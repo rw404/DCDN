@@ -1,0 +1,122 @@
+schema_version: 1
+dataset_id: kuairec_big_matrix
+artifact_role: fail_closed_partial_null_invalidation_evidence
+diagnosed_at_utc: '2026-08-18T14:50:48Z'
+status: preserved_invalidated_predecessor_evidence
+status_at_diagnosis: unresolved
+test_unlocked: false
+test_labels_opened: false
+row_samples_or_individual_values_read: false
+watch_ratio_read: false
+validation_or_test_model_metrics_read: false
+materialization_performed_after_discrepancy: false
+
+launch_guard:
+  accounting_basis: local_owner_approved_estimate
+  ledger_epoch_utc: '2026-08-18T09:13:18Z'
+  evaluated_at_utc: '2026-08-18T14:48:59.516100Z'
+  eta_hours: 0.1
+  estimated_spend_usd: 43.41
+  projected_spend_usd: 43.74
+  launch_allowed: true
+
+source_identity:
+  archive_path: /home/codex/.cache/dcdn-public/downloads/kuairec/KuaiRec.zip
+  archive_bytes: 431964858
+  archive_sha256: c23f211cf109c7a060a25a4afe9e8c681b1ccbbc816cca921d87ad37dd11c70c
+  daily_member_path: KuaiRec 2.0/data/item_daily_features.csv
+  daily_member_bytes: 85855213
+  daily_member_sha256: 45943d63c44652b6403f3a4f78c7225e1afe7916bab17d9a674d7979245e085b
+
+source_member_and_file_counts:
+  archive_member_count_total: 15
+  archive_member_count_files: 12
+  archive_exact_daily_member_count: 1
+  archive_daily_basename_member_count: 1
+  extracted_regular_file_count: 12
+  extracted_exact_daily_file_count: 1
+  extracted_daily_basename_file_count: 1
+
+daily_file_aggregate_counts:
+  csv_records: 343341
+  unique_video_date_keys: 343341
+  duplicate_video_date_rows: 0
+  date_groups_with_exactly_69683_rows: 0
+  target_columns:
+    collect_cnt:
+      total: 343341
+      null: 69683
+      nonnull: 273658
+      parse_invalid: 0
+      nonfinite: 0
+      negative: 0
+    collect_user_num:
+      total: 343341
+      null: 69683
+      nonnull: 273658
+      parse_invalid: 0
+      nonfinite: 0
+      negative: 0
+    cancel_collect_cnt:
+      total: 343341
+      null: 69683
+      nonnull: 273658
+      parse_invalid: 0
+      nonfinite: 0
+      negative: 0
+    cancel_collect_user_num:
+      total: 343341
+      null: 69683
+      nonnull: 273658
+      parse_invalid: 0
+      nonfinite: 0
+      negative: 0
+
+finding:
+  prior_69683_interpretation: null_count_per_target_column
+  prior_source_wide_all_null_claim: false
+  exact_four_columns_source_wide_all_null: false
+  explained_by_one_file: false
+  explained_by_one_date: false
+  explained_by_video_date_deduplication: false
+  new_feature_policy_asserted: false
+
+invalidation:
+  blind_scan_original_active_path: configs/data/kuairec/blind_scan_v1.yaml
+  blind_scan_archive_path: configs/data/kuairec/blind_scan_v1.rejected-3b383910.yaml
+  blind_scan_generated_sha256: 3b38391097c9294b7622bc91c7b836283247b7ff41bbf41a0a7a4e84c35357ab
+  blind_scan_generated_cli_verdict: PASS
+  blind_scan_status: invalid_not_usable
+  blind_scan_reason: upstream_feature_contract_relied_on_false_source_wide_all_null_premise
+  blind_scan_original_bytes_archived: true
+  feature_contract_archive_path: configs/data/kuairec/features_v1.rejected-f0883ced.yaml
+  feature_contract_sha256: f0883ced4c8fb3f0945cacb1affa0b4891f748c4294e3a2d1016100191011b8d
+  feature_contract_status: unresolved_invalid_not_usable
+  feature_contract_original_bytes_archived: true
+  refreeze_performed_at_diagnosis: false
+
+decision_required_at_diagnosis:
+  subject: four_partially_null_collect_counters_and_four_derived_rates
+  zero_imputation_allowed: false
+  row_or_population_change_allowed: false
+  full_column_and_rate_exclusion_approved: false
+  next_action_at_diagnosis: await_explicit_owner_policy_decision
+
+subsequent_owner_decision:
+  status: approved
+  scope: exclude_exactly_four_partially_null_counters_and_four_derived_rates_all_KuaiRec_regimes
+  zero_imputation_allowed: false
+  row_or_population_change_allowed: false
+  ms_to_seconds_normalization_unchanged: true
+  full_blind_rerun_from_start_required: true
+
+corrected_successor:
+  feature_contract_path: configs/data/kuairec/features_v1.yaml
+  feature_contract_sha256: ab016a7f6d300e7a90de9940891ea974695aa5f61ea85985e239588290522c36
+  blind_scan_path: configs/data/kuairec/blind_scan_v1.yaml
+  blind_scan_sha256: 716e976e0afc642b354c50096ca0d12bdef07e55381b5e91b75cc7c4910f810a
+  blind_scan_audited_at_utc: '2026-08-18T14:59:10Z'
+  full_rerun_from_start_passed: true
+  prior_invalid_artifacts_remain_invalid: true
+  test_unlocked: false
+  validation_or_test_model_metrics_read: false

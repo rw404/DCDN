@@ -1,0 +1,576 @@
+schema_version: 1
+dataset_id: vk_lsvd_up0.01_ir0.01
+artifact_role: pre_metric_feature_contract
+frozen_utc: "2026-08-18T14:16:17Z"
+test_unlocked: false
+test_labels_opened: false
+validation_model_metrics_read: false
+test_metrics_read: false
+week26_schema_inspected: false
+week26_view_materialized: false
+
+source_manifest:
+  path: data/manifests/vk_lsvd_source_v1.yaml
+  sha256: 5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac
+  dataset_id: deepvk/VK-LSVD
+  subset: up0.01_ir0.01
+  resolved_revision: 084a18386e149a454dd6dbe0123478e75c6b09ce
+  exact_objects: 30
+  exact_bytes: 2843350925
+
+upstream_preprocessing_provenance:
+  repository: https://github.com/rw404/HEGM.git
+  revision: d16c097d57f867f438f906949d9cc1efd0f6ddc4
+  license: Apache-2.0
+  license_sha256: eb74dde2903b7a84802e5907b35717441530b25738fc00c0b6639bb8287878c3
+  preprocess_path: scripts/preprocess_vklsvd.py
+  preprocess_vklsvd_sha256: 5e7137820f8d923692afc0055c60069faa27678d98f8fa29054b4777b53be92e
+  inspected_scope:
+    - LICENSE
+    - scripts/preprocess_vklsvd.py
+    - hegm/features.py
+    - hegm/data.py
+  forbidden_scope:
+    - README.md
+    - evaluate.py
+    - hegm/metrics.py
+    - published results
+    - evaluator outputs
+    - checkpoints
+  published_result_values_read: false
+
+inspection_boundary:
+  semantic_parquet_weeks_opened_for_phase_1: 0-25_only
+  week26_allowed_operations:
+    - byte_count_from_source_manifest
+    - sha256_from_source_manifest
+  week26_forbidden_operations:
+    - file_open_by_feature_code
+    - parquet_decode
+    - schema_inspection
+    - row_access
+    - label_access
+    - distribution_or_metric_computation
+  metadata_values_read:
+    - items_metadata.duration_for_label_c_provenance
+    - metadata_key_uniqueness_and_null_checks
+  model_metrics_computed: false
+
+split_contract:
+  history_weeks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+  train_weeks: [20, 21, 22, 23, 24]
+  validation_week: 25
+  sealed_test_week: 26
+  feature_state: fit_once_on_history_0_19_then_freeze
+  train_only_fit:
+    - categorical_C_mappings
+    - P0_scale_constants
+    - E_scale_constants
+  no_rolling_updates_after_history: true
+  row_order: week_then_stable_parquet_row_index0
+  deduplication: none_retain_every_released_row
+  audit_time_key: [week, source_row_index0]
+  stable_row_id: sha256_of_revision_subset_week_source_row_index0
+
+raw_schemas:
+  interaction:
+    - user_id:uint32
+    - item_id:uint32
+    - place:uint8
+    - platform:uint8
+    - agent:uint8
+    - timespent:uint8
+    - like:bool
+    - dislike:bool
+    - share:bool
+    - bookmark:bool
+    - click_on_author:bool
+    - open_comments:bool
+  users_metadata:
+    - user_id:uint32
+    - age:uint8
+    - gender:uint8
+    - geo:uint8
+    - train_interactions_rank:uint32
+  items_metadata:
+    - item_id:uint32
+    - author_id:uint32
+    - duration:uint8
+    - train_interactions_rank:uint32
+
+strict_exclusions:
+  current_row_outcomes:
+    - timespent
+    - like
+    - dislike
+    - share
+    - bookmark
+    - click_on_author
+    - open_comments
+  current_row_outcome_use: label_only_never_input_or_history_for_same_row
+  raw_ids:
+    user_id: audit_grouping_and_history_lookup_only
+    item_id: audit_grouping_metadata_and_history_lookup_only
+  metadata_fields:
+    author_id: excluded_not_in_frozen_C
+    train_interactions_rank: excluded_potential_full-training-derived_rank
+  item_embeddings.npz: excluded_no_predeclared_model_requires_content_embeddings
+  PLE: forbidden_for_mandatory_DCDN_Core_and_public_baselines
+  history_feature_source: weeks_0_19_only
+  validation_or_test_rows_in_feature_fit: forbidden
+
+context_C:
+  fields:
+    age: {source: users_metadata.age, join_key: user_id}
+    gender: {source: users_metadata.gender, join_key: user_id}
+    geo: {source: users_metadata.geo, join_key: user_id}
+    place: {source: current_row.place}
+    platform: {source: current_row.platform}
+    agent: {source: current_row.agent}
+  mapping_fit_weeks: [20, 21, 22, 23, 24]
+  mapping_fit_split: train_only
+  encoding: categorical_embedding
+  embedding_dim: 16
+  token_ids:
+    OOV: 0
+    MISSING: 1
+    first_known: 2
+  known_value_order: ascending_integer
+  missing_metadata_behavior: map_to_MISSING_without_row_drop
+  unseen_validation_or_test_behavior: map_to_OOV_without_row_drop
+  reciprocal_branch: bypass
+
+ordered_fields:
+  C:
+    - age
+    - gender
+    - geo
+    - place
+    - platform
+    - agent
+  P0:
+    - p_duration_seconds
+    - p_user_show_count
+    - p_user_show_count_plus_beta
+    - p_user_timespent_sum_seconds
+    - p_user_like_count_plus_alpha
+    - p_user_share_count_plus_alpha
+    - p_user_bookmark_count_plus_alpha
+    - p_user_comments_count_plus_alpha
+    - p_user_dislike_count_plus_alpha
+    - p_user_heartbeat15_count_plus_alpha
+    - p_user_heartbeat30_count_plus_alpha
+    - p_item_show_count
+    - p_item_show_count_plus_beta
+    - p_item_timespent_sum_seconds
+    - p_item_like_count_plus_alpha
+    - p_item_share_count_plus_alpha
+    - p_item_bookmark_count_plus_alpha
+    - p_item_comments_count_plus_alpha
+    - p_item_dislike_count_plus_alpha
+    - p_item_click_on_author_count_plus_alpha
+    - p_item_heartbeat15_count_plus_alpha
+    - p_item_heartbeat30_count_plus_alpha
+    - p_ials_viewtime_dot
+    - p_ials_viewtime_user_norm
+    - p_ials_viewtime_item_norm
+    - p_ials_feedback_dot
+    - p_ials_feedback_user_norm
+    - p_ials_feedback_item_norm
+    - p_ials_survival_dot
+    - p_ials_survival_user_norm
+    - p_ials_survival_item_norm
+  V:
+    - v_user_history_present
+    - v_item_history_present
+    - v_item_metadata_present
+    - v_duration_positive
+    - v_ials_viewtime_user_seen
+    - v_ials_viewtime_item_seen
+    - v_ials_viewtime_user_norm_positive
+    - v_ials_viewtime_item_norm_positive
+    - v_ials_feedback_user_seen
+    - v_ials_feedback_item_seen
+    - v_ials_feedback_user_norm_positive
+    - v_ials_feedback_item_norm_positive
+    - v_ials_survival_user_seen
+    - v_ials_survival_item_seen
+    - v_ials_survival_user_norm_positive
+    - v_ials_survival_item_norm_positive
+    - v_duration_seconds_reciprocal_floor_active
+    - v_user_show_count_reciprocal_floor_active
+    - v_user_show_count_plus_beta_reciprocal_floor_active
+    - v_item_show_count_reciprocal_floor_active
+    - v_item_show_count_plus_beta_reciprocal_floor_active
+    - v_ials_viewtime_user_norm_reciprocal_floor_active
+    - v_ials_viewtime_item_norm_reciprocal_floor_active
+    - v_ials_feedback_user_norm_reciprocal_floor_active
+    - v_ials_feedback_item_norm_reciprocal_floor_active
+    - v_ials_survival_user_norm_reciprocal_floor_active
+    - v_ials_survival_item_norm_reciprocal_floor_active
+  P:
+    - p_duration_seconds
+    - p_user_show_count
+    - p_user_show_count_plus_beta
+    - p_user_timespent_sum_seconds
+    - p_user_like_count_plus_alpha
+    - p_user_share_count_plus_alpha
+    - p_user_bookmark_count_plus_alpha
+    - p_user_comments_count_plus_alpha
+    - p_user_dislike_count_plus_alpha
+    - p_user_heartbeat15_count_plus_alpha
+    - p_user_heartbeat30_count_plus_alpha
+    - p_item_show_count
+    - p_item_show_count_plus_beta
+    - p_item_timespent_sum_seconds
+    - p_item_like_count_plus_alpha
+    - p_item_share_count_plus_alpha
+    - p_item_bookmark_count_plus_alpha
+    - p_item_comments_count_plus_alpha
+    - p_item_dislike_count_plus_alpha
+    - p_item_click_on_author_count_plus_alpha
+    - p_item_heartbeat15_count_plus_alpha
+    - p_item_heartbeat30_count_plus_alpha
+    - p_ials_viewtime_dot
+    - p_ials_viewtime_user_norm
+    - p_ials_viewtime_item_norm
+    - p_ials_feedback_dot
+    - p_ials_feedback_user_norm
+    - p_ials_feedback_item_norm
+    - p_ials_survival_dot
+    - p_ials_survival_user_norm
+    - p_ials_survival_item_norm
+    - v_user_history_present
+    - v_item_history_present
+    - v_item_metadata_present
+    - v_duration_positive
+    - v_ials_viewtime_user_seen
+    - v_ials_viewtime_item_seen
+    - v_ials_viewtime_user_norm_positive
+    - v_ials_viewtime_item_norm_positive
+    - v_ials_feedback_user_seen
+    - v_ials_feedback_item_seen
+    - v_ials_feedback_user_norm_positive
+    - v_ials_feedback_item_norm_positive
+    - v_ials_survival_user_seen
+    - v_ials_survival_item_seen
+    - v_ials_survival_user_norm_positive
+    - v_ials_survival_item_norm_positive
+    - v_duration_seconds_reciprocal_floor_active
+    - v_user_show_count_reciprocal_floor_active
+    - v_user_show_count_plus_beta_reciprocal_floor_active
+    - v_item_show_count_reciprocal_floor_active
+    - v_item_show_count_plus_beta_reciprocal_floor_active
+    - v_ials_viewtime_user_norm_reciprocal_floor_active
+    - v_ials_viewtime_item_norm_reciprocal_floor_active
+    - v_ials_feedback_user_norm_reciprocal_floor_active
+    - v_ials_feedback_item_norm_reciprocal_floor_active
+    - v_ials_survival_user_norm_reciprocal_floor_active
+    - v_ials_survival_item_norm_reciprocal_floor_active
+  E:
+    - e_user_avg_timespent_seconds
+    - e_user_like_rate
+    - e_user_share_rate
+    - e_user_bookmark_rate
+    - e_user_comments_rate
+    - e_user_dislike_rate
+    - e_user_heartbeat15_rate
+    - e_user_heartbeat30_rate
+    - e_item_avg_timespent_seconds
+    - e_item_like_rate
+    - e_item_share_rate
+    - e_item_bookmark_rate
+    - e_item_comments_rate
+    - e_item_dislike_rate
+    - e_item_click_on_author_rate
+    - e_item_heartbeat15_rate
+    - e_item_heartbeat30_rate
+    - e_ials_viewtime_cosine
+    - e_ials_feedback_cosine
+    - e_ials_survival_cosine
+
+feature_formulas:
+  P0:
+    p_duration_seconds: "items_metadata.duration joined by item_id; missing fallback 0"
+    p_user_show_count: "count(history rows grouped by user_id); missing fallback 0"
+    p_user_show_count_plus_beta: "p_user_show_count + beta"
+    p_user_timespent_sum_seconds: "sum(history.timespent grouped by user_id); missing fallback 0"
+    p_user_like_count_plus_alpha: "sum(history.like grouped by user_id) + alpha"
+    p_user_share_count_plus_alpha: "sum(history.share grouped by user_id) + alpha"
+    p_user_bookmark_count_plus_alpha: "sum(history.bookmark grouped by user_id) + alpha"
+    p_user_comments_count_plus_alpha: "sum(history.open_comments grouped by user_id) + alpha"
+    p_user_dislike_count_plus_alpha: "sum(history.dislike grouped by user_id) + alpha"
+    p_user_heartbeat15_count_plus_alpha: "sum(history.survival_15 grouped by user_id) + alpha"
+    p_user_heartbeat30_count_plus_alpha: "sum(history.survival_30 grouped by user_id) + alpha"
+    p_item_show_count: "count(history rows grouped by item_id); missing fallback 0"
+    p_item_show_count_plus_beta: "p_item_show_count + beta"
+    p_item_timespent_sum_seconds: "sum(history.timespent grouped by item_id); missing fallback 0"
+    p_item_like_count_plus_alpha: "sum(history.like grouped by item_id) + alpha"
+    p_item_share_count_plus_alpha: "sum(history.share grouped by item_id) + alpha"
+    p_item_bookmark_count_plus_alpha: "sum(history.bookmark grouped by item_id) + alpha"
+    p_item_comments_count_plus_alpha: "sum(history.open_comments grouped by item_id) + alpha"
+    p_item_dislike_count_plus_alpha: "sum(history.dislike grouped by item_id) + alpha"
+    p_item_click_on_author_count_plus_alpha: "sum(history.click_on_author grouped by item_id) + alpha"
+    p_item_heartbeat15_count_plus_alpha: "sum(history.survival_15 grouped by item_id) + alpha"
+    p_item_heartbeat30_count_plus_alpha: "sum(history.survival_30 grouped by item_id) + alpha"
+    p_ials_viewtime_dot: "dot(ials.viewtime.user_factor, ials.viewtime.item_factor); unseen fallback 0"
+    p_ials_viewtime_user_norm: "l2_norm(ials.viewtime.user_factor); unseen fallback 0"
+    p_ials_viewtime_item_norm: "l2_norm(ials.viewtime.item_factor); unseen fallback 0"
+    p_ials_feedback_dot: "dot(ials.feedback.user_factor, ials.feedback.item_factor); unseen fallback 0"
+    p_ials_feedback_user_norm: "l2_norm(ials.feedback.user_factor); unseen fallback 0"
+    p_ials_feedback_item_norm: "l2_norm(ials.feedback.item_factor); unseen fallback 0"
+    p_ials_survival_dot: "dot(ials.survival.user_factor, ials.survival.item_factor); unseen fallback 0"
+    p_ials_survival_user_norm: "l2_norm(ials.survival.user_factor); unseen fallback 0"
+    p_ials_survival_item_norm: "l2_norm(ials.survival.item_factor); unseen fallback 0"
+  V:
+    v_user_history_present: "p_user_show_count > 0"
+    v_item_history_present: "p_item_show_count > 0"
+    v_item_metadata_present: "item_id matched exactly one metadata row"
+    v_duration_positive: "v_item_metadata_present and p_duration_seconds > 0"
+    v_ials_viewtime_user_seen: "user_id exists in history-fitted ials.viewtime.user_map"
+    v_ials_viewtime_item_seen: "item_id exists in history-fitted ials.viewtime.item_map"
+    v_ials_viewtime_user_norm_positive: "v_ials_viewtime_user_seen and p_ials_viewtime_user_norm > 0"
+    v_ials_viewtime_item_norm_positive: "v_ials_viewtime_item_seen and p_ials_viewtime_item_norm > 0"
+    v_ials_feedback_user_seen: "user_id exists in history-fitted ials.feedback.user_map"
+    v_ials_feedback_item_seen: "item_id exists in history-fitted ials.feedback.item_map"
+    v_ials_feedback_user_norm_positive: "v_ials_feedback_user_seen and p_ials_feedback_user_norm > 0"
+    v_ials_feedback_item_norm_positive: "v_ials_feedback_item_seen and p_ials_feedback_item_norm > 0"
+    v_ials_survival_user_seen: "user_id exists in history-fitted ials.survival.user_map"
+    v_ials_survival_item_seen: "item_id exists in history-fitted ials.survival.item_map"
+    v_ials_survival_user_norm_positive: "v_ials_survival_user_seen and p_ials_survival_user_norm > 0"
+    v_ials_survival_item_norm_positive: "v_ials_survival_item_seen and p_ials_survival_item_norm > 0"
+    v_duration_seconds_reciprocal_floor_active: "denominator_valid(p_duration_seconds) and normalized(p_duration_seconds) < 0.01"
+    v_user_show_count_reciprocal_floor_active: "denominator_valid(p_user_show_count) and normalized(p_user_show_count) < 0.01"
+    v_user_show_count_plus_beta_reciprocal_floor_active: "denominator_valid(p_user_show_count_plus_beta) and normalized(p_user_show_count_plus_beta) < 0.01"
+    v_item_show_count_reciprocal_floor_active: "denominator_valid(p_item_show_count) and normalized(p_item_show_count) < 0.01"
+    v_item_show_count_plus_beta_reciprocal_floor_active: "denominator_valid(p_item_show_count_plus_beta) and normalized(p_item_show_count_plus_beta) < 0.01"
+    v_ials_viewtime_user_norm_reciprocal_floor_active: "denominator_valid(p_ials_viewtime_user_norm) and normalized(p_ials_viewtime_user_norm) < 0.01"
+    v_ials_viewtime_item_norm_reciprocal_floor_active: "denominator_valid(p_ials_viewtime_item_norm) and normalized(p_ials_viewtime_item_norm) < 0.01"
+    v_ials_feedback_user_norm_reciprocal_floor_active: "denominator_valid(p_ials_feedback_user_norm) and normalized(p_ials_feedback_user_norm) < 0.01"
+    v_ials_feedback_item_norm_reciprocal_floor_active: "denominator_valid(p_ials_feedback_item_norm) and normalized(p_ials_feedback_item_norm) < 0.01"
+    v_ials_survival_user_norm_reciprocal_floor_active: "denominator_valid(p_ials_survival_user_norm) and normalized(p_ials_survival_user_norm) < 0.01"
+    v_ials_survival_item_norm_reciprocal_floor_active: "denominator_valid(p_ials_survival_item_norm) and normalized(p_ials_survival_item_norm) < 0.01"
+  E:
+    e_user_avg_timespent_seconds: "p_user_timespent_sum_seconds / p_user_show_count when v_user_history_present else 0"
+    e_user_like_rate: "p_user_like_count_plus_alpha / p_user_show_count_plus_beta"
+    e_user_share_rate: "p_user_share_count_plus_alpha / p_user_show_count_plus_beta"
+    e_user_bookmark_rate: "p_user_bookmark_count_plus_alpha / p_user_show_count_plus_beta"
+    e_user_comments_rate: "p_user_comments_count_plus_alpha / p_user_show_count_plus_beta"
+    e_user_dislike_rate: "p_user_dislike_count_plus_alpha / p_user_show_count_plus_beta"
+    e_user_heartbeat15_rate: "p_user_heartbeat15_count_plus_alpha / p_user_show_count_plus_beta"
+    e_user_heartbeat30_rate: "p_user_heartbeat30_count_plus_alpha / p_user_show_count_plus_beta"
+    e_item_avg_timespent_seconds: "p_item_timespent_sum_seconds / p_item_show_count when v_item_history_present else 0"
+    e_item_like_rate: "p_item_like_count_plus_alpha / p_item_show_count_plus_beta"
+    e_item_share_rate: "p_item_share_count_plus_alpha / p_item_show_count_plus_beta"
+    e_item_bookmark_rate: "p_item_bookmark_count_plus_alpha / p_item_show_count_plus_beta"
+    e_item_comments_rate: "p_item_comments_count_plus_alpha / p_item_show_count_plus_beta"
+    e_item_dislike_rate: "p_item_dislike_count_plus_alpha / p_item_show_count_plus_beta"
+    e_item_click_on_author_rate: "p_item_click_on_author_count_plus_alpha / p_item_show_count_plus_beta"
+    e_item_heartbeat15_rate: "p_item_heartbeat15_count_plus_alpha / p_item_show_count_plus_beta"
+    e_item_heartbeat30_rate: "p_item_heartbeat30_count_plus_alpha / p_item_show_count_plus_beta"
+    e_ials_viewtime_cosine: "p_ials_viewtime_dot / (p_ials_viewtime_user_norm * p_ials_viewtime_item_norm) when both factors are seen and both norms are positive else 0"
+    e_ials_feedback_cosine: "p_ials_feedback_dot / (p_ials_feedback_user_norm * p_ials_feedback_item_norm) when both factors are seen and both norms are positive else 0"
+    e_ials_survival_cosine: "p_ials_survival_dot / (p_ials_survival_user_norm * p_ials_survival_item_norm) when both factors are seen and both norms are positive else 0"
+
+smoothing:
+  alpha: 5.0
+  beta: 100.0
+  constants_source: pinned_HEGM_preprocess_source
+  fitted_or_tuned: false
+  cold_history_behavior:
+    raw_counts_and_timespent_sums: 0
+    count_plus_alpha: 5.0
+    show_count_plus_beta: 100.0
+    smoothed_rate: 0.05
+
+derived_history_signals:
+  survival_15: "float32(timespent >= 15)"
+  survival_30: "float32(timespent >= 30)"
+  any_feedback: "float32(like OR share OR bookmark OR click_on_author OR open_comments)"
+  viewtime_float: "float32(timespent)"
+
+ials:
+  signals: [viewtime, feedback, survival]
+  targets:
+    viewtime: viewtime_float
+    feedback: any_feedback
+    survival: survival_15
+  fit_weeks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+  factors: 32
+  iterations: 15
+  regularization: 0.01
+  random_state: 42
+  id_order: ascending_integer
+  threads: 1
+  sparse_duplicate_rule: csr_sum_duplicates
+  freeze_after_fit: true
+  unseen_user_or_item_operands: 0
+  cosine_invalid_fallback: 0
+
+normalization:
+  fit_weeks: [20, 21, 22, 23, 24]
+  method: divide_by_train_abs_q99
+  quantile: 0.99
+  interpolation: nearest
+  minimum_scale: 1.0e-12
+  centering: none
+  clipping: none
+  validity_indicator_scale: 1.0
+  fit_separately_for:
+    - P0
+    - E
+  freeze_before_validation: true
+  shared_C_plus_P_values_bitwise_identical_across_regimes: true
+
+denominator_contract:
+  eligible_fields:
+    - p_duration_seconds
+    - p_user_show_count
+    - p_user_show_count_plus_beta
+    - p_item_show_count
+    - p_item_show_count_plus_beta
+    - p_ials_viewtime_user_norm
+    - p_ials_viewtime_item_norm
+    - p_ials_feedback_user_norm
+    - p_ials_feedback_item_norm
+    - p_ials_survival_user_norm
+    - p_ials_survival_item_norm
+  ordered_mask: [true, true, true, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, true, true, false, true, true, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
+  validity_sources:
+    p_duration_seconds: v_item_metadata_present AND v_duration_positive
+    p_user_show_count: v_user_history_present
+    p_user_show_count_plus_beta: always_true_after_beta_shift
+    p_item_show_count: v_item_history_present
+    p_item_show_count_plus_beta: always_true_after_beta_shift
+    p_ials_viewtime_user_norm: v_ials_viewtime_user_seen AND v_ials_viewtime_user_norm_positive
+    p_ials_viewtime_item_norm: v_ials_viewtime_item_seen AND v_ials_viewtime_item_norm_positive
+    p_ials_feedback_user_norm: v_ials_feedback_user_seen AND v_ials_feedback_user_norm_positive
+    p_ials_feedback_item_norm: v_ials_feedback_item_seen AND v_ials_feedback_item_norm_positive
+    p_ials_survival_user_norm: v_ials_survival_user_seen AND v_ials_survival_user_norm_positive
+    p_ials_survival_item_norm: v_ials_survival_item_seen AND v_ials_survival_item_norm_positive
+  epsilon: 0.01
+  floor: positive_clamp_min_after_scale_only_normalization
+  invalid_action: validity_gate_to_zero
+  negative_action: reject
+  reciprocal_compute_dtype: float32
+  denominator_scan_before_training: complete_materialized_view
+  required_reports:
+    - mask_coverage
+    - invalid_or_zero_frequency_per_field
+    - reciprocal_floor_incidence_per_field
+    - denominator_magnitude_buckets
+    - nan_or_inf_rate
+
+primary_label:
+  name: normalized_watch_time
+  source: current_row.timespent
+  source_unit: seconds
+  c_seconds: 157.0
+  c_source: full items_metadata.duration q0.99 with Polars nearest interpolation
+  c_source_object: metadata/items_metadata.parquet
+  c_source_sha256: 607ffd09d3fb6627f7eec07ed53583d45c47263a2e6538e4deee66cd8a22e51e
+  c_not_watch_time_q99: true
+  transform: clip(timespent,0,c)/c
+  reporting_target_seconds: clip(timespent,0,c)
+  prediction_seconds: c*clip(normalized_prediction,0,1)
+
+metrics_and_uncertainty:
+  primary_selection_metric: normalized_mse
+  selection_direction: minimize
+  reporting_metrics:
+    normalized_mse: mean((normalized_prediction-normalized_target)^2)
+    mae_seconds: mean(abs(prediction_seconds-reporting_target_seconds))
+    mse_seconds_squared: mean((prediction_seconds-reporting_target_seconds)^2)
+    global_concordance: >-
+      Over all unordered pairs with unequal reporting targets, score matching
+      prediction order as 1, reversed order as 0, prediction ties as 0.5, and
+      exclude target ties; implementation must be order-invariant.
+  global_concordance_required_report: comparable_pair_count_and_coverage
+  HEGM_batch_XAUC:
+    primary: false
+    permitted_only_if_labeled_exactly: HEGM batch-XAUC
+    requires_locked_batch_size_and_order_sensitivity_audit: true
+  final_seeds: [42, 43, 44]
+  aggregate: mean_and_sample_standard_deviation
+  paired_bootstrap:
+    cluster: user_id
+    confidence_level: 0.95
+    replicates: 2000
+    random_seed: 20260818
+    interval: percentile
+    pairing_key: stable_row_id
+  primary_contrasts:
+    - DCDN(C+P)-DCNv2(C+P)
+    - DCDN(C+P)-DCNv2(C+P+E)
+    - DCDN(C+P)-DCNv2-capacity-matched-core(C+P)
+    - DCNv2(C+P+E)-DCNv2(C+P)
+  multiplicity:
+    family: four_primary_normalized_mse_contrasts
+    method: Holm-Bonferroni
+    familywise_alpha: 0.05
+  secondary_binary_targets:
+    labels: [like, share, dislike]
+    metrics: [log_loss, roc_auc, user_gauc, auprc]
+    scheduling: optional_only_after_mandatory_primary_cells
+    user_gauc_single_class_users: exclude_and_report_user_and_row_coverage
+
+audit_only:
+  columns:
+    - user_id
+    - item_id
+    - week
+    - source_row_index0
+    - stable_row_id
+  uses:
+    - exact_row_alignment
+    - user_clustered_uncertainty
+    - user_grouped_metrics
+    - history_and_metadata_coverage
+    - cold_user_and_cold_item_slices
+  model_input: false
+
+schema_hashes:
+  ordered_operand_schema_sha256: bb2f6c47fa12c175a3820830f90ff577acb293c56b107c7d1c40e4c682f2ff4d
+  denominator_mask_sha256: 9e168fae4014f4763008e89f61324858f17d376f56fb5de46f2775911650bcaa
+  C_plus_P_full_ordered_schema_sha256: 2cfd6d12cd85346e413f476ff223e19d57be213d74fe68b75d6f0ce686c0f091
+  C_plus_P_plus_E_full_ordered_schema_sha256: 381beb02c21c8a56a4111b2dde50eb7c870518e9289a806f6e4ddb8a2c9dda59
+
+derived_dimensions:
+  C_fields: 6
+  P0_fields: 31
+  V_fields: 27
+  P_fields: 58
+  E_fields: 20
+  encoded_C_bypass_width: 96
+  C_plus_P_model_field_count: 64
+  C_plus_P_flat_width: 154
+  C_plus_P_plus_E_model_field_count: 84
+  C_plus_P_plus_E_flat_width: 174
+  denominator_mask_width: 58
+  denominator_eligible_count: 11
+
+honest_field_count_reporting:
+  P0_plus_E_to_P0: {before: 51, after: 31, removed: 20, reduction_percent: 39.2}
+  C_plus_P0_plus_E_to_C_plus_P0_before_V: {before: 57, after: 37, removed: 20, reduction_percent: 35.1}
+  P0_plus_V_plus_E_to_P0_plus_V: {before: 78, after: 58, removed: 20, reduction_percent: 25.6}
+  C_plus_P0_plus_V_plus_E_to_C_plus_P0_plus_V: {before: 84, after: 64, removed: 20, reduction_percent: 23.8}
+  comparison_to_industrial_40.1_percent: forbidden
+  counts_selected_to_match_industrial_result: false
+
+deterministic_adaptations_from_HEGM:
+  - rebuild_P0_and_E_from_allowed_raw_history_instead_of_reusing_32_column_processed_view
+  - replace_HEGM_minus_1000_join_fill_with_explicit_zero_or_smoothed_fallbacks_and_V
+  - sort_iALS_user_and_item_ids_ascending_and_use_one_thread
+  - use_train_only_scale_normalization_instead_of_PLE_for_mandatory_public_core
+  - retain_audit_ids_and_row_order
+  - never_decode_week26_before_protocol_and_selected_configs_lock
+
+resolution_gate:
+  exact_upstream_fields_and_formulas_established: true
+  unresolved_fields: []
+  first_model_metric_blocked: false
+  test_access_blocked: true
+  test_unlock_requires:
+    - validation_only_tuning_complete
+    - protocol_frozen_yaml_and_sha256
+    - selected_configs_lock_and_sha256

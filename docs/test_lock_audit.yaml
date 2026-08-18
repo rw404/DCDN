@@ -43,3 +43,48 @@ events:
       - do not use published rankings to choose candidates or fixed configs
       - retain test_unlocked=false
       - freeze the DCDN protocol independently
+  - event_id: test-lock-20260818-kuairec-readme-snippet
+    observed_at_utc: "2026-08-18T14:42:39Z"
+    trigger: >-
+      A narrowly scoped public search for the pinned HEGM handling of official
+      KuaiRec duration units.
+    exposure: >-
+      Search output unexpectedly included an official KuaiRec README example
+      row and a published dataset-size summary.
+    retained_schema_fact: >-
+      The official duration and play-duration fields are expressed in
+      milliseconds; all displayed example/statistic values remain quarantined.
+    not_accessed:
+      - local KuaiRec test-label rows or vectors
+      - local watch_ratio values
+      - DCDN outputs
+      - validation or test model metrics
+    scope: >-
+      External documentation exposure, not a project test evaluation.
+    mitigation:
+      - quarantine every displayed row/statistic value from all decisions
+      - retain only the duration-unit schema fact
+      - do not inspect further KuaiRec README/result/evaluator/checkpoint material
+      - retain test_unlocked=false
+      - record deterministic millisecond-to-second normalization before metrics
+      - rerun the label-blind audit from pinned raw bytes
+  - event_id: test-lock-20260818-encoder-source-search
+    observed_at_utc: "2026-08-18T15:13:07Z"
+    trigger: >-
+      Primary-source search for standard CTR categorical and continuous-field
+      encoder semantics before freezing the shared encoder.
+    exposure: >-
+      An unrelated search-result snippet displayed published performance values
+      for another repository and dataset.
+    not_accessed:
+      - local public-dataset test rows or labels
+      - DCDN outputs
+      - project-generated validation or test metrics
+    scope: >-
+      External published prior unrelated to the frozen DCDN views; it is not a
+      project evaluation.
+    mitigation:
+      - quarantine every displayed performance value from all decisions
+      - use only primary-source architecture and tensor-contract evidence
+      - do not inspect the unrelated result artifact further
+      - retain test_unlocked=false

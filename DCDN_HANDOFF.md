@@ -696,5 +696,32 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   metric-independent search-space SHA-256 is
   `b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344`.
   Neither lock used validation or test metrics.
+- Public feature phase-1 checkpoint recorded 2026-08-18: the VK-LSVD
+  feature-contract SHA-256 is
+  `380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b`.
+  Weeks 0--25 passed structural/schema audit while sealed week 26 remained
+  unopened; no validation model metric was computed.
+- The corrected KuaiRand-Pure phase-1 contract, SHA-256
+  `92a060d34e16d5b3dd2674d9ca75281fac0d20a54adda03c9ecaa206e9e601ef`,
+  passed its owner-approved deterministic boundary embargo. It retains
+  later-role rows, excludes exactly 6,639 overlapping earlier-role rows, and
+  uses the actually available 2022-04-09--2022-04-21 burn-in. Test access and
+  model metrics remain locked.
+- The corrected KuaiRec phase-1 contract, SHA-256
+  `ab016a7f6d300e7a90de9940891ea974695aa5f61ea85985e239588290522c36`,
+  and blind-audit artifact, SHA-256
+  `716e976e0afc642b354c50096ca0d12bdef07e55381b5e91b75cc7c4910f810a`,
+  passed after the owner-approved missingness/unit revision. Four partial-null
+  collection counters (69,683 nulls among 343,341 daily rows) and their four
+  rates are excluded without imputation; millisecond duration/watch-time
+  fields are converted deterministically to seconds. Rejected predecessor
+  artifacts remain preserved and explicitly unusable; test access and model
+  metrics remain locked.
+- VK-LSVD train/validation materialization recorded 2026-08-18: the matched
+  12-shard views manifest SHA-256 is
+  `738d3610fd83a93297d94ccad4c4316dd3ad8b241f8409e84daf5b2322040dbe`,
+  covering 7,505,820 train and 1,516,831 validation rows. Every shard passed
+  independent byte-hash, schema, and row-count re-open checks; sealed week 26
+  remained outside the path graph and unopened.
 
 Update this decision log whenever a material choice changes.

@@ -1,0 +1,178 @@
+schema_version: 1
+dataset_id: kuairec_big_matrix
+artifact_role: label_blind_filter_split_audit
+audited_at_utc: '2026-08-18T14:48:12Z'
+feature_contract:
+  path: configs/data/kuairec/features_v1.yaml
+  sha256: f0883ced4c8fb3f0945cacb1affa0b4891f748c4294e3a2d1016100191011b8d
+source_manifest_sha256: 963019bcb4c8dbd4663f23c24a472fe0332f6494fdcbbaa74ca158a73488c5b4
+test_unlocked: false
+test_labels_opened: false
+test_label_values_exposed_or_summarized: false
+current_play_positive_predicate_applied_blind: true
+watch_ratio_read: false
+validation_or_test_model_metrics_read: false
+test_view_materialized: false
+guards:
+  cost:
+    accounting_basis: local_owner_approved_estimate
+    control_plane_billing: unavailable_and_owner_waived
+    ledger_epoch_utc: '2026-08-18T09:13:18Z'
+    now_utc: '2026-08-18T14:48:08.779021Z'
+    projected_end_utc: '2026-08-18T15:18:08.779021Z'
+    elapsed_stop_utc: '2026-08-23T09:13:18Z'
+    absolute_stop_utc: '2026-08-24T11:00:00Z'
+    effective_stop_utc: '2026-08-23T09:13:18Z'
+    reserve_start_utc: '2026-08-23T01:13:18Z'
+    phase: compute
+    work_class: mandatory
+    eta_hours: '0.5'
+    elapsed_hours: '5.580772'
+    pod_rate_usd_per_hour: '3.29'
+    storage_reserve_usd: '25'
+    warning_usd: '370'
+    hard_cap_usd: '460'
+    estimated_spend_usd: '43.36'
+    projected_spend_usd: '45.01'
+    status: ok
+    launch_allowed: true
+    reasons: []
+    provider_actions_performed: false
+  temporary_filesystem:
+    total_bytes: 107374182400
+    available_bytes: 86619508736
+    usage: 0.19329296112060546
+  persistent_filesystem:
+    total_bytes: 443466171875328
+    available_bytes: 120612657233920
+    usage: 0.7280228687480859
+  durable_project_bytes_before_audit: 3828743
+raw_integrity:
+  big_matrix_sha256: 4ee1a72ff9ce4e86ef50525da9dfd7aefcefa717b37c9d570010f689c42f4ef9
+  item_daily_features_sha256: 45943d63c44652b6403f3a4f78c7225e1afe7916bab17d9a674d7979245e085b
+  exact_headers_from_source_manifest:
+    big_matrix:
+    - user_id
+    - video_id
+    - play_duration
+    - video_duration
+    - time
+    - date
+    - timestamp
+    - watch_ratio
+    item_daily_features:
+    - video_id
+    - date
+    - author_id
+    - video_type
+    - upload_dt
+    - upload_type
+    - visible_status
+    - video_duration
+    - video_width
+    - video_height
+    - music_id
+    - video_tag_id
+    - video_tag_name
+    - show_cnt
+    - show_user_num
+    - play_cnt
+    - play_user_num
+    - play_duration
+    - complete_play_cnt
+    - complete_play_user_num
+    - valid_play_cnt
+    - valid_play_user_num
+    - long_time_play_cnt
+    - long_time_play_user_num
+    - short_time_play_cnt
+    - short_time_play_user_num
+    - play_progress
+    - comment_stay_duration
+    - like_cnt
+    - like_user_num
+    - click_like_cnt
+    - double_click_cnt
+    - cancel_like_cnt
+    - cancel_like_user_num
+    - comment_cnt
+    - comment_user_num
+    - direct_comment_cnt
+    - reply_comment_cnt
+    - delete_comment_cnt
+    - delete_comment_user_num
+    - comment_like_cnt
+    - comment_like_user_num
+    - follow_cnt
+    - follow_user_num
+    - cancel_follow_cnt
+    - cancel_follow_user_num
+    - share_cnt
+    - share_user_num
+    - download_cnt
+    - download_user_num
+    - report_cnt
+    - report_user_num
+    - reduce_similar_cnt
+    - reduce_similar_user_num
+    - collect_cnt
+    - collect_user_num
+    - cancel_collect_cnt
+    - cancel_collect_user_num
+duration_unit_normalization:
+  source_units: milliseconds
+  canonical_units: seconds
+  divisor: 1000.0
+  positive_filters_applied_before_conversion: true
+  big_matrix_video_duration_converted_before_c_and_P: true
+  current_play_conversion_deferred_to_sealed_label_materialization: true
+  lagged_daily_play_duration_conversion_declared_in_feature_contract: true
+static_video_type_invariance:
+  daily_rows_checked_for_video_type: 343341
+  videos_with_static_video_type: 10728
+  videos_with_inconsistent_video_type: 0
+daily_base_schema:
+  daily_rows: 343341
+  video_date_groups: 343341
+  invalid_numeric_or_key_cells: 0
+filter_counts:
+  raw_rows: 12530806
+  after_static_non_ad: 12495027
+  after_positive_current_play: 12255608
+  after_positive_current_video_duration: 12255608
+split_counts:
+  train: 9804486
+  validation_before_cold_drop: 1225560
+  validation_after_cold_drop: 1141154
+  sealed_test_before_cold_drop: 1225562
+  sealed_test_after_cold_drop: 1027696
+cold_drop_counts:
+  validation:
+    before_inner_drop: 1225560
+    unseen_user_rows: 0
+    unseen_item_rows: 84406
+    dropped_rows: 84406
+    after_inner_drop: 1141154
+  sealed_test:
+    before_inner_drop: 1225562
+    unseen_user_rows: 0
+    unseen_item_rows: 197866
+    dropped_rows: 197866
+    after_inner_drop: 1027696
+train_mapping_cardinalities:
+  user_id: 7176
+  video_id: 9049
+  category_mappings: fit_train_only_during_feature_materialization
+train_only_label_constant:
+  name: c_seconds
+  value: 131.684
+  source: filtered_train_current_video_duration_ms_div_1000
+  quantile: 0.99
+  interpolation: linear_R7
+  validation_or_test_values_used: false
+split_membership_sha256:
+  train: 52106343fb06d25ffc14e667685b93ef8a619dad3c49e535ffa22177e2a3dc4c
+  validation_after_cold_drop: fa2ea4d67e0d2f19c2e99ab456a41966686e5088d0ce14ccaedb73f2cca56412
+  sealed_test_after_cold_drop: 95fa70d0db67301d647e67a3e7998c65fd9b12fc52cc3aaf47dc52ed15830f60
+outcome_free_membership_hash_encoding: sha256(dataset_id NUL big_matrix_sha256 NUL
+  split_name NUL ordered_big_endian_uint64_source_row_indices)
