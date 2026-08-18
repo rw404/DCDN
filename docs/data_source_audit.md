@@ -1,10 +1,13 @@
 # Public data source audit
 
-Audit checkpoint: `2026-08-18T12:03:43Z`
+Initial audit checkpoint: `2026-08-18T12:03:43Z`
 
 No HEGM, VK-LSVD, KuaiRand-Pure, or KuaiRec data, archives, manifests,
 Parquet, Arrow, Feather, or CSV files were present under `/workspace`,
-`/home/codex/.cache`, or `/tmp`. No data was downloaded during this audit.
+`/home/codex/.cache`, or `/tmp` at the initial checkpoint. No data was
+downloaded during that audit. The later verified acquisition checkpoint below
+supersedes that initial local-presence statement without changing its
+historical observation.
 
 ## Frozen source routes
 
@@ -64,3 +67,25 @@ data.
   compact registries/logs/results, and selected best checkpoints.
 - Keep project-owned durable artifacts at or below 40 GiB and preserve at
   least 10 GiB headroom.
+
+## Verified acquisition checkpoint
+
+Checkpoint: `2026-08-18T14:14:40Z`.
+
+- KuaiRand-Pure archive: 47,432,272 bytes, SHA-256
+  `c814bf6f3624c0cfae83c57de3df26b2ed206e5c57bab4c4dcbfabbabe20cbf0`;
+  manifest SHA-256
+  `bc5b441fdd3188d033e0ecbf0bdfd73f8bcf07bbc744d474d260ee220ae4d6e9`.
+- KuaiRec archive: 431,964,858 bytes, SHA-256
+  `c23f211cf109c7a060a25a4afe9e8c681b1ccbbc816cca921d87ad37dd11c70c`;
+  manifest SHA-256
+  `963019bcb4c8dbd4663f23c24a472fe0332f6494fdcbbaa74ca158a73488c5b4`.
+- VK-LSVD revision
+  `084a18386e149a454dd6dbe0123478e75c6b09ce`: exactly 30 objects and
+  2,843,350,925 bytes; manifest SHA-256
+  `5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac`.
+  Week 26 was acquired last, hash-verified, set read-only, and never decoded.
+
+Raw bytes remain only under `/home/codex/.cache/dcdn-public`. The durable
+repository contains source-only manifests and sidecars; all three retain
+`test_unlocked: false`, and no model metric was computed.

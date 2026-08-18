@@ -20,11 +20,13 @@ the epoch is currently unknown and must be recorded separately if discovered.
 | 2026-08-18T11:52:44Z | UNVERIFIED | UNVERIFIED | UNVERIFIED | No credential-free control-plane data; handoff-only historical display was USD 3.29/h | Blocked before owner override |
 | 2026-08-18T11:59:30Z | 3.29 assumed | Unavailable and owner-waived | 34.11 | 2.770000 elapsed hours x USD 3.29 + USD 25 fixed storage reserve | Proceed under frozen local-accounting override |
 | 2026-08-18T12:36:18Z | 3.29 assumed | Unavailable and owner-waived | 36.13 | 3.383427 elapsed hours x USD 3.29 + USD 25 fixed storage reserve | Bootstrap, CPU suite, and dual-GPU deterministic preflight passed |
+| 2026-08-18T13:26:52Z | 3.29 assumed | Unavailable and owner-waived | 38.90 current; 45.48 at 2 h ETA | 4.226242 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; local cost guard allowed the mandatory integration stage | Continue source/model/search integration; no provider action performed |
+| 2026-08-18T14:14:40Z | 3.29 assumed | Unavailable and owner-waived | 41.53 current; 44.82 at 1 h ETA | 5.022851 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; acquisition/model/search checkpoint and local guards passed | Continue dataset feature audits; no provider action performed |
 
 Control-plane historical charges and balance are unavailable and are not
 invented. The owner explicitly waived provider-side expiry, credentialed
 inspection, and quota metadata as execution gates. Estimated warning headroom
-at the latest checkpoint is USD 333.87 and estimated hard-cap headroom is USD
-423.87. The USD 370 warning estimate is crossed at
+at the latest checkpoint is USD 328.47 and estimated hard-cap headroom is USD
+418.47. The USD 370 warning estimate is crossed at
 `2026-08-22T18:05:06Z`; the USD 460 cost estimate would be crossed at
 `2026-08-23T21:26:26Z`, so the earlier 120-hour stop remains binding.

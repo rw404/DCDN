@@ -49,3 +49,19 @@ The exact public experiment matrix is
 `configs/experiment_matrix_v1.yaml`. Dataset-specific protocol files are not
 valid until their unresolved hashes are replaced, sidecars are written, and
 the fail-closed gate accepts them.
+
+## Frozen source and model checkpoint
+
+The three approved public sources are byte-verified outside the repository.
+Their source-only manifests keep test access locked:
+
+- KuaiRand-Pure: `bc5b441fdd3188d033e0ecbf0bdfd73f8bcf07bbc744d474d260ee220ae4d6e9`;
+- KuaiRec: `963019bcb4c8dbd4663f23c24a472fe0332f6494fdcbbaa74ca158a73488c5b4`;
+- VK-LSVD: `5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac`.
+
+Model provenance is frozen in `configs/model_sources_v1.yaml` and the
+metric-independent two-candidate search policy is frozen in
+`configs/search_space_v1.yaml`. Their SHA-256 digests are respectively
+`0844a838e5a68029299a52aaa31b5f74205fe57fd486b51544061b32c571a3f4`
+and `b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344`.
+No validation or test metric was used to define either lock.

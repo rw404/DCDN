@@ -51,6 +51,14 @@ ruff format --check src tests scripts
 ruff check src tests scripts
 ```
 
+On this workspace FUSE mount, never run concurrent pytest or Ruff processes.
+A formatter interrupted while writing two untracked acquisition scripts
+demonstrated that direct concurrent writes can truncate files. For integration
+checks, copy an explicit stable allowlist into a fresh directory under
+`/tmp`, run exactly one pytest/Ruff process there, and byte-compare any
+formatted result before applying a reviewed unified diff. Never copy raw data
+into the repository snapshot.
+
 For any proposed task, pass a conservative elapsed ETA to `preflight.py`.
 Run `scripts/gpu_smoke.py` with exactly one visible GPU; use one independent
 process per A100 and never DDP. `STATUS.md` is updated at every protocol

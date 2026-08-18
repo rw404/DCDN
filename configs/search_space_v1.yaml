@@ -1,0 +1,495 @@
+schema_version: 1
+status: frozen_before_metrics
+frozen_utc: "2026-08-18T13:50:08Z"
+model_sources:
+  path: configs/model_sources_v1.yaml
+  sha256: 0844a838e5a68029299a52aaa31b5f74205fe57fd486b51544061b32c571a3f4
+experiment_matrix:
+  path: configs/experiment_matrix_v1.yaml
+  sha256: 867118db089bbbffb4abf02ff7b3c01e2c9f43e804a188a27a3886f66db4e000
+
+selection_firewall:
+  published_results_quarantined: true
+  published_results_may_select_candidates: false
+  test_split_may_select_candidates: false
+  test_metrics_before_selected_configs_lock: false
+  tuning_seed: 42
+  tuning_splits: [train, validation]
+  final_seeds: [42, 43, 44]
+
+trial_budget:
+  tuned_candidates_per_tuning_unit: 2
+  fixed_no_tune_candidates: 1
+  tuning_unit_fields: [dataset, primary_target, model, feature_regime]
+  independent_selection_per_tuning_unit: true
+  unused_trials_may_transfer: false
+  adaptive_trial_transfer: false
+  adaptive_candidate_generation: false
+  identical_completed_cells_may_be_reused: true
+  technical_failure_policy: repair_and_rerun_same_candidate
+
+matrix_model_aliases:
+  dnn: dnn
+  deepfm: deepfm
+  dcn: dcn
+  autoint_plus: autoint_plus
+  dcnv2: dcnv2_full_rank
+  afn_plus: afn_plus
+  wukong_small: wukong_small
+  dcdn_core: dcdn_core
+  dcnv2_capacity_matched_core: dcnv2_low_rank_mix_capacity
+
+symbolic_dimensions:
+  DATASET_MODEL_FIELD_COUNT:
+    type: positive_integer
+    source: dataset_features_v1.ordered_C_plus_numeric_field_count
+    required_before: first_model_metric
+  DATASET_FLAT_WIDTH:
+    type: positive_integer
+    source: dataset_features_v1.flat_C_plus_numeric_width
+    required_before: first_model_metric
+  DATASET_CORE_OPERAND_WIDTH:
+    type: positive_integer
+    source: dataset_features_v1.ordered_numeric_interaction_operand_width
+    required_before: first_model_metric
+  DATASET_CONTEXT_BYPASS_WIDTH:
+    type: non_negative_integer
+    source: dataset_features_v1.encoded_C_bypass_width
+    required_before: first_model_metric
+  DATASET_DENOMINATOR_MASK_WIDTH:
+    type: positive_integer
+    source: dataset_features_v1.denominator_mask_width
+    required_before: first_model_metric
+    must_equal: DATASET_CORE_OPERAND_WIDTH
+
+dimension_relations:
+  DATASET_FLAT_WIDTH:
+    equals_sum: [DATASET_CORE_OPERAND_WIDTH, DATASET_CONTEXT_BYPASS_WIDTH]
+
+symbolic_hashes:
+  DATASET_FULL_SCHEMA_SHA256:
+    type: lowercase_sha256
+    source: dataset_features_v1.full_ordered_schema_sha256
+    required_before: first_model_metric
+  DATASET_OPERAND_SCHEMA_SHA256:
+    type: lowercase_sha256
+    source: dataset_features_v1.ordered_operand_schema_sha256
+    required_before: first_model_metric
+
+symbolic_hyperparameters:
+  SELECTED_DCNV2_LEARNING_RATE:
+    type: positive_float
+    source: selected_configs.same_tuning_unit.dcnv2_full_rank.optimizer.learning_rate
+    allowed_values: [0.0003, 0.001]
+    required_before: capacity_control_training
+
+common_contract:
+  optimizer:
+    family: AdamW
+    betas: [0.9, 0.999]
+    epsilon: 1.0e-8
+    weight_decay: 1.0e-6
+    decoupled_weight_decay: true
+  precision:
+    parameter_dtype: float32
+    autocast_enabled: true
+    autocast_dtype: bfloat16
+    optimizer_state_dtype: float32
+    loss_accumulation_dtype: float32
+    fp16_forbidden: true
+    fp32_sensitive_operations:
+      - dcdn_reciprocal
+      - afn_abs_clamp_log_and_exp
+      - loss
+  batching:
+    effective_batch_per_independent_run: 4096
+    one_process_per_gpu: true
+    ddp: false
+    gradient_accumulation_preserves_effective_batch: true
+    one_microbatch_reduction_after_first_oom: true
+    second_oom_stops_run: true
+  stopping:
+    patience_validation_checks: 3
+    minimum_delta: 0.0
+    restore_best_validation_checkpoint: true
+    maximum_examples_is_hard: true
+    validation_cadence_is_examples_based: true
+    budget_rationale: project_pre_metric_compute_envelope_choice_not_upstream_default_or_metric_derived
+    cadence_rationale: project_pre_metric_examples_based_monitoring_choice_not_upstream_default_or_metric_derived
+    datasets:
+      kuairand_pure:
+        maximum_train_examples: 3000000
+        validate_every_examples: 250000
+        loss: binary_cross_entropy_with_logits
+        selection_metric: log_loss
+        selection_direction: minimize
+      vk_lsvd_up0.01_ir0.01:
+        maximum_train_examples: 40000000
+        validate_every_examples: 4000000
+        loss: normalized_mean_squared_error
+        selection_metric: normalized_mse
+        selection_direction: minimize
+      kuairec_big_matrix:
+        maximum_train_examples: 50000000
+        validate_every_examples: 5000000
+        loss: normalized_mean_squared_error
+        selection_metric: normalized_mse
+        selection_direction: minimize
+  gradient_clipping:
+    kind: global_l2_norm
+    max_norm: 1.0
+    apply_after_unscale: true
+  initialization:
+    deterministic_from_run_seed: true
+    component_seeds: hash_derived_interaction_adapter_head_from_run_seed
+    head_weights_identical_across_variants: true
+    adapter_seed_and_distribution_identical_shape_dependent: true
+    embeddings: normal_std_0.01
+    relu_hidden_linear: kaiming_uniform_nonlinearity_relu
+    representation_task_output_attention_qkv_residual_and_gates: xavier_uniform
+    all_biases: zeros
+    cross_product_linear: kaiming_normal_scale_0.1
+    dcdn_division_linear: kaiming_normal_scale_0.1
+    afn_coefficients_and_branch_outputs: xavier_uniform
+    wukong_fmb_pre_relu_output: kaiming_uniform_nonlinearity_relu
+    same_product_initialization_for_dcn_dcnv2_dcdn: true
+  shared_encoder:
+    context_embedding_dim: 16
+    representation_dim: 64
+    full_schema_sha256: ${DATASET_FULL_SCHEMA_SHA256}
+    operand_schema_sha256: ${DATASET_OPERAND_SCHEMA_SHA256}
+    numerical_operands: positive_scale_only_no_z_centering
+    ordered_schema_required: true
+    ids_and_audit_columns_excluded_unless_explicitly_in_C: true
+  shared_prediction_head:
+    kind: visible_representation_adapter_plus_linear_task_output
+    representation_dim: 64
+    hidden_dims: []
+    dropout: 0.0
+    bias: true
+    per_model_adapter: linear_to_representation_dim
+    adapter_parameters_and_flops_counted: true
+    loss_owned_by_common_harness: true
+    source_model_auxiliary_losses_forbidden: true
+
+models:
+  dnn:
+    search_mode: tuned
+    source_model: dnn
+    architecture_source: project_pre_metric_protocol_v1
+    architecture_rationale: one_fixed_general_mlp_geometry_with_lr_only_two_trial_tuning
+    vary_only: optimizer.learning_rate
+    base_config:
+      architecture:
+        model_key: dnn
+        input_width: ${DATASET_FLAT_WIDTH}
+        input_schema_sha256: ${DATASET_FULL_SCHEMA_SHA256}
+        feature_scope: flat_C_plus_numeric_regime
+        hidden_dims: [512, 256, 128]
+        activation: relu
+        dropout: 0.1
+        batch_norm: false
+      optimizer:
+        learning_rate: 0.0003
+    candidates:
+      - id: dnn_lr_3e_4
+        override:
+          optimizer:
+            learning_rate: 0.0003
+      - id: dnn_lr_1e_3
+        override:
+          optimizer:
+            learning_rate: 0.001
+
+  deepfm:
+    search_mode: tuned
+    source_model: deepfm
+    architecture_source: model_sources_v1.fuxictr.deepfm
+    architecture_rationale: pinned_fm_plus_project_fixed_dnn_geometry_with_lr_only_tuning
+    vary_only: optimizer.learning_rate
+    base_config:
+      architecture:
+        model_key: deepfm
+        input_field_count: ${DATASET_MODEL_FIELD_COUNT}
+        second_order_fm: true
+        dnn_hidden_dims: [512, 256, 128]
+        activation: relu
+        dropout: 0.1
+        batch_norm: false
+      optimizer:
+        learning_rate: 0.0003
+    candidates:
+      - id: deepfm_lr_3e_4
+        override:
+          optimizer:
+            learning_rate: 0.0003
+      - id: deepfm_lr_1e_3
+        override:
+          optimizer:
+            learning_rate: 0.001
+
+  dcn:
+    search_mode: tuned
+    source_model: dcn
+    architecture_source: model_sources_v1.fuxictr.cross_net
+    architecture_rationale: original_rank_one_cross_with_depth_matched_to_dcdn_core
+    vary_only: optimizer.learning_rate
+    base_config:
+      architecture:
+        model_key: dcn
+        input_width: ${DATASET_FLAT_WIDTH}
+        input_schema_sha256: ${DATASET_FULL_SCHEMA_SHA256}
+        feature_scope: flat_C_plus_numeric_regime
+        cross_parameterization: original_rank_one
+        num_cross_layers: 2
+        local_parallel_dnn: false
+        fixed_anchor: true
+      optimizer:
+        learning_rate: 0.0003
+    candidates:
+      - id: dcn_lr_3e_4
+        override:
+          optimizer:
+            learning_rate: 0.0003
+      - id: dcn_lr_1e_3
+        override:
+          optimizer:
+            learning_rate: 0.001
+
+  autoint_plus:
+    search_mode: tuned
+    source_model: autoint_plus
+    architecture_source: model_sources_v1.fuxictr.autoint
+    architecture_rationale: attention_plus_required_dnn_branch_fixed_before_metrics
+    vary_only: optimizer.learning_rate
+    base_config:
+      architecture:
+        model_key: autoint_plus
+        input_field_count: ${DATASET_MODEL_FIELD_COUNT}
+        attention_layers: 2
+        attention_dim: 16
+        num_heads: 2
+        use_scale: true
+        use_residual: true
+        layer_norm: true
+        attention_dropout: 0.1
+        dnn_branch_enabled: true
+        dnn_hidden_dims: [256, 128]
+        dnn_dropout: 0.1
+        branch_merge: concatenate_attention_and_dnn_representations_before_visible_adapter
+      optimizer:
+        learning_rate: 0.0003
+    candidates:
+      - id: autoint_plus_lr_3e_4
+        override:
+          optimizer:
+            learning_rate: 0.0003
+      - id: autoint_plus_lr_1e_3
+        override:
+          optimizer:
+            learning_rate: 0.001
+
+  dcnv2_full_rank:
+    search_mode: tuned
+    source_model: dcnv2_full_rank
+    architecture_source: model_sources_v1.fuxictr.cross_net.CrossNetV2
+    architecture_rationale: explicit_full_rank_cross_with_depth_matched_to_dcdn_core
+    vary_only: optimizer.learning_rate
+    base_config:
+      architecture:
+        model_key: dcnv2_full_rank
+        input_width: ${DATASET_FLAT_WIDTH}
+        input_schema_sha256: ${DATASET_FULL_SCHEMA_SHA256}
+        feature_scope: flat_C_plus_numeric_regime
+        cross_parameterization: full_rank
+        use_low_rank_mixture: false
+        num_cross_layers: 2
+        local_parallel_dnn: false
+        fixed_anchor: true
+      optimizer:
+        learning_rate: 0.0003
+    candidates:
+      - id: dcnv2_full_rank_lr_3e_4
+        override:
+          optimizer:
+            learning_rate: 0.0003
+      - id: dcnv2_full_rank_lr_1e_3
+        override:
+          optimizer:
+            learning_rate: 0.001
+
+  afn_plus:
+    search_mode: tuned
+    source_model: afn_plus
+    implementation_source: model_sources_v1.model_provenance.afn_plus
+    architecture_source_role: hyperparameter_geometry_only_not_implementation
+    architecture_source: model_sources_v1.wukong_paper.smallest_documented_afn_plus_architecture
+    architecture_rationale: documented_wukong_appendix_baseline_geometry_without_result_values_with_official_afn_implementation_contract
+    vary_only: optimizer.learning_rate
+    base_config:
+      architecture:
+        model_key: afn_plus
+        input_field_count: ${DATASET_MODEL_FIELD_COUNT}
+        ensemble: true
+        separate_embedding_views: true
+        logarithmic_neurons: 128
+        afn_hidden_dims: [512]
+        dnn_hidden_dims: [512]
+        activation: relu
+        dropout: 0.1
+        batch_norm: true
+        branch_merge: concatenate_branch_logits_then_common_adapter_head
+        common_task_loss_only: true
+        auxiliary_branch_losses: false
+        stop_gradient_on_branch_logits: false
+        positive_log_treatment:
+          order: [abs, clamp_min, log]
+          clamp_min: 0.0001
+          compute_dtype: float32
+          exp_compute_dtype: float32
+          exp_clip: null
+          exp_equation: unbounded_source_equation
+          nonfinite_action: stop_run
+      optimizer:
+        learning_rate: 0.0003
+    candidates:
+      - id: afn_plus_lr_3e_4
+        override:
+          optimizer:
+            learning_rate: 0.0003
+      - id: afn_plus_lr_1e_3
+        override:
+          optimizer:
+            learning_rate: 0.001
+
+  wukong_small:
+    search_mode: fixed_no_tune
+    source_model: wukong_small
+    architecture_source: model_sources_v1.wukong_paper.smallest_fully_enumerated_complete_architecture
+    architecture_rationale: smallest_complete_public_row_not_cartesian_invention_or_result_rank
+    fixed_source: model_sources_v1.wukong_paper.smallest_fully_enumerated_complete_architecture
+    fixed_reason: avoid_inventing_an_unpublished_cartesian_combination_or_using_result_rankings
+    base_config:
+      architecture:
+        model_key: wukong_small
+        input_field_count: ${DATASET_MODEL_FIELD_COUNT}
+        num_layers: 2
+        lcb_features: 8
+        fmb_features: 8
+        fmb_rank: 24
+        fmb_hidden_dims: [2048, 2048, 2048]
+        dropout: 0.0
+        layer_norm: true
+        source_projection_head_replaced_by_common_head: true
+      optimizer:
+        learning_rate: 0.0003
+    candidates:
+      - id: wukong_small_paper_explicit_min
+        override: {}
+
+  dcdn_core:
+    search_mode: tuned
+    source_model: dcdn_core
+    architecture_source: model_sources_v1.dcdn_public_core
+    architecture_rationale: theorem_aligned_two_layer_public_core_with_lr_only_tuning
+    vary_only: optimizer.learning_rate
+    base_config:
+      architecture:
+        model_key: dcdn_core
+        label: DCDN-Core-L2
+        features_count: ${DATASET_CORE_OPERAND_WIDTH}
+        operand_schema_sha256: ${DATASET_OPERAND_SCHEMA_SHA256}
+        context_bypass_width: ${DATASET_CONTEXT_BYPASS_WIDTH}
+        full_output_width: ${DATASET_FLAT_WIDTH}
+        full_schema_sha256: ${DATASET_FULL_SCHEMA_SHA256}
+        context_bypass: unchanged_concat_after_core_before_visible_adapter
+        num_layers: 2
+        fixed_anchor: true
+        residual: true
+        product_bias: true
+        division_bias: true
+        local_fc_path: false
+        local_batch_norm: false
+        local_dropout: false
+        concatenation_projector: false
+        product_init_scale: 0.1
+        division_init_scale: 0.1
+        reciprocal:
+          denominator_mask_source: dataset_features_v1.ordered_denominator_mask
+          denominator_validity_source: dataset_features_v1.per_row_validity
+          mask_width: ${DATASET_DENOMINATOR_MASK_WIDTH}
+          mask_required: true
+          epsilon: 0.01
+          floor: positive_clamp_min
+          invalid_negative_action: reject
+          missing_action: validity_gate_to_zero
+          compute_dtype: float32
+          exact_laurent_claim_when_floor_active: false
+          log_treatment: none
+          runtime_value_checks_full_training: false
+          full_materialized_scan_required: true
+      optimizer:
+        learning_rate: 0.0003
+    candidates:
+      - id: dcdn_core_l2_lr_3e_4
+        override:
+          optimizer:
+            learning_rate: 0.0003
+      - id: dcdn_core_l2_lr_1e_3
+        override:
+          optimizer:
+            learning_rate: 0.001
+
+  dcnv2_low_rank_mix_capacity:
+    search_mode: mechanical_capacity_match
+    source_model: dcnv2_low_rank_mix
+    architecture_source: model_sources_v1.fuxictr.cross_net.CrossNetMix
+    architecture_rationale: two_rank_brackets_selected_only_by_parameter_and_flop_distance
+    display_label: DCNv2-capacity-matched-core
+    target_model: dcdn_core
+    base_config:
+      architecture:
+        model_key: dcnv2_capacity_matched_core
+        input_width: ${DATASET_CORE_OPERAND_WIDTH}
+        operand_schema_sha256: ${DATASET_OPERAND_SCHEMA_SHA256}
+        context_bypass_width: ${DATASET_CONTEXT_BYPASS_WIDTH}
+        full_output_width: ${DATASET_FLAT_WIDTH}
+        full_schema_sha256: ${DATASET_FULL_SCHEMA_SHA256}
+        context_bypass: unchanged_concat_after_core_before_visible_adapter
+        cross_parameterization: low_rank_moe
+        use_low_rank_mixture: true
+        num_cross_layers: 2
+        num_experts: 4
+        local_parallel_dnn: false
+        fixed_anchor: true
+      optimizer:
+        learning_rate: ${SELECTED_DCNV2_LEARNING_RATE}
+    ordinary_full_rank_reuse_check:
+      model: dcnv2_full_rank
+      ordinary_feature_scope: flat_C_plus_numeric_regime
+      fallback_feature_scope: operand_core_plus_unchanged_C_bypass
+      tolerance_fraction: 0.05
+      reuse_exact_run_if_parameters_and_flops_both_within_tolerance: true
+    capacity_counter:
+      parameter_scope: all_trainable_non_embedding_parameters
+      flop_scope: one_forward_example_excluding_embedding_lookup
+      include_common_prediction_head: true
+      include_visible_representation_adapter: true
+      include_unchanged_context_bypass: true
+      deterministic_eval_mode: true
+    candidates:
+      - id: capacity_rank_lower
+        architecture_selector:
+          field: low_rank
+          rule: greatest_positive_integer_with_parameter_count_not_above_target
+      - id: capacity_rank_upper
+        architecture_selector:
+          field: low_rank
+          rule: lower_rank_plus_one
+    selection_rule:
+      metric_values_forbidden: true
+      required_before: first_model_metric
+      eligibility: both_parameter_and_flop_ratios_within_0.95_and_1.05
+      distance: abs_log_parameter_ratio_plus_abs_log_flop_ratio
+      tie_break: lower_rank
+      if_neither_eligible: record_both_diagnostics_and_mark_exact_match_unavailable

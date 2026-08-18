@@ -684,4 +684,17 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
 - Deterministic preflight recorded 2026-08-18: `uv.lock` SHA-256 is `af9fcbb29fedabaa0105ff2682c8d858eb3660ef6a83e7d60ccfa5ac96f49df6`; 101 CPU tests and Ruff pass. Independent one-process-per-A100 FP32/BF16 numerical smokes produced matching cross-GPU hashes and left no GPU process. No public dataset, validation metric, test label, or project test metric was accessed.
 - The exact public matrix is byte-locked at `configs/experiment_matrix_v1.yaml` SHA-256 `867118db089bbbffb4abf02ff7b3c01e2c9f43e804a188a27a3886f66db4e000`. Dataset protocols and selected configurations remain unresolved and `test_unlocked=false`.
 
+- Public-source acquisition recorded 2026-08-18: KuaiRand-Pure, KuaiRec, and
+  exactly 30 allowlisted VK-LSVD objects were byte-verified in ephemeral
+  storage. Their durable source-manifest SHA-256 values are respectively
+  `bc5b441fdd3188d033e0ecbf0bdfd73f8bcf07bbc744d474d260ee220ae4d6e9`,
+  `963019bcb4c8dbd4663f23c24a472fe0332f6494fdcbbaa74ca158a73488c5b4`,
+  and `5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac`.
+  VK week 26 remains sealed and `test_unlocked=false`.
+- Model/search freeze recorded 2026-08-18: source provenance SHA-256 is
+  `0844a838e5a68029299a52aaa31b5f74205fe57fd486b51544061b32c571a3f4`;
+  metric-independent search-space SHA-256 is
+  `b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344`.
+  Neither lock used validation or test metrics.
+
 Update this decision log whenever a material choice changes.

@@ -1,0 +1,169 @@
+schema_version: 1
+status: frozen_before_metrics
+frozen_utc: "2026-08-18T13:48:00Z"
+
+audit_policy:
+  published_result_values_quarantined: true
+  published_result_values_used_for_selection: false
+  readmes_used_for_selection: false
+  dataset_rows_or_values_inspected: false
+  allowed_evidence:
+    - pinned_implementation_source
+    - license_text
+    - paper_architecture_columns_only
+  implementation_policy: attributed_clean_room_pytorch_ports
+  protocol_overrides_external_training_wrappers: true
+  unexpected_published_result_exposure:
+    occurred: true
+    scope: wukong_pdf_title_page_during_bibliographic_resolution
+    values_recorded_or_used_for_selection: false
+    disposition: quarantined_before_search_space_was_finalized
+
+sources:
+  fuxictr:
+    kind: external_code
+    url: https://github.com/reczoo/FuxiCTR.git
+    revision: 0245987fdc1d43c36164ea496a02324885a8557a
+    license: Apache-2.0
+    license_file: LICENSE
+    license_sha256: ed24b2447e7415e4baeaf4366d12db81e8a21224f3f1a69c08b8e30807b2ebaa
+    source_files:
+      cross_net:
+        path: fuxictr/pytorch/layers/interactions/cross_net.py
+        sha256: bd1627cec81db448e7147b06e64e2457a58ee12e4dbec2a7c0c7310a1f7c07d3
+      dcn:
+        path: model_zoo/DCN/DCN_torch/src/DCN.py
+        sha256: f6d4e6a937c5e4cac6055c7b988cd2ed1c7720facff52d4bc9ecaf9e87037371
+      dcnv2:
+        path: model_zoo/DCNv2/src/DCNv2.py
+        sha256: 78fc7d1c4f129dcbb750e410e53e075a646cacf5462ebd186ce0cf687418f4a9
+      deepfm:
+        path: model_zoo/DeepFM/DeepFM_torch/src/DeepFM.py
+        sha256: 326fc8158d68e6e8bd922050c81ee44dd165f96e073a6e64ade8b3f703725e32
+      autoint:
+        path: model_zoo/AutoInt/src/AutoInt.py
+        sha256: fdde3cc7f0d0b482bdc5d17967cf48f28f5d8b85babe9d71e6d45960c998cd9e
+      afn:
+        path: model_zoo/AFN/src/AFN.py
+        sha256: cceba7bba9bd60f11f84a43f00f473fdf615dfdc1de46223d46c11d6252e28d2
+      wukong:
+        path: model_zoo/WuKong/src/WuKong.py
+        sha256: f0be1a2024532acc5ab03129abff5c8b289fb2554d21c58e2db9020845d268d2
+
+  afn_plus_official:
+    kind: external_code
+    url: https://github.com/WeiyuCheng/AFN-AAAI-20.git
+    revision: 25d7bd995bd0a3c71f562b3d332a0628c3b30d28
+    license: MIT
+    license_file: LICENSE
+    license_sha256: b6a2bc1dc211e2286b0af8106deb43ff704d09c9e1131eb62851e76b10e7d160
+    source_files:
+      afn_plus:
+        path: src/AFN.py
+        sha256: e6728d48a41ae683dd3b16b6a1c8cdfa75e15ee1be9ae1abb7fe97708d77979f
+    audited_structural_facts:
+      ensemble: true
+      separate_embedding_views: true
+      log_input: abs_then_clamp_then_log
+      clamp_min: 0.0001
+      logarithmic_interaction: learned_power_then_exp
+      official_training_has_auxiliary_branch_losses: true
+      official_ensemble_uses_stopped_branch_logits: true
+
+  wukong_standalone:
+    kind: external_code
+    url: https://github.com/clabrugere/wukong-recommendation.git
+    revision: 8a0c14ccee50e02d40201d4dc665ee9fcebeb6b9
+    license: MIT
+    license_file: LICENSE
+    license_sha256: fcb8346bda486d130ed8e1eed4d145d07277e0d40a9c7747a0e69878dc619d7d
+    source_files:
+      interaction_stack:
+        path: model/pytorch/wukong.py
+        sha256: 56a05170af970f1bd238e264757abd8986c6a89c2a435665fc164231be17ff4e
+      mlp:
+        path: model/pytorch/mlp.py
+        sha256: ec110da3c4a20a2bfd2d3f70a18ff5f96bbb2201f7a387d4336872121bc2ce1e
+      embedding:
+        path: model/pytorch/embedding.py
+        sha256: 1320013462124f616e9e58b9f471afaf3614b25307c838facc853d52242817f4
+
+  wukong_paper:
+    kind: paper
+    url: https://proceedings.mlr.press/v235/zhang24ao.html
+    revision: PMLR-235-ICML-2024
+    arxiv_identifier: arXiv:2403.02545
+    local_artifact_origin_repository: https://github.com/mlresearch/v235
+    local_pdf_origin_url: https://raw.githubusercontent.com/mlresearch/v235/main/assets/zhang24ao/zhang24ao.pdf
+    local_pdf_sha256: 8f4f539a174d3ff12653694d7e3d16f2c3b0c0651770a97445ac4826dcb5fabd
+    inspected_scope: architecture_domains_and_complete_architecture_columns_only
+    forbidden_scope: metric_result_and_evaluation_columns
+    audited_architecture_domain:
+      num_layers: [1, 2, 3, 4]
+      fmb_features: [8, 16]
+      lcb_features: [8, 16]
+      fmb_rank: [24]
+      mlp_layers: [1, 2, 3, 4]
+      mlp_width: [512, 1024, 2048]
+    smallest_documented_afn_plus_architecture:
+      logarithmic_neurons: 128
+      afn_hidden_dims: [512]
+      dnn_hidden_dims: [512]
+      inspected_scope: architecture_columns_only
+    smallest_fully_enumerated_complete_architecture:
+      num_layers: 2
+      fmb_features: 8
+      lcb_features: 8
+      fmb_rank: 24
+      fmb_hidden_dims: [2048, 2048, 2048]
+    rejected_derived_cartesian_minimum:
+      num_layers: 1
+      fmb_features: 8
+      lcb_features: 8
+      fmb_rank: 24
+      fmb_hidden_dims: [512]
+      reason: not_a_fully_enumerated_complete_public_configuration
+
+  dcdn_public_core:
+    kind: project_source
+    repository_path: DCDNCore_reference.py
+    sha256: 6b2cdb5db0c248fcd960c42d4ce14873820cc65d382741721214166d5e83d9ac
+    implementation_path: src/dcdn/core.py
+    implementation_sha256_at_audit: faeb8b3b8d7cb60eec7416e7b881b34963ef1f3664a9be454e9562a4603468c6
+    provenance: user_added_reference_plus_separate_tested_project_implementation
+
+model_provenance:
+  dnn:
+    source_ids: [fuxictr]
+    implementation_basis: project_native_mlp_from_pinned_pytorch_primitives
+  deepfm:
+    source_ids: [fuxictr]
+    implementation_basis: clean_room_from_pinned_deepfm_structure
+  dcn:
+    source_ids: [fuxictr]
+    implementation_basis: clean_room_from_pinned_crossnet_structure
+  autoint_plus:
+    source_ids: [fuxictr]
+    implementation_basis: clean_room_attention_plus_nonempty_dnn_branch
+  dcnv2_full_rank:
+    source_ids: [fuxictr]
+    implementation_basis: clean_room_crossnetv2_full_rank
+  dcnv2_low_rank_mix:
+    source_ids: [fuxictr]
+    implementation_basis: clean_room_crossnetmix_low_rank_moe
+  afn_plus:
+    source_ids: [afn_plus_official, fuxictr]
+    implementation_basis: clean_room_official_structure_with_fuxictr_style_modern_ensemble_training
+    protocol_adaptation:
+      common_task_loss_only: true
+      auxiliary_branch_losses: false
+      stop_gradient_on_branch_logits: false
+      rationale: preserve_end_to_end_branch_training_under_the_common_loss
+      exact_official_training_reproduction: false
+  wukong_small:
+    source_ids: [wukong_paper, wukong_standalone, fuxictr]
+    implementation_basis: clean_room_interaction_stack_with_common_project_head
+    selection_basis: smallest_fully_enumerated_complete_architecture_without_result_values
+  dcdn_core:
+    source_ids: [dcdn_public_core]
+    implementation_basis: theorem_aligned_public_core_only

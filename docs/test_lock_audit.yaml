@@ -22,3 +22,24 @@ events:
       - do not inspect further HEGM README, result, or evaluation artifacts
       - retain test_unlocked=false
       - freeze the DCDN protocol independently
+  - event_id: test-lock-20260818-wukong-paper-appendix
+    observed_at_utc: "2026-08-18T12:58:15Z"
+    trigger: >-
+      Configuration-only extraction from the official ICML 2024 Wukong paper
+      Appendix to identify its documented architecture grid.
+    exposure: >-
+      The extracted pages also displayed published Wukong and baseline result
+      tables adjacent to the requested architecture and search-space text.
+    not_accessed:
+      - local public-dataset test files or labels
+      - DCDN outputs
+      - project-generated model metrics
+    scope: >-
+      External published prior on other authors' dataset views; it is not a
+      project test evaluation and is incompatible with the frozen DCDN views.
+    mitigation:
+      - use only architecture definitions and enumerated hyperparameter domains
+      - quarantine every displayed result value from model and feature decisions
+      - do not use published rankings to choose candidates or fixed configs
+      - retain test_unlocked=false
+      - freeze the DCDN protocol independently
