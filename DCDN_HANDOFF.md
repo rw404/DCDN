@@ -1,0 +1,684 @@
+# DCDN project handoff
+
+Updated: 2026-08-18 (Europe/Moscow)
+
+This document is the durable source of truth for continuing the DCDN paper in another Codex task or Project. Read it before the manuscript, because the legacy generated draft still contains an abandoned provisional name and placeholder claims.
+
+## 1. Status at a glance
+
+- Target: WSDM 2027 full-paper submission.
+- Abstract: submitted.
+- Full-paper deadline: 2026-08-24 AoE, i.e. 2026-08-25 14:59 Moscow time. Recheck the official CFP before submission: <https://www.wsdm-conference.org/2027/cffp.html>.
+- Final method/title choice:
+
+  **DCDN: Deep Cross-Division Network for Product-and-Ratio Feature Interactions in Industrial Ranking**
+
+- Use **DCDN** exclusively as the architecture name. “Laurent polynomial” describes the induced mathematical function class; it is not a model name.
+- Central empirical fact already available on the industrial dataset:
+
+  \[
+  Q(\mathrm{DCNv2\!-\!112}) \ll Q(\mathrm{DCNv2\!-\!187})
+  < Q(\mathrm{DCDN\!-\!112}).
+  \]
+
+  The exact definition and numerical values of \(Q\), uncertainty, split, and training protocol still need to be inserted.
+- Central production result: DCDN replaced the DCNv2 block, removed the corresponding engineered features, and reduced the input feature inventory by 40.1%. The resulting DCDN ranker is deployed in the production short-video service.
+- Architecture split confirmed by the user on 2026-08-18: the production ranker uses **one** hybrid DCDN block with the auxiliary FC path and final projector shown in `DCDNBlock_provided.py`; public offline experiments use the simplified cross-division core without that FC path or projector.
+- Current submission risk is predominantly experimental reporting and causal controls, not lack of prose.
+
+## 2. Source-of-truth priority
+
+When sources disagree, use this order:
+
+1. Explicit user-confirmed facts and decisions in this handoff.
+2. The current full-paper abstract below. The industrial arm labels in Section 7 retain the absolute counts only for internal experimental reproducibility.
+3. New verified experiment outputs and implementation code.
+4. The legacy generated working draft listed below.
+5. The original Russian source manuscript.
+
+Do not silently promote proposals, placeholders, or inferred implementation details to facts.
+
+## 3. Files and current artifact state
+
+### Original sources
+
+This handoff is intended to be copied into the directory containing the original DCDN/DCN source files. Once copied, prefer the sibling files in that directory as the canonical working sources.
+
+- PDF supplied by the user: `/Users/m.trapeznikov/Downloads/DCNvsDDN (2).pdf`
+- Original TeX: `/Users/m.trapeznikov/Documents/neuralranking_rocketscience/deep_division_network/DCNvsDDN.tex`
+- Original notebooks/code: `/Users/m.trapeznikov/Documents/neuralranking_rocketscience/deep_division_network/`
+- User-supplied one-layer production hybrid block: `/Users/m.trapeznikov/Documents/Codex/2026-08-17/new-chat/DCDNBlock_provided.py`
+- Theorem-aligned public offline reference core: `/Users/m.trapeznikov/Documents/Codex/2026-08-17/new-chat/DCDNCore_reference.py`
+
+### Generated working draft
+
+- TeX: `/Users/m.trapeznikov/Documents/Codex/2026-08-17/new-chat/outputs/laurent_cross_networks.tex`
+- bibliography: `/Users/m.trapeznikov/Documents/Codex/2026-08-17/new-chat/outputs/laurent_cross_networks.bib`
+- compiled PDF: `/Users/m.trapeznikov/Documents/Codex/2026-08-17/new-chat/outputs/laurent_cross_networks.pdf`
+- Word draft: `/Users/m.trapeznikov/Documents/Codex/2026-08-17/new-chat/outputs/laurent_cross_networks_working_draft.docx`
+- generated figures/assets: `/Users/m.trapeznikov/Documents/Codex/2026-08-17/new-chat/work/generated_manuscript_assets/`
+
+The generated TeX is useful scaffolding, not a submission-ready paper:
+
+- its title and notation use an abandoned provisional architecture name and must be changed to **DCDN** throughout;
+- its abstract is a stale working-draft abstract, not the revised full-paper abstract in Section 4;
+- it contains 32 `\tbd{...}` macro occurrences and many individual unfilled result/table fields;
+- most missing evidence is in Experimental Design, Results, deployment details, and the exact production implementation;
+- its theory appendix is substantially more mature than its empirical sections, but must still be audited against the deployed architecture.
+
+## 4. Current full-paper abstract
+
+This is the paper-facing revision selected after the portal abstract submission. It intentionally reports only the relative 40.1% feature-inventory reduction and explicitly states that DCDN is deployed in the production short-video service. Keep the absolute inventory counts only in internal experiment labels, tables, and the private reproducibility record.
+
+> Learning effective feature interactions is essential for industrial recommender systems. DCN and DCNv2 efficiently automate polynomial feature crossing. However, their cross layers construct interactions using only non-negative integer powers of the input features, with the maximum degree controlled by network depth. Consequently, they cannot directly represent the reciprocal terms required for ratios, rates, and normalized counts unless such features are explicitly provided as inputs.
+>
+> We introduce DCDN, a Deep Cross-Division Network that augments a DCNv2-style cross layer with a division branch. DCDN jointly learns product, ratio, and mixed product–ratio interactions. We characterize its cross-division core using multivariate Laurent polynomials and show that it can generate Laurent monomials of every interaction order up to a depth-controlled maximum.
+>
+> We evaluated DCDN against a production-optimized neural-ranking baseline built around DCNv2 and supplied with manually engineered ratio features. Replacing the DCNv2 block with DCDN allowed us to eliminate this entire feature class from the model input, reducing the input feature inventory by 40.1%. DCDN is deployed in the production ranking stack of a major short-video service. In a live A/B test on this service, DCDN increased likes by 2.7%, shares by 16.4%, and total view time by 0.8%, while reducing dislikes by 4.3%; all changes were statistically significant. The number of short videos shown to users remained stable. These results demonstrate that DCDN can improve user engagement while eliminating reliance on manually engineered ratio features.
+
+Notes for the full paper:
+
+- `production-optimized` is acceptable if the incumbent was genuinely tuned and deployed. Never say `optimal`.
+- In paper-facing prose, report only the 40.1% reduction; retain the absolute feature counts solely where they are required to define internal experimental arms or confidential reproducibility artifacts.
+- The paper should replace broad expressivity prose with the assumption-qualified theorem statements in Section 6 below.
+- The abstract's “remained stable” should be supported in the paper by the actual \(-0.3\%\) estimate and uncertainty. A nonsignificant result does not establish exact equality.
+
+## 5. Central paper narrative
+
+The intended DCN/DCNv2-style narrative is:
+
+1. Industrial rankers rely on learned feature interactions, but also consume materialized rates, normalized counts, and other ratios.
+2. DCN/DCNv2 cross layers naturally build positive-power polynomial interactions; reciprocal terms must normally be supplied explicitly.
+3. DCDN adds a reciprocal/division cross branch to a DCNv2-style recurrence, creating a structured bias for product, ratio, and mixed product-ratio interactions.
+4. The resulting exact symbolic interactions are Laurent monomials on nonzero denominator domains.
+5. DCDN is deployed in the production ranking stack of the short-video service, where it reduces the input feature inventory by 40.1%, improves the measured engagement outcomes, and slightly increases total view time.
+6. Controlled offline experiments must establish that the gain is caused by the reciprocal structure rather than only extra parameters, tuning, or an irrelevant feature removal.
+
+Defensible novelty is the package:
+
+- a drop-in DCNv2-style reciprocal cross operator;
+- an exact, assumption-qualified Laurent support analysis;
+- controlled feature-substitution evidence;
+- a 40.1% production feature-inventory reduction;
+- a live short-video A/B test.
+
+Do not claim that DCDN is the first neural model capable of learning division. AFN/AFN+, NALU/NPU, EulerNet-like approaches, and ordinary networks supplied with reciprocal inputs are relevant prior art or controls.
+
+## 6. Architecture and mathematical claim boundaries
+
+### Conceptual recurrence
+
+The working mathematical form is
+
+\[
+h^{(0)}=x,
+\]
+
+\[
+h^{(\ell+1)} = h^{(\ell)}
++ x\odot\left(W_\ell^+h^{(\ell)}+b_\ell^+\right)
++ m\odot\rho(x)\odot\left(W_\ell^-h^{(\ell)}+b_\ell^-\right),
+\]
+
+This is the canonical DCDN core. In public raw-feature experiments, \(m\) enables division only for semantically valid denominator coordinates and \(\rho\) is either the exact reciprocal or the declared stabilizer. The production integration instead applies its stabilizer to all PLE coordinates and uses one hybrid block with a parallel FC path and final projection. The exact PLE preprocessing, remaining tower, loss, and head still require confirmation from the complete production configuration.
+
+The reciprocal bias is mathematically important: it makes pure terms such as \(1/x_j\) reachable. If the deployed implementation omits this bias, the theorem and wording must be adjusted.
+
+### User-supplied production hybrid block
+
+On 2026-08-18 the user supplied `DCDNBlock_provided.py` as the production block implementation. With feature width \(F\), its cross-division path is
+
+\[
+c_i = x_i + x_0\odot(W_i^+x_i+b_i^+)
+      + \rho_\varepsilon(x_0)\odot(W_i^-x_i+b_i^-),
+\]
+
+followed by a parallel nonlinear path and projection,
+
+\[
+h_{i+1}=P_i\,[\,c_i\,;\,\operatorname{Dropout}(\operatorname{BN}(\operatorname{LeakyReLU}(W_i^f x_i+b_i^f)))\,]+b_i^P.
+\]
+
+The supplied stabilizer is the coordinatewise sign-preserving hard floor
+
+\[
+\rho_\varepsilon(t)=
+\frac{1}{t},\quad |t|>\varepsilon,
+\qquad
+\rho_\varepsilon(t)=\frac{1}{\operatorname{sign}_+(t)\varepsilon},\quad |t|\le\varepsilon,
+\]
+
+where zero is assigned positive sign and the default is \(\varepsilon=10^{-2}\). The division map is an unfactorized dense square parameterization (generically, but not necessarily after training, full rank), includes a bias, is Kaiming-initialized, and is scaled by `div_init_scale=0.1`. The positive cross matrix also includes a bias. The deep branch has width 32, LeakyReLU, `BatchNorm1d(8)`, and dropout 0.1; a final linear projector maps the concatenated \(F+32\) channels back to \(F\).
+
+The user subsequently confirmed that this is the production block, that production uses one such block, initializes `x_i=x_0`, keeps `x_0` fixed, and that the FC path/projector belong only to the production integration. Its input contract is \(x_0,x_i\in\mathbb R^{B\times 8\times F}\): the middle dimension is the eight-dimensional piecewise-linear encoding (PLE) of each feature, while the final dimension indexes features. Each linear map mixes the \(F\) features independently inside one PLE coordinate slice. Treat the file as **user-supplied production-architecture source**. The remaining end-to-end details to record are the exact PLE construction and clipping range, feature width and ordering, input preprocessing, tower/head, loss, and production training configuration.
+
+The supplied production block has no semantic denominator mask: the reciprocal stabilizer is applied to every PLE coordinate of `x_0`. Do not retrofit the raw-operand mask into the preserved production source. The masked reciprocal policy described below belongs to the public raw-feature DCDN core.
+
+Because the production wrapper initializes `x_i=x_0`, the exact Laurent-polynomial theorem applies directly to the **cross-division path in PLE coordinates** when the stabilizer is replaced by exact reciprocals and the reciprocal coordinates are nonzero. The supplied hard-floor operator is only piecewise reciprocal, and the LeakyReLU/BatchNorm/Dropout path means the complete training-time block is not a global Laurent polynomial. At deterministic inference, after BatchNorm statistics are frozen and dropout is disabled, the full block is piecewise Laurent in the lifted PLE coordinates over fixed activation and stabilizer regions.
+
+The supplied block has \(3F^2+67F+48\) trainable parameters. It changes capacity and topology relative to a bare dense DCNv2 cross layer by adding the division map, the width-32 nonlinear path, and the projector. Therefore a mechanism comparison must retain the same input layout, nonlinear path, projector, head, and training protocol while ablating or replacing only the reciprocal mechanism; a bare DCNv2 block is not by itself a capacity-isolating control.
+
+### Architecture split used in the paper
+
+Keep the following variants explicit; do not silently treat them as identical implementations.
+
+| Variant | Definition | Role |
+|---|---|---|
+| **DCDN core** | residual + product cross + reciprocal cross; no auxiliary FC path and no concatenation projector | canonical method for the theory and all public offline experiments |
+| **Production DCDN** | exactly one DCDN cross-division core in parallel with the width-32 FC/LeakyReLU/BatchNorm/Dropout path, followed by the learned projector | deployed industrial model and live A/B evidence only |
+
+The offline core recurrence is
+
+\[
+h^{(\ell+1)} = h^{(\ell)}
++ x_0\odot(W_\ell^+h^{(\ell)}+b_\ell^+)
++ m\odot\rho(x_0)\odot(W_\ell^-h^{(\ell)}+b_\ell^-),
+\]
+
+with no `fc_block`, concatenation, or `projector` between DCDN layers. Public experiments may vary the number of core layers as a predeclared hyperparameter. The production configuration fixes this depth to one and then mixes the one-layer cross-division representation with the auxiliary nonlinear path.
+
+Consequently, the production model **uses a one-layer Laurent-structured cross-division operator**. Since its wrapper initializes `x_i=x_0`, the cross-division representation is a Laurent polynomial in the PLE coordinates before reciprocal stabilization. The complete hybrid output must not be called a global Laurent polynomial: the hard reciprocal floor and LeakyReLU make it only piecewise Laurent at deterministic inference. The exact Laurent closure/support theorems describe the idealized offline core with exact reciprocals on its valid nonzero domain. The live A/B test evaluates the full one-layer hybrid production package, whereas the public offline experiments isolate the cross-division mechanism. State this evidence boundary explicitly.
+
+#### PLE-space versus raw-feature algebra
+
+Let \(z\in\mathbb R^F\) denote raw numerical features and let \(u=\phi_{\mathrm{PLE}}(z)\in\mathbb R^{8\times F}\) be their production encoding. PLE is a structured piecewise-linear lift and can retain enough information to recover a raw value over its non-clipped range, but it is **not an algebra homomorphism**: in general, \(\phi(xy)\ne\phi(x)\phi(y)\) and \(\phi(x/y)\ne\phi(x)/\phi(y)\).
+
+Under the confirmed production initialization `x_i=x_0=u`, the production cross-division path is Laurent in the lifted coordinates \(u\), separately within each of the eight PLE slices, wherever exact reciprocal coordinates are nonzero. On a fixed PLE cell, each coordinate has the affine form \(u_{rj}=a_{rj}z_j+b_{rj}\), so pulling a Laurent term back to raw space produces terms of the form
+
+\[
+\prod_j(a_{rj}z_j+b_{rj})^{\alpha_j},
+\]
+
+which are generally rational and piecewise-defined in the raw features rather than Laurent monomials in \(z\). The production stabilizer and nonlinear side path further make the complete inference block a stabilized piecewise-rational map of the raw inputs. The safe interpretation is that PLE preserves structured information about each source feature and lets DCDN learn product-and-ratio interactions **in the lifted feature space**; do not claim that quotients of PLE coordinates literally equal the engineered raw-feature ratios.
+
+For public offline experiments, apply the DCDN core directly to named, positively scaled raw/base operands. With exact reciprocals on nonzero operands—or on an evaluated domain where the declared floor never activates—the raw-space Laurent interpretation is direct. With an active stabilizer it is only piecewise Laurent/rational. The explicit ratio-substitution experiment remains direct in either case. This creates a deliberate two-level evaluation: raw operands isolate the algebraic mechanism; the PLE hybrid documents the production integration.
+
+#### Audit of the original `DCNvsDDN.tex`
+
+The original theorem and induction do **not** include the explicit production FC path. The DCDN definition is the pure residual/product/division recurrence, and its diagram combines those branches by addition. The source mentions parallel FC stacks only as general DCN background. Its later `FCN` label denotes affine terms induced by repeated cross/division operations; it is not the width-32 LeakyReLU/BatchNorm/Dropout branch in `DCDNBlock_provided.py`. Therefore the theorem-aligned public architecture is the DCDN core without `fc_block` or `projector`, while the explicit FC path belongs in the Production Integration and Industrial Lessons sections.
+
+The old induction must not be copied verbatim: its second-layer expansion incorrectly folds the residual into a bias-scaled hidden state. Use the corrected Laurent-support proof in the new appendix.
+
+### Safe claims
+
+- In the idealized cross-division core—exact reciprocals, nonzero enabled denominators, and no intervening nonlinear side path—every hidden coordinate is a multivariate Laurent polynomial. The full supplied hybrid block is generally only piecewise Laurent at deterministic inference.
+- Increasing depth expands the set of structurally reachable Laurent-monomial orders; the maximum order is controlled by depth.
+- For dense projections and generic parameters, the layer has an exact support recurrence. Accidental coefficient cancellation can occur on exceptional parameter choices.
+- With a full denominator mask, the fixed-width network is **monomial-support complete** within the depth-controlled reachable set. This is structural reachability, not independent coefficient control.
+- With a selective public/core mask, negative powers are reachable only along denominator-eligible coordinates. State the theorem for the admissible mask or clearly label the full-mask theorem as an idealized result. The supplied production PLE block is unmasked.
+- A separate widened basis-channel construction can exactly represent an arbitrary finite Laurent polynomial with enough auxiliary channels and depth. This widened construction is a theorem device unless it is actually deployed.
+
+For the full reciprocal mask, the current draft states the generic output-support union after \(L\) layers as
+
+\[
+U_L=(E+\mathcal B_L)\cup(-E+\mathcal B_{L-1}),
+\qquad
+\mathcal B_r=\{\alpha\in\mathbb Z^d:\|\alpha\|_1\le r\}.
+\]
+
+This implies a depth-controlled finite support and contains the Laurent ball \(\mathcal B_L\); it does not imply arbitrary independent coefficients for all those monomials.
+
+### Claims to avoid
+
+- Do not say the deployed fixed-width block can represent **any Laurent polynomial**.
+- Do not conflate support completeness with coefficient completeness.
+- Do not say the model learns arbitrary rational functions such as \(1/(x_1+x_2)\). Its exact core yields Laurent polynomials with monomial denominators.
+- Do not apply a full-mask theorem to a selectively masked implementation without restriction.
+- Do not call a stabilized operator globally Laurent. For example, \(1/(x+\varepsilon)\) or \(x/(x^2+\varepsilon^2)\) is only an approximation to \(1/x\) away from zero.
+- Do not claim literal reconstruction of every removed feature until the 75-feature taxonomy confirms that all required primitive operands and business logic remain available.
+
+### Known source-manuscript issue
+
+The original two-layer symbolic expansion contains an algebraic error. The second layer must include the residual \(h_j^{(1)}\) and separate bias term \(\widetilde b_j x_j\):
+
+\[
+h_j^{(2)}=h_j^{(1)}
++x_j(\widetilde W h^{(1)}+\widetilde b)_j
++x_j^{-1}(\overline W h^{(1)}+\overline b)_j.
+\]
+
+Do not replace the residual by a factor such as \((\widetilde b_j+1)h_j^{(1)}\). Re-audit any proof or explicit expansion copied from the original TeX.
+
+## 7. Confirmed industrial evidence
+
+### Offline
+
+- Baseline: production neural ranker built around DCNv2 with 187 inputs, including manually engineered rate/ratio features.
+- Reduced baseline: the same intended DCNv2 setup with 112 retained primitive inputs.
+- Treatment: DCDN with 112 retained inputs.
+- User-reported ordering:
+
+  \[
+  Q(\mathrm{DCNv2}_{112}) \ll Q(\mathrm{DCNv2}_{187})
+  < Q(\mathrm{DCDN}_{112}).
+  \]
+
+Still needed: metric name and direction, exact values, variance/CI, dataset size, split dates, seeds, tuning budget, and confirmation of which model components were held fixed.
+
+### Online A/B test
+
+User-reported relative changes:
+
+| Metric | Relative change | Reported inference |
+|---|---:|---|
+| Likes | +2.7% | statistically significant |
+| Shares | +16.4% | statistically significant |
+| Dislikes | −4.3% | statistically significant; lower is beneficial |
+| Total view time | +0.8% | statistically significant; small positive lift |
+| Number of short videos shown | −0.3% | not statistically significant |
+
+Preferred prose for the last metric:
+
+> We observed no statistically detectable change in the number of short videos shown to users.
+
+Do not say exact invariance or equivalence unless a pre-specified equivalence/non-inferiority test supports it. Keep statistical significance separate from internal practical-significance thresholds: a +0.8% total-view-time estimate can be statistically significant while below an internal +1% materiality threshold.
+
+The A/B test establishes the value of the complete treatment package—DCDN plus the reduced feature set. Offline controls are required to isolate the division branch.
+
+Still required for publication:
+
+- start/end date and duration;
+- randomization unit and traffic allocation;
+- number of users/sessions/impressions;
+- exact metric definitions and denominators;
+- confidence intervals or p-values;
+- repeated-observation/cluster treatment;
+- fixed-horizon versus sequential procedure;
+- multiplicity policy and primary metric;
+- SRM and balance checks;
+- interpretation of the internal materiality thresholds;
+- online latency and safety/quality guardrails.
+
+## 8. Research questions
+
+Use these four RQs consistently:
+
+- **RQ1 — Feature substitution.** Can DCDN recover the predictive value of manually engineered ratio features from retained numerator and denominator base operands?
+- **RQ2 — Ranking effectiveness.** Given the same base operands, context features, and training/serving budget, does DCDN outperform DCNv2 and representative feature-interaction models?
+- **RQ3 — Reciprocal mechanism and production integration.** Are the gains attributable to reciprocal interactions rather than additional parameters, compute, or the parallel FC path? The public core ablation isolates division on raw operands; a compact industrial PLE-space ablation separates division, FC, and their interaction. Explicit reciprocal-input lifting remains an optional reviewer control.
+- **RQ4 — Production utility and cross-setting consistency.** Does the deployed DCDN package reduce feature-pipeline complexity while remaining stable and efficient, and are its production outcomes directionally consistent with the separately measured offline mechanism evidence? Do not present this as an identified causal translation from public offline metrics to online lift.
+
+Use “recover the predictive value” rather than “reconstruct every removed feature” unless direct reconstruction probes are actually run.
+
+## 9. Required experimental matrix
+
+### Industrial causal core
+
+| Variant | Feature set | Purpose | Priority |
+|---|---:|---|---|
+| DCNv2-full | 187 (primitives + engineered) | production-quality baseline | mandatory |
+| DCNv2-primitives | 112 | cost of removing the 75 features | mandatory |
+| DCDN-primitives | 112 | main treatment | mandatory |
+| Hybrid-second-product-control | 112 | controls for the extra active branch in the exact production wrapper | mandatory for production-mechanism attribution |
+| DCDN-full | 187 | tests architecture benefit without compression | optional |
+
+Do not use the name `DCDN-sham`. For public raw-core tables, call the rank/width/parameter control **DCNv2-capacity-matched-core**. If ordinary DCNv2 is already within ±5% in trainable non-embedding parameters and FLOPs/example, reuse it; otherwise choose a predeclared bracketing rank mechanically by the frozen parameter/FLOP-distance rule, never by validation quality.
+
+This public control is distinct from the production **Hybrid-second-product-control** below. The latter preserves the exact hybrid topology and replaces only the reciprocal carrier with a second product carrier; it is the direct test of reciprocal structure versus another active matrix/compute path.
+
+### Production integration ablation
+
+The public main tables deliberately omit the local FC path. To support the industrial claim that division is the essential architectural change rather than the parallel DCNv2-style FC integration, run a compact factorial ablation on the industrial offline dataset using the same PLE-8 inputs, one fixed-anchor block, prediction head, projector geometry, optimizer budget, and seeds:
+
+| Division branch | FC branch | Interpretation |
+|---:|---:|---|
+| off | off | product/residual base inside the common wrapper |
+| off | on | DCNv2-style parallel FC integration without division |
+| on | off | cross-division core inside the common wrapper |
+| on | on | full deployed hybrid topology |
+
+Implement branch removal with explicit gates and zero tensors of the same shapes so that the projector and downstream geometry remain unchanged; retrain every row. Add a fifth **Hybrid-second-product-control** row with the FC path and projector retained: replace \(\rho(x_0)\odot(W^-x_i+b^-)\) by \(x_0\odot(W^-x_i+b^-)\). It has the same active branch count, topology, parameters, and approximately the same FLOPs as the production hybrid, while removing reciprocal structure.
+
+Primary contrasts are:
+
+- `full − FC-only`: division benefit conditional on the production FC path;
+- `full − division-only`: incremental value of the FC path;
+- `(full − FC-only) − (division-only − base)`: division-by-FC interaction;
+- `full − Hybrid-second-product-control`: reciprocal carrier versus an equally budgeted second product mechanism.
+
+The minimum acceptable attribution evidence is `full` versus `FC-only` plus `Hybrid-second-product-control`. Add `division-only` to substantiate the statement that the FC integration is secondary. No additional online arm is required. If the industrial ablation cannot be run and the paper wishes to attribute production gains specifically to division, reproduce the four factorial cells **plus the fifth second-product control** on one public dataset with the production PLE-8 wrapper, keeping them separate from the raw-core main table. If neither attribution experiment is available, restrict the production conclusion to the utility of the complete deployed package and make the division-mechanism claim only from raw-core public evidence.
+
+### Explicit reciprocal input control
+
+`DCNv2(C + P + safe reciprocal lifts)` is an offline-only reviewer control answering “why not compute \(1/x\) inside input preprocessing and use ordinary DCNv2?”. It does **not** require a production A/B test or 75 newly materialized feature-store fields.
+
+Priority:
+
+- lower than the industrial three-way comparison and capacity-matched DCNv2;
+- preferably run on VK-LSVD and/or a synthetic benchmark;
+- compare quality, input dimension, parameters, FLOPs, latency, and sample efficiency;
+- frame DCDN's possible advantage as structured inductive bias and pipeline simplicity, not fundamental representational impossibility for lifted DCNv2.
+
+This lifting control is optional evidence for RQ3. The capacity comparison itself is mandatory; it may reuse ordinary DCNv2 when that row already satisfies the frozen ±5% parameter/FLOP tolerance.
+
+## 10. Public datasets and frozen roles
+
+### What HEGM actually provides
+
+The current HEGM repository (<https://github.com/rw404/HEGM>) supports exactly two public-data pipelines:
+
+- KuaiRec **big matrix**;
+- VK-LSVD `up0.01_ir0.01`.
+
+The `k={3,6,9,12}` HEGM configurations vary the number of mixture components; they are not additional datasets. HEGM does not currently contain KuaiRand or Yambda preprocessing. Its released processed parquet files are useful for reproducing HEGM, but they are not sufficient for the DCDN feature-substitution experiment: VK-LSVD already contains engineered rates without every matched base operand, while KuaiRec retains only a small numeric view. Rebuild explicit `C+P` and `C+P+E/R` views from the permitted raw history.
+
+Use the following notation throughout the public experiments:
+
+- **C:** shared context, static, categorical, and other non-ratio fields; C is identical across the feature-substitution arms and never enters DCDN's reciprocal branch;
+- **P:** retained positive or safely shifted **base operands** from which ratios can be formed, together with required support/validity indicators;
+- **E/R:** explicit engineered ratio, rate, average, normalization, or cosine fields removed in the DCDN substitution arm.
+
+Unless explicitly labeled otherwise, every public-table row written as `DCDN(C+P)` means the **DCDN core without the production FC path/projector**, operating on the declared raw or safely shifted numerical operands in `P`. Shared categorical/context fields in `C` use the common encoder and bypass the reciprocal carrier. The production hybrid is not part of the public offline architecture suite. This keeps the public comparison focused on the cross-division operator and aligns it with the Laurent-support analysis. Public offline results and the live A/B result therefore support complementary—not identical—architectures; do not call a public run a literal reproduction of the deployed ranker.
+
+Do not call every member of P a raw primitive. Shifted counts and iALS dot products/norms are derived base operands even though they are not explicit divisions.
+
+### VK-LSVD — primary scalable public benchmark
+
+Reuse the HEGM preprocessing/split as a starting point, not its embedding-to-DCN architecture unchanged:
+
+- official dataset: <https://huggingface.co/datasets/deepvk/VK-LSVD>;
+- selected subset: approximately 38.4M interactions, 100K users, and 171K items;
+- history: weeks 0–19;
+- train: weeks 20–24;
+- validation: week 25;
+- test: week 26;
+- compute user/item aggregates and fit the three iALS models on history weeks 0–19, then freeze them;
+- use the fixed HEGM smoothing constants `alpha = 5` and `beta = 100`; they are protocol constants, not quantities fit on validation or test;
+- the released HEGM preprocessor obtains `c` from the 99th percentile of full item-metadata **duration** and uses `clip(timespent, 0, c) / c` as the target (`c` is approximately 157 seconds); despite the README wording, the current code does not estimate `c` from watch time;
+- as a reproduction fact, the released HEGM implementation fits PLE numerical quantile edges and categorical cardinalities on processed train weeks 20–24. **Do not feed that PLE representation to the mandatory raw-operand DCDN core.** For the core, fit positive scale-only numerical normalization and categorical `C` mappings on train, then freeze them. Fit new PLE edges only for a separately labeled optional production-hybrid bridge or exact HEGM-architecture reproduction. Record the exact `meta.json` value of `c`; if a stricter history/train-only constant is used, label it as a protocol change rather than exact HEGM reproduction.
+
+Proposed public feature-substitution regimes, to validate and freeze in code before reporting counts:
+
+- **C, 6 shared context fields:** `age`, `gender`, `geo`, `place`, `platform`, and `agent`.
+- **P0, 31 candidate base operands before validity indicators:** duration; user/item raw shows, safe `shows + 100` denominators, total watch time, shifted event counts such as `count + 5`; for each of three iALS signals, dot product and user/item norms.
+- **V, code-validated support/validity indicators:** missing-history, unseen-factor, and zero/floored-denominator indicators required by the implemented safe-division policy. Define `P = P0 + V` and report the exact count from the manifest.
+- **E, 20 candidate engineered features:** average watch time, user/item event rates and survival rates, and three iALS cosine similarities.
+
+Core comparison:
+
+- `DCNv2(C+P)`;
+- `DCNv2(C+P+E)`;
+- `DCDN(C+P)`;
+- resolved `DCNv2-capacity-matched-core(C+P)`, reusing ordinary DCNv2 when it already satisfies the frozen ±5% tolerance.
+
+The provisional `31` and `20` counts imply a 39.2% reduction **only inside the numerical operand-plus-engineered subspace**: `51 -> 31`, before validity indicators. They do not imply a 39.2% reduction in all public input fields. Including the six shared C fields gives `57 -> 37`, or 35.1%, before validity indicators; with `|V| = v`, the honest total-field comparison is `(57 + v) -> (37 + v)`, a reduction of `20 / (57 + v)`. Report both the subspace and total-field definitions, and do not compare either percentage with the industrial 40.1% until the code-generated manifest fixes C, P, V, and E exactly.
+
+Tasks:
+
+- primary: watch-time regression with the code-defined `clip(timespent, 0, c) / c` target, using the exact released or explicitly refit `c`; report MSE in sec² and MAE in seconds;
+- secondary: like/share/dislike prediction; report user-GAUC/AUC, LogLoss, and AUPRC.
+
+The current HEGM evaluator's “XAUC” is a pairwise concordance computed only within contiguous evaluation batches, so it can depend on row order and batch boundaries. If reproduced, call it **HEGM batch-XAUC**, lock batch size/order, and audit permutation and batch-size sensitivity; do not present it as user-GAUC or global concordance. A standard, explicitly defined global or user-grouped ranking metric may be reported separately.
+
+Retain `user_id`, `item_id`, week/timestamp, source split, and stable row ID as audit-only columns in the rebuilt views. They must not silently become model features, but they are required for leakage checks, user-GAUC, paired user bootstrap, cold-entity coverage, and exact row alignment across arms.
+
+To reproduce HEGM smoothing exactly, expose shifted base operands such as `(count + 5)` and `(shows + 100)`. Raw `count` and `shows` alone do not make `(count + 5)/(shows + 100)` a finite Laurent monomial in those raw variables.
+
+### KuaiRand-Pure — second core benchmark and randomized-exposure test
+
+Official dataset: <https://github.com/chongminggao/KuaiRand>.
+
+Use **KuaiRand-Pure** for the deadline experiment:
+
+- 27,285 users;
+- approximately 1.44M standard-policy candidate-pool interactions;
+- approximately 1.19M randomized exposures;
+- 7,583 videos in the intervention pool;
+- exact timestamps and 12 feedback signals;
+- approximately 194MB packaged data.
+
+Do not use KuaiRand-1K as the headline randomized test: it retains approximately 11.7M standard interactions but only about 43K randomized rows. KuaiRand-27K is an optional later scaling run: its 322M standard rows are not required for the submission grid. If used, stream them to construct histories and run only predeclared finalist models.
+
+Pre-register the following temporal protocol before inspecting model results, after validating that the released rows cover every stated date:
+
+- history/feature burn-in: standard-policy events from 2022-04-08 through 2022-04-21;
+- training labels: standard-policy events from 2022-04-22 through 2022-05-02;
+- validation: randomized events from 2022-05-03 through 2022-05-05;
+- headline test: randomized events from 2022-05-06 through 2022-05-08;
+- secondary in-policy test: standard-policy events from the same final dates.
+
+Freeze the KuaiRand rolling-state policy before validation/test access:
+
+- initialize state from the predeclared standard-policy history and training rows through 2022-05-02;
+- keep model weights, feature definitions, smoothing/floor constants, aggregation keys/windows, and state-update code frozen after training;
+- for validation and both test strata, score every timestamp group against state containing only rows with `time_ms < t`; after all rows at timestamp `t` are scored, update the common state with the released standard and randomized events at `t`;
+- retain source file and original row offset. Deduplicate only canonically byte-identical normalized raw rows using a full-row fingerprint; never collapse distinct events merely because `(user_id, video_id, time_ms)` matches;
+- order timestamp groups by `time_ms`; within a post-score update group, use a deterministic `(policy, source_file, source_row)` order. Equal-timestamp rows must never enter one another's features;
+- this is a frozen rolling/prequential simulation, so earlier validation/test outcomes may update later aggregate state but may not change weights, feature definitions, hyperparameters, thresholds, or the protocol hash. Report this explicitly and include a frozen-state-at-training-cutoff sensitivity slice if feasible.
+
+Because KuaiRand-Pure contains only candidate-pool rows, call these **candidate-pool histories**, not complete user histories.
+
+Feature regimes:
+
+- **C:** shared safe static/context fields available at scoring time; never include `is_rand`.
+- **P:** smoothed positive numerator/denominator base operands for historical exposures, long views, likes, forwards, hates, follows, play-time sums, duration sums, and dwell-time sums; construct supported user/item/author/tab groups and predeclared 1-day, 7-day, and all-history windows.
+- **R:** explicit lagged rates such as long-view/exposure, like/exposure, forward/exposure, hate/exposure, play-time/exposure, play-time/duration, short-window/long-window, and supported preference shares.
+
+Headline comparison:
+
+- `DCNv2(C+P)`;
+- `DCNv2(C+P+R)`;
+- `DCDN(C+P)`;
+- `DCNv2-capacity-matched-core(C+P)`;
+- AFN+ as the closest algebraic prior.
+
+Primary target: `long_view`, with LogLoss as the primary metric and ROC-AUC/user-GAUC as secondary metrics. Use AUPRC for rare like/forward/hate targets. Treat `is_click` only as a per-UI/tab secondary target because its released semantics differ between the two-column and single-column interfaces.
+
+Do not use `video_features_statistic.csv` in the strict causal experiment: the documented statistics overlap the collection month and can include current or future outcomes. Use only safe static metadata and prefix aggregates rebuilt from event logs. Never feed `is_rand` as a feature; use it only to define evaluation strata.
+
+The standard-policy candidate-pool log contains 7,551 videos whereas the randomized log contains 7,583. Keep randomized rows whose item is unseen in standard training: map ID inputs to a declared OOV token, use zero-history values plus validity indicators, and report cold-item coverage and warm/cold metric slices. Never inner-drop these rows from the headline randomized population.
+
+Randomized evaluation reduces logging-policy bias only within the curated 7,583-video intervention pool and filtered intervention population. Do not call it a full offline A/B test, full OPE, or an unbiased evaluation over the entire catalog.
+
+### KuaiRec big matrix — mechanistic ratio ablation
+
+Official dataset: <https://github.com/chongminggao/KuaiRec>.
+
+- 7,176 users, 10,728 videos, and approximately 12.53M interactions;
+- exact interaction timestamps, play duration, video duration, and watch ratio;
+- daily item statistics with shows, plays, complete/valid/long/short plays, total play time, and engagement counts;
+- HEGM filters ads and rows with non-positive current `play_duration` or `video_duration`, sorts globally by timestamp, takes an 80/10/10 interaction split, fits ID/category mappings on train, and inner-drops validation/test rows with unseen user or item IDs.
+
+KuaiRec is the cleanest public mechanism test for base counts versus explicit ratios, but the current HEGM processed view is not sufficient. For the HEGM-comparable primary protocol, reproduce the documented filters, split, train-only mappings, and cold-row removal above and report row counts at every step; otherwise label the result as a modified KuaiRec protocol. The positive-watch filter changes the estimand and must not be silently added or removed after results are inspected.
+
+Rebuild a point-in-time dataset from raw `item_daily_features.csv` with an as-of join. For an interaction on date `d`, use daily aggregates only from dates strictly earlier than `d`; same-day totals contain target-period outcomes and are forbidden. Do not reuse HEGM's video-level `.unique(video_id)` shortcut for any time-varying daily statistic. Static fields must come from a genuinely static table or the latest value strictly before `d`.
+
+Feature regimes:
+
+- **C:** shared train-mapped user/video/category context available at scoring time.
+- **P:** lagged `show_cnt`, `show_user_num`, `play_cnt`, `play_user_num`, `hist_play_duration_sum`, complete/valid/long/short-play counts, engagement counts, video duration, shifted safe denominators, and validity indicators. `hist_play_duration_sum` is the accumulated lagged daily total and must not be confused with the current interaction outcome.
+- **E:** lagged play/show, unique-play/unique-show, complete/play or complete/show, valid/long/short rates, average play duration, play-time/show, and engagement/show rates.
+
+Run the causal matrix `DCNv2(C+P)`, `DCNv2(C+P+E)`, `DCDN(C+P)`, `DCNv2-capacity-matched-core(C+P)`, and AFN+. The current interaction's `play_duration` is the label source and `watch_ratio` is derived from that outcome; neither may enter the inputs. KuaiRec has no native like label. Use `clip(current_play_duration, 0, c) / c`, where current HEGM code takes `c` from the 99th percentile of video duration (approximately 60 seconds), and report MAE in seconds and MSE in sec². If HEGM batch-XAUC is retained, use the same qualified name and audit rules as for VK-LSVD. Retain original IDs, timestamp/date, and stable row ID as audit-only columns.
+
+### Yambda-50M — optional cross-domain evidence only
+
+Official dataset: <https://huggingface.co/datasets/yandex/yambda>.
+
+Yambda-50M contains approximately 46.47M listens with timestamps, playback ratios, and recommendation/organic flags, but it does not provide non-listen impression rows. It is therefore weaker than KuaiRand for the central response-per-impression and engineered-rate substitution claim. Run it only after the required VK-LSVD, KuaiRand-Pure, and KuaiRec tables are complete.
+
+If used:
+
+- use the official chronological structure: the final one-day interval is test, the preceding one-day interval is validation, with one 30-minute gap between train and validation and a second 30-minute gap between validation and test; training contains all earlier eligible events. The approximately 300 days describe the full collection horizon, not a 300-day training window followed by extra validation/test days;
+- restrict the pointwise task to recommendation-driven listens, `is_organic = 0`;
+- define `Listen+ := played_ratio_pct >= 50`;
+- describe the task as **completion re-ranking**, not CTR or end-to-end retrieval;
+- skip the shared audio-embedding file unless a predeclared model requires it.
+
+### Datasets deliberately outside the deadline scope
+
+KuaiSAR is a credible additional short-video log and EB-NeRD is a credible cross-domain impression-ranking benchmark. Both are deferred unless every mandatory table is complete. Do not add either dataset, or Criteo/Avazu/Tenrec/MicroLens, without an explicit scope change. Standard CTR datasets do not by themselves test interpretable base-operand-to-ratio substitution.
+
+### Leakage, denominator, and architecture rules for every dataset
+
+- No outcome from the target row may enter its features.
+- All aggregates must use events strictly before the feature cutoff.
+- Fit iALS, buckets, normalization constants, and history statistics only on permitted history/train data.
+- In mandatory public `DCDN-Core`, apply reciprocal operations only to explicitly designated denominator features. PLE, categorical, ID, and content embeddings bypass the core reciprocal branch. A separately labeled production-hybrid bridge is the only exception and must use the confirmed PLE-space semantics rather than inherit the raw mask.
+- Do not z-center denominators; use positive scale-only normalization, smoothing/floors, and validity indicators.
+- Report coverage of the denominator mask, missing/zero frequency, clipping/floor incidence, and NaN/Inf rate.
+- Scan complete materialized operand views for finiteness and denominator positivity before full training. Use synchronous value assertions only in smoke/debug runs; freeze BF16-or-FP32 model precision, compute reciprocals in FP32 under AMP, and monitor non-finite losses/activations/gradients in optimized runs.
+- Freeze a small residual-near branch initialization and gradient-clipping policy before validation metrics, and apply the same product-branch initialization to DCN/DCNv2 controls.
+- Keep stable user/item/time/row identifiers as audit-only columns for exact row matching, clustered uncertainty, cold-start slices, and leakage assertions; do not feed them as model features unless the frozen regime explicitly includes an ID field.
+
+## 11. Model suite
+
+### Main table
+
+1. DNN/MLP
+2. DeepFM
+3. original DCN
+4. AutoInt+
+5. DCNv2
+6. AFN+
+7. Wukong-small
+8. DCDN
+
+AFN+ is mandatory as the closest algebraic prior: log-exp interaction learning can use negative or fractional powers. Therefore the novelty claim must not be “first model to learn reciprocal interactions.”
+
+Run the full eight-model main suite on **exactly the shared `C+P` regime** for VK-LSVD and KuaiRand-Pure; this is the same-input RQ2 comparison. Run `DCNv2(C+P+E/R)` separately as the engineered-feature arm of the causal RQ1 matrix. Do not run all eight architectures on both feature regimes unless the scope is explicitly expanded. On KuaiRec, prioritize the causal mechanism matrix (`DCNv2(C+P)`, `DCNv2(C+P+E)`, `DCDN(C+P)`, capacity-matched DCNv2, and AFN+) rather than repeating every architecture. Yambda is optional and must not delay any mandatory public-data cell.
+
+### Optional, in order
+
+- EulerNet;
+- xDeepFM;
+- FinalMLP or MaskNet;
+- DLRM.
+
+Do not spend the deadline window reproducing scaled Wukong. Use a small public configuration only if the implementation is working. Do not copy comparison numbers from other papers.
+
+## 12. Fairness, metrics, and uncertainty
+
+Architecture comparisons should share:
+
+- identical examples and temporal splits;
+- identical feature regime for a given comparison;
+- identical labels, sampling, and candidate sets;
+- identical embedding/input encoder where semantically possible;
+- identical prediction head, loss, maximum training steps/examples, validation cadence, patience, and selection rule; report the realized examples seen for each run;
+- equal hyperparameter-search budget and final seeds;
+- equal effective global batch, using gradient accumulation where needed.
+
+For models using the same regime, require an identical ordered schema and identical feature values. The causal RQ1 comparison intentionally adds E/R only in the full arm: assert that every C and P column is bitwise identical and row-aligned between `C+P` and `C+P+E/R`, rather than requiring the two regimes to have equal width.
+
+Before any test label is read or test metric is computed, write an immutable protocol manifest and its SHA-256 hash. It must cover raw-data hashes/version, exclusions, split boundaries, row-ID/dedup/order rules, rolling-state policy, C/P/V/E/R schemas and order, label and metric definitions, smoothing/floors, mappings, model configurations, tuning space, seeds, and stopping rule. Tune the predeclared configurations with seed 42 on train/validation only; suppress test evaluation until the protocol hash and chosen configurations are frozen. Then evaluate the untouched test for seeds 42/43/44 without adapting data, features, thresholds, metrics, or hyperparameters.
+
+Report:
+
+- task quality: LogLoss and AUC/user-GAUC; AUPRC for rare labels;
+- list quality only if real candidate lists exist: NDCG@K;
+- watch-time metrics: the established production quality metric plus MAE/MSE as appropriate;
+- at least three final seeds with mean and standard deviation;
+- paired bootstrap confidence intervals over users or temporal blocks for differences;
+- dense and total parameters separately;
+- FLOPs/example, throughput, peak VRAM, and p50/p95/p99 **model-only inference latency** under a frozen hardware/precision/batch/warmup/repetition protocol; production end-to-end latency remains separate industrial evidence;
+- NaN/Inf rate and performance by denominator-magnitude bucket.
+
+No-significant-difference is not proof of non-inferiority. If `DCDN-112` is described as non-inferior to `DCNv2-187`, define the margin before inspecting final results.
+
+## 13. RunPod setup already chosen
+
+The user configured one RunPod Pod with:
+
+- name recommendation: `laurent-forge`;
+- template: RunPod PyTorch 2.8.0;
+- CUDA: choose 12.8, not 13.0;
+- GPUs: 2 × A100 SXM 80GB with NVLink (160GB total VRAM);
+- host resources shown: 234GB RAM and 32 vCPU;
+- current displayed price: USD 3.29/hour.
+
+Storage shown in the user's RunPod configuration screenshot:
+
+- container disk: 1,000GB, temporary and erased when the Pod is stopped;
+- persistent network volume mounted at `/workspace`: 50GB;
+- verify the live mounts, free space, and write permissions before any download because the screenshot may no longer match the running Pod;
+- keep code, manifests, compact metrics, logs, and irreplaceable best checkpoints under `/workspace`;
+- keep raw public datasets and regenerable preprocessing caches on the large temporary container disk when the 50GB persistent volume is insufficient;
+- do not stop the Pod until durable outputs have been verified on persistent or otherwise approved backup storage;
+- resizing storage is a paid external change and requires user approval.
+
+Execution:
+
+- run independent jobs/seeds on the two GPUs using one process per GPU;
+- prefer job-level parallelism over DDP for these tabular models;
+- start with a 10%/one-epoch pipeline and throughput check before full sweeps;
+- use streaming Arrow/Parquet or prepacked shards so CPU/I/O does not starve the GPUs;
+- back up results before terminating the Pod;
+- do not upload proprietary industrial logs to Community Cloud without company approval.
+
+Budget and deadline envelope for the remote research agent:
+
+- 24 hours: USD 78.96;
+- 3 days: USD 236.88;
+- 5 days: USD 394.80;
+- hard incremental ceiling from the agent's immutable ledger epoch: **USD 460 pre-tax**, including compute and storage;
+- warning threshold: **USD 370**;
+- maximum Pod wall time from that epoch: **120 hours**;
+- absolute compute stop: the earlier of the 120-hour limit and **2026-08-24 14:00 Europe/Moscow**, with the final 8 hours reserved for aggregation and backup.
+
+The earlier suggestion to fund the account with roughly USD 500 is a balance recommendation, not authorization to spend it all or to exceed the USD 460 experiment envelope. Record any cost incurred before the ledger epoch separately.
+
+Prices and availability are time-sensitive; recheck RunPod before extending the run.
+
+## 14. Highest-priority missing information
+
+Do not invent these fields. Obtain them from the user, experiment logs, or production documentation:
+
+1. Exact industrial offline metric \(Q\), values, direction, uncertainty, split, and sample size.
+2. Complete A/B design and inference details listed in Section 7.
+3. Taxonomy of the 75 removed features and a mapping to retained primitives; identify ratios, rates, normalizations, windowed combinations, and non-algebraic business rules.
+4. Remaining production wrapper details: exact PLE construction/clipping range, feature ordering/width, surrounding tower and head, loss, optimizer, and training configuration. Already confirmed: one fixed-anchor block initialized with `x_i=x_0`; eight PLE channels; no semantic denominator mask; sign-preserving hard floor with `eps=1e-2`; separate biased dense product/division maps; production-only FC path/projector.
+5. Which components besides the cross block and input inventory were identical between control and treatment.
+6. Parameter counts, FLOPs, training throughput, production p95/p99 latency, and feature-pipeline cost savings.
+7. Exact authorship, affiliations, anonymity constraints, and final WSDM formatting requirements.
+
+## 15. Execution order
+
+Run the following two tracks in parallel. The industrial track is owner-side work because public RunPod execution is not authorized to access company data; missing industrial access must not block the frozen public experiments.
+
+**Owner-side industrial/manuscript track**
+
+1. Make the industrial table reproducible: `DCNv2-187`, `DCNv2-112`, production-hybrid `DCDN-112`, then `Hybrid-second-product-control-112`; add the gated division-by-FC factorial cells needed for attribution.
+2. Obtain the complete A/B statistical protocol and confidence intervals.
+3. Obtain the remaining production wrapper details—especially the exact PLE definition—and align the production notation with the confirmed initialization `x_i=x_0`.
+
+**Public RunPod track**
+
+1. Build the KuaiRand-Pure `C+P` and `C+P+R` rolling views and the VK-LSVD `C+P` and `C+P+E` views. Validate raw hashes, dates, row alignment, deduplication, audit IDs, cold/OOV handling, and leakage before any model result is inspected.
+2. Run deterministic train-only smoke tests, denominator/numerical tests, and model-path tests. Do not read test labels or compute test metrics.
+3. Run at most the predeclared tuning budget per model with seed 42 on train/validation only. Select configurations without test access.
+4. Freeze the exact data views, rolling-state rule, model configurations, seeds, metrics, and stopping rules in the immutable protocol manifest; record its SHA-256 hash. Test access begins only after this checkpoint.
+5. Evaluate the causal matrices for seeds 42/43/44. On VK-LSVD and KuaiRand-Pure, run the full eight-model suite only on `C+P`; run the full-feature `DCNv2(C+P+E/R)` arm separately.
+6. Rebuild the lagged KuaiRec `C+P` and `C+P+E` daily views using strict as-of joins and the frozen HEGM-comparable filters, then run its causal mechanism matrix without using same-day aggregates.
+7. Measure latency, parameters, FLOPs, throughput, peak VRAM, denominator coverage, clipping, non-finite rates, and uncertainty.
+8. Add Yambda-50M only if every mandatory **public** VK-LSVD, KuaiRand-Pure, and KuaiRec result cell has a technically successful evaluation. A valid negative scientific result counts; an OOM, timeout, leakage defect, implementation failure, or missing cell does not. Industrial evidence remains an owner-side manuscript dependency, not a RunPod access prerequisite.
+9. Run the optional explicit reciprocal-input lifting control for RQ3 and a small synthetic product/ratio/mixed benchmark only if time remains.
+10. Replace the abandoned provisional architecture name with DCDN and fill all experimental placeholders in the TeX.
+11. Compile, visually inspect, and perform a claim-by-claim evidence audit before submission.
+
+## 16. Decision log
+
+- Final and only architecture name: DCDN, singular “Network”.
+- Final title: `DCDN: Deep Cross-Division Network for Product-and-Ratio Feature Interactions in Industrial Ranking`.
+- `Laurent` is retained for theory, not for the model name/title.
+- Abstract was submitted to WSDM 2027.
+- Current full-paper abstract wording reports only the 40.1% relative feature-inventory reduction and explicitly states that DCDN is deployed in the production short-video service; absolute feature counts remain internal experiment identifiers.
+- The production model uses one hybrid DCDN block initialized with `x_i=x_0`, keeps `x_0` fixed, and applies it to 8-dimensional piecewise-linear feature encodings; the FC path/projector is production-only. Public offline experiments use DCDN core layers on raw numerical operands without that auxiliary path or projector.
+- PLE retains structured information about raw features but does not preserve multiplication or division exactly. Production Laurent claims are made in lifted PLE coordinates; the pullback and complete stabilized hybrid are generally piecewise rational in raw inputs.
+- The original `DCNvsDDN.tex` theorem uses the pure core. Its `FCN` label denotes induced affine terms, not the explicit production FC path; that path belongs in Production Integration/Industrial Lessons and in a compact division-by-FC ablation.
+- Frozen public dataset roles: VK-LSVD is the scalable primary benchmark; KuaiRand-Pure is the second core benchmark and randomized-exposure test; KuaiRec big matrix is the mechanistic base-operand-versus-rate ablation; Yambda-50M is optional cross-domain evidence only.
+- HEGM supports exactly KuaiRec big matrix and VK-LSVD `up0.01_ir0.01`; its released processed views must be rebuilt for strict DCDN `C+P` versus `C+P+E/R` comparisons.
+- KuaiRand-1K is not the headline randomized benchmark because it has only about 43K randomized rows. KuaiRand-27K is optional for a finalist scaling run, not a full grid.
+- KuaiSAR, EB-NeRD, Criteo/Avazu, Tenrec, and MicroLens are outside the deadline scope unless the user explicitly expands it.
+- Main model family follows DCNv2/Wukong comparisons, with AFN+ mandatory as closest algebraic prior. The full eight-model suite is frozen to the shared `C+P` regime; the full-feature DCNv2 arm is a separate causal control.
+- `DCDN-sham` terminology was rejected. Use `DCNv2-capacity-matched-core` for public raw-core tables and `Hybrid-second-product-control` for the exact production/bridge wrapper.
+- Explicit reciprocal inputs are an offline-only reviewer control, never a required production A/B arm.
+- Test evaluation is forbidden until the immutable protocol manifest and SHA-256 hash have been recorded after train/validation-only tuning.
+- Industrial reproducibility and A/B documentation are owner-side manuscript work; the public RunPod must neither access industrial data nor wait for it before executing the frozen public protocol.
+- Actual RunPod selection is one 2×A100 SXM Pod at USD 3.29/hour, not two separately confirmed Pods.
+- Remote execution is capped at USD 460 pre-tax and 120 Pod wall hours from the immutable ledger epoch, with an earlier absolute stop at 2026-08-24 14:00 Europe/Moscow and 8 hours reserved for artifact finalization.
+- Owner RunPod override recorded 2026-08-18: control-plane expiry, credentialed billing inspection, account balance/headroom, and quota metadata are waived as execution gates. Use the earliest persisted ledger epoch, USD 3.29 per elapsed Pod-hour, and a fixed USD 25 storage reserve; never use stored RunPod credentials or mutate Pod/volume lifecycle. The owner is responsible for manual termination after verified backup and zero task-owned processes.
+- Local source audit recorded 2026-08-18: no public datasets were present. Use the official allowlisted routes and hashes in `docs/data_source_audit.md`; place regenerable data on the temporary overlay and never commit or redistribute raw data.
+- Test-lock audit recorded 2026-08-18: a credential-free HEGM provenance lookup unexpectedly exposed a published benchmark table for incompatible released processed views. No local test files, labels, DCDN outputs, or project-generated metrics were accessed. Quarantine the external values from every protocol, feature, search-space, and configuration decision; `test_unlocked` remains false.
+
+Update this decision log whenever a material choice changes.

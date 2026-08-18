@@ -1,0 +1,951 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{tikz, pgfplots}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage[Glenn]{fncychap}
+\usepackage{mathbbol}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{cleveref}
+\usepackage{float}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{extarrows}
+\usepackage[linesnumbered,lined,boxed]{algorithm2e}
+\usepackage{subcaption}
+\usepackage{epigraph}
+\usepackage{listings}
+
+\lstdefinestyle{pythonstyle}{
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{MidnightBlue}\bfseries,
+    commentstyle=\color{OliveGreen}\itshape,
+    stringstyle=\color{BrickRed},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{black!30},
+    language=Python,
+    captionpos=b,
+    columns=fullflexible,
+    keepspaces=true
+}
+\lstset{style=pythonstyle}
+
+\allowdisplaybreaks
+
+\RestyleAlgo{ruled}
+\SetKwComment{Comment}{/* }{ */}
+
+\usetikzlibrary{positioning, calc, arrows.meta, decorations.pathreplacing, shapes.geometric, fit, backgrounds}
+\pgfplotsset{width=15cm, compat=1.18}
+
+\newtcbtheorem[auto counter]{theo}%
+    {Theorem}{%
+    colback=red!5!white,
+    colframe=red!50!black
+    }{theorem}
+\makeatletter
+\newcommand\tcb@cnt@theoautorefname{Theorem}
+\makeatother
+
+% Цветовые обозначения для слагаемых разложения.
+\definecolor{FCNcol}{named}{MidnightBlue}
+\definecolor{Pposcol}{named}{BrickRed}
+\definecolor{Pnegcol}{named}{OliveGreen}
+\definecolor{Pzerocol}{named}{Purple}
+\definecolor{Pcrosscol}{named}{BurntOrange}
+\definecolor{DCNcol}{named}{RoyalBlue}
+\definecolor{DDNcol}{named}{RedOrange}
+
+% Макросы для полиномиальных семейств признаков.
+\newcommand{\FCN}[1]{\ensuremath{{\color{FCNcol}\mathrm{FCN}_{#1}}}}
+\newcommand{\Ppos}[1]{\ensuremath{{\color{Pposcol}P_{#1}}}}
+\newcommand{\Pneg}[1]{\ensuremath{{\color{Pnegcol}P_{-#1}}}}
+\newcommand{\Pzero}{\ensuremath{{\color{Pzerocol}P_{0}}}}
+\newcommand{\Pcross}[2]{\ensuremath{{\color{Pcrosscol}P_{#1}{\cdot}P_{#2}}}}
+
+\title{DCN vs DDN: геометрия признаковых взаимодействий}
+
+\begin{document}
+\chapter{Признаковые взаимодействия: DCN и DDN}
+
+\section{Взаимодействие признаков через DCN}
+\label{dcn:intro}
+
+\par По умолчанию, DCN\cite{DCN} используется для создания явных взаимодействий признаков, например, $ctr * \#like$. В основе dcn используется произведение Адамара:
+\begin{tcolorbox}[title=DCN блок, colframe=TealBlue!90]
+    \begin{align}
+        \label{dcn:intro:dcn}
+        \color{DCNcol}\mathrm{DCN}(x_i, x_0)\color{black} &= (Wx_i+b)\odot x_0 + x_i \ \forall i\ge 1.
+    \end{align}
+\end{tcolorbox}
+
+\begin{tcolorbox}[title=Явные зависимости]
+\label{dcn:intro:inductionbase}
+\begin{align}
+    x_0 &=\begin{bmatrix}
+        x_1^{(0)}\\ 
+        x_2^{(0)}
+    \end{bmatrix}
+    \rightarrow
+    \color{DCNcol}\mathrm{DCN}(x_0)\color{black} = \\
+    &=(Wx_0+b)\odot x_0 + x_0 = \\
+    &=\begin{bmatrix}
+        \left(w_{11}x_1^{(0)} + w_{12}x_2^{(0)} + b_1\right) * x_1^{(0)} + x_1^{(0)}\\
+        \left(w_{21}x_1^{(0)} + w_{22}x_2^{(0)} + b_2\right) * x_2^{(0)} + x_2^{(0)}
+    \end{bmatrix}=\\
+    &=\begin{bmatrix}
+        w_{11}\left(x_1^{(0)}\right)^2 + w_{12}x_2^{(0)}x_1^{(0)} + b_1x_1^{(0)} + x_1^{(0)}\\
+        w_{21}x_1^{(0)}x_2^{(0)} + w_{22}\left(x_2^{(0)}\right)^2 + b_2x_2^{(0)} + x_2^{(0)}
+    \end{bmatrix}
+\end{align} 
+\end{tcolorbox}
+
+\par Полученный таким образом полином степени 2, дальше по индукции можно доказать, что $n$ блоков получают в итоге полином степени $n+1$ от входных признаков:
+\begin{theo}{Степень полинома DCN}{dcninduct}
+    Для модели из $N$ последовательных $\color{DCNcol}\mathrm{DCN}\color{black}$ блоков в итоге получится вектор, эмулирующий полином степени $N+1$ от входных признаков
+\end{theo}
+\begin{tcolorbox}[title=Доказательство]
+    \par Докажем по индукции:
+    \begin{itemize}
+        \item База индукции была доказана в \autoref{dcn:intro:inductionbase}
+        \item Индуктивный переход: \color{blue}пусть для случая с $K$ блоками действительно получится полином степени $K+1$\color{black}, то есть(не ограничивая общности, посмотрим на случай с 2-мя компонентами):
+        \begin{equation}
+            x_K = \begin{bmatrix}
+                x_1^{(K)}\\
+                x_2^{(K)}
+            \end{bmatrix}
+        \end{equation} -- полином степени $K+1$ от входных компонент $x_0$;
+        Используем полученное в базе индукции представление:
+        \begin{align*}
+            x_{K+1} = \begin{bmatrix}
+                w_{11}x_1^{(K)}x_1^{(0)} + w_{12}x_2^{(K)}x_1^{(0)} + b_1x_1^{(0)} + x_1^{(K)}\\
+                w_{21}x_1^{(K)}x_2^{(0)} + w_{22}x_2^{(K)}x_2^{(0)} + b_2x_2^{(0)} + x_2^{(K)}
+            \end{bmatrix}
+        \end{align*}
+    \end{itemize}
+    Заметим, что \color{red}в первой компоненте $x_1^{(K)}x_1^{(0)}$\color{black}\ будет произведением полинома 
+    $x_1^{(K)}$ степени $K+1$(\color{blue}по предположению индукции\color{black}) по переменной $x_1^{(0)}$ на 
+    одночлен $x_1^{(0)}$, итого получается полином степени $K+2$. Остальные слагаемые состоят из полиномов степени не больше чем $K+2$:
+    \begin{itemize}
+        \item $x_2^{(K)}$ будет полиномом степени $\le K+1$ от $x_1^{(0)}$(\color{blue}опять же предоложение индукции\color{black}), тогда $x_2^{(K)}x_1^{(0)}$ будет полиномом степени $\le K+2$;
+        \item $x_1^{(0)}$ будет 1-ой степени;
+        \item $x_1^{(K)}$ степени $K+1$(\color{blue}опять же предоложение индукции\color{black}).
+    \end{itemize}
+    Аналогично для второй компоненты, тем самым $x_{K+1}$ будет полиномом от входных признаков степени $K+2$ \qedsymbol
+\end{tcolorbox}
+
+
+\subsection{Implicit взаимодействия в DCN}
+\label{dcn:intro:fullyconnected}
+
+\par Важно, что в некоторых статьях\cite{DCN, DCNv3} активно используют параллельные
+(или же последовательные) ветки с полносвязными слоями, мотивируя это \color{red} 
+моделированием неявных взаимодействий признаков\color{black}, например выпуклая сумма всех счетчиков. 
+\begin{itemize}
+    \item Эти слои могут быть сколь угодно большими, поэтому чаще их делают сильно меньше \color{DCNcol}DCN\color{black}\ слоев, чтобы не переобучаться.
+\end{itemize}
+
+\section{Deep divisional block(DDN)}
+\epigraph{Цель блоков явных взаимодействий в том, чтобы уметь моделировать взаимодействия в некотором полном базисе(аналог теоремы Поста в алгебре логики)}{}
+\label{ddn:into}
+
+\par Кроме мультипликативных свойств, некоторые признаки считаются как отношения 
+одного количества событий к другому, например $CTR = \frac{click}{shows}$. Наивным вариантом кажется переход в \color{Plum}exp-log преобразование\color{black}:
+\begin{enumerate}
+    \item Преобразуем признаки в log-пространство;
+    \item Настраиваем на них implicit-fullyconnected ветку dcn;
+    \item возвращаем обратно через потенцирование экспоненты.
+\end{enumerate}
+
+\par Такой подход можно рассматривать \color{red}на положительных признаках\color{black}(в области определения логарифма) и 
+через \color{red}численно-стабильную версию экспоненты\color{black}(в случае с чрезмерным сложением экспонент 
+может получится огромное произведение признаков).
+
+\par Введение log-exp преобразований поможет, но на случай \color{red}положительных значений\color{black}, 
+однако также хочется предусмотреть возможность модели задавать взаимодействия признаков не 
+только полжительных, но и например, скалярных произведений эмбеддингов, косинусов и тд, 
+чтобы тем самым могли моделироваться отношения каких-то счетчиков к, 
+например, dot-прдокату ALS-моделей.
+
+\par Таким вариантом видится \color{PineGreen}Deep Divisionable Block\color{black}:
+\begin{tcolorbox}[title=DDN блок, colframe=PineGreen!90]
+    \begin{align}
+        \label{ddn:intro:ddn}
+        \color{PineGreen}\mathrm{DDN}(x_i, x_0)\color{black} &= (Wx_i+b)\odot \frac{1}{x_0} \ \forall i\ge 1.
+    \end{align}
+\end{tcolorbox}
+
+\par \textbf{Важно}, что:
+\begin{itemize}
+    \item в этом блоке \color{red}не используется residual связь\color{black}\ и про это будет рассказано ниже;
+    \item в полносвязной проекции \color{magenta}используется bias\color{black}\ и это тоже будет объяснено ниже.
+\end{itemize}
+
+\par Сперва сформулируем небольшое утверждение:
+\begin{theo}{Степень полинома DDN}{ddndegree}
+    Для модели из $N$ последовательных \color{PineGreen}DDN\color{black}\ блоков получится вектор, 
+    эмулирующий полином степени не ниже, чем $-N$ от входных признаков
+\end{theo}
+\begin{tcolorbox}[title=Доказательство, breakable, enhanced]
+    \par По индукции(все так же, не ограничивая общности, рассмотрим случай вектора из двух элементов):
+    \begin{itemize}
+        \item База индукции:
+        \begin{align}
+            \label{ddn:intro:inductionbase}
+            \begin{bmatrix}
+                x_1^{(-1)}\\
+                x_2^{(-1)}
+            \end{bmatrix}
+            &\overset{DDN(x_0, x_0)}{=} 
+            \left(
+                \begin{bmatrix}
+                    w_{11}, w_{12}\\
+                    w_{21}, w_{22}
+                \end{bmatrix}
+                \begin{bmatrix}
+                    x_1^{(0)}\\
+                    x_2^{(0)}
+                \end{bmatrix}
+                +b  
+            \right)
+            \odot
+            \begin{bmatrix}
+                x_1^{(0)}\\
+                x_2^{(0)}
+            \end{bmatrix}=\\
+            &=\begin{bmatrix}
+                \left(w_{11}x_1^{(0)} + w_{12}x_2^{(0)}+b_1\right)\frac{1}{x_1^{(0)}}\\
+                \left(w_{21}x_1^{(0)} + w_{22}x_2^{(0)}+b_2\right)\frac{1}{x_2^{(0)}}\\
+            \end{bmatrix} = \\
+            &=\begin{bmatrix}
+                w_{11} + w_{12}\frac{x_2^{(0)}}{x_1^{(0)}}+\frac{b_1}{x_1^{(0)}}\\
+                w_{21}\frac{x_1^{(0)}}{x_2^{(0)}} + w_{22}+\frac{b_2}{x_2^{(0)}}
+            \end{bmatrix}
+        \end{align}
+        полученные векторы есть полиномы степени не ниже, чем $-1$. \textbf{Важно}, что благодаря \color{magenta}bias'у\color{black}\ в полносвязной проекции сохраняет одночлен степени $-1$, что пригодится далее;
+        \item Индуктивный переход: \color{ForestGreen}пусть из $K$ блоков получается вектор-полином степени не ниже, чем $-K$\color{black}\ от входных признаков, проверим $K+1$-ый блок:
+        \begin{align}
+            \begin{bmatrix}
+                x_1^{(-(K+1))}\\
+                x_2^{(-(K+1))}
+            \end{bmatrix}
+            &\overset{\ref{ddn:intro:inductionbase}}{=}
+            \begin{bmatrix}
+                \left(w_{11}x_1^{(-K)} + w_{12}x_2^{(-K)}+b_1\right)\frac{1}{x_1^{(0)}}\\
+                \left(w_{21}x_1^{(-K)} + w_{22}x_2^{(-K)}+b_2\right)\frac{1}{x_2^{(0)}}
+            \end{bmatrix} = \\
+            &=\begin{bmatrix}
+                w_{11}\frac{x_1^{(-K)}}{x_1^{(0)}} + w_{12}\frac{x_2^{(-K)}}{x_1^{(0)}}+\frac{b_1}{x_1^{(0)}}\\
+                w_{21}\frac{x_1^{(-K)}}{x_2^{(0)}} + w_{22}\frac{x_2^{(-K)}}{x_2^{(0)}}+\frac{b_2}{x_2^{(0)}}
+            \end{bmatrix}
+        \end{align}
+        Заметим, что в полученном векторе в первой компоненте $\frac{x_1^{(-K)}}{x_1^{(0)}}$ 
+        полином степени не ниже чем $-K$(\color{ForestGreen}предположение индукции\color{black}) 
+        делится на одночлен $x_1^{(0)}$, то есть итоговая степень не ниже, чем $-(K+1)$. 
+        Второе слагаемое аналогично степени не ниже $-(K+1)$. 
+        Третье степени не ниже $-1$, итого компонента вектора степени не ниже $-(K+1)$. Аналогично для второй. \qedsymbol
+    \end{itemize}
+\end{tcolorbox}
+
+\par В утверждении испольозвалось интересное свойство \color{magenta}bias'а\color{black}\ в 
+полносвязной проекции в \color{PineGreen}DNN\color{black}\ - 
+через него сохраняется явно одночлен степени $-1$, 
+который в последующих блоках поможет моделировать полный полином.
+
+\section{DCN \& DDN}
+\label{dcnddn:arch}
+
+\par Главные недостатки рассмотренных блоков следующие:
+\begin{itemize}
+    \item В \color{PineGreen}DDN\color{black}\ могут затухать градиенты без residual связи;
+    \item В \color{PineGreen}DDN\color{black}\ не моделируются мультипликативные взаимодействия признаков;
+    \item В \color{DCNcol}DCN\color{black}\ не моделируются взаимодействия через деления;
+    \item В \color{DCNcol}DCN\color{black}\ и \color{PineGreen}DNN\color{black}\ не моделируются неявные взаимодействия признаков, 
+    а дополнительная ветка через полносвязные блоки плодит гиперпараметры и создает риски переобучения.
+\end{itemize}
+
+\par В связи с этим предлагается блок, комбинирующий \color{DCNcol}DCN\color{black}\ и \color{PineGreen}DNN\color{black}\ блоки:
+\begin{tcolorbox}[title=DCN\&DDN блок, colframe=magenta!30!blue!60]
+    \begin{align}
+        \label{dcnddn:arch:dcn}
+        \color{Violet}DCDN(x_i, x_0)\color{black} = \color{DCNcol}\left(Wx_i + b\right)\odot x_0 + x_i\color{black} + \color{PineGreen}\left(\widehat{W}x_i + \widehat{b}\right)\odot\frac{1}{x_0}\color{black}\ \forall i\ge 1
+    \end{align}
+\end{tcolorbox}
+
+\par Схематично он представляется следующим образом(см. Рис.~\ref{dcnddn:arch:blockfig}):
+\begin{figure}[H]
+    \begin{center}
+        \begin{tikzpicture}[
+            INP/.style={rectangle, draw=black!70, fill=black!5, very thick, minimum size=18, rounded corners=2pt},
+            DCN/.style={rectangle, draw=DCNcol, fill=DCNcol!10, very thick, minimum width=42, minimum height=24, rounded corners=3pt},
+            DDN/.style={rectangle, draw=DDNcol, fill=DDNcol!10, very thick, minimum width=42, minimum height=24, rounded corners=3pt},
+            OUT/.style={rectangle, draw=black!70, fill=gray!15, very thick, minimum size=22, rounded corners=3pt},
+            every node/.style={font=\small}
+        ]
+            \node[INP] (xin) {$x^{(i)}$};
+            \node[DCN] (dcn) [above right=0.9 and 1.8 of xin] {$\color{DCNcol}\left(Wx_i+b\right)\odot x_0 + x_i\color{black}$};
+            \node[DDN] (ddn) [below right=0.9 and 1.8 of xin] {$\color{PineGreen}\left(\widehat{W}x_i+\widehat{b}\right)\odot \frac{1}{x_0}\color{black}$};
+            \node[OUT] (concat) [right=5.6 of xin] {$+$};
+            \node[OUT] (out) [right=1.4 of concat] {$x^{(i+1)}$};
+
+            \draw[->, very thick] (xin.east) -- ++(0.4,0) |- (dcn.west);
+            \draw[->, very thick] (xin.east) -- ++(0.4,0) |- (ddn.west);
+            \draw[->, very thick, DCNcol] (dcn.east) -| (concat.north);
+            \draw[->, very thick, DDNcol] (ddn.east) -| (concat.south);
+            \draw[->, very thick] (concat.east) -- (out.west);
+
+            \node[below=0.05 of dcn, font=\scriptsize, DCNcol] {полиномы $x_1^{p}x_2^{q}$, $p,q\geq 0$};
+            \node[above=0.05 of ddn, font=\scriptsize, DDNcol] {рациональные $x_1^{p}x_2^{q}$, $p,q\in\mathbb{Z}$};
+        \end{tikzpicture}
+        \caption{$\color{Violet}DCDN(x_i, x_0)\color{black}$}
+        \label{dcnddn:arch:blockfig}
+    \end{center}
+\end{figure}
+
+\subsection{Степень полинома DCDN-блока}
+\label{dcnddn:degree}
+
+\par Оценим какой результат получается после применения $N$ \color{Violet}DCDN-блоков\color{black}:
+\begin{theo}{Взаимодействия признаков в DCDN}{dcdndegree}
+    Применение $N$ \color{Violet}DCDN-блоков\color{black} формирует вектор, эмулирующий:
+    \begin{itemize}
+        \item Полином степени не выше чем $N+1$ от входных признаков;
+        \item Полином степени не ниже, чем $-N$ от входных признаков;
+        \item Неявные взаимодействия полносвязной нейросети\\
+        $\mathbb{1}\left(N-1 > 0\right)$ блока(либо 1, либо 0).
+    \end{itemize}
+\end{theo}
+
+\subsubsection{База индукции}
+\label{dcnddn:degree:base}
+
+\par Сперва рассмотрим базу индукции:
+\begin{align}
+    &\color{Violet}DCDN(x_0, x_0)\color{black} \overset{\ref{dcnddn:arch:dcn}}{=} 
+    \color{DCNcol}\left(Wx_0 + b\right)\odot x_0 + x_0\color{black} + \color{PineGreen}\left(\widehat{W}x_0 + \widehat{b}\right)\odot\frac{1}{x_0}\color{black} = \\
+    &=
+    \begin{bmatrix}
+        (w_{11}x_1^{(0)} + w_{12}x_2^{(0)}+b_1)x_1^{(0)}\\
+        (w_{21}x_1^{(0)} + w_{22}x_2^{(0)}+b_2)x_2^{(0)}\\
+    \end{bmatrix}
+    + 
+    \begin{bmatrix}
+        x_1^{(0)}\\
+        x_2^{(0)}
+    \end{bmatrix}
+    +\\
+    &+
+    \begin{bmatrix}
+        (\widehat{w}_{11}x_1^{(0)} + \widehat{w}_{12}x_2^{(0)}+\widehat{b}_1)\frac{1}{x_1^{(0)}}\\
+        (\widehat{w}_{21}x_1^{(0)} + \widehat{w}_{22}x_2^{(0)}+\widehat{b}_2)\frac{1}{x_2^{(0)}}\\
+    \end{bmatrix}
+    =\\
+    &=
+    \begin{bmatrix}
+        w_{11}\left(x_1^{(0)}\right)^2 + w_{12}x_2^{(0)}x_1^{(0)} + (b_1 + 1)x_1^{(0)} + \widehat{w}_{11}+\widehat{w}_{12}\frac{x_2^{(0)}}{x_1^{(0)}} + \frac{\widehat{b}_1}{x_1^{(0)}}\\
+        w_{21}x_1^{(0)}x_2^{(0)} + w_{22}\left(x_2^{(0)}\right)^2 + (b_2 + 1)x_2^{(0)} + \widehat{w}_{21}\frac{x_1^{(0)}}{x_2^{(0)}}+\widehat{w}_{22} + \frac{\widehat{b}_2}{x_2^{(0)}}\\
+    \end{bmatrix}
+    \label{dcnddn:degree:base:fml}
+\end{align}
+
+\par Заметим, что в полученном представлении(если рассматривать полином от входного признака по каждой компоненте; не ограничивая общности, \textbf{первой}):
+\begin{itemize}
+    \item Полином степени 2(введем нотацию $\color{Pcrosscol}P_2(x_1^{(0)})\color{black}$): $w_{11}\left(x_1^{(0)}\right)^2$;
+    \item Полином степени 1(введем нотацию $\color{Pposcol}P_1(x_1^{(0)})\color{black}$): $w_{12}x_2^{(0)}x_1^{(0)} + (b_1 + 1)x_1^{(0)}$;
+    \item Полином степени 0(введем нотацию $\color{Pzerocol}P_0(x_1^{(0)})\color{black}$): $\widehat{w}_{11}$;
+    \item Полином степени -1(введем нотацию $\color{Pnegcol}P_{-1}(x_1^{(0)})\color{black}$): $\widehat{w}_{12}\frac{x_2^{(0)}}{x_1^{(0)}} + \frac{\widehat{b}_1}{x_1^{(0)}}$;
+    \item Нет полносвязных блоков(так как нет одночлена с $x_2^{(0)}$).
+\end{itemize}
+\par Итого в варианте одинарного \color{Violet}DCDN\color{black}\ блока выполняется теорема;
+
+\subsubsection{Индуктивный переход}
+\label{dcnddn:degree:transition}
+\par Предположим, что выполняется условие теоремы для $K\ge 2$ блоков:
+\begin{align}
+    &\color{Violet}DCDN\color{black}\times K = x_K = \\
+    &=\begin{bmatrix}
+        P_{K+1}(x_1^{(0)}) + \dots + P_{0}(x_1^{(0)}) + \dots + P_{-K}(x_1^{(0)}) + F_1\\
+        P_{K+1}(x_2^{(0)}) + \dots + P_{0}(x_2^{(0)}) + \dots + P_{-K}(x_2^{(0)}) + F_2
+    \end{bmatrix} 
+\end{align}, где $\color{teal}F_i = f_{1}^{(i)}x_1^{(0)} + f_{2}^{(i)}x_2^{(0)} + b^{(i)}\color{black}$ -- полносвязная сеть от входных признаков. 
+\textbf{Такие блоки интересны только тем, что используют в качестве весов произвдения элементов матрицы из моделирования явной комбинации признаков}.
+
+\par Проверим что произойдет от применения к этому вектору блока \color{Violet}DCDN\color{black}:
+\begin{align}
+    &\color{Violet}DCDN(x_K)\color{black} = \left|\text{Будем полагать } P_{l}^i := P_l(x_i^{(0)})\right| = \\
+    &=\color{Violet}DCDN\color{black}
+    \left(
+        \begin{bmatrix}
+        P_{K+1}^1 + \dots + P_{0}^1 + \dots + P_{-K}^1 + F_1\\
+        P_{K+1}^2 + \dots + P_{0}^2 + \dots + P_{-K}^2 + F_2
+    \end{bmatrix} 
+    \right)=\\
+    &=\color{DCNcol}(Wx_K + b)\odot x_0\color{black} + \color{magenta}x_K\color{black} + \color{PineGreen}(\widehat{W}x_K + \widehat{b})\odot\frac{1}{x_0}\color{black}
+\end{align}
+
+\par Рассмотрим каждое слагаемое по отдельности:
+\begin{align}
+    &\color{DCNcol}(Wx_K + b)\odot x_0\color{black} = 
+    \left(
+        W
+        \begin{bmatrix}
+            \sum_{l=-K}^{K+1}P_{l}^1 + F_1\\
+            \sum_{l=-K}^{K+1}P_{l}^2 + F_2
+        \end{bmatrix} 
+        +b
+    \right)\odot x_0 = \\
+    &=
+    \begin{bmatrix}
+        w_{11}\left(\sum_{l=-K}^{K+1}P_{l}^1 + F_1\right) + w_{12}\left(\sum_{l=-K}^{K+1}P_{l}^2 + F_2\right) + b_1\\
+        w_{21}\left(\sum_{l=-K}^{K+1}P_{l}^1 + F_1\right) + w_{22}\left(\sum_{l=-K}^{K+1}P_{l}^2 + F_2\right) + b_2
+    \end{bmatrix}
+    \odot x_0=\\
+    &=
+    \begin{bmatrix}
+        w_{11}\sum_{l=-K}^{K+1}P_{l}^1 + w_{12}\sum_{l=-K}^{K+1}P_{l}^2+ w_{11}F_1 + w_{12}F_2 + b_1\\
+        w_{21}\sum_{l=-K}^{K+1}P_{l}^1 + w_{22}\sum_{l=-K}^{K+1}P_{l}^2 + w_{21}F_1 + w_{22}F_2 + b_2
+    \end{bmatrix}\odot\\
+    &\odot
+    \begin{bmatrix}
+        x_1^{(0)}\\
+        x_2^{(0)}
+    \end{bmatrix} = \\
+    &=
+    \begin{bmatrix}
+        w_{11}\sum_{l=-(K-1)}^{K+2}P_{l}^1 + w_{12}\sum_{l=-K}^{K+1}x_1^{(0)}P_{l}^2 + 
+        x_1^{(0)}w_{11}F_1 + x_1^{(0)}w_{12}F_2 + x_1^{(0)}b_1\\
+        w_{21}\sum_{l=-K}^{K+1}x_2^{(0)}P_{l}^1 + w_{22}\sum_{l=-(K-1)}^{K+2}P_{l}^2 + 
+        x_2^{(0)}w_{21}F_1 + x_2^{(0)}w_{22}F_2 + x_2^{(0)}b_2
+    \end{bmatrix}
+\end{align}
+
+\par Заметим здесь, что:
+\begin{itemize}
+    \item $\sum_{l=-K}^{K+1}P_{l}^1x_1^{(0)} = \sum_{l=-(K-1)}^{K+2}P_{l}^1$, 
+    так как каждое слагаемое с $x_1^{(0)}$ повышает свою степень на 1;
+    \item $\sum_{l=-K}^{K+1}P_{l}^2x_1^{(0)}$ имеет степень по признаку $x_1^{(0)}$ 
+    не ниже $-K$ в силу предположения индукции и не выше $K+2$ по предположению индукции и построению блоков;
+    \item 
+    \begin{align*}
+        &x_1^{(0)}w_{11}\color{blue}F_1\color{black} + x_1^{(0)}w_{12}\color{red}F_2\color{black} = \color{blue}f_1^{(1)}\color{black}w_{11}\left(x_1^{(0)}\right)^2 + \\
+        &+\color{blue}f_2^{(1)}\color{black}w_{11}x_2^{(0)}x_1^{(0)} + \color{blue}b^{(1)}\color{black}x_1^{(0)} + \\
+        &+\color{red}f_1^{(2)}\color{black}w_{12}\left(x_1^{(0)}\right)^2 + \color{red}f_2^{(2)}\color{black}w_{12}x_2^{(0)}x_1^{(0)} + \color{red}b^{(2)}\color{black}x_1^{(0)}
+    \end{align*} -- полученный полином второй степени, то есть все условия соблюдаются.
+\end{itemize}
+
+\par Второе слагаемое это $\color{magenta}x_K\color{black}$ из предположения индукции, которое удовлетворяет условиям.
+
+\par Слагаемое из $\color{Violet}DCDN\color{black}$ блока:
+\begin{align*}
+    &\color{PineGreen}(\widehat{W}x_K + \widehat{b})\odot\frac{1}{x_0}\color{black} = 
+    \left(
+        \widehat{W}
+        \begin{bmatrix}
+            \sum_{l=-K}^{K+1}P_{l}^1 + F_1\\
+            \sum_{l=-K}^{K+1}P_{l}^2 + F_2
+        \end{bmatrix}
+        +
+        \widehat{b}
+    \right)
+    \odot
+    \frac{1}{x_0} = \\
+    &=
+    \begin{bmatrix}
+        \widehat{w}_{11}\left(\sum_{l=-K}^{K+1}P_{l}^1 + F_1\right) + \widehat{w}_{12}\left(\sum_{l=-K}^{K+1}P_{l}^2 + F_2\right) + \widehat{b}_1\\
+        \widehat{w}_{21}\left(\sum_{l=-K}^{K+1}P_{l}^1 + F_1\right) + \widehat{w}_{22}\left(\sum_{l=-K}^{K+1}P_{l}^2 + F_2\right) + \widehat{b}_2
+    \end{bmatrix}
+    \odot \frac{1}{x_0}=\\
+    &=\begin{bmatrix}
+        \widehat{w}_{11}\sum_{l=-K}^{K+1}P_{l}^1 + \widehat{w}_{12}\sum_{l=-K}^{K+1}P_{l}^2+ \widehat{w}_{11}F_1 + \widehat{w}_{12}F_2 + \widehat{b}_1\\
+        \widehat{w}_{21}\sum_{l=-K}^{K+1}P_{l}^1 + \widehat{w}_{22}\sum_{l=-K}^{K+1}P_{l}^2 + \widehat{w}_{21}F_1 + \widehat{w}_{22}F_2 + \widehat{b}_2
+    \end{bmatrix}\odot\\
+    &\odot
+    \begin{bmatrix}
+        \frac{1}{x_1^{(0)}}\\
+        \frac{1}{x_2^{(0)}}
+    \end{bmatrix} = \\
+    &=
+    \begin{bmatrix}
+        \widehat{w}_{11}\sum_{l=-(K+1)}^{K}P_{l}^1 + \widehat{w}_{12}\sum_{l=-K}^{K+1}\frac{P_{l}^2}{x_1^{(0)}}+ \widehat{w}_{11}\frac{F_1}{x_1^{(0)}} + \widehat{w}_{12}\frac{F_2}{x_1^{(0)}} + \frac{\widehat{b}_1}{x_1^{(0)}}\\
+        \widehat{w}_{21}\sum_{l=-K}^{K+1}\frac{P_{l}^1}{x_2^{(0)}} + \widehat{w}_{22}\sum_{l=-(K+1)}^{K}P_{l}^2 + \widehat{w}_{21}\frac{F_1}{x_2^{(0)}} + \widehat{w}_{22}\frac{F_2}{x_2^{(0)}} + \frac{\widehat{b}_2}{x_2^{(0)}}
+    \end{bmatrix}
+\end{align*}
+
+\par Здесь заметим, что(так же не ограничивая общности, только для первой компоненты):
+\begin{itemize}
+    \item $\sum_{l=-(K)}^{K+1}\frac{P_{l}^1}{x_1^{(0)}} = \sum_{l=-(K+1)}^{K}P_{l}^1$, так как каждое слагаемое с $x_1^{(0)}$ понижает степень на 1;
+    \item $\sum_{l=-K}^{K+1}\frac{P_{l}^2}{x_1^{(0)}}$ имеет степень по признаку $x_1^{(0)}$ 
+    не выше $K+1$ в силу предположения индукции и не ниже $-(K+1)$ по предположению индукции и построению блоков;
+    \item 
+    \begin{align*}
+        &w_{11}\frac{\color{blue}F_1\color{black}}{x_1^{(0)}} + w_{12}\frac{\color{red}F_2\color{black}}{x_1^{(0)}} = \color{blue}f_1^{(1)}\color{black}w_{11} +\color{blue}f_2^{(1)}\color{black}w_{11}\frac{x_2^{(0)}}{x_1^{(0)}} + \frac{\color{blue}b^{(1)}\color{black}}{x_1^{(0)}} + \\
+        &+\color{red}f_1^{(2)}\color{black}w_{12} + \color{red}f_2^{(2)}\color{black}w_{12}\frac{x_2^{(0)}}{x_1^{(0)}} + \frac{\color{red}b^{(2)}\color{black}}{x_1^{(0)}}
+    \end{align*} -- полученный полином -1'ой степени, то есть все условия соблюдаются.
+\end{itemize}
+
+\par Таким образом, полученное представление уже создает вектор, эмулирующий полином вида:
+\begin{equation*}
+    \begin{bmatrix}
+        P_{K+2}(x_1^{(0)}) + \dots + P_{0}(x_1^{(0)}) + \dots + P_{-(K+1)}(x_1^{(0)})\\
+        P_{K+2}(x_2^{(0)}) + \dots + P_{0}(x_2^{(0)}) + \dots + P_{-(K+1)}(x_2^{(0)})
+    \end{bmatrix}
+\end{equation*}
+
+\par Чтобы завершить доказательство надо показать, что есть еще в каждой компоненте слагаемое, которое явлется $F_3$ и $F_4$, соответственно:
+\begin{itemize}
+    \item В самой переменной $\color{magenta}x_K\color{black}$ уже есть слагаемые $F_1$ и $F_2$;
+    \item Рассмотрим $P_1^2$(для первой компоненты) -- это выражение вида: \\
+    $\alpha_1 x_2^{(0)} + \alpha_2 x_2^{(0)}x_1^{(0)}+\dots$ в силу нотации из раздела \nameref{dcnddn:degree:base} про полиномы;
+    \item В силу преобразования через \color{Violet}DCDN\color{black}\ блока в слагаемых есть \\
+    $\widehat{w}_{12}\frac{P_{1}^2}{x_1^{(0)}} = \widehat{w}_{12}\frac{\alpha_1 x_2^{(0)} + \alpha_2 x_2^{(0)}x_1^{(0)}}{x_1^{(0)}} = \widehat{w}_{12}\alpha_1\frac{x_2^{(0)}}{x_1^{(0)}} + \widehat{w}_{12}\alpha_2x_2^{(0)}$. 
+    Последнее слагаемое как раз является ключевым - оно добавляет полносвязную ветку из признака другой компоненты;
+    \item По аналогии заметим, что слагаемое $P_2^1 = \beta_1 \left(x_1^{(0)}\right)^2 + \beta_2 \left(x_1^{(0)}\right)^2x_2^{(0)} + \dots$ при делении на $x_1^{(0)}$ даст в итоге: \\
+    $\widehat{w}_{11}\frac{P_{2}^1}{x_1^{(0)}} = \widehat{w}_{11}\beta_1x_1^{(0)} + \dots$, тем самым добавляется слагаемое от $x_1^{(0)}$ в итоговое слагаемое $F_3$;
+    \item Так же для $P_1^1$ появится слагаемое $\gamma_1 * \frac{x_1^{(0)}}{x_1^{(0)}} = \gamma_1$ с весом этого полинома;
+    \item Таким образом, получаем $F_3 = F_1 + \widehat{w}_{12}\alpha_1 x_2^{(0)} + \widehat{w}_{11}\beta_1x_1^{(0)} + \widehat{w}_{11}\gamma_1$.
+\end{itemize}
+
+\par Получаем преобразование, изменяющее и полносвязные слагаемые, то есть индуктивный переход преобразует следующим образом:
+\begin{align*}
+    &\begin{bmatrix}
+        P_{K+1}(x_1^{(0)}) + \dots + P_{0}(x_1^{(0)}) + \dots + P_{-K}(x_1^{(0)}) + F_1\\
+        P_{K+1}(x_2^{(0)}) + \dots + P_{0}(x_2^{(0)}) + \dots + P_{-K}(x_2^{(0)}) + F_2
+    \end{bmatrix} \rightarrow\\
+    &\rightarrow
+    \begin{bmatrix}
+        \color{DCNcol}P_{K+2}(x_1^{(0)})\color{black} + \dots + P_{0}(x_1^{(0)}) + \dots + \color{PineGreen}P_{-(K+1)}(x_1^{(0)})\color{black} + \color{magenta}F_3\color{black}\\
+        \color{DCNcol}P_{K+2}(x_2^{(0)})\color{black} + \dots + P_{0}(x_2^{(0)}) + \dots + \color{PineGreen}P_{-(K+1)}(x_2^{(0)})\color{black} + \color{magenta}F_4\color{black}
+    \end{bmatrix} \\\qedsymbol
+\end{align*}
+
+
+
+
+
+
+
+
+% Тут
+\section{Пример с двумя слоями}
+\label{dcnddn:2ndlayer}
+
+\par Рассмотрим детально пример с 2-мя последовательными \color{Violet}DCDN\color{black}\ боками:
+\begin{itemize}
+    \item Сперва явно получим представление после 1-го блока:
+\end{itemize}
+
+\begin{align}
+    x^{(1)} &= \color{Violet}DCDN\color{black}(x^{(0)}, x^{(0)}) \overset{\ref{dcnddn:degree:base:fml}}{=}\nonumber \\
+    &=\begin{bmatrix}
+        w_{11}\left(x_1^{(0)}\right)^2 + w_{12}x_2^{(0)}x_1^{(0)} + (b_1 + 1)x_1^{(0)} + \widehat{w}_{11}+\widehat{w}_{12}\frac{x_2^{(0)}}{x_1^{(0)}} + \frac{\widehat{b}_1}{x_1^{(0)}}\\
+        w_{21}x_1^{(0)}x_2^{(0)} + w_{22}\left(x_2^{(0)}\right)^2 + (b_2 + 1)x_2^{(0)} + \widehat{w}_{21}\frac{x_1^{(0)}}{x_2^{(0)}}+\widehat{w}_{22} + \frac{\widehat{b}_2}{x_2^{(0)}}\\
+    \end{bmatrix} = \nonumber \\
+    &=
+    \begin{bmatrix}
+        \underbrace{w_{11}\left(x_1^{(0)}\right)^2}_{\color{Pposcol}P_2^1\color{black}} + 
+        \underbrace{w_{12}x_2^{(0)}x_1^{(0)}}_{\color{Pcrosscol}P_1^1\color{black},\color{Pcrosscol}P_1^2\color{black}} +
+        \underbrace{(b_1 + 1)x_1^{(0)}}_{\color{Pposcol}P_1^1\color{black}} + 
+        \underbrace{\widehat{w}_{11}}_{\color{Pzerocol}P_0^1\color{black}}+
+        \underbrace{\widehat{w}_{12}\frac{x_2^{(0)}}{x_1^{(0)}}}_{\color{Pnegcol}P_{-1}^1\color{black},\color{Pposcol}P_1^2\color{black}} + 
+        \underbrace{\frac{\widehat{b}_1}{x_1^{(0)}}}_{\color{Pnegcol}P_{-1}^1\color{black}}\\
+        \underbrace{w_{21}x_1^{(0)}x_2^{(0)}}_{\color{Pcrosscol}P_1^1\color{black},\color{Pcrosscol}P_1^2\color{black}} + 
+        \underbrace{w_{22}\left(x_2^{(0)}\right)^2}_{\color{Pposcol}P_2^2\color{black}} + 
+        \underbrace{(b_2 + 1)x_2^{(0)}}_{\color{Pposcol}P_1^1\color{black}} + 
+        \underbrace{\widehat{w}_{21}\frac{x_1^{(0)}}{x_2^{(0)}}}_{\color{Pposcol}P_1^1\color{black},\color{Pnegcol}P_{-1}^2\color{black}}+
+        \underbrace{\widehat{w}_{22}}_{\color{Pzerocol}P_0^2\color{black}} + 
+        \underbrace{\frac{\widehat{b}_2}{x_2^{(0)}}}_{\color{Pnegcol}P_{-1}^2\color{black}}\\
+    \end{bmatrix} \label{dcnddn:2ndlayer:1stlayer}
+\end{align}
+
+\begin{itemize}
+    \item Теперь рассмотрим еще одно применение блока:
+\end{itemize}
+
+\begin{align}
+    x^{(2)} &= \color{Violet}DCDN\color{black}(x^{(1)}, x^{(0)}) \overset{\ref{dcnddn:degree:base:fml}}{=}\nonumber \\
+    &=\begin{bmatrix}
+        \widetilde{w}_{11}x_1^{(1)}x_1^{(0)} + \widetilde{w}_{12}x_2^{(1)}x_1^{(0)} + (\widetilde{b}_1 + 1)x_1^{(1)} + \overline{w}_{11}\frac{x_1^{(1)}}{x_1^{(0)}}+\overline{w}_{12}\frac{x_2^{(1)}}{x_1^{(0)}} + \frac{\overline{b}_1}{x_1^{(0)}}\\
+        \widetilde{w}_{21}x_1^{(1)}x_2^{(0)} + \widetilde{w}_{22}x_2^{(1)}x_2^{(0)} + (\widetilde{b}_2 + 1)x_2^{(0)} + \overline{w}_{21}\frac{x_1^{(1)}}{x_2^{(0)}}+\overline{w}_{22}\frac{x_2^{(1)}}{x_2^{(0)}} + \frac{\overline{b}_2}{x_2^{(0)}}
+    \end{bmatrix} \label{dcnddn:2ndlayer:2ndlayer}
+\end{align}
+
+\par Раскрывая первую координату и группируя члены по \textbf{классам}, получаем:
+{\allowdisplaybreaks
+\begin{align}
+    &x^{(2)}_1 = \widetilde{w}_{11}x_1^{(1)}x_1^{(0)} + \widetilde{w}_{12}x_2^{(1)}x_1^{(0)} + (\widetilde{b}_1 + 1)x_1^{(1)} + 
+    \overline{w}_{11}\frac{x_1^{(1)}}{x_1^{(0)}}+\overline{w}_{12}\frac{x_2^{(1)}}{x_1^{(0)}} + \frac{\overline{b}_1}{x_1^{(0)}}=\nonumber\\
+    &=\color{blue}\widetilde{w}_{11}\left[w_{11}\left(x_1^{(0)}\right)^2 + w_{12}x_2^{(0)}x_1^{(0)} + (b_1 + 1)x_1^{(0)} + \widehat{w}_{11}+\widehat{w}_{12}\frac{x_2^{(0)}}{x_1^{(0)}} + \frac{\widehat{b}_1}{x_1^{(0)}}\right]x_1^{(0)} + \nonumber\\
+    &+\color{red}\widetilde{w}_{12}\left[w_{21}x_1^{(0)}x_2^{(0)} + w_{22}\left(x_2^{(0)}\right)^2 + (b_2 + 1)x_2^{(0)} + \widehat{w}_{21}\frac{x_1^{(0)}}{x_2^{(0)}}+\widehat{w}_{22} + \frac{\widehat{b}_2}{x_2^{(0)}}\right]x_1^{(0)} + \nonumber\\
+    &+\color{magenta}(\widetilde{b}_1 + 1)\left[w_{11}\left(x_1^{(0)}\right)^2 + w_{12}x_2^{(0)}x_1^{(0)} + (b_1 + 1)x_1^{(0)} + \widehat{w}_{11}+\widehat{w}_{12}\frac{x_2^{(0)}}{x_1^{(0)}} + \frac{\widehat{b}_1}{x_1^{(0)}}\right] + \nonumber\\
+    &+\color{PineGreen}\overline{w}_{11}\left[w_{11}x_1^{(0)} + w_{12}x_2^{(0)} + (b_1 + 1) + \frac{\widehat{w}_{11}}{x_1^{(0)}}+\widehat{w}_{12}\frac{x_2^{(0)}}{\left(x_1^{(0)}\right)^2} + \frac{\widehat{b}_1}{\left(x_1^{(0)}\right)^2}\right] + \nonumber\\
+    &+\color{Tan}\overline{w}_{12}\left[w_{21}x_2^{(0)} + w_{22}\frac{\left(x_2^{(0)}\right)^2}{x_1^{(0)}} + (b_2 + 1)\frac{x_2^{(0)}}{x_1^{(0)}} + \frac{\widehat{w}_{21}}{x_2^{(0)}}+\frac{\widehat{w}_{22}}{x_1^{(0)}} + \frac{\widehat{b}_2}{x_1^{(0)}x_2^{(0)}}\right]+\nonumber\\
+    &+\frac{\overline{b}_1}{x_1^{(0)}}=\color{blue}\widetilde{w}_{11}w_{11}\color{black}\left(x_1^{(0)}\right)^3 + \nonumber\\
+    &+\left(x_1^{(0)}\right)^2\left[\left(\color{blue}\widetilde{w}_{11} w_{12}\color{black} + \color{red}\widetilde{w}_{12} w_{21}\color{black}\right)x_2^{(0)} + \color{magenta}(\widetilde{b}_1+1)w_{11}\color{black} + \color{blue}\widetilde{w}_{11}(b_1 + 1)\color{black} + \color{red}\widetilde{w}_{12}\widehat{w}_{21}\color{black}\frac{1}{x_2^{(0)}}\right] + \nonumber\\
+    &+x_1^{(0)}\left[\color{blue}\widetilde{w}_{11}\widehat{w}_{11}\color{black} + \color{red}\widetilde{w}_{12}w_{22}\color{black}\left(x_2^{(0)}\right)^2 + \color{red}\widetilde{w}_{12}(b_2+1)\color{black}x_2^{(0)} + \color{red}\widetilde{w}_{12}\widehat{w}_{22}\color{black}+\color{red}\color{black}\frac{\color{red}\widetilde{w}_{12}\widehat{b}_{2}}{x_2^{(0)}}+\right.\nonumber\\
+    &+\left.\color{magenta}(\widetilde{b}_1+1)w_{12}\color{black}x_2^{(0)} + \color{magenta}(\widetilde{b}_1+1)(b_1+1)\color{black}+\color{PineGreen}\overline{w}_{11}w_{11}\color{black}\right] + \nonumber\\
+    &+\left[\color{blue}\widetilde{w}_{11}\widehat{w}_{12}\color{black}x_2^{(0)}+\color{blue}\widetilde{w}_{11}\widehat{b}_1\color{black}+\color{magenta}(\widetilde{b}_1+1)\widehat{w}_{11}\color{black}+\color{PineGreen}\overline{w}_{11}w_{12}\color{black}x_2^{(0)} + \color{PineGreen}\overline{w}_{11}(b_1+1)\color{black}+\color{Tan}\overline{w}_{12}w_{21}\color{black}x_2^{(0)}+\color{Tan}\overline{w}_{12}\color{black}\frac{\color{Tan}\widehat{w}_{21}}{x_2^{(0)}}\right]+\nonumber\\
+    &+\frac{1}{x_1^{(0)}}\left[\color{magenta}(\widetilde{b}_1+1)\widehat{w}_{12}\color{black}x_2^{(0)}+\color{magenta}(\widetilde{b}_1+1)\widehat{b}_1\color{black}+\color{PineGreen}\overline{w}_{11}\widehat{w}_{11}\color{black}+\color{Tan}\overline{w}_{12}w_{22}\color{black}\left(x_2^{(0)}\right)^2+\right.\nonumber\\
+    &+\left.\color{Tan}\overline{w}_{12}(b_2+1)\color{black}x_2^{(0)}+\color{Tan}\overline{w}_{12}\widehat{w}_{22}\color{black}+\color{Tan}\overline{w}_{12}\color{black}\frac{\color{Tan}\widehat{b}_2}{x_2^{(0)}} + \overline{b}_1\right]+\frac{1}{\left(x_1^{(0)}\right)^2}\left[\color{PineGreen}\overline{w}_{11}\widehat{w}_{12}\color{black}x_2^{(0)}+\color{PineGreen}\overline{w}_{11}\widehat{b}_1\color{black}\right] = \nonumber\\
+    &=\alpha_{3,0}\left(x_1^{(0)}\right)^3 + \alpha_{2,0}\left(x_1^{(0)}\right)^2 + \alpha_{1,0}x_1^{(0)} + \alpha_{0,0} + \alpha_{-1, 0}\frac{1}{x_1^{(0)}} + \alpha_{-2, 0}\frac{1}{\left(x_1^{(0)}\right)^2}+\nonumber\\
+    &+\alpha_{2, 1}\left(x_1^{(0)}\right)^2x_2^{(0)} + \alpha_{1, 2}x_1^{(0)}\left(x_2^{(0)}\right)^2 + \alpha_{1, 1}x_1^{(0)}x_2^{(0)}+\nonumber\\
+    &+\alpha_{2, -1}\frac{\left(x_1^{(0)}\right)^2}{x_2^{(0)}}+\alpha_{1, -1}\frac{x_1^{(0)}}{x_2^{(0)}} + \alpha_{-1, -1}\frac{1}{x_1^{(0)}x_2^{(0)}} + \alpha_{-1, 1}\frac{x_2^{(0)}}{x_1^{(0)}} + \alpha_{-1, 2}\frac{\left(x_2^{(0)}\right)^2}{x_1^{(0)}} \nonumber\\
+    &+\alpha_{0, 1}x_2^{(0)} + \alpha_{0, -1}\frac{1}{x_2^{(0)}} = \left|\text{Возьмем часть из }\alpha_{1,0}\text{ и }\alpha_{0, 1}\text{ для } F\text{ блока}\right| = \nonumber\\
+    &=\sum_{l=-2}^3P_l^1 + \sum_{l=1}^2 P_l^1P_{2-l}^2 + \sum_{l=-1}^2P_l^1P_{1-l}^2 + \sum_{l=-1}^1P_l^1P_{-l}^2 + P_{-1}^1P_{-1}^2 + \nonumber\\
+    &+\underbrace{\beta_1 x_1^{(0)} + \beta_2 x_2^{(0)} + \beta_3}_{FCN} \label{dcnddn:2ndlayer:formula}
+\end{align}
+}
+
+\subsection{Таблица степеней}
+\label{dcnddn:degreetable}
+
+\par Каждому слагаемому в \cref{dcnddn:2ndlayer:formula} соответствует точка в решётке степеней $(p,q)\in\mathbb{Z}\times\mathbb{Z}$, где моном имеет вид $x_1^p x_2^q$ (см. \cref{dcnddn:lattice:1layer:fig}, \cref{dcnddn:lattice:2layer:fig}). 
+Рассмотрим сразу для всего вектора, так как по второму признаку распределение полиномов просто получается ортогональным поворотом
+
+
+\begin{figure}[H]
+    \begin{center}
+        \begin{tikzpicture}[scale=0.9,
+            axis/.style={->, very thick, black!70},
+            grid/.style={thin, black!15},
+            FCNpt/.style={circle, draw=FCNcol, fill=FCNcol!30, very thick, minimum size=7, inner sep=0},
+            Ppospt/.style={circle, draw=Pposcol, fill=Pposcol!30, very thick, minimum size=7, inner sep=0},
+            Pnegpt/.style={circle, draw=Pnegcol, fill=Pnegcol!30, very thick, minimum size=7, inner sep=0},
+            Pzeropt/.style={circle, draw=Pzerocol, fill=Pzerocol!30, very thick, minimum size=7, inner sep=0},
+            Pcrosspt/.style={circle, draw=Pcrosscol, fill=Pcrosscol!30, very thick, minimum size=7, inner sep=0}
+        ]
+            % grid
+            \foreach \x in {-2,-1,0,1,2,3} {
+                \draw[grid] (\x,-2.2) -- (\x,3.2);
+            }
+            \foreach \y in {-2,-1,0,1,2,3} {
+                \draw[grid] (-2.2,\y) -- (3.2,\y);
+            }
+            % axes
+            \draw[axis] (-2.4,0) -- (3.5,0) node[right] {$p$ (степень $x_1$)};
+            \draw[axis] (0,-2.4) -- (0,3.5) node[above] {$q$ (степень $x_2$)};
+
+            % FCN points: x1^1, x1^-1, x2^1, x2^-1
+            \node[Pnegpt] at (-1,0) {};
+            
+            \node[Pnegpt] at (0,-1) {};
+            % P_+ (positive polynomial in single variable)
+            \node[Ppospt] at (2,0) {};
+            \node[Ppospt] at (1,0) {};
+            \node[Ppospt] at (0,1) {};
+            \node[Ppospt] at (0,2) {};
+            % P_0 (degree zero — constants or canceling ratios)
+            \node[Pzeropt] at (0,0) {};
+            % Cross-monomials
+            \node[Pcrosspt] at (1,1) {};
+            \node[Pcrosspt] at (1,-1) {};
+            \node[Pcrosspt] at (-1,1) {};
+
+            % Legend
+            \begin{scope}[shift={(7,2)}]
+                \node[FCNpt, label=right:{\color{FCNcol}\FCN{i}}] at (0,0) {};
+                \node[Ppospt, label=right:{\color{Pposcol}\Ppos{k}}] at (0,-0.55) {};
+                \node[Pnegpt, label=right:{\color{Pnegcol}\Pneg{k}}] at (0,-1.1) {};
+                \node[Pzeropt, label=right:{\color{Pzerocol}\Pzero}] at (0,-1.65) {};
+                \node[Pcrosspt, label=right:{\color{Pcrosscol}\Pcross{i}{j}}] at (0,-2.2) {};
+            \end{scope}
+
+            % Background regions
+            \begin{scope}[on background layer]
+                \fill[DCNcol, opacity=0.06] (0,0) rectangle (3.2,3.2);
+                \fill[DDNcol, opacity=0.08] (-2.2,-2.2) rectangle (0,0);
+                \fill[DDNcol, opacity=0.05] (-2.2,0) rectangle (0,3.2);
+                \fill[DDNcol, opacity=0.05] (0,-2.2) rectangle (3.2,0);
+                \node[DCNcol, font=\small\itshape] at (2.4,2.8) {DCN-регион};
+                \node[DDNcol, font=\small\itshape] at (-1.3,-1.6) {DDN-регион};
+            \end{scope}
+        \end{tikzpicture}
+        \caption{Решётка мономов $x_1^p x_2^q$ для одного блока. \color{DCNcol}DCN\color{black}\ заполняет неотрицательный квадрант, \color{DDNcol}DDN\color{black} -- прочие. Точка $(0,0)$ (\Pzero) -- единственная, куда попадают обе ветви.}
+        \label{dcnddn:lattice:1layer:fig}
+    \end{center}
+\end{figure}
+
+\par На \cref{dcnddn:lattice:1layer:fig} в позициях $(1, 0$ и $(0, 1)$ используются именно полиномы, так как для $FCN$ не хватает еще в компоненте суммы других компонент -- например, $\alpha x_2$ в первой компоненте.
+
+\begin{figure}[H]
+    \begin{center}
+        \begin{tikzpicture}[scale=0.9,
+            axis/.style={->, very thick, black!70},
+            grid/.style={thin, black!15},
+            FCNpt/.style={circle, draw=FCNcol, fill=FCNcol!30, very thick, minimum size=7, inner sep=0},
+            Ppospt/.style={circle, draw=Pposcol, fill=Pposcol!30, very thick, minimum size=7, inner sep=0},
+            Pnegpt/.style={circle, draw=Pnegcol, fill=Pnegcol!30, very thick, minimum size=7, inner sep=0},
+            Pzeropt/.style={circle, draw=Pzerocol, fill=Pzerocol!30, very thick, minimum size=7, inner sep=0},
+            Pcrosspt/.style={circle, draw=Pcrosscol, fill=Pcrosscol!30, very thick, minimum size=7, inner sep=0}
+        ]
+            % grid
+            \foreach \x in {-2,-1,0,1,2,3} {
+                \draw[grid] (\x,-2.2) -- (\x,3.2);
+            }
+            \foreach \y in {-2,-1,0,1,2,3} {
+                \draw[grid] (-2.2,\y) -- (3.2,\y);
+            }
+            % axes
+            \draw[axis] (-2.4,0) -- (3.5,0) node[right] {$p$ (степень $x_1$)};
+            \draw[axis] (0,-2.4) -- (0,3.5) node[above] {$q$ (степень $x_2$)};
+
+            % FCN points: x1^1, x1^-1, x2^1, x2^-1
+            \node[FCNpt] at (1,0) {};
+            \node[Pnegpt] at (-1,0) {};
+            \node[FCNpt] at (0,1) {};
+            \node[Pnegpt] at (0,-1) {};
+            % P_+ (positive polynomial in single variable)
+            \node[Ppospt] at (2,0) {};
+            \node[Ppospt] at (3,0) {};
+            \node[Ppospt] at (0,2) {};
+            \node[Ppospt] at (0,3) {};
+            % P_- (negative degree in single var)
+            \node[Pcrosspt] at (-1,1) {};
+            \node[Pcrosspt] at (1,-1) {};
+            \node[Pnegpt] at (0,-2) {};
+            \node[Pnegpt] at (-2,0) {};
+            % P_0 (degree zero — constants or canceling ratios)
+            \node[Pzeropt] at (0,0) {};
+            % Cross-monomials
+            \node[Pcrosspt] at (1,1) {};
+            \node[Pcrosspt] at (2,1) {};
+            \node[Pcrosspt] at (1,2) {};
+            \node[Pcrosspt] at (-1,2) {};
+            \node[Pcrosspt] at (2,-1) {};
+            \node[Pcrosspt] at (-1,-1) {};
+
+            % Legend
+            \begin{scope}[shift={(7,2)}]
+                \node[FCNpt, label=right:{\color{FCNcol}\FCN{i}}] at (0,0) {};
+                \node[Ppospt, label=right:{\color{Pposcol}\Ppos{k}}] at (0,-0.55) {};
+                \node[Pnegpt, label=right:{\color{Pnegcol}\Pneg{k}}] at (0,-1.1) {};
+                \node[Pzeropt, label=right:{\color{Pzerocol}\Pzero}] at (0,-1.65) {};
+                \node[Pcrosspt, label=right:{\color{Pcrosscol}\Pcross{i}{j}}] at (0,-2.2) {};
+            \end{scope}
+
+            % Background regions
+            \begin{scope}[on background layer]
+                \fill[DCNcol, opacity=0.06] (0,0) rectangle (3.2,3.2);
+                \fill[DDNcol, opacity=0.08] (-2.2,-2.2) rectangle (0,0);
+                \fill[DDNcol, opacity=0.05] (-2.2,0) rectangle (0,3.2);
+                \fill[DDNcol, opacity=0.05] (0,-2.2) rectangle (3.2,0);
+                \node[DCNcol, font=\small\itshape] at (2.4,2.8) {DCN-регион};
+                \node[DDNcol, font=\small\itshape] at (-1.3,-1.6) {DDN-регион};
+            \end{scope}
+        \end{tikzpicture}
+        \caption{Решётка мономов $x_1^p x_2^q$ для второго блока. \color{DCNcol}DCN\color{black}\ заполняет неотрицательный квадрант, \color{DDNcol}DDN\color{black} -- прочие. Точка $(0,0)$ (\Pzero) -- единственная, куда попадают обе ветви.}
+        \label{dcnddn:lattice:2layer:fig}
+    \end{center}
+\end{figure}
+
+\section{Код}
+\label{dcnddn:code}
+
+\par Ниже приведён код из ноутбука \texttt{divide.ipynb}, реализующий простейший \color{PineGreen}DDN\color{black}-блок (\texttt{DivisibleDCN}) и обучающий его восстанавливать $CTR = \frac{click}{shows}$ по паре признаков-счётчиков.
+
+\subsection{Импорты и определение модели}
+\label{dcnddn:code:model}
+
+\begin{lstlisting}[caption={Импорт библиотек}]
+import torch
+from torch import nn
+from tqdm.notebook import tqdm
+from matplotlib import pyplot as plt
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Модель DivisibleDCN}]
+class DivisibleDCN(nn.Module):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.layer = nn.Linear(2, 2, False)
+        self.projector = nn.Linear(2, 1, False)
+
+    def forward(self, x):
+        cross_prediction = self.layer(x) / torch.clip(x, min=1.0).float()
+
+        return self.projector(cross_prediction)
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Инициализация модели и пробный прогон}]
+ctrPredictor = DivisibleDCN()
+ctrPredictor
+
+ctrPredictor(torch.tensor([0, 1]).float())
+\end{lstlisting}
+
+\subsection{Синтетические данные и обучение}
+\label{dcnddn:code:train}
+
+\begin{lstlisting}[caption={Генерация счётчиков кликов и показов}]
+click_counters = torch.randint(low=0, high=1000, size=(1_000_000,))
+show_counters = torch.randint(low=0, high=10000, size=(1_000_000,)) + click_counters
+
+click_counters, show_counters
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Обучающий цикл}]
+optimizer = torch.optim.AdamW(ctrPredictor.parameters(), lr=3e-4, weight_decay=1e-6)
+
+losses = []
+for batch_start in tqdm(range(click_counters.size(0) // 100)):
+    click_slice = click_counters[batch_start: batch_start+100]
+    show_slice = show_counters[batch_start: batch_start+100]
+
+    input_batch = torch.stack([click_slice, show_slice], dim=-1)
+
+    optimizer.zero_grad()
+    predicted_ctrs = ctrPredictor(input_batch.float())
+    true_ctrs = click_slice.float() / show_slice.float()
+    loss = torch.nn.functional.mse_loss(true_ctrs.unsqueeze(-1), predicted_ctrs)
+    loss.backward()
+    optimizer.step()
+
+    losses.append(loss.item())
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Визуализация кривой обучения}]
+plt.figure(figsize=(10, 5))
+plt.title("Ctr mse losses", fontsize=20)
+plt.plot(range(click_counters.size(0) // 100), losses, label="losses")
+plt.grid(True)
+plt.legend(fontsize=12)
+plt.xlabel("Step")
+plt.ylabel("MSE loss")
+plt.show()
+\end{lstlisting}
+
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{artifacts/loss_curve.png}
+        \caption{Кривая MSE-лосса в процессе обучения \color{PineGreen}DivisibleDCN\color{black}: после $\sim 3000$ шагов функция ошибки выходит почти на $0$, что означает восстановление формулы $CTR = \frac{click}{shows}$ с точностью до шума обучения.}
+        \label{dcnddn:code:losscurve}
+    \end{center}
+\end{figure}
+
+\subsection{Тестирование}
+\label{dcnddn:code:test}
+
+\begin{lstlisting}[caption={Генерация тестовой выборки}]
+click_counters_test = torch.randint(low=0, high=1000, size=(10,))
+show_counters_test = torch.randint(low=0, high=10000, size=(10,)) + click_counters_test
+
+click_counters_test, show_counters_test
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Сравнение предсказаний с истинными CTR}]
+truth_ctrs_test = click_counters_test / show_counters_test
+
+ctrPredictor.eval()
+with torch.no_grad():
+    predicted_ctrs_test = ctrPredictor(torch.stack([click_counters_test, show_counters_test], dim=1).float())
+
+print(f"True ctrs test: {truth_ctrs_test}")
+print(f"Pred ctrs test: {predicted_ctrs_test}")
+\end{lstlisting}
+
+\subsection{Представление матрицы после обучения}
+\label{dcnddn:code:weights}
+
+\par После обучения параметры модели (\texttt{layer.weight} и \texttt{projector.weight}) сходятся к:
+\begin{align}
+    \label{dcnddn:code:weights:W}
+    W &=
+    \begin{pmatrix}
+        w_{11} & w_{12}\\
+        w_{21} & w_{22}
+    \end{pmatrix}
+    \approx
+    \begin{pmatrix}
+        0.2794 & 0.4493\\
+        1.7166 & 0.0000
+    \end{pmatrix},\\
+    \label{dcnddn:code:weights:p}
+    p &= \begin{pmatrix} p_1 & p_2 \end{pmatrix}
+    \approx \begin{pmatrix} 0.0000 & 0.5826 \end{pmatrix}.
+\end{align}
+
+\par Распишем проход \texttt{DivisibleDCN} на входе $x = \begin{bmatrix} click \\ shows \end{bmatrix}$, то есть именно в виде \color{PineGreen}DDN\color{black}\ блока без residual и с биасом, обернутого в линейный проектор:
+\begin{tcolorbox}[title=DDN блок с обученными числами, colframe=PineGreen!90, breakable, enhanced]
+    \begin{align}
+        \label{dcnddn:code:weights:forward}
+        \color{PineGreen}DDN(x)\color{black}
+        &= (Wx)\odot \frac{1}{x}
+        =
+        \begin{bmatrix}
+            w_{11}\cdot click + w_{12}\cdot shows\\
+            w_{21}\cdot click + w_{22}\cdot shows
+        \end{bmatrix}
+        \odot
+        \begin{bmatrix}
+            \tfrac{1}{click}\\
+            \tfrac{1}{shows}
+        \end{bmatrix}
+        =\\
+        &=
+        \begin{bmatrix}
+            w_{11} + w_{12}\tfrac{shows}{click}\\
+            w_{21}\tfrac{click}{shows} + w_{22}
+        \end{bmatrix}
+        \approx
+        \begin{bmatrix}
+            0.2794 + 0.4493\cdot \tfrac{shows}{click}\\
+            1.7166\cdot \tfrac{click}{shows} + 0.0000
+        \end{bmatrix},\\
+        \widehat{CTR} &= p\cdot \color{PineGreen}DDN(x)\color{black}
+        = \underbrace{p_1 w_{11} + p_2 w_{22}}_{\approx\ 0}
+        + \underbrace{p_1 w_{12}}_{\approx\ 0}\cdot\tfrac{shows}{click} + \\
+        &+ \underbrace{p_2 w_{21}}_{\approx\ 1.0003}\cdot\tfrac{click}{shows}
+        \approx \tfrac{click}{shows}.
+    \end{align}
+\end{tcolorbox}
+
+\par В решётке мономов \cref{dcnddn:lattice:1layer:fig} из обученных весов активна ровно одна точка $(p, q) = (1, -1)$ (моном $\tfrac{click}{shows}$) -- см. \cref{dcnddn:code:weights:lattice}.
+\begin{figure}[H]
+    \begin{center}
+        \begin{tikzpicture}[scale=1.0,
+            axis/.style={->, very thick, black!70},
+            grid/.style={thin, black!15},
+            activept/.style={circle, draw=Pcrosscol, fill=Pcrosscol!60, very thick, minimum size=9, inner sep=0},
+            deadpt/.style={circle, draw=black!40, fill=black!5, thick, minimum size=7, inner sep=0}
+        ]
+            \foreach \x in {-1,0,1} {\draw[grid] (\x,-1.2) -- (\x,1.2);}
+            \foreach \y in {-1,0,1} {\draw[grid] (-1.2,\y) -- (1.2,\y);}
+            \draw[axis] (-1.4,0) -- (1.5,0) node[right] {$p$ (степень $click$)};
+            \draw[axis] (0,-1.4) -- (0,1.5) node[above] {$q$ (степень $shows$)};
+
+            \node[deadpt, label=below right:{\scriptsize $w_{11}\approx 0.28$ (подавлен $p_1$)}] at (0,0) {};
+            \node[deadpt, label=above left:{\scriptsize $w_{12}\approx 0.45$ (подавлен $p_1$)}] at (-1,1) {};
+            \node[activept, label=below right:{\scriptsize $p_2 w_{21}\approx 1.00$}] at (1,-1) {};
+            \node[deadpt, label=above left:{\scriptsize $w_{22}\approx 0$}] at (0,0) {};
+
+            \begin{scope}[on background layer]
+                \fill[DDNcol, opacity=0.08] (-1.2,-1.2) rectangle (0,0);
+                \fill[DDNcol, opacity=0.05] (-1.2,0) rectangle (0,1.2);
+                \fill[DDNcol, opacity=0.05] (0,-1.2) rectangle (1.2,0);
+            \end{scope}
+        \end{tikzpicture}
+        \caption{Активные мономы после обучения. Серые точки -- компоненты, зануленные либо $w_{22}\approx 0$, либо проектором $p_1\approx 0$.}
+        \label{dcnddn:code:weights:lattice}
+    \end{center}
+\end{figure}
+
+\begin{thebibliography}{9}
+    \bibitem{DCN}
+    Wang R. et al. Dcn v2: Improved deep \& cross network and practical lessons 
+    for web-scale learning to rank systems //Proceedings of the web conference 2021. – 2021. – С. 1785-1797.
+
+    \bibitem{DCNv3}
+    Zhou G. et al. Deep interest network for click-through rate prediction 
+    //Proceedings of the 24th ACM SIGKDD international conference on knowledge discovery \& 
+    data mining. – 2018. – С. 1059-1068.
+\end{thebibliography}
+
+\end{document}

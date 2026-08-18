@@ -1,0 +1,24 @@
+schema_version: 1
+test_unlocked: false
+events:
+  - event_id: test-lock-20260818-hegm-readme
+    observed_at_utc: "2026-08-18T12:03:43Z"
+    trigger: >-
+      Credential-free inspection of the pinned HEGM README for download and
+      licensing metadata.
+    exposure: >-
+      A published HEGM benchmark table on released VK-LSVD and KuaiRec
+      processed test views appeared in the inspected page.
+    not_accessed:
+      - local test files or labels
+      - DCDN outputs
+      - project-generated model metrics
+    scope: >-
+      External published prior on incompatible HEGM processed views; it is not
+      a project test evaluation.
+    mitigation:
+      - quarantine all exposed values from feature and protocol decisions
+      - quarantine all exposed values from search-space and config decisions
+      - do not inspect further HEGM README, result, or evaluation artifacts
+      - retain test_unlocked=false
+      - freeze the DCDN protocol independently

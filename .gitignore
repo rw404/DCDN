@@ -1,0 +1,51 @@
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.venv/
+
+# Credentials and local environment
+.env
+.env.*
+*.pem
+*.key
+
+# Telemetry and external experiment trackers (disabled by policy)
+wandb/
+mlruns/
+
+# Public data, regenerable caches, and model checkpoints
+data/
+cache/
+checkpoints/
+*.ckpt
+*.pt
+*.pth
+
+# Run/result payloads are registered explicitly; keep only directory markers
+runs/*
+!runs/.gitkeep
+results/*
+!results/.gitkeep
+
+# Third-party checkouts are pinned in manifests rather than vendored implicitly
+third_party/*
+!third_party/README.md
+
+# Legacy LaTeX build products (the supplied PDF is retained explicitly)
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+
+# Editor and OS noise
+.DS_Store
+*.swp
+*~
