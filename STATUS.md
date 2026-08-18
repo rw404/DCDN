@@ -1,6 +1,6 @@
 # DCDN execution status
 
-Updated: `2026-08-18T18:37:19.390739Z`
+Updated: `2026-08-18T20:02:45.503451Z`
 
 ## Current checkpoint
 
@@ -15,9 +15,9 @@ Updated: `2026-08-18T18:37:19.390739Z`
 - The owner waived provider-side expiry, credentialed billing inspection, and
   control-plane quota evidence. Frozen accounting is USD 3.29 per elapsed hour
   plus a USD 25 storage reserve.
-- Estimated incremental spend is USD 55.93, with USD 314.07 warning-threshold
-  headroom and USD 404.07 hard-cap headroom. At the conservative one-hour
-  ETA the projection is USD 59.22, leaving USD 400.78 hard-cap headroom.
+- Estimated incremental spend is USD 60.09, with USD 309.91 warning-threshold
+  headroom and USD 399.91 hard-cap headroom at the zero-hour post-smoke
+  checkpoint.
 - Test access remains locked. No local test data, labels, DCDN outputs, or
   project-generated metrics were read. A credential-free HEGM provenance
   lookup unexpectedly exposed a published benchmark table from incompatible
@@ -113,23 +113,67 @@ Updated: `2026-08-18T18:37:19.390739Z`
   after clean Git provenance. Ordinary seed-42 validation tuning may follow a
   successful smoke; capacity-control tuning remains locked until a durable
   selected-DCNv2 learning-rate binding exists, and final/test remains locked.
+- The two authorized one-effective-batch implementation smokes completed under
+  exact Git commit `38268f305a6c60ae6b8e2fc2f0e62982b03198b1`, empty tracked-diff
+  SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`,
+  and Protocol v3 SHA-256
+  `1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`.
+  `vk-cp-smoke-dcdn-core-l2-s42-1eb-v1` ran on physical GPU 0 and
+  `vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1` on physical GPU 1. Each
+  consumed exactly 4,096 train examples, performed one optimizer step and
+  zero validation checks, and stopped at the requested checkpoint boundary.
+  Both records are `completed` and explicitly non-scientific; test metrics,
+  selected validation metrics, best checkpoints, and latency are all null.
+- Both smoke paths reported zero OOMs and zero non-finite observations, with
+  all three activation hooks observed. Every config, command, result,
+  history, log, registry record, and `last` checkpoint was re-opened and
+  hashed; both checkpoints passed integrity-checked CPU-only
+  `weights_only=True` loading. The compact audit is
+  `results/smoke/implementation_smoke_audit_v1.json`, SHA-256
+  `6748d9f643115f0d85b73041b0892a362b1f38efda7c404ca5d329b4ea4650b4`.
+  After this verified audit, the two regenerable smoke `last.pt` files and
+  their two SHA-256 sidecars were removed at `2026-08-18T19:59:09Z` under the
+  retention policy. Their pre-deletion paths, sizes, hashes, safe CPU reopen,
+  and sidecar verification remain recorded; retention is now
+  `removed_after_verified_audit`.
+- No validation-only tuning or scientific model evaluation has started.
+  Ordinary seed-42 validation-only tuning may now begin. The
+  `DCNv2-capacity-matched` tuning row remains blocked until the selected
+  ordinary-DCNv2 learning rate is durably bound. Final/test execution remains
+  blocked because `test_unlocked=false`, selected configurations and exact
+  validation-selected checkpoint lineage are not frozen, and the one-pass
+  final/test runner is not yet implemented and audited.
+- The current `DCNvsDDN.tex` remains the legacy Russian `DCN vs DDN` draft
+  with stale naming and the known two-layer/`FCN` derivation issue. It was not
+  changed by the smoke audit and remains a separate manuscript blocker.
 
-## Preflight result
+## Post-smoke result
 
-**VK PRE-SMOKE CHECKPOINT PASSED UNDER OWNER OVERRIDE.** At
-`2026-08-18T18:37:19.390739Z`, the credential-free local cost guard allowed a
-mandatory one-hour ETA: USD 55.93 estimated current spend and USD 59.22
-projected, below both thresholds. The storage guard measured 5,939,200 bytes
-(0.005531 GiB) of project-owned durable artifacts, 49.994469 GiB logical
-headroom under the frozen 50 GiB envelope, and 62.554615 GiB available on the
-temporary overlay at 37.4454% usage. Both A100s were idle at 0 MiB and 0%
-utilization. The `/workspace` FUSE `df` capacity is
-informational shared-backend metadata; the 40 GiB project cap and 10 GiB
-reserve remain enforced. No guard violation or provider action occurred.
+**VK IMPLEMENTATION SMOKE PASSED UNDER OWNER OVERRIDE.** At the post-run,
+pre-cleanup local guard (`2026-08-18T19:53:13.266664Z` cost;
+`2026-08-18T19:53:15.826349Z` storage), the credential-free estimate was
+USD 60.09 for 10.665352 elapsed Pod-hours including the fixed USD 25 storage
+reserve. The storage guard measured 127,622,144 bytes (0.118857 GiB) of
+project-owned durable artifacts, 49.881143 GiB logical headroom under the
+frozen 50 GiB envelope, and 62.506607 GiB available on the temporary overlay
+at 37.4934% usage. No cost/storage violation or provider action occurred.
+At `2026-08-18T19:52:54Z`, both A100s were at 0 MiB and 0% utilization, the
+GPU compute-process list was empty, and no task-owned worker/training PID
+remained.
 
-The exact next action is an explicit staged-diff audit, clean commit/push, and
-two concurrent one-effective-batch train-only implementation smoke runs under
-the active protocol (DCDN on GPU0 and full-rank DCNv2 on GPU1).
-Only after those pass may seed-42 validation-only tuning begin. Test access
-remains locked until selected configurations are frozen and final lineage is
-activated.
+The exact four regenerable checkpoint files were absent after cleanup. The
+`2026-08-18T20:00:30.583480Z` storage guard passed with 6,381,568 project
+bytes (0.005943 GiB), 49.994057 GiB logical headroom, and 62.499523 GiB
+temporary-overlay free space. At `2026-08-18T20:01:07.664646Z`, a fresh
+read/parse/hash test re-opened all 12 retained per-run config, command, result,
+history, log, and registry files and verified eight retained run/protocol
+sidecars. All matched their pre-cleanup sizes and SHA-256 values; zero
+task-owned training/worker processes remained.
+
+This checkpoint validates implementation paths only and is not a model-quality
+result. The exact next action is seed-42 validation-only tuning for the
+currently eligible frozen rows, with test access still locked. Before the
+capacity-matched row, durably bind the selected ordinary-DCNv2 learning rate;
+before any final/test access, freeze selected configurations and exact best
+checkpoint lineage, implement/audit the one-pass final runner, and activate a
+new protocol revision through the existing lifecycle gates.

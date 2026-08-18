@@ -764,5 +764,37 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   local estimate is USD 50.88 current and USD 60.75 at a conservative
   three-hour ETA; storage inspection found 5,564,928 project-owned durable
   bytes and 62.794891 GiB overlay available, with no violation.
+- VK-LSVD C+P implementation-smoke checkpoint recorded 2026-08-18: exact Git
+  commit `38268f305a6c60ae6b8e2fc2f0e62982b03198b1`, empty tracked-diff SHA-256
+  `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`,
+  and Protocol v3 SHA-256
+  `1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`
+  bound two independent one-effective-batch runs. DCDN-Core-L2 used physical
+  GPU 0 and full-rank DCNv2-L2 used physical GPU 1; each consumed exactly
+  4,096 train examples, made one optimizer step and zero validation checks,
+  then stopped at the requested checkpoint boundary. Both registry records are
+  completed and explicitly non-scientific; validation selection, best
+  checkpoint, latency, and test metrics are null. Both paths reported zero
+  OOMs and zero non-finite observations with all three activation hooks
+  observed. Configs, commands, results, histories, logs, registry records, and
+  both `last` checkpoints were re-opened and hashed; the checkpoints passed
+  integrity-checked CPU-only loading. The compact audit SHA-256 is
+  `6748d9f643115f0d85b73041b0892a362b1f38efda7c404ca5d329b4ea4650b4`.
+  At `2026-08-18T19:59:09Z`, after the verified audit, the two regenerable
+  smoke `last.pt` files and their two SHA-256 sidecars were removed under the
+  retention policy; their pre-deletion paths, sizes, hashes, sidecar checks,
+  and safe CPU reopen evidence remain preserved in the audit, with status
+  `removed_after_verified_audit`. The post-run cost guard estimated USD 60.09
+  at 10.665352 elapsed Pod-hours including storage. The post-cleanup storage
+  guard at `2026-08-18T20:00:30.583480Z` passed with 6,381,568 durable project
+  bytes, 49.994057 GiB logical headroom, and 62.499523 GiB overlay free. A
+  fresh retained-artifact read/parse/hash test re-opened 12 per-run evidence
+  files and verified eight run/protocol sidecars; the four deleted paths were
+  absent and zero task-owned training/worker processes remained. Ordinary
+  seed-42 validation-only tuning may begin. `DCNv2-capacity-matched` tuning
+  remains gated on a durable selected ordinary-DCNv2 learning-rate binding,
+  while final/test remains locked pending selected configurations, exact best-
+  checkpoint lineage, an audited one-pass final runner, and explicit Protocol
+  lifecycle activation; `test_unlocked=false`.
 
 Update this decision log whenever a material choice changes.

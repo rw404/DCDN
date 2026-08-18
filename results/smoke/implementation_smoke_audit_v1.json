@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "audit_kind": "dcdn_implementation_smoke_evidence",
+  "created_at_utc": "2026-08-18T19:52:49.593766Z",
+  "updated_at_utc": "2026-08-18T20:01:25.077068Z",
+  "designation": {
+    "execution_kind": "implementation_smoke",
+    "scientific_result_eligible": false,
+    "scientific_claims_allowed": false,
+    "model_quality_evidence": false,
+    "test_labels_or_metrics_accessed": false,
+    "statement": "These one-effective-batch runs verify only implementation, integrity, numerical-monitoring, and worker-lifecycle paths. Their elapsed time and throughput are implementation-only observations and must not be used as scientific or comparative model results."
+  },
+  "code_identity": {
+    "head_commit": "38268f305a6c60ae6b8e2fc2f0e62982b03198b1",
+    "execution_git_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "execution_git_diff_definition": "sha256(git diff --binary HEAD --)",
+    "same_identity_for_both_runs": true
+  },
+  "protocol_identity": {
+    "protocol": {
+      "path": "configs/protocols/vk_lsvd_c_plus_p/protocol_frozen.yaml",
+      "sha256": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+      "size_bytes": 1706,
+      "sha256_sidecar_verified": true
+    },
+    "active_protocol": {
+      "path": "artifacts/protocol_state/vk_lsvd_c_plus_p/active_protocol.yaml",
+      "sha256": "2d76236dece1769c08417cc0322f3b3bc51001cfb52ceb945e24fe237ca0fdb4",
+      "size_bytes": 307,
+      "sha256_sidecar_verified": true
+    },
+    "test_unlocked": false
+  },
+  "verification": {
+    "configs_results_commands_and_protocol_sidecars_verified": true,
+    "results_histories_logs_and_registry_records_reopened": true,
+    "checkpoint_reopen_method": "torch.load(weights_only=True, map_location=cpu) through the repository integrity gate",
+    "checkpoint_tensors_observed_only_on": [
+      "cpu"
+    ],
+    "checkpoint_retention_status": "removed_after_verified_audit"
+  },
+  "runs": [
+    {
+      "run_id": "vk-cp-smoke-dcdn-core-l2-s42-1eb-v1",
+      "model_key": "dcdn_core",
+      "physical_gpu_index": 0,
+      "registry_status": "completed",
+      "scientific_result_eligible": false,
+      "artifacts": {
+        "resolved_config": {
+          "path": "configs/runs/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1.yaml",
+          "sha256": "683062743795680aa72c61c3b1f2a3f53e4470e2179e7612e4c53cbf33aff326",
+          "size_bytes": 3030,
+          "sha256_sidecar_verified": true
+        },
+        "reproduction_command": {
+          "path": "runs/commands/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1.sh",
+          "sha256": "12e2a929f91c088ae8b34fca28d19ccfc8bbf7f4e12d7fede2f1b916d2c27717",
+          "size_bytes": 405,
+          "sha256_sidecar_verified": true
+        },
+        "result": {
+          "path": "results/smoke/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1.json",
+          "sha256": "975718586168b7392cdf1da87c7847d0601eaa8d5ecddec3f0d363a1593a7531",
+          "size_bytes": 3561,
+          "sha256_sidecar_verified": true
+        },
+        "history": {
+          "path": "runs/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1/history.jsonl",
+          "sha256": "7083b1fe8c92b4bcd3526cc92cecca68468e1c9c60286aa3858304d7abfe6974",
+          "size_bytes": 2290
+        },
+        "worker_log": {
+          "path": "runs/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1/worker.log",
+          "sha256": "674aa5e56ab4bbe004081e13a7f63f1ed2f3b54241c022a6d1b8aa6a075d728e",
+          "size_bytes": 208
+        },
+        "last_checkpoint": {
+          "path": "runs/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1/last.pt",
+          "sha256": "7ff0e8f662f636cad534177bf20eab17591710e0f6eb639abc0eaa4b0cdcd312",
+          "size_bytes": 60427129,
+          "evidence_scope": "verified_pre_deletion",
+          "artifact_state": "removed_after_verified_audit",
+          "deleted_utc": "2026-08-18T19:59:09Z",
+          "post_deletion_absence_verified": true,
+          "sha256_sidecar_verified": true,
+          "sha256_sidecar": {
+            "path": "runs/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1/last.pt.sha256",
+            "sha256": "02b37df34857ca9cc9edf649ec39578cb1b8585d44c3ba4ce4dff2dae92828cc",
+            "size_bytes": 74,
+            "evidence_scope": "verified_immediately_before_deletion",
+            "artifact_state": "removed_after_verified_audit",
+            "deleted_utc": "2026-08-18T19:59:09Z",
+            "post_deletion_absence_verified": true
+          },
+          "safe_cpu_reopen_verified": true,
+          "format": "dcdn.training-checkpoint",
+          "format_version": 1,
+          "metadata_config_hash": "840bb0a542a9d922a68b0427ecaede0e8115b89540ab8f25cf4cd10a1ed3ab9f",
+          "metadata_protocol_hash": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+          "precision": "fp32_parameters_bf16_autocast",
+          "global_step": 1,
+          "accumulation_boundary": true
+        },
+        "registry_record": {
+          "path": "runs/registry/records/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1.json",
+          "sha256": "64fe2eb75d53ed408d818fb160776206fa8fcbcdadc34e01adfa7c1f9bb95540",
+          "size_bytes": 1456
+        }
+      },
+      "execution_evidence": {
+        "examples_seen": 4096,
+        "optimizer_steps": 1,
+        "validation_checks": 0,
+        "selected_validation_metric": null,
+        "best_checkpoint_filename": null,
+        "best_checkpoint_sha256": null,
+        "best_validation_metric": null,
+        "end_to_end_raw_to_logit_validation_latency": null,
+        "test_metrics": null,
+        "stopped_reason": "requested_checkpoint_boundary",
+        "elapsed_seconds": 1.0327779315412045,
+        "throughput_examples_per_second": 3966.002637069887,
+        "measurement_scope": "implementation_only_one_effective_batch_not_scientific_or_comparative"
+      },
+      "numerical_and_failure_evidence": {
+        "oom_count": 0,
+        "nonfinite_total": 0,
+        "nonfinite_by_kind": {},
+        "activation_hook_count": 3,
+        "activation_hook_observations": 3,
+        "monitor_submitted": 23,
+        "monitor_completed": 23,
+        "monitor_pending": 0,
+        "asynchronous_cuda_monitoring": true
+      }
+    },
+    {
+      "run_id": "vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1",
+      "model_key": "dcnv2_full_rank",
+      "physical_gpu_index": 1,
+      "registry_status": "completed",
+      "scientific_result_eligible": false,
+      "artifacts": {
+        "resolved_config": {
+          "path": "configs/runs/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1.yaml",
+          "sha256": "520103e871395953401d49bd38549d5cea9b26fa996e627e4fb3362f4238942d",
+          "size_bytes": 2996,
+          "sha256_sidecar_verified": true
+        },
+        "reproduction_command": {
+          "path": "runs/commands/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1.sh",
+          "sha256": "ec59997a435073325ec2fccea85695b5b7b1aa819db4bcadbd47fa3981b3bc8a",
+          "size_bytes": 417,
+          "sha256_sidecar_verified": true
+        },
+        "result": {
+          "path": "results/smoke/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1.json",
+          "sha256": "91b3d7815dce3e5f0f7b2bac99e0cf24434fcdb829c5fbce2010fa952647fc7a",
+          "size_bytes": 3574,
+          "sha256_sidecar_verified": true
+        },
+        "history": {
+          "path": "runs/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1/history.jsonl",
+          "sha256": "2356fc6fbf492d6665f3a5d1d694da79254cb9b64e6a36df97c45ecb53de4ebd",
+          "size_bytes": 2315
+        },
+        "worker_log": {
+          "path": "runs/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1/worker.log",
+          "sha256": "a5b3876a80ce30e3782f3110727b408e3ab68dd522bce858dee67cfe337f53a4",
+          "size_bytes": 214
+        },
+        "last_checkpoint": {
+          "path": "runs/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1/last.pt",
+          "sha256": "8f17793fb76ebec1b6ddf68ba2881505955ee7e4e0532301629f5d614a87e557",
+          "size_bytes": 60829036,
+          "evidence_scope": "verified_pre_deletion",
+          "artifact_state": "removed_after_verified_audit",
+          "deleted_utc": "2026-08-18T19:59:09Z",
+          "post_deletion_absence_verified": true,
+          "sha256_sidecar_verified": true,
+          "sha256_sidecar": {
+            "path": "runs/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1/last.pt.sha256",
+            "sha256": "9ae464a2891304b461c7635c39bddf7f0a6ffdf1b206e9e4f7dd4c1a455c96d3",
+            "size_bytes": 74,
+            "evidence_scope": "verified_immediately_before_deletion",
+            "artifact_state": "removed_after_verified_audit",
+            "deleted_utc": "2026-08-18T19:59:09Z",
+            "post_deletion_absence_verified": true
+          },
+          "safe_cpu_reopen_verified": true,
+          "format": "dcdn.training-checkpoint",
+          "format_version": 1,
+          "metadata_config_hash": "62c5577e21667952b06cfe22b95dfc0cb9184875a156feb680e1a17cc836479f",
+          "metadata_protocol_hash": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+          "precision": "fp32_parameters_bf16_autocast",
+          "global_step": 1,
+          "accumulation_boundary": true
+        },
+        "registry_record": {
+          "path": "runs/registry/records/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1.json",
+          "sha256": "6893d66a923cb15243d94e52a0af1611c6ab2f76e9e006f5b9fa4236b2f98161",
+          "size_bytes": 1486
+        }
+      },
+      "execution_evidence": {
+        "examples_seen": 4096,
+        "optimizer_steps": 1,
+        "validation_checks": 0,
+        "selected_validation_metric": null,
+        "best_checkpoint_filename": null,
+        "best_checkpoint_sha256": null,
+        "best_validation_metric": null,
+        "end_to_end_raw_to_logit_validation_latency": null,
+        "test_metrics": null,
+        "stopped_reason": "requested_checkpoint_boundary",
+        "elapsed_seconds": 1.0718562304973602,
+        "throughput_examples_per_second": 3821.4080241893857,
+        "measurement_scope": "implementation_only_one_effective_batch_not_scientific_or_comparative"
+      },
+      "numerical_and_failure_evidence": {
+        "oom_count": 0,
+        "nonfinite_total": 0,
+        "nonfinite_by_kind": {},
+        "activation_hook_count": 3,
+        "activation_hook_observations": 3,
+        "monitor_submitted": 19,
+        "monitor_completed": 19,
+        "monitor_pending": 0,
+        "asynchronous_cuda_monitoring": true
+      }
+    }
+  ],
+  "post_run_guards": {
+    "cost": {
+      "observed_at_utc": "2026-08-18T19:53:13.266664Z",
+      "accounting_basis": "local_owner_approved_estimate",
+      "control_plane_billing": "unavailable_and_owner_waived",
+      "ledger_epoch_utc": "2026-08-18T09:13:18Z",
+      "elapsed_hours": "10.665352",
+      "pod_rate_usd_per_hour": "3.29",
+      "storage_reserve_usd": "25",
+      "estimated_spend_usd": "60.09",
+      "eta_hours": "0",
+      "projected_spend_usd": "60.09",
+      "warning_usd": "370",
+      "hard_cap_usd": "460",
+      "reserve_start_utc": "2026-08-23T01:13:18Z",
+      "effective_stop_utc": "2026-08-23T09:13:18Z",
+      "status": "ok",
+      "launch_allowed": true,
+      "reasons": [],
+      "provider_actions_performed": false
+    },
+    "storage": {
+      "observed_at_utc": "2026-08-18T19:53:15.826349Z",
+      "ok": true,
+      "violations": [],
+      "capacity_basis": "frozen_50_gib_logical_envelope",
+      "project_bytes": 127622144,
+      "project_gib": 0.11885738372802734,
+      "project_cap_bytes": 42949672960,
+      "project_cap_gib": 40.0,
+      "logical_headroom_bytes": 53559469056,
+      "logical_headroom_gib": 49.88114261627197,
+      "required_headroom_bytes": 10737418240,
+      "required_headroom_gib": 10.0,
+      "persistent_mount_point": "/workspace",
+      "persistent_fs_type": "fuse",
+      "shared_fuse_df_caveat": true,
+      "persistent_df_enforcement": "informational_shared_backend",
+      "overlay_available_gib": 62.50660705566406,
+      "overlay_usage_fraction": 0.37493392944335935
+    },
+    "processes": {
+      "observed_at_utc": "2026-08-18T19:52:49.593766Z",
+      "recorded_worker_pids": [
+        400865,
+        400932
+      ],
+      "recorded_worker_pids_running": false,
+      "matching_task_processes": [],
+      "zero_task_owned_training_or_worker_processes": true
+    },
+    "gpus": {
+      "observed_at_utc": "2026-08-18T19:52:54.737000Z",
+      "devices": [
+        {
+          "index": 0,
+          "uuid": "GPU-afdc6868-d363-22e1-813f-a18627d22450",
+          "name": "NVIDIA A100-SXM4-80GB",
+          "memory_used_mib": 0,
+          "utilization_percent": 0
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-b644d07c-5960-012c-5ec5-b2f137c11432",
+          "name": "NVIDIA A100-SXM4-80GB",
+          "memory_used_mib": 0,
+          "utilization_percent": 0
+        }
+      ],
+      "compute_applications": [],
+      "zero_gpu_compute_processes": true
+    },
+    "post_cleanup": {
+      "checkpoint_retention_status": "removed_after_verified_audit",
+      "deleted_utc": "2026-08-18T19:59:09Z",
+      "deletion_scope": [
+        "runs/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1/last.pt",
+        "runs/vk-cp-smoke-dcdn-core-l2-s42-1eb-v1/last.pt.sha256",
+        "runs/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1/last.pt",
+        "runs/vk-cp-smoke-dcnv2-full-rank-l2-s42-1eb-v1/last.pt.sha256"
+      ],
+      "deletion_scope_count": 4,
+      "all_deleted_paths_absent": true,
+      "pre_deletion_checkpoint_path_size_hash_evidence_preserved": true,
+      "storage": {
+        "observed_at_utc": "2026-08-18T20:00:30.583480Z",
+        "ok": true,
+        "violations": [],
+        "capacity_basis": "frozen_50_gib_logical_envelope",
+        "project_bytes": 6381568,
+        "project_gib": 0.00594329833984375,
+        "project_cap_bytes": 42949672960,
+        "project_cap_gib": 40.0,
+        "logical_headroom_bytes": 53680709632,
+        "logical_headroom_gib": 49.994056701660156,
+        "required_headroom_bytes": 10737418240,
+        "required_headroom_gib": 10.0,
+        "persistent_mount_point": "/workspace",
+        "persistent_fs_type": "fuse",
+        "shared_fuse_df_caveat": true,
+        "persistent_df_enforcement": "informational_shared_backend",
+        "overlay_available_gib": 62.4995231628418,
+        "overlay_usage_fraction": 0.37500476837158203
+      },
+      "retained_artifact_read_test": {
+        "observed_at_utc": "2026-08-18T20:01:07.664646Z",
+        "ok": true,
+        "retained_artifact_keys_per_run": [
+          "resolved_config",
+          "reproduction_command",
+          "result",
+          "history",
+          "worker_log",
+          "registry_record"
+        ],
+        "retained_files_reopened": 12,
+        "retained_sidecars_verified": 8,
+        "structured_content_reparsed": true,
+        "all_retained_sizes_and_sha256_match_pre_cleanup_evidence": true,
+        "deleted_files_absent": 4
+      },
+      "processes": {
+        "observed_at_utc": "2026-08-18T20:01:25.077068Z",
+        "matching_task_processes": [],
+        "zero_task_owned_training_or_worker_processes": true
+      }
+    }
+  }
+}

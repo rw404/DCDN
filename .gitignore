@@ -34,6 +34,7 @@ runs/*
 !runs/.gitkeep
 !runs/registry/
 !runs/registry/**
+runs/registry/locks/
 !runs/commands/
 !runs/commands/**
 
