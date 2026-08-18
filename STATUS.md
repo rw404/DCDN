@@ -1,6 +1,6 @@
 # DCDN execution status
 
-Updated: `2026-08-18T20:02:45.503451Z`
+Updated: `2026-08-18T21:24:26Z`
 
 ## Current checkpoint
 
@@ -15,9 +15,9 @@ Updated: `2026-08-18T20:02:45.503451Z`
 - The owner waived provider-side expiry, credentialed billing inspection, and
   control-plane quota evidence. Frozen accounting is USD 3.29 per elapsed hour
   plus a USD 25 storage reserve.
-- Estimated incremental spend is USD 60.09, with USD 309.91 warning-threshold
-  headroom and USD 399.91 hard-cap headroom at the zero-hour post-smoke
-  checkpoint.
+- Estimated incremental spend at completion of the DCDN tuning pair is USD
+  64.54, with USD 305.46 warning-threshold headroom and USD 395.46 hard-cap
+  headroom under the owner-approved local accounting basis.
 - Test access remains locked. No local test data, labels, DCDN outputs, or
   project-generated metrics were read. A credential-free HEGM provenance
   lookup unexpectedly exposed a published benchmark table from incompatible
@@ -47,9 +47,9 @@ Updated: `2026-08-18T20:02:45.503451Z`
   `/tmp` snapshots, reviewed, and the full 46-test acquisition suite passed
   against byte-identical copies. Direct concurrent test/format writes on FUSE
   are now prohibited.
-- Dataset-specific feature audits are complete and passed before metrics. No
-  training, validation metric, test-label inspection, or model evaluation has
-  occurred.
+- Dataset-specific feature audits completed and passed before any model metric.
+  That metric-independent checkpoint itself opened no label-bearing model
+  result; subsequent DCDN tuning used only the frozen train/validation splits.
 - The VK-LSVD phase-1 contract SHA-256 is
   `380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b`.
   Its train/validation views manifest SHA-256 is
@@ -102,8 +102,9 @@ Updated: `2026-08-18T20:02:45.503451Z`
 - One isolated `/tmp` data-checkpoint run passed all 46 scoped tests, Ruff,
   formatting, and every SHA-256 sidecar.
 - The previous shared-encoder/raw-runtime blocker is resolved and bound to the
-  active premetric protocol. Real model training has not started; every source
-  remains fail-closed on exact train/validation runtime identity.
+  active premetric protocol. The first real validation-only tuning unit has now
+  completed for DCDN-Core; every source remained fail-closed on exact
+  train/validation runtime identity.
 - The raw/composite training harness now binds all nine runtime architectures,
   optimizer/runtime fairness fields, exact capacity candidate/rank, Protocol
   v3 identities, same-FD runtime sources, whole-model checkpoints, numerical
@@ -136,13 +137,18 @@ Updated: `2026-08-18T20:02:45.503451Z`
   retention policy. Their pre-deletion paths, sizes, hashes, safe CPU reopen,
   and sidecar verification remain recorded; retention is now
   `removed_after_verified_audit`.
-- No validation-only tuning or scientific model evaluation has started.
-  Ordinary seed-42 validation-only tuning may now begin. The
-  `DCNv2-capacity-matched` tuning row remains blocked until the selected
-  ordinary-DCNv2 learning rate is durably bound. Final/test execution remains
-  blocked because `test_unlocked=false`, selected configurations and exact
-  validation-selected checkpoint lineage are not frozen, and the one-pass
-  final/test runner is not yet implemented and audited.
+- The two-candidate DCDN-Core seed-42 validation-only tuning unit is complete.
+  Frozen minimization of `normalized_mse` selects `dcdn_core_l2_lr_1e_3`
+  (`learning_rate=0.001`) at `0.020977282795389355`, versus
+  `0.021020834286119675` for `dcdn_core_l2_lr_3e_4`. The difference is
+  `0.000043551490730320` in favor of the selected candidate; no tie occurred
+  and no unregistered tie-break was applied. The per-model selection artifact
+  SHA-256 is
+  `66458ce3d96d6e4f5d5382dab904a5c120134ba52385d8a5bcdbd9d3c2bccb49`.
+  `DCNv2-capacity-matched` remains blocked until the selected ordinary-DCNv2
+  learning rate is durably bound. Final/test remains blocked because
+  `test_unlocked=false`, the dataset-wide selected-config lock is incomplete,
+  and the one-pass final/test runner is not yet implemented and audited.
 - The current `DCNvsDDN.tex` remains the legacy Russian `DCN vs DDN` draft
   with stale naming and the known two-layer/`FCN` derivation issue. It was not
   changed by the smoke audit and remains a separate manuscript blocker.
@@ -170,10 +176,38 @@ history, log, and registry files and verified eight retained run/protocol
 sidecars. All matched their pre-cleanup sizes and SHA-256 values; zero
 task-owned training/worker processes remained.
 
-This checkpoint validates implementation paths only and is not a model-quality
-result. The exact next action is seed-42 validation-only tuning for the
-currently eligible frozen rows, with test access still locked. Before the
-capacity-matched row, durably bind the selected ordinary-DCNv2 learning rate;
-before any final/test access, freeze selected configurations and exact best
-checkpoint lineage, implement/audit the one-pass final runner, and activate a
-new protocol revision through the existing lifecycle gates.
+This historical checkpoint validated implementation paths only. The subsequent
+DCDN tuning unit described below is now complete. The exact next action is to
+continue the remaining eligible seed-42 validation-only tuning units, with test
+access still locked. Before the capacity-matched row, durably bind the selected
+ordinary-DCNv2 learning rate; before any final/test access, freeze every
+selected configuration and exact best-checkpoint lineage, implement/audit the
+one-pass final runner, and activate a new protocol revision through the
+existing lifecycle gates.
+
+## DCDN validation-only selection
+
+Both frozen DCDN-Core C+P LR candidates completed under Git commit
+`b41e1ce9e702b8c9406a4f01042f0d32f91f239c`, Protocol v3 SHA-256
+`1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`,
+seed 42, and the identical 39,997,440-example budget. Each made 9 validation
+checks, reported zero OOM and zero non-finite observations, and contains no
+test metric. Independent postaudit gave FINAL GO for the strict validation
+minimum above.
+
+The selected checkpoint is
+`runs/vk-cp-tune-dcdn-core-l2-s42-lr1e3-v1/best-step-000000007813-generation-0000.pt`,
+SHA-256
+`e12d3b5e769ed3c0a45318e921a2b83a276c9a1ace831cd7575ba93cfebd0f0f`.
+All 12 best generations and both `last` checkpoints (14 checkpoint/sidecar
+pairs) passed streaming hash verification, strict sidecar validation, safe
+CPU-only `weights_only=True` loading, and tensor finiteness checks. The exact
+retention inventory is in
+`results/tuning/vk_lsvd_c_plus_p_dcdn_core_selection_v1.json`; no checkpoint
+has been deleted. It marks only the selected best for retention and identifies
+13 redundant pairs as deletion candidates after the parent commits, pushes,
+and read-tests the durable evidence.
+
+This is one per-model validation selection, not the final dataset
+`selected_configs.lock`. The active protocol remains premetric and
+`test_unlocked=false`; no test data, label, or metric was accessed.

@@ -8,13 +8,15 @@ to exact data, views, feature algebra, split, schemas, denominator eligibility,
 full-scan evidence, deterministic cache identity, encoder contract, capacity
 resolution, search space, and experiment matrix.
 
-This module does not create or authorize a VK-LSVD protocol. The repository
-template is intentionally invalid. The real full-scan, cache, encoder,
-capacity, physical-schema, expanded-schema, operand-schema, and denominator-mask
-artifacts are still pending, so an actual VK lock must not yet be written.
-For the later VK-LSVD lock, the frozen train and validation row counts are
-7,505,820 and 1,516,831 respectively; those counts do not substitute for any
-pending hash.
+The intentionally invalid repository template remains only a negative test
+fixture. The actual VK-LSVD C+P premetric protocol is now materialized at
+`configs/protocols/vk_lsvd_c_plus_p/protocol_frozen.yaml`, with SHA-256
+`1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`.
+It binds the verified full scan, cache, encoder, capacity, physical/expanded/
+operand schemas, and denominator mask, plus 7,505,820 train and 1,516,831
+validation rows. Its active registry remains at the premetric stage and
+`test_unlocked=false`; the per-model DCDN validation selection is not a final
+dataset `selected_configs.lock` and does not authorize test access.
 
 ## Verified artifacts and sidecars
 

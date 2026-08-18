@@ -797,4 +797,27 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   checkpoint lineage, an audited one-pass final runner, and explicit Protocol
   lifecycle activation; `test_unlocked=false`.
 
+- VK-LSVD C+P DCDN-Core validation selection recorded 2026-08-18: both
+  predeclared seed-42 LR candidates completed as scientifically eligible
+  validation-only tuning under Git commit
+  `b41e1ce9e702b8c9406a4f01042f0d32f91f239c`, the same 39,997,440-example
+  budget, and Protocol v3 SHA-256
+  `1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`.
+  Strict minimization of frozen `normalized_mse` selected
+  `dcdn_core_l2_lr_1e_3` (`learning_rate=0.001`) at
+  `0.020977282795389355`, versus `0.021020834286119675` for
+  `dcdn_core_l2_lr_3e_4`; the absolute difference is
+  `0.000043551490730320`. No tie occurred and no post-metric tie-break was
+  invented. The durable per-model selection artifact SHA-256 is
+  `66458ce3d96d6e4f5d5382dab904a5c120134ba52385d8a5bcdbd9d3c2bccb49`.
+  Its retained selected checkpoint is
+  `best-step-000000007813-generation-0000.pt`, SHA-256
+  `e12d3b5e769ed3c0a45318e921a2b83a276c9a1ace831cd7575ba93cfebd0f0f`.
+  All 12 best generations and two `last` checkpoints passed sidecar/hash,
+  safe CPU-only reopen, and tensor-finiteness audit; no checkpoint was deleted.
+  This freezes only the DCDN per-model choice, not the dataset-wide
+  `selected_configs.lock`. `DCNv2-capacity-matched` remains gated on the
+  selected ordinary-DCNv2 LR, and final/test remains locked pending all model
+  selections and an audited one-pass runner; `test_unlocked=false`.
+
 Update this decision log whenever a material choice changes.

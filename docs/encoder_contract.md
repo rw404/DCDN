@@ -155,13 +155,14 @@ device-sync predicates. They also cover encoder-lock symlink rejection and
 replacement during parse, proving that the returned lock was parsed from the
 already hash-verified bytes.
 
-## Remaining integration gate
+## Integration status
 
-The remaining integration blocker is root-owned and atomic: the training
-harness must replace its encoded-tensor source with the verified
-`RawBatchSource`, optimize/checkpoint the complete `TrainableEncodedModel`,
-read `source.runtime_value_checks` and pass that exact mode to the encoder, and
-retain embedding-capacity exclusion. Real VK training remains fail-closed until
-that wiring and its deterministic smoke/resume verification are complete.
-This encoder work neither unlocks validation/test model metrics nor permits
-test-label access.
+The raw harness integration is complete: the verified `RawBatchSource` feeds
+the complete `TrainableEncodedModel`; the source-owned
+`runtime_value_checks` mode is passed unchanged; encoder, interaction,
+adapter, and head are optimized and checkpointed together; and embedding
+capacity remains excluded by the frozen counter. Deterministic smoke/resume
+verification passed, followed by the two frozen seed-42 DCDN-Core C+P
+validation-only LR candidates. This integration still does not authorize test
+access: the active VK protocol remains premetric with `test_unlocked=false`,
+and the per-model DCDN selection is not the dataset-wide selected-config lock.
