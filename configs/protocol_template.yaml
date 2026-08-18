@@ -1,15 +1,54 @@
 # TEMPLATE ONLY. This file is intentionally invalid until every UNRESOLVED
-# field is replaced and a byte-level .sha256 sidecar is written.
-schema_version: 1
+# field is replaced and the exact bytes have an adjacent strict .sha256
+# sidecar. Do not materialize a dataset protocol while any fact is pending.
+schema_version: 3
 dataset_id: UNRESOLVED
+feature_regime: UNRESOLVED
+
+# Frozen ordered model identities; selected_configs.lock must use this exact list.
+required_model_keys:
+  - UNRESOLVED
+
+# Premetric protocol lineage has no parent. A final child must replace null with
+# the exact digest of its independently verified premetric protocol.
+parent_premetric_protocol_sha256: null
+
+# Premetric lock: only the active protocol may authorize train/validation.
 test_unlocked: false
+test_path_available: false
+
 hashes:
   data_manifest_sha256: UNRESOLVED
+  views_manifest_sha256: UNRESOLVED
   features_sha256: UNRESOLVED
+
+  # Exact derivation from the recursively JSON-validated split mapping:
+  # sha256(json.dumps(views_payload["split"], sort_keys=True,
+  # separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8"))
+  # There is no wrapper object and no trailing newline.
   split_sha256: UNRESOLVED
+
   search_space_sha256: UNRESOLVED
   experiment_matrix_sha256: UNRESOLVED
-  selected_configs_sha256: null
+  physical_schema_sha256: UNRESOLVED
+  expanded_schema_sha256: UNRESOLVED
+  operand_schema_sha256: UNRESOLVED
+  denominator_mask_sha256: UNRESOLVED
+  full_materialized_scan_sha256: UNRESOLVED
+  cache_content_sha256: UNRESOLVED
+  encoder_contract_sha256: UNRESOLVED
+  capacity_resolution_sha256: UNRESOLVED
+
+  # selected_configs_sha256 MUST be absent while test_unlocked=false.
+  # Add it only to a separately hashed final child after validation-only
+  # selection and after selected_configs.lock has been strictly parsed.
+
+split_row_counts:
+  train: UNRESOLVED
+  validation: UNRESOLVED
+  # Must remain null or be absent while locked; no test path is available.
+  test: null
+
 final_seeds: [42, 43, 44]
 tuning_seed: 42
 tuning_splits: [train, validation]

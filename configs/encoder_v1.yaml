@@ -1,0 +1,256 @@
+schema_version: 1
+status: frozen_before_metrics
+frozen_utc: "2026-08-18T15:16:00Z"
+contract: dcdn-trainable-shared-feature-encoder-v1
+metric_derived_choices: false
+test_unlocked: false
+
+architecture:
+  context_embedding_dim: 16
+  numeric_field_embedding_dim: 16
+  representation_dim: 64
+  categorical_tables: one_separate_nn_Embedding_per_ordered_C_field
+  numeric_table: one_nn_Embedding_table_indexed_by_ordered_numeric_field
+  categorical_initializer: normal_mean_0_std_0.01
+  numeric_initializer: normal_mean_0_std_0.01
+  categorical_reserved_tokens:
+    OOV: 0
+    MISSING: 1
+  bypass_features: flattened_ordered_C_embeddings
+  operand_features: unchanged_ordered_raw_or_scale_normalized_numeric_values
+  numeric_field_view: learned_field_vector_times_scalar_without_bias
+  field_order: ordered_C_then_ordered_numeric_fields
+  denominator_validity: unchanged_pass_through
+  parameter_dtype: float32
+  accepted_input_dtypes: [float32, bfloat16]
+  fp16_inputs: forbidden
+  autocast_dtype: bfloat16
+  audit_id_and_label_fields: structurally_absent_from_encoder_forward_signature
+
+initialization:
+  policy: independent_sha256_derived_cpu_component_seeds_v1
+  primary_seed_domain: dcdn-shared-encoder-primary-v1
+  afn_secondary_seed_domain: dcdn-shared-encoder-afn-secondary-v1
+  per_table_seed_domain: dcdn-shared-encoder-table-v1
+  model_key_in_primary_seed: false
+  construction_order_independent: true
+  cuda_rng_touched: false
+  afn_plus:
+    independent_secondary_view: true
+    identical_ordered_raw_fields: true
+    shares_parameters_with_primary: false
+  all_other_models:
+    secondary_view_present: false
+
+runtime_identity:
+  source: dcdn.raw.RawSourceIdentity
+  require_dataset_id: true
+  require_data_manifest_sha256: true
+  require_views_manifest_sha256: true
+  require_feature_contract_sha256: true
+  require_physical_schema_sha256: true
+  require_expanded_schema_sha256: true
+  require_operand_schema_sha256: true
+  require_denominator_mask_sha256: true
+  require_full_materialized_scan_sha256: true
+  require_cache_content_sha256: true
+  content_digests_distinct_from_each_other_and_metadata: true
+  spec_provenance: independently_frozen_expected_values_never_copied_from_input
+  precomputed_embeddings: forbidden
+
+runtime_value_checks:
+  debug_smoke:
+    runtime_value_checks: true
+    finite_and_token_predicates: true
+    gpu_sync_allowed: true
+  optimized:
+    runtime_value_checks: false
+    finite_and_token_predicates: false
+    gpu_sync_allowed: false
+    requires_bound_full_materialized_scan_sha256: true
+    requires_bound_cache_content_sha256: true
+
+datasets:
+  vk_lsvd_up0.01_ir0.01:
+    resolution_status: verified_train_validation_views_before_model_metrics
+    source_manifest_sha256: 5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac
+    views_manifest_sha256: 738d3610fd83a93297d94ccad4c4316dd3ad8b241f8409e84daf5b2322040dbe
+    feature_contract_sha256: 380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b
+    full_materialized_scan_sha256: cc7c74b183688c1125cd3e49d32daed2b1e7560d9ee796cfe93de972792ed612
+    ordered_context_fields: [age, gender, geo, place, platform, agent]
+    categorical_cardinalities: [55, 4, 82, 24, 13, 22]
+    regimes:
+      C+P:
+        allowed_models: []
+        physical_schema_sha256: 0b334e587d2028e1e39760b735a71e712af5e75ec4fd204cbc76a5efafe12f68
+        expanded_schema_sha256: 2cfd6d12cd85346e413f476ff223e19d57be213d74fe68b75d6f0ce686c0f091
+        operand_schema_sha256: bb2f6c47fa12c175a3820830f90ff577acb293c56b107c7d1c40e4c682f2ff4d
+        denominator_mask_sha256: 9e168fae4014f4763008e89f61324858f17d376f56fb5de46f2775911650bcaa
+        cache_content_sha256: b732b95f80f9ec28f4d9dd5192bf7dba3ed16bb96093bc5add209743edfff590
+        ordered_operand_fields: &vk_p_fields
+          - p_duration_seconds
+          - p_user_show_count
+          - p_user_show_count_plus_beta
+          - p_user_timespent_sum_seconds
+          - p_user_like_count_plus_alpha
+          - p_user_share_count_plus_alpha
+          - p_user_bookmark_count_plus_alpha
+          - p_user_comments_count_plus_alpha
+          - p_user_dislike_count_plus_alpha
+          - p_user_heartbeat15_count_plus_alpha
+          - p_user_heartbeat30_count_plus_alpha
+          - p_item_show_count
+          - p_item_show_count_plus_beta
+          - p_item_timespent_sum_seconds
+          - p_item_like_count_plus_alpha
+          - p_item_share_count_plus_alpha
+          - p_item_bookmark_count_plus_alpha
+          - p_item_comments_count_plus_alpha
+          - p_item_dislike_count_plus_alpha
+          - p_item_click_on_author_count_plus_alpha
+          - p_item_heartbeat15_count_plus_alpha
+          - p_item_heartbeat30_count_plus_alpha
+          - p_ials_viewtime_dot
+          - p_ials_viewtime_user_norm
+          - p_ials_viewtime_item_norm
+          - p_ials_feedback_dot
+          - p_ials_feedback_user_norm
+          - p_ials_feedback_item_norm
+          - p_ials_survival_dot
+          - p_ials_survival_user_norm
+          - p_ials_survival_item_norm
+          - v_user_history_present
+          - v_item_history_present
+          - v_item_metadata_present
+          - v_duration_positive
+          - v_ials_viewtime_user_seen
+          - v_ials_viewtime_item_seen
+          - v_ials_viewtime_user_norm_positive
+          - v_ials_viewtime_item_norm_positive
+          - v_ials_feedback_user_seen
+          - v_ials_feedback_item_seen
+          - v_ials_feedback_user_norm_positive
+          - v_ials_feedback_item_norm_positive
+          - v_ials_survival_user_seen
+          - v_ials_survival_item_seen
+          - v_ials_survival_user_norm_positive
+          - v_ials_survival_item_norm_positive
+          - v_duration_seconds_reciprocal_floor_active
+          - v_user_show_count_reciprocal_floor_active
+          - v_user_show_count_plus_beta_reciprocal_floor_active
+          - v_item_show_count_reciprocal_floor_active
+          - v_item_show_count_plus_beta_reciprocal_floor_active
+          - v_ials_viewtime_user_norm_reciprocal_floor_active
+          - v_ials_viewtime_item_norm_reciprocal_floor_active
+          - v_ials_feedback_user_norm_reciprocal_floor_active
+          - v_ials_feedback_item_norm_reciprocal_floor_active
+          - v_ials_survival_user_norm_reciprocal_floor_active
+          - v_ials_survival_item_norm_reciprocal_floor_active
+        denominator_mask:
+          [true, true, true, false, false, false, false, false, false, false,
+           false, true, true, false, false, false, false, false, false, false,
+           false, false, false, true, true, false, true, true, false, true,
+           true, false, false, false, false, false, false, false, false, false,
+           false, false, false, false, false, false, false, false, false, false,
+           false, false, false, false, false, false, false, false]
+      C+P+E:
+        allowed_models: [dcnv2_full_rank]
+        physical_schema_sha256: 91061695b06f2a1f4c8743f4ba4c0fa66c14cd7c0dd09d15e6c40d7262b6197b
+        expanded_schema_sha256: 381beb02c21c8a56a4111b2dde50eb7c870518e9289a806f6e4ddb8a2c9dda59
+        operand_schema_sha256: 3b34b22f0779dd059e89016b388952862da074c5bfa2534cc7ba251569ba54e3
+        operand_schema_hash_derivation: sha256_compact_ASCII_JSON_of_ordered_P_then_E_names
+        denominator_mask_sha256: 8bca04940fe8b7e6cf0d2f8e100db0787cc32e066c6c9eadd0ba711652b37715
+        cache_content_sha256: 34f415bde13633adc6994e22548e9aa44817a586d6d74350c93e859835c9d5d7
+        ordered_operand_fields:
+          - p_duration_seconds
+          - p_user_show_count
+          - p_user_show_count_plus_beta
+          - p_user_timespent_sum_seconds
+          - p_user_like_count_plus_alpha
+          - p_user_share_count_plus_alpha
+          - p_user_bookmark_count_plus_alpha
+          - p_user_comments_count_plus_alpha
+          - p_user_dislike_count_plus_alpha
+          - p_user_heartbeat15_count_plus_alpha
+          - p_user_heartbeat30_count_plus_alpha
+          - p_item_show_count
+          - p_item_show_count_plus_beta
+          - p_item_timespent_sum_seconds
+          - p_item_like_count_plus_alpha
+          - p_item_share_count_plus_alpha
+          - p_item_bookmark_count_plus_alpha
+          - p_item_comments_count_plus_alpha
+          - p_item_dislike_count_plus_alpha
+          - p_item_click_on_author_count_plus_alpha
+          - p_item_heartbeat15_count_plus_alpha
+          - p_item_heartbeat30_count_plus_alpha
+          - p_ials_viewtime_dot
+          - p_ials_viewtime_user_norm
+          - p_ials_viewtime_item_norm
+          - p_ials_feedback_dot
+          - p_ials_feedback_user_norm
+          - p_ials_feedback_item_norm
+          - p_ials_survival_dot
+          - p_ials_survival_user_norm
+          - p_ials_survival_item_norm
+          - v_user_history_present
+          - v_item_history_present
+          - v_item_metadata_present
+          - v_duration_positive
+          - v_ials_viewtime_user_seen
+          - v_ials_viewtime_item_seen
+          - v_ials_viewtime_user_norm_positive
+          - v_ials_viewtime_item_norm_positive
+          - v_ials_feedback_user_seen
+          - v_ials_feedback_item_seen
+          - v_ials_feedback_user_norm_positive
+          - v_ials_feedback_item_norm_positive
+          - v_ials_survival_user_seen
+          - v_ials_survival_item_seen
+          - v_ials_survival_user_norm_positive
+          - v_ials_survival_item_norm_positive
+          - v_duration_seconds_reciprocal_floor_active
+          - v_user_show_count_reciprocal_floor_active
+          - v_user_show_count_plus_beta_reciprocal_floor_active
+          - v_item_show_count_reciprocal_floor_active
+          - v_item_show_count_plus_beta_reciprocal_floor_active
+          - v_ials_viewtime_user_norm_reciprocal_floor_active
+          - v_ials_viewtime_item_norm_reciprocal_floor_active
+          - v_ials_feedback_user_norm_reciprocal_floor_active
+          - v_ials_feedback_item_norm_reciprocal_floor_active
+          - v_ials_survival_user_norm_reciprocal_floor_active
+          - v_ials_survival_item_norm_reciprocal_floor_active
+          - e_user_avg_timespent_seconds
+          - e_user_like_rate
+          - e_user_share_rate
+          - e_user_bookmark_rate
+          - e_user_comments_rate
+          - e_user_dislike_rate
+          - e_user_heartbeat15_rate
+          - e_user_heartbeat30_rate
+          - e_item_avg_timespent_seconds
+          - e_item_like_rate
+          - e_item_share_rate
+          - e_item_bookmark_rate
+          - e_item_comments_rate
+          - e_item_dislike_rate
+          - e_item_click_on_author_rate
+          - e_item_heartbeat15_rate
+          - e_item_heartbeat30_rate
+          - e_ials_viewtime_cosine
+          - e_ials_feedback_cosine
+          - e_ials_survival_cosine
+        denominator_mask:
+          [true, true, true, false, false, false, false, false, false, false,
+           false, true, true, false, false, false, false, false, false, false,
+           false, false, false, true, true, false, true, true, false, true,
+           true, false, false, false, false, false, false, false, false, false,
+           false, false, false, false, false, false, false, false, false, false,
+           false, false, false, false, false, false, false, false, false, false,
+           false, false, false, false, false, false, false, false, false, false,
+           false, false, false, false, false, false, false, false]
+
+unresolved_datasets:
+  - kuairand_pure
+  - kuairec_big_matrix
+resolution_rule: add_only_after_verified_view_manifest_cardinalities_and_scan_attestation

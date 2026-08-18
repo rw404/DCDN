@@ -8,7 +8,7 @@ import json
 import math
 import os
 import tempfile
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
@@ -237,6 +237,31 @@ class ResumeState:
     extra_state: Mapping[str, Any]
 
 
+@dataclass(frozen=True)
+class CheckpointProgress:
+    """Validated immutable progress exposed to pre-mutation validators."""
+
+    global_step: int
+    epoch: int
+    accumulation_step: int
+    accumulation_steps: int
+    mode: str
+    model_training: bool
+
+
+@dataclass(frozen=True)
+class EvaluationCheckpointState:
+    """Metadata returned after a model-only evaluation restore."""
+
+    progress: CheckpointProgress
+    metadata: CheckpointMetadata
+    sha256: str
+    extra_state: Mapping[str, Any]
+
+
+ExtraStateValidator = Callable[[Mapping[str, Any], CheckpointProgress], None]
+
+
 def _component_name(component: Any) -> str:
     cls = component.__class__
     return f"{cls.__module__}.{cls.__qualname__}"
@@ -384,6 +409,123 @@ def _validate_nonnegative_integer(value: Any, *, field: str) -> int:
     return value
 
 
+def _validate_tensor_structure(
+    saved: torch.Tensor,
+    current: torch.Tensor,
+    *,
+    field: str,
+) -> None:
+    if saved.shape != current.shape:
+        raise CheckpointCompatibilityError(
+            f"{field} shape mismatch: checkpoint={tuple(saved.shape)}, "
+            f"current={tuple(current.shape)}"
+        )
+    if saved.dtype != current.dtype:
+        raise CheckpointCompatibilityError(
+            f"{field} dtype mismatch: checkpoint={saved.dtype}, current={current.dtype}"
+        )
+    if saved.layout != current.layout:
+        raise CheckpointCompatibilityError(
+            f"{field} layout mismatch: checkpoint={saved.layout}, "
+            f"current={current.layout}"
+        )
+
+
+def _validate_exact_extra_state(saved: Any, current: Any, *, field: str) -> None:
+    """Require exact live contract state without comparing trainable tensors."""
+
+    if isinstance(current, torch.Tensor):
+        if not isinstance(saved, torch.Tensor):
+            raise CheckpointCompatibilityError(f"{field} is not a tensor")
+        _validate_tensor_structure(saved, current, field=field)
+        try:
+            equal = torch.equal(saved.detach().cpu(), current.detach().cpu())
+        except Exception as exc:
+            raise CheckpointCompatibilityError(
+                f"{field} tensor value could not be compared"
+            ) from exc
+        if not equal:
+            raise CheckpointCompatibilityError(f"{field} tensor value mismatch")
+        return
+    if isinstance(current, Mapping):
+        if not isinstance(saved, Mapping) or set(saved) != set(current):
+            raise CheckpointCompatibilityError(f"{field} mapping keys mismatch")
+        for key, current_value in current.items():
+            _validate_exact_extra_state(
+                saved[key], current_value, field=f"{field}.{key}"
+            )
+        return
+    if isinstance(current, list | tuple):
+        if type(saved) is not type(current) or len(saved) != len(current):
+            raise CheckpointCompatibilityError(f"{field} sequence shape mismatch")
+        for index, (saved_value, current_value) in enumerate(
+            zip(saved, current, strict=True)
+        ):
+            _validate_exact_extra_state(
+                saved_value, current_value, field=f"{field}[{index}]"
+            )
+        return
+    if type(saved) is not type(current) or saved != current:
+        raise CheckpointCompatibilityError(f"{field} value mismatch")
+
+
+def _validate_state_schema(saved: Any, current: Any, *, field: str) -> None:
+    """Validate dynamic component state structure without comparing its values."""
+
+    if isinstance(current, torch.Tensor):
+        if not isinstance(saved, torch.Tensor):
+            raise CheckpointCompatibilityError(f"{field} is not a tensor")
+        _validate_tensor_structure(saved, current, field=field)
+        return
+    if isinstance(current, Mapping):
+        if not isinstance(saved, Mapping) or set(saved) != set(current):
+            raise CheckpointCompatibilityError(f"{field} mapping keys mismatch")
+        for key, current_value in current.items():
+            _validate_state_schema(saved[key], current_value, field=f"{field}.{key}")
+        return
+    if isinstance(current, list | tuple):
+        if type(saved) is not type(current) or len(saved) != len(current):
+            raise CheckpointCompatibilityError(f"{field} sequence shape mismatch")
+        for index, (saved_value, current_value) in enumerate(
+            zip(saved, current, strict=True)
+        ):
+            _validate_state_schema(
+                saved_value, current_value, field=f"{field}[{index}]"
+            )
+        return
+    if type(saved) is not type(current):
+        raise CheckpointCompatibilityError(
+            f"{field} type mismatch: checkpoint={type(saved).__name__}, "
+            f"current={type(current).__name__}"
+        )
+
+
+def _validate_detached_state(value: Any, *, field: str) -> None:
+    """Reject unsupported objects in a state with no initialized live analogue."""
+
+    if isinstance(value, torch.Tensor):
+        if value.layout not in {torch.strided, torch.sparse_coo}:
+            raise CheckpointCompatibilityError(f"{field} tensor layout is unsupported")
+        return
+    if isinstance(value, Mapping):
+        for key, child in value.items():
+            if not isinstance(key, str | int):
+                raise CheckpointCompatibilityError(
+                    f"{field} contains an unsupported mapping key"
+                )
+            _validate_detached_state(child, field=f"{field}.{key}")
+        return
+    if isinstance(value, list | tuple):
+        for index, child in enumerate(value):
+            _validate_detached_state(child, field=f"{field}[{index}]")
+        return
+    if value is None or type(value) in (bool, int, float, str):
+        return
+    raise CheckpointCompatibilityError(
+        f"{field} contains unsupported state type {type(value).__name__}"
+    )
+
+
 def _validate_module_state(model: nn.Module, state: Any) -> None:
     if not isinstance(state, Mapping):
         raise CheckpointFormatError("model state must be a mapping")
@@ -403,20 +545,12 @@ def _validate_module_state(model: nn.Module, state: Any) -> None:
                 raise CheckpointCompatibilityError(
                     f"model state {name!r} is not a tensor"
                 )
-            if saved_value.shape != current_value.shape:
-                raise CheckpointCompatibilityError(
-                    f"model state shape mismatch for {name!r}: "
-                    f"checkpoint={tuple(saved_value.shape)}, "
-                    f"current={tuple(current_value.shape)}"
-                )
-            if saved_value.dtype != current_value.dtype:
-                raise CheckpointCompatibilityError(
-                    f"model state dtype mismatch for {name!r}: "
-                    f"checkpoint={saved_value.dtype}, current={current_value.dtype}"
-                )
-        elif type(saved_value) is not type(current_value):
-            raise CheckpointCompatibilityError(
-                f"model extra state type mismatch for {name!r}"
+            _validate_tensor_structure(
+                saved_value, current_value, field=f"model state {name!r}"
+            )
+        else:
+            _validate_exact_extra_state(
+                saved_value, current_value, field=f"model extra state {name!r}"
             )
 
 
@@ -429,24 +563,108 @@ def _validate_optimizer_state(optimizer: torch.optim.Optimizer, state: Any) -> N
     current_groups = optimizer.state_dict()["param_groups"]
     if not isinstance(saved_groups, list) or len(saved_groups) != len(current_groups):
         raise CheckpointCompatibilityError("optimizer parameter-group count mismatch")
-    paired_groups = zip(saved_groups, current_groups, strict=False)
-    for index, (saved, current) in enumerate(paired_groups):
+    live_groups = optimizer.param_groups
+    if len(live_groups) != len(current_groups):
+        raise CheckpointCompatibilityError(
+            "runtime optimizer group serialization is inconsistent"
+        )
+    saved_to_live: dict[int, nn.Parameter] = {}
+    saved_to_current_id: dict[int, int] = {}
+    current_parameter_ids: set[int] = set()
+    paired_groups = zip(saved_groups, current_groups, live_groups, strict=True)
+    for index, (saved, current, live) in enumerate(paired_groups):
         if not isinstance(saved, Mapping) or "params" not in saved:
             raise CheckpointFormatError(
                 f"optimizer parameter group {index} is malformed"
             )
-        if len(saved["params"]) != len(current["params"]):
+        if not isinstance(current, Mapping) or set(saved) != set(current):
+            raise CheckpointCompatibilityError(
+                f"optimizer parameter-group fields mismatch in group {index}"
+            )
+        saved_ids = saved["params"]
+        current_ids = current["params"]
+        live_parameters = live.get("params")
+        if not all(isinstance(values, list) for values in (saved_ids, current_ids)):
+            raise CheckpointFormatError("optimizer params entries must be lists")
+        if not isinstance(live_parameters, list):
+            raise CheckpointCompatibilityError(
+                "runtime optimizer params entry must be a list"
+            )
+        if not (len(saved_ids) == len(current_ids) == len(live_parameters)):
             raise CheckpointCompatibilityError(
                 f"optimizer parameter count mismatch in group {index}"
             )
+        for field in set(saved) - {"params"}:
+            _validate_state_schema(
+                saved[field],
+                current[field],
+                field=f"optimizer group {index}.{field}",
+            )
+        for saved_id, current_id, parameter in zip(
+            saved_ids, current_ids, live_parameters, strict=True
+        ):
+            if (
+                isinstance(saved_id, bool)
+                or not isinstance(saved_id, int)
+                or isinstance(current_id, bool)
+                or not isinstance(current_id, int)
+            ):
+                raise CheckpointFormatError(
+                    "optimizer parameter identifiers must be integers"
+                )
+            if not isinstance(parameter, nn.Parameter):
+                raise CheckpointCompatibilityError(
+                    "runtime optimizer references a non-Parameter object"
+                )
+            if saved_id in saved_to_live or current_id in current_parameter_ids:
+                raise CheckpointCompatibilityError(
+                    "optimizer parameter identifiers are duplicated"
+                )
+            saved_to_live[saved_id] = parameter
+            saved_to_current_id[saved_id] = current_id
+            current_parameter_ids.add(current_id)
     saved_state = state["state"]
     if not isinstance(saved_state, Mapping):
         raise CheckpointFormatError("optimizer per-parameter state must be a mapping")
-    valid_parameter_ids = {
-        parameter_id for group in saved_groups for parameter_id in group["params"]
-    }
-    if not set(saved_state).issubset(valid_parameter_ids):
+    if not set(saved_state).issubset(saved_to_live):
         raise CheckpointFormatError("optimizer state references an unknown parameter")
+    current_state = optimizer.state_dict()["state"]
+    if not isinstance(current_state, Mapping):
+        raise CheckpointCompatibilityError(
+            "runtime optimizer per-parameter state is not a mapping"
+        )
+    for saved_id, saved_parameter_state in saved_state.items():
+        if not isinstance(saved_parameter_state, Mapping):
+            raise CheckpointFormatError(
+                f"optimizer state for parameter {saved_id} must be a mapping"
+            )
+        current_id = saved_to_current_id[saved_id]
+        current_parameter_state = current_state.get(current_id)
+        if current_parameter_state:
+            _validate_state_schema(
+                saved_parameter_state,
+                current_parameter_state,
+                field=f"optimizer state parameter {saved_id}",
+            )
+            continue
+        parameter = saved_to_live[saved_id]
+        for name, value in saved_parameter_state.items():
+            _validate_detached_state(
+                value, field=f"optimizer state parameter {saved_id}.{name}"
+            )
+            if not isinstance(value, torch.Tensor) or value.numel() <= 1:
+                continue
+            if value.shape != parameter.shape:
+                raise CheckpointCompatibilityError(
+                    f"optimizer tensor shape mismatch for parameter {saved_id}.{name}: "
+                    f"checkpoint={tuple(value.shape)}, "
+                    f"parameter={tuple(parameter.shape)}"
+                )
+            if value.is_floating_point() and value.dtype != parameter.dtype:
+                raise CheckpointCompatibilityError(
+                    f"optimizer tensor dtype mismatch for parameter {saved_id}.{name}: "
+                    f"checkpoint={value.dtype}, parameter={parameter.dtype}"
+                )
 
 
 def _validate_optional_component(
@@ -474,21 +692,15 @@ def _validate_optional_component(
         )
     if not isinstance(saved["state"], Mapping):
         raise CheckpointFormatError(f"{label} state must be a mapping")
-    # Scheduler keys are stable after construction and can be checked without
-    # applying state. GradScaler may be intentionally lazy and have an empty
-    # runtime state before its first scale(), so it cannot use the same check.
-    if label == "scheduler":
-        current_state = current.state_dict()
-        if not isinstance(current_state, Mapping):
-            raise CheckpointCompatibilityError(
-                "runtime scheduler state_dict is not a mapping"
-            )
-        if set(saved["state"]) != set(current_state):
-            raise CheckpointCompatibilityError(
-                "scheduler state keys mismatch; "
-                f"missing={sorted(set(current_state) - set(saved['state']))}, "
-                f"extra={sorted(set(saved['state']) - set(current_state))}"
-            )
+    current_state = current.state_dict()
+    if not isinstance(current_state, Mapping):
+        raise CheckpointCompatibilityError(
+            f"runtime {label} state_dict is not a mapping"
+        )
+    if current_state:
+        _validate_state_schema(saved["state"], current_state, field=f"{label} state")
+    else:
+        _validate_detached_state(saved["state"], field=f"{label} state")
 
 
 def save_checkpoint(
@@ -604,6 +816,7 @@ def load_checkpoint(
     expected_metadata: CheckpointMetadata,
     expected_accumulation_steps: int | None = None,
     map_location: str | torch.device | Mapping[str, str] = "cpu",
+    extra_state_validator: ExtraStateValidator | None = None,
 ) -> ResumeState:
     """Strictly validate then restore a training checkpoint.
 
@@ -620,6 +833,8 @@ def load_checkpoint(
         raise TypeError("sampler must be a StatefulPermutationSampler")
     if not isinstance(expected_metadata, CheckpointMetadata):
         raise TypeError("expected_metadata must be CheckpointMetadata")
+    if extra_state_validator is not None and not callable(extra_state_validator):
+        raise TypeError("extra_state_validator must be callable")
     if expected_accumulation_steps is not None:
         if isinstance(expected_accumulation_steps, bool) or not isinstance(
             expected_accumulation_steps, int
@@ -753,6 +968,23 @@ def load_checkpoint(
         extra_state = _normalise_json(payload["extra_state"])
     except (TypeError, ValueError) as exc:
         raise CheckpointFormatError(f"invalid checkpoint extra_state: {exc}") from exc
+    validated_progress = CheckpointProgress(
+        global_step=global_step,
+        epoch=epoch,
+        accumulation_step=accumulation_step,
+        accumulation_steps=accumulation_steps,
+        mode=mode,
+        model_training=progress["model_training"],
+    )
+    if extra_state_validator is not None:
+        try:
+            extra_state_validator(extra_state, validated_progress)
+        except CheckpointError:
+            raise
+        except Exception as exc:
+            raise CheckpointCompatibilityError(
+                f"checkpoint extra_state was rejected before restore: {exc}"
+            ) from exc
 
     # All fail-closed checks above are mutation-free. These state_dict loads are
     # expected not to fail after structural validation. RNG is restored last.
@@ -772,6 +1004,182 @@ def load_checkpoint(
         accumulation_step=accumulation_step,
         accumulation_steps=accumulation_steps,
         mode=mode,
+        sha256=digest,
+        extra_state=extra_state,
+    )
+
+
+def load_model_checkpoint_for_evaluation(
+    path: str | os.PathLike[str],
+    *,
+    model: nn.Module,
+    expected_metadata: CheckpointMetadata,
+    expected_mode: str = "train",
+    map_location: str | torch.device | Mapping[str, str] = "cpu",
+    extra_state_validator: ExtraStateValidator | None = None,
+    restore_model: bool = True,
+) -> EvaluationCheckpointState:
+    """Restore only validated model weights for parent-bound final evaluation.
+
+    The optimizer, scheduler, sampler, scaler, RNG streams, and the live model's
+    training/evaluation mode are deliberately untouched.  Every envelope,
+    metadata, progress, model-contract, and caller extra-state check completes
+    before ``model.load_state_dict`` is invoked.  ``restore_model=False`` is a
+    validation-only inspection used to prove best-checkpoint lineage without
+    mutating the live model.
+    """
+
+    if not isinstance(model, nn.Module):
+        raise TypeError("model must be an nn.Module")
+    if not isinstance(expected_metadata, CheckpointMetadata):
+        raise TypeError("expected_metadata must be CheckpointMetadata")
+    if not isinstance(expected_mode, str) or not expected_mode.strip():
+        raise ValueError("expected_mode must be a non-empty string")
+    if expected_mode != expected_mode.strip():
+        raise ValueError("expected_mode must not contain surrounding whitespace")
+    if extra_state_validator is not None and not callable(extra_state_validator):
+        raise TypeError("extra_state_validator must be callable")
+    if type(restore_model) is not bool:
+        raise TypeError("restore_model must be boolean")
+
+    payload, digest = _load_verified_payload(Path(path), map_location=map_location)
+    _require_exact_keys(
+        payload,
+        {
+            "format",
+            "version",
+            "metadata",
+            "progress",
+            "components",
+            "rng_state",
+            "extra_state",
+        },
+        label="checkpoint payload",
+    )
+    if payload["format"] != CHECKPOINT_FORMAT:
+        raise CheckpointFormatError(
+            f"unsupported checkpoint format: {payload['format']!r}"
+        )
+    if payload["version"] != CHECKPOINT_VERSION:
+        raise CheckpointFormatError(
+            f"unsupported checkpoint version: {payload['version']!r}"
+        )
+
+    saved_metadata = CheckpointMetadata.from_dict(payload["metadata"])
+    mismatches = saved_metadata.mismatch_fields(expected_metadata)
+    if mismatches:
+        raise CheckpointCompatibilityError(
+            "frozen checkpoint metadata mismatch: " + ", ".join(mismatches)
+        )
+
+    progress = payload["progress"]
+    if not isinstance(progress, Mapping):
+        raise CheckpointFormatError("checkpoint progress must be a mapping")
+    _require_exact_keys(
+        progress,
+        {
+            "global_step",
+            "epoch",
+            "accumulation_step",
+            "accumulation_steps",
+            "accumulation_boundary",
+            "mode",
+            "model_training",
+        },
+        label="checkpoint progress",
+    )
+    global_step = _validate_nonnegative_integer(
+        progress["global_step"], field="global_step"
+    )
+    epoch = _validate_nonnegative_integer(progress["epoch"], field="epoch")
+    accumulation_step = _validate_nonnegative_integer(
+        progress["accumulation_step"], field="accumulation_step"
+    )
+    accumulation_steps = progress["accumulation_steps"]
+    if (
+        isinstance(accumulation_steps, bool)
+        or not isinstance(accumulation_steps, int)
+        or accumulation_steps <= 0
+    ):
+        raise CheckpointFormatError("accumulation_steps must be a positive integer")
+    if progress["accumulation_boundary"] is not True or accumulation_step != 0:
+        raise CheckpointCompatibilityError(
+            "checkpoint is not at a completed accumulation boundary"
+        )
+    mode = progress["mode"]
+    if not isinstance(mode, str) or not mode.strip() or mode != mode.strip():
+        raise CheckpointFormatError("checkpoint mode must be a non-empty string")
+    if mode != expected_mode:
+        raise CheckpointCompatibilityError(
+            f"checkpoint mode mismatch: checkpoint={mode!r}, expected={expected_mode!r}"
+        )
+    if type(progress["model_training"]) is not bool:
+        raise CheckpointFormatError("model_training must be boolean")
+    validated_progress = CheckpointProgress(
+        global_step=global_step,
+        epoch=epoch,
+        accumulation_step=accumulation_step,
+        accumulation_steps=accumulation_steps,
+        mode=mode,
+        model_training=progress["model_training"],
+    )
+
+    components = payload["components"]
+    if not isinstance(components, Mapping):
+        raise CheckpointFormatError("checkpoint components must be a mapping")
+    _require_exact_keys(
+        components,
+        {"model", "optimizer", "scheduler", "sampler", "scaler"},
+        label="checkpoint components",
+    )
+    for label in ("model", "optimizer", "sampler"):
+        component = components[label]
+        if not isinstance(component, Mapping) or set(component) != {"type", "state"}:
+            raise CheckpointFormatError(f"{label} component is malformed")
+        if not isinstance(component["type"], str) or not component["type"]:
+            raise CheckpointFormatError(f"{label} component type is malformed")
+        if not isinstance(component["state"], Mapping):
+            raise CheckpointFormatError(f"{label} state must be a mapping")
+    for label in ("scheduler", "scaler"):
+        component = components[label]
+        if component is None:
+            continue
+        if not isinstance(component, Mapping) or set(component) != {"type", "state"}:
+            raise CheckpointFormatError(f"{label} component is malformed")
+        if not isinstance(component["type"], str) or not component["type"]:
+            raise CheckpointFormatError(f"{label} component type is malformed")
+        if not isinstance(component["state"], Mapping):
+            raise CheckpointFormatError(f"{label} state must be a mapping")
+    model_component = components["model"]
+    if model_component["type"] != _component_name(model):
+        raise CheckpointCompatibilityError(
+            f"model type mismatch: checkpoint={model_component['type']!r}, "
+            f"current={_component_name(model)!r}"
+        )
+    _validate_module_state(model, model_component["state"])
+    try:
+        validate_rng_state(payload["rng_state"])
+    except RNGStateError as exc:
+        raise CheckpointCompatibilityError(f"invalid RNG state: {exc}") from exc
+    try:
+        extra_state = _normalise_json(payload["extra_state"])
+    except (TypeError, ValueError) as exc:
+        raise CheckpointFormatError(f"invalid checkpoint extra_state: {exc}") from exc
+    if extra_state_validator is not None:
+        try:
+            extra_state_validator(extra_state, validated_progress)
+        except CheckpointError:
+            raise
+        except Exception as exc:
+            raise CheckpointCompatibilityError(
+                f"checkpoint extra_state was rejected before restore: {exc}"
+            ) from exc
+
+    if restore_model:
+        model.load_state_dict(model_component["state"], strict=True)
+    return EvaluationCheckpointState(
+        progress=validated_progress,
+        metadata=saved_metadata,
         sha256=digest,
         extra_state=extra_state,
     )

@@ -1,6 +1,6 @@
 # DCDN execution status
 
-Updated: `2026-08-18T15:17:23Z`
+Updated: `2026-08-18T18:37:19.390739Z`
 
 ## Current checkpoint
 
@@ -15,8 +15,9 @@ Updated: `2026-08-18T15:17:23Z`
 - The owner waived provider-side expiry, credentialed billing inspection, and
   control-plane quota evidence. Frozen accounting is USD 3.29 per elapsed hour
   plus a USD 25 storage reserve.
-- Estimated incremental spend is USD 44.96 with USD 415.04 hard-cap headroom at
-  this checkpoint.
+- Estimated incremental spend is USD 55.93, with USD 314.07 warning-threshold
+  headroom and USD 404.07 hard-cap headroom. At the conservative one-hour
+  ETA the projection is USD 59.22, leaving USD 400.78 hard-cap headroom.
 - Test access remains locked. No local test data, labels, DCDN outputs, or
   project-generated metrics were read. A credential-free HEGM provenance
   lookup unexpectedly exposed a published benchmark table from incompatible
@@ -55,6 +56,37 @@ Updated: `2026-08-18T15:17:23Z`
   `738d3610fd83a93297d94ccad4c4316dd3ad8b241f8409e84daf5b2322040dbe`.
   It records 12 matched shards (2.44 GB), 7,505,820 train rows, and 1,516,831
   validation rows. Week 26 remained outside the path graph and unopened.
+- VK-LSVD runtime/encoder hardening is frozen: encoder-contract SHA-256
+  `16fa99db8e92ce4dd55c0bd5e7d7bfd8af8d3d59251cc769b41988e61d414449`
+  binds full-scan SHA-256
+  `cc7c74b183688c1125cd3e49d32daed2b1e7560d9ee796cfe93de972792ed612`
+  and C+P cache-content SHA-256
+  `b732b95f80f9ec28f4d9dd5192bf7dba3ed16bb96093bc5add209743edfff590`.
+  The combined fresh-`/tmp` runtime/encoder hardening suite passed 64 tests.
+- The metric-free VK C+P capacity artifact SHA-256 is
+  `d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565`.
+  It mechanically selects two layers, four experts, and rank 12 within the
+  frozen ±5% parameter/FLOP rule. The reporting label is
+  `DCNv2-capacity-matched`; `dcnv2_capacity_matched_core` is the stable
+  runtime key and `DCNv2-capacity-matched-core` is historical provenance only.
+- The actual VK C+P premetric Protocol v3 SHA-256 is
+  `1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`;
+  active-registry SHA-256 is
+  `2d76236dece1769c08417cc0322f3b3bc51001cfb52ceb945e24fe237ca0fdb4`;
+  canonical views-split SHA-256 is
+  `f754784d06141daf27aae45191d30d8468720d7b4d9410d7d6470c4632e67e75`.
+  Independent views-split, active-state, and exact train/validation
+  `RuntimeIdentity` gates passed, as did 70 fresh-`/tmp` Protocol tests.
+  There is no selected-config hash, test row count, or test path, and
+  `test_unlocked=false`. Capacity resolution and protocol materialization
+  opened no data row or label, used no GPU, and computed no model metric.
+- The deterministic execution projection keeps frozen
+  `effective_batch=4096` but floors the 40,000,000-example hard maximum to
+  39,997,440 examples, so execution never exceeds it. Validation runs at the
+  first completed batch at or above each declared 4,000,000-example threshold
+  (first at 4,001,792), identically for every model. The declared search
+  lock/hash remains unchanged; this arithmetic policy triggers no search or
+  protocol re-hash.
 - The corrected KuaiRand-Pure contract SHA-256 is
   `92a060d34e16d5b3dd2674d9ca75281fac0d20a54adda03c9ecaa206e9e601ef`.
   Its owner-approved embargo excludes exactly 6,639 overlapping earlier-role
@@ -69,18 +101,35 @@ Updated: `2026-08-18T15:17:23Z`
   train-only duration constant is 131.684 seconds.
 - One isolated `/tmp` data-checkpoint run passed all 46 scoped tests, Ruff,
   formatting, and every SHA-256 sidecar.
-- Real model execution remains fail-closed on the previously unresolved
-  trainable shared encoder and bounded raw-shard bridge. Their contracts and a
-  dedicated full-materialized-scan hash are being frozen before GPU work.
+- The previous shared-encoder/raw-runtime blocker is resolved and bound to the
+  active premetric protocol. Real model training has not started; every source
+  remains fail-closed on exact train/validation runtime identity.
+- The raw/composite training harness now binds all nine runtime architectures,
+  optimizer/runtime fairness fields, exact capacity candidate/rank, Protocol
+  v3 identities, same-FD runtime sources, whole-model checkpoints, numerical
+  monitoring, and immutable worker receipts. A fresh independent snapshot
+  passed 263 synthetic CPU tests, Ruff, formatting, and compilation. Independent
+  review authorizes only two one-effective-batch implementation smoke runs
+  after clean Git provenance. Ordinary seed-42 validation tuning may follow a
+  successful smoke; capacity-control tuning remains locked until a durable
+  selected-DCNv2 learning-rate binding exists, and final/test remains locked.
 
 ## Preflight result
 
-**SOURCE/MODEL CHECKPOINT PASSED UNDER OWNER OVERRIDE.** Local guards report
-0.00395 GiB of project-owned durable artifacts and 71.95 GiB free on the
-temporary overlay. The operational durable-artifact cap remains 40 GiB with
-at least 10 GiB kept free.
+**VK PRE-SMOKE CHECKPOINT PASSED UNDER OWNER OVERRIDE.** At
+`2026-08-18T18:37:19.390739Z`, the credential-free local cost guard allowed a
+mandatory one-hour ETA: USD 55.93 estimated current spend and USD 59.22
+projected, below both thresholds. The storage guard measured 5,939,200 bytes
+(0.005531 GiB) of project-owned durable artifacts, 49.994469 GiB logical
+headroom under the frozen 50 GiB envelope, and 62.554615 GiB available on the
+temporary overlay at 37.4454% usage. Both A100s were idle at 0 MiB and 0%
+utilization. The `/workspace` FUSE `df` capacity is
+informational shared-backend metadata; the 40 GiB project cap and 10 GiB
+reserve remain enforced. No guard violation or provider action occurred.
 
-The exact next actions are to freeze the trainable shared encoder and the
-full-scan-attested bounded raw-shard source, integrate them with the
-deterministic harness, then run synthetic two-GPU and real train-only
-smoke/throughput checks. Test access remains locked.
+The exact next action is an explicit staged-diff audit, clean commit/push, and
+two concurrent one-effective-batch train-only implementation smoke runs under
+the active protocol (DCDN on GPU0 and full-rank DCNv2 on GPU1).
+Only after those pass may seed-42 validation-only tuning begin. Test access
+remains locked until selected configurations are frozen and final lineage is
+activated.

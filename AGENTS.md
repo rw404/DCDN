@@ -33,13 +33,13 @@ For any RunPod or other paid remote-compute task, also read `REMOTE_AGENT_PROMPT
 ## Experimental requirements
 
 - Keep the industrial causal core: `DCNv2-187`, `DCNv2-112`, production-hybrid `DCDN-112`, and `Hybrid-second-product-control-112`, which preserves the exact wrapper but replaces the reciprocal carrier by a second product carrier.
-- Never use `DCDN-sham`. Call the public raw-core rank/width control `DCNv2-capacity-matched-core`; call the exact production/bridge control `Hybrid-second-product-control`.
+- Never use `DCDN-sham`. Use the user-facing/reporting label `DCNv2-capacity-matched` for the public raw-core rank/width control; retain `dcnv2_capacity_matched_core` as its stable internal key and `DCNv2-capacity-matched-core` only as a historical frozen provenance alias. Do not rewrite or re-hash existing search/view locks solely for this naming update. Call the exact production/bridge control `Hybrid-second-product-control`.
 - Explicit reciprocal inputs are an offline-only optional control; no extra A/B arm is required.
 - Keep the public-dataset scope frozen: VK-LSVD and KuaiRand-Pure are core; KuaiRec big matrix is the mechanistic ablation; Yambda-50M is optional only after all mandatory tables are complete.
 - HEGM currently supports exactly VK-LSVD `up0.01_ir0.01` and KuaiRec big matrix. Its released processed views are not sufficient for a strict `C+P` versus `C+P+E/R` comparison; rebuild the matched base-operand and engineered views from allowed raw history.
 - On KuaiRand-Pure, use `long_view` as the primary target and the late randomized rows as the headline test. Never use `is_rand` as a feature or claim unbiased evaluation beyond the fixed intervention pool.
 - Exclude KuaiRand monthly `video_features_statistic.csv` from the strict causal experiment. On KuaiRec, lag daily aggregates by at least one day. Current-row outcomes are labels, not inputs.
-- Run the full eight-model suite only on the shared `C+P` regime of VK-LSVD and KuaiRand-Pure. On KuaiRec prioritize `DCNv2(C+P)`, `DCNv2(C+P+E)`, `DCDN(C+P)`, `DCNv2-capacity-matched-core(C+P)`, and `AFN+(C+P)`.
+- Run the full eight-model suite only on the shared `C+P` regime of VK-LSVD and KuaiRand-Pure. On KuaiRec prioritize `DCNv2(C+P)`, `DCNv2(C+P+E)`, `DCDN(C+P)`, `DCNv2-capacity-matched(C+P)`, and `AFN+(C+P)`.
 - Do not add KuaiSAR, EB-NeRD, Criteo/Avazu, Tenrec, MicroLens, or another dataset/model before every mandatory result cell is complete and the user explicitly expands scope.
 - Prevent temporal leakage. Every aggregate must precede the target example.
 - In public `DCDN-Core`, apply division only to semantically valid raw/base-operand denominator coordinates; categorical, ID, PLE, and content embeddings bypass it. Preserve the confirmed production block separately as an unmasked reciprocal operation over PLE coordinates, and do not silently claim that it uses the public raw-denominator mask.

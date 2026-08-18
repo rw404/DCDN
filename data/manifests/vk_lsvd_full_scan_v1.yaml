@@ -1,0 +1,3124 @@
+schema_version: 1
+dataset_id: vk_lsvd_up0.01_ir0.01
+artifact_role: canonical_full_materialized_train_validation_scan
+scan_state: complete_and_hash_verified
+algorithm_version: vk-lsvd-full-materialized-scan-v2
+algorithm_source_sha256: 40edf35afc0cddac1ae93c924337985579df96c13270bc2cb6a973397961f5b1
+source_manifest_sha256: 5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac
+views_manifest_sha256: 738d3610fd83a93297d94ccad4c4316dd3ad8b241f8409e84daf5b2322040dbe
+feature_contract_sha256: 380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b
+test_unlocked: false
+test_labels_opened: false
+test_view_opened: false
+week26_path_constructed: false
+model_metrics_computed: false
+scan_scope:
+  roles:
+  - train
+  - validation
+  weeks:
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  paired_regimes:
+  - C+P
+  - C+P+E
+  parquet_batch_rows: 262144
+schema_identity:
+  ordered_C:
+  - age
+  - gender
+  - geo
+  - place
+  - platform
+  - agent
+  ordered_P:
+  - p_duration_seconds
+  - p_user_show_count
+  - p_user_show_count_plus_beta
+  - p_user_timespent_sum_seconds
+  - p_user_like_count_plus_alpha
+  - p_user_share_count_plus_alpha
+  - p_user_bookmark_count_plus_alpha
+  - p_user_comments_count_plus_alpha
+  - p_user_dislike_count_plus_alpha
+  - p_user_heartbeat15_count_plus_alpha
+  - p_user_heartbeat30_count_plus_alpha
+  - p_item_show_count
+  - p_item_show_count_plus_beta
+  - p_item_timespent_sum_seconds
+  - p_item_like_count_plus_alpha
+  - p_item_share_count_plus_alpha
+  - p_item_bookmark_count_plus_alpha
+  - p_item_comments_count_plus_alpha
+  - p_item_dislike_count_plus_alpha
+  - p_item_click_on_author_count_plus_alpha
+  - p_item_heartbeat15_count_plus_alpha
+  - p_item_heartbeat30_count_plus_alpha
+  - p_ials_viewtime_dot
+  - p_ials_viewtime_user_norm
+  - p_ials_viewtime_item_norm
+  - p_ials_feedback_dot
+  - p_ials_feedback_user_norm
+  - p_ials_feedback_item_norm
+  - p_ials_survival_dot
+  - p_ials_survival_user_norm
+  - p_ials_survival_item_norm
+  - v_user_history_present
+  - v_item_history_present
+  - v_item_metadata_present
+  - v_duration_positive
+  - v_ials_viewtime_user_seen
+  - v_ials_viewtime_item_seen
+  - v_ials_viewtime_user_norm_positive
+  - v_ials_viewtime_item_norm_positive
+  - v_ials_feedback_user_seen
+  - v_ials_feedback_item_seen
+  - v_ials_feedback_user_norm_positive
+  - v_ials_feedback_item_norm_positive
+  - v_ials_survival_user_seen
+  - v_ials_survival_item_seen
+  - v_ials_survival_user_norm_positive
+  - v_ials_survival_item_norm_positive
+  - v_duration_seconds_reciprocal_floor_active
+  - v_user_show_count_reciprocal_floor_active
+  - v_user_show_count_plus_beta_reciprocal_floor_active
+  - v_item_show_count_reciprocal_floor_active
+  - v_item_show_count_plus_beta_reciprocal_floor_active
+  - v_ials_viewtime_user_norm_reciprocal_floor_active
+  - v_ials_viewtime_item_norm_reciprocal_floor_active
+  - v_ials_feedback_user_norm_reciprocal_floor_active
+  - v_ials_feedback_item_norm_reciprocal_floor_active
+  - v_ials_survival_user_norm_reciprocal_floor_active
+  - v_ials_survival_item_norm_reciprocal_floor_active
+  ordered_E:
+  - e_user_avg_timespent_seconds
+  - e_user_like_rate
+  - e_user_share_rate
+  - e_user_bookmark_rate
+  - e_user_comments_rate
+  - e_user_dislike_rate
+  - e_user_heartbeat15_rate
+  - e_user_heartbeat30_rate
+  - e_item_avg_timespent_seconds
+  - e_item_like_rate
+  - e_item_share_rate
+  - e_item_bookmark_rate
+  - e_item_comments_rate
+  - e_item_dislike_rate
+  - e_item_click_on_author_rate
+  - e_item_heartbeat15_rate
+  - e_item_heartbeat30_rate
+  - e_ials_viewtime_cosine
+  - e_ials_feedback_cosine
+  - e_ials_survival_cosine
+  dimensions:
+    C: 6
+    P0: 31
+    V: 27
+    P: 58
+    E: 20
+  physical_schema_sha256:
+    C_plus_P: 0b334e587d2028e1e39760b735a71e712af5e75ec4fd204cbc76a5efafe12f68
+    C_plus_P_plus_E: 91061695b06f2a1f4c8743f4ba4c0fa66c14cd7c0dd09d15e6c40d7262b6197b
+  expanded_schema_sha256:
+    C_plus_P: 2cfd6d12cd85346e413f476ff223e19d57be213d74fe68b75d6f0ce686c0f091
+    C_plus_P_plus_E: 381beb02c21c8a56a4111b2dde50eb7c870518e9289a806f6e4ddb8a2c9dda59
+  operand_schema_sha256:
+    C_plus_P: bb2f6c47fa12c175a3820830f90ff577acb293c56b107c7d1c40e4c682f2ff4d
+    C_plus_P_plus_E: 3b34b22f0779dd059e89016b388952862da074c5bfa2534cc7ba251569ba54e3
+  denominator_mask_sha256:
+    C_plus_P: 9e168fae4014f4763008e89f61324858f17d376f56fb5de46f2775911650bcaa
+    C_plus_P_plus_E: 8bca04940fe8b7e6cf0d2f8e100db0787cc32e066c6c9eadd0ba711652b37715
+  ordered_denominator_mask:
+    C_plus_P:
+    - true
+    - true
+    - true
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - true
+    - true
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - true
+    - true
+    - false
+    - true
+    - true
+    - false
+    - true
+    - true
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    C_plus_P_plus_E:
+    - true
+    - true
+    - true
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - true
+    - true
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - true
+    - true
+    - false
+    - true
+    - true
+    - false
+    - true
+    - true
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+input_boundary:
+  model_C_plus_P_fields:
+  - age
+  - gender
+  - geo
+  - place
+  - platform
+  - agent
+  - p_duration_seconds
+  - p_user_show_count
+  - p_user_show_count_plus_beta
+  - p_user_timespent_sum_seconds
+  - p_user_like_count_plus_alpha
+  - p_user_share_count_plus_alpha
+  - p_user_bookmark_count_plus_alpha
+  - p_user_comments_count_plus_alpha
+  - p_user_dislike_count_plus_alpha
+  - p_user_heartbeat15_count_plus_alpha
+  - p_user_heartbeat30_count_plus_alpha
+  - p_item_show_count
+  - p_item_show_count_plus_beta
+  - p_item_timespent_sum_seconds
+  - p_item_like_count_plus_alpha
+  - p_item_share_count_plus_alpha
+  - p_item_bookmark_count_plus_alpha
+  - p_item_comments_count_plus_alpha
+  - p_item_dislike_count_plus_alpha
+  - p_item_click_on_author_count_plus_alpha
+  - p_item_heartbeat15_count_plus_alpha
+  - p_item_heartbeat30_count_plus_alpha
+  - p_ials_viewtime_dot
+  - p_ials_viewtime_user_norm
+  - p_ials_viewtime_item_norm
+  - p_ials_feedback_dot
+  - p_ials_feedback_user_norm
+  - p_ials_feedback_item_norm
+  - p_ials_survival_dot
+  - p_ials_survival_user_norm
+  - p_ials_survival_item_norm
+  - v_user_history_present
+  - v_item_history_present
+  - v_item_metadata_present
+  - v_duration_positive
+  - v_ials_viewtime_user_seen
+  - v_ials_viewtime_item_seen
+  - v_ials_viewtime_user_norm_positive
+  - v_ials_viewtime_item_norm_positive
+  - v_ials_feedback_user_seen
+  - v_ials_feedback_item_seen
+  - v_ials_feedback_user_norm_positive
+  - v_ials_feedback_item_norm_positive
+  - v_ials_survival_user_seen
+  - v_ials_survival_item_seen
+  - v_ials_survival_user_norm_positive
+  - v_ials_survival_item_norm_positive
+  - v_duration_seconds_reciprocal_floor_active
+  - v_user_show_count_reciprocal_floor_active
+  - v_user_show_count_plus_beta_reciprocal_floor_active
+  - v_item_show_count_reciprocal_floor_active
+  - v_item_show_count_plus_beta_reciprocal_floor_active
+  - v_ials_viewtime_user_norm_reciprocal_floor_active
+  - v_ials_viewtime_item_norm_reciprocal_floor_active
+  - v_ials_feedback_user_norm_reciprocal_floor_active
+  - v_ials_feedback_item_norm_reciprocal_floor_active
+  - v_ials_survival_user_norm_reciprocal_floor_active
+  - v_ials_survival_item_norm_reciprocal_floor_active
+  model_C_plus_P_plus_E_fields:
+  - age
+  - gender
+  - geo
+  - place
+  - platform
+  - agent
+  - p_duration_seconds
+  - p_user_show_count
+  - p_user_show_count_plus_beta
+  - p_user_timespent_sum_seconds
+  - p_user_like_count_plus_alpha
+  - p_user_share_count_plus_alpha
+  - p_user_bookmark_count_plus_alpha
+  - p_user_comments_count_plus_alpha
+  - p_user_dislike_count_plus_alpha
+  - p_user_heartbeat15_count_plus_alpha
+  - p_user_heartbeat30_count_plus_alpha
+  - p_item_show_count
+  - p_item_show_count_plus_beta
+  - p_item_timespent_sum_seconds
+  - p_item_like_count_plus_alpha
+  - p_item_share_count_plus_alpha
+  - p_item_bookmark_count_plus_alpha
+  - p_item_comments_count_plus_alpha
+  - p_item_dislike_count_plus_alpha
+  - p_item_click_on_author_count_plus_alpha
+  - p_item_heartbeat15_count_plus_alpha
+  - p_item_heartbeat30_count_plus_alpha
+  - p_ials_viewtime_dot
+  - p_ials_viewtime_user_norm
+  - p_ials_viewtime_item_norm
+  - p_ials_feedback_dot
+  - p_ials_feedback_user_norm
+  - p_ials_feedback_item_norm
+  - p_ials_survival_dot
+  - p_ials_survival_user_norm
+  - p_ials_survival_item_norm
+  - v_user_history_present
+  - v_item_history_present
+  - v_item_metadata_present
+  - v_duration_positive
+  - v_ials_viewtime_user_seen
+  - v_ials_viewtime_item_seen
+  - v_ials_viewtime_user_norm_positive
+  - v_ials_viewtime_item_norm_positive
+  - v_ials_feedback_user_seen
+  - v_ials_feedback_item_seen
+  - v_ials_feedback_user_norm_positive
+  - v_ials_feedback_item_norm_positive
+  - v_ials_survival_user_seen
+  - v_ials_survival_item_seen
+  - v_ials_survival_user_norm_positive
+  - v_ials_survival_item_norm_positive
+  - v_duration_seconds_reciprocal_floor_active
+  - v_user_show_count_reciprocal_floor_active
+  - v_user_show_count_plus_beta_reciprocal_floor_active
+  - v_item_show_count_reciprocal_floor_active
+  - v_item_show_count_plus_beta_reciprocal_floor_active
+  - v_ials_viewtime_user_norm_reciprocal_floor_active
+  - v_ials_viewtime_item_norm_reciprocal_floor_active
+  - v_ials_feedback_user_norm_reciprocal_floor_active
+  - v_ials_feedback_item_norm_reciprocal_floor_active
+  - v_ials_survival_user_norm_reciprocal_floor_active
+  - v_ials_survival_item_norm_reciprocal_floor_active
+  - e_user_avg_timespent_seconds
+  - e_user_like_rate
+  - e_user_share_rate
+  - e_user_bookmark_rate
+  - e_user_comments_rate
+  - e_user_dislike_rate
+  - e_user_heartbeat15_rate
+  - e_user_heartbeat30_rate
+  - e_item_avg_timespent_seconds
+  - e_item_like_rate
+  - e_item_share_rate
+  - e_item_bookmark_rate
+  - e_item_comments_rate
+  - e_item_dislike_rate
+  - e_item_click_on_author_rate
+  - e_item_heartbeat15_rate
+  - e_item_heartbeat30_rate
+  - e_ials_viewtime_cosine
+  - e_ials_feedback_cosine
+  - e_ials_survival_cosine
+  audit_only_fields:
+  - user_id
+  - item_id
+  - week
+  - source_row_index0
+  - stable_row_id
+  target_only_fields:
+  - label_normalized_watch_time
+  - label_timespent_seconds
+  forbidden_model_input_intersection: []
+  current_outcomes_consumed_as_features: false
+row_counts:
+  train: 7505820
+  validation: 1516831
+  total: 9022651
+token_bounds:
+  age:
+    minimum: 2
+    maximum: 54
+    cardinality: 55
+  gender:
+    minimum: 2
+    maximum: 3
+    cardinality: 4
+  geo:
+    minimum: 2
+    maximum: 81
+    cardinality: 82
+  place:
+    minimum: 2
+    maximum: 23
+    cardinality: 24
+  platform:
+    minimum: 2
+    maximum: 12
+    cardinality: 13
+  agent:
+    minimum: 2
+    maximum: 21
+    cardinality: 22
+numeric_ranges:
+  P:
+    p_duration_seconds:
+      minimum: 0.028901733458042145
+      maximum: 1.0404623746871948
+    p_user_show_count:
+      minimum: 0.13097712397575378
+      maximum: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      minimum: 0.2805507779121399
+      maximum: 1.2358003854751587
+    p_user_timespent_sum_seconds:
+      minimum: 0.035851094871759415
+      maximum: 1.4128278493881226
+    p_user_like_count_plus_alpha:
+      minimum: 0.04716981202363968
+      maximum: 2.169811248779297
+    p_user_share_count_plus_alpha:
+      minimum: 0.25
+      maximum: 4.349999904632568
+    p_user_bookmark_count_plus_alpha:
+      minimum: 0.5
+      maximum: 11.300000190734863
+    p_user_comments_count_plus_alpha:
+      minimum: 0.08474576473236084
+      maximum: 2.96610164642334
+    p_user_dislike_count_plus_alpha:
+      minimum: 0.8333333134651184
+      maximum: 33.16666793823242
+    p_user_heartbeat15_count_plus_alpha:
+      minimum: 0.029411764815449715
+      maximum: 1.4460784196853638
+    p_user_heartbeat30_count_plus_alpha:
+      minimum: 0.03546099364757538
+      maximum: 1.453900694847107
+    p_item_show_count:
+      minimum: 0.0
+      maximum: 4.935606002807617
+    p_item_show_count_plus_beta:
+      minimum: 0.005873025394976139
+      maximum: 4.912491798400879
+    p_item_timespent_sum_seconds:
+      minimum: 0.0
+      maximum: 2.2732903957366943
+    p_item_like_count_plus_alpha:
+      minimum: 0.011135857552289963
+      maximum: 2.708240509033203
+    p_item_share_count_plus_alpha:
+      minimum: 0.044247787445783615
+      maximum: 3.725663661956787
+    p_item_bookmark_count_plus_alpha:
+      minimum: 0.20000000298023224
+      maximum: 3.240000009536743
+    p_item_comments_count_plus_alpha:
+      minimum: 0.010309278033673763
+      maximum: 3.6185567378997803
+    p_item_dislike_count_plus_alpha:
+      minimum: 0.3571428656578064
+      maximum: 5.214285850524902
+    p_item_click_on_author_count_plus_alpha:
+      minimum: 0.10638298094272614
+      maximum: 6.021276473999023
+    p_item_heartbeat15_count_plus_alpha:
+      minimum: 0.0005571651272475719
+      maximum: 2.1594607830047607
+    p_item_heartbeat30_count_plus_alpha:
+      minimum: 0.0007937767659313977
+      maximum: 2.584696054458618
+    p_ials_viewtime_dot:
+      minimum: -0.7943590879440308
+      maximum: 1.7247846126556396
+    p_ials_viewtime_user_norm:
+      minimum: 0.08662474900484085
+      maximum: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      minimum: 0.0
+      maximum: 1.4973207712173462
+    p_ials_feedback_dot:
+      minimum: -8.184257507324219
+      maximum: 24.43657684326172
+    p_ials_feedback_user_norm:
+      minimum: 0.0
+      maximum: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      minimum: 0.0
+      maximum: 2.9042654037475586
+    p_ials_survival_dot:
+      minimum: -2.3612844944000244
+      maximum: 6.072730541229248
+    p_ials_survival_user_norm:
+      minimum: 2.369947287661489e-05
+      maximum: 1.67754065990448
+    p_ials_survival_item_norm:
+      minimum: 0.0
+      maximum: 2.730736255645752
+    v_user_history_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_item_history_present:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_metadata_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_duration_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_feedback_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_duration_seconds_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_item_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_ials_viewtime_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+  E:
+    e_user_avg_timespent_seconds:
+      minimum: 0.04973381385207176
+      maximum: 1.4668771028518677
+    e_user_like_rate:
+      minimum: 0.02520289458334446
+      maximum: 2.1269500255584717
+    e_user_share_rate:
+      minimum: 0.13231198489665985
+      maximum: 4.327225208282471
+    e_user_bookmark_rate:
+      minimum: 0.2506963908672333
+      maximum: 9.964285850524902
+    e_user_comments_rate:
+      minimum: 0.04723108932375908
+      maximum: 2.862283229827881
+    e_user_dislike_rate:
+      minimum: 0.35654595494270325
+      maximum: 24.972549438476562
+    e_user_heartbeat15_rate:
+      minimum: 0.025760792195796967
+      maximum: 1.2736361026763916
+    e_user_heartbeat30_rate:
+      minimum: 0.026640675961971283
+      maximum: 1.4450106620788574
+    e_item_avg_timespent_seconds:
+      minimum: 0.0
+      maximum: 4.435928821563721
+    e_item_like_rate:
+      minimum: 0.008046569302678108
+      maximum: 2.0708892345428467
+    e_item_share_rate:
+      minimum: 0.0021519516594707966
+      maximum: 4.830917835235596
+    e_item_bookmark_rate:
+      minimum: 0.0021519516594707966
+      maximum: 1.4285714626312256
+    e_item_comments_rate:
+      minimum: 0.014746272936463356
+      maximum: 2.871114492416382
+    e_item_dislike_rate:
+      minimum: 0.0038242542650550604
+      maximum: 1.1764706373214722
+    e_item_click_on_author_rate:
+      minimum: 0.006952893920242786
+      maximum: 3.741007089614868
+    e_item_heartbeat15_rate:
+      minimum: 0.012232143431901932
+      maximum: 1.2273204326629639
+    e_item_heartbeat30_rate:
+      minimum: 0.004143661353737116
+      maximum: 1.1904335021972656
+    e_ials_viewtime_cosine:
+      minimum: -0.836837887763977
+      maximum: 1.5453053712844849
+    e_ials_feedback_cosine:
+      minimum: -1.0797078609466553
+      maximum: 1.766081690788269
+    e_ials_survival_cosine:
+      minimum: -0.8155330419540405
+      maximum: 1.4660553932189941
+  targets:
+    label_normalized_watch_time:
+      minimum: 0.006369426846504211
+      maximum: 1.0
+    label_timespent_seconds:
+      minimum: 1.0
+      maximum: 157.0
+  all_P_finite: true
+  all_E_finite: true
+  all_targets_finite: true
+normalization_provenance:
+  fit_split: train_weeks_20_24
+  method: divide_by_train_abs_q99
+  quantile: 0.99
+  centering: none
+  clipping: none
+  P0_scales:
+    p_duration_seconds: 173.0
+    p_user_show_count: 481.0
+    p_user_show_count_plus_beta: 581.0
+    p_user_timespent_sum_seconds: 10181.0
+    p_user_like_count_plus_alpha: 106.0
+    p_user_share_count_plus_alpha: 20.0
+    p_user_bookmark_count_plus_alpha: 10.0
+    p_user_comments_count_plus_alpha: 59.0
+    p_user_dislike_count_plus_alpha: 6.0
+    p_user_heartbeat15_count_plus_alpha: 204.0
+    p_user_heartbeat30_count_plus_alpha: 141.0
+    p_item_show_count: 16927.0
+    p_item_show_count_plus_beta: 17027.0
+    p_item_timespent_sum_seconds: 415441.0
+    p_item_like_count_plus_alpha: 449.0
+    p_item_share_count_plus_alpha: 113.0
+    p_item_bookmark_count_plus_alpha: 25.0
+    p_item_comments_count_plus_alpha: 485.0
+    p_item_dislike_count_plus_alpha: 14.0
+    p_item_click_on_author_count_plus_alpha: 47.0
+    p_item_heartbeat15_count_plus_alpha: 8974.0
+    p_item_heartbeat30_count_plus_alpha: 6299.0
+    p_ials_viewtime_dot: 1.0245733261108398
+    p_ials_viewtime_user_norm: 11.275375366210938
+    p_ials_viewtime_item_norm: 0.695406436920166
+    p_ials_feedback_dot: 0.048131201416254044
+    p_ials_feedback_user_norm: 0.31718724966049194
+    p_ials_feedback_item_norm: 4.0212531089782715
+    p_ials_survival_dot: 0.24630245566368103
+    p_ials_survival_user_norm: 0.4388481676578522
+    p_ials_survival_item_norm: 4.715590953826904
+  E_scales:
+    e_user_avg_timespent_seconds: 35.245551601423486
+    e_user_like_rate: 0.2798165137614679
+    e_user_share_rate: 0.05263157894736842
+    e_user_bookmark_rate: 0.027777777777777776
+    e_user_comments_rate: 0.14931237721021612
+    e_user_dislike_rate: 0.01953125
+    e_user_heartbeat15_rate: 0.4945054945054945
+    e_user_heartbeat30_rate: 0.36585365853658536
+    e_item_avg_timespent_seconds: 47.34070796460177
+    e_item_like_rate: 0.11029411764705882
+    e_item_share_rate: 0.05
+    e_item_bookmark_rate: 0.05
+    e_item_comments_rate: 0.06942202131094607
+    e_item_dislike_rate: 0.05
+    e_item_click_on_author_rate: 0.05
+    e_item_heartbeat15_rate: 0.6306794497707378
+    e_item_heartbeat30_rate: 0.5419141914191419
+    e_ials_viewtime_cosine: 0.6393907070159912
+    e_ials_feedback_cosine: 0.5580435991287231
+    e_ials_survival_cosine: 0.6589826941490173
+  label_c_seconds: 157.0
+denominator_semantics:
+  eligible_fields:
+  - p_duration_seconds
+  - p_user_show_count
+  - p_user_show_count_plus_beta
+  - p_item_show_count
+  - p_item_show_count_plus_beta
+  - p_ials_viewtime_user_norm
+  - p_ials_viewtime_item_norm
+  - p_ials_feedback_user_norm
+  - p_ials_feedback_item_norm
+  - p_ials_survival_user_norm
+  - p_ials_survival_item_norm
+  epsilon: 0.01
+  noneligible_validity_always_true: true
+  active_values_strictly_positive: true
+  inactive_values_canonical_zero: true
+  floor_indicators_exact: true
+  scan:
+    p_duration_seconds:
+      rows: 9022651
+      valid_rows: 9022651
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.028901733458042145
+      maximum_normalized: 1.0404623746871948
+    p_user_show_count:
+      rows: 9022651
+      valid_rows: 9022651
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.13097712397575378
+      maximum_normalized: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      rows: 9022651
+      valid_rows: 9022651
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.2805507779121399
+      maximum_normalized: 1.2358003854751587
+    p_item_show_count:
+      rows: 9022651
+      valid_rows: 5180072
+      invalid_or_zero_rows: 3842579
+      reciprocal_floor_rows: 637653
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.9077214245917276e-05
+      maximum_normalized: 4.935606002807617
+    p_item_show_count_plus_beta:
+      rows: 9022651
+      valid_rows: 9022651
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 4203484
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.005873025394976139
+      maximum_normalized: 4.912491798400879
+    p_ials_viewtime_user_norm:
+      rows: 9022651
+      valid_rows: 9022651
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.08662474900484085
+      maximum_normalized: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      rows: 9022651
+      valid_rows: 5180072
+      invalid_or_zero_rows: 3842579
+      reciprocal_floor_rows: 148187
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.499871698091738e-05
+      maximum_normalized: 1.4973207712173462
+    p_ials_feedback_user_norm:
+      rows: 9022651
+      valid_rows: 7143356
+      invalid_or_zero_rows: 1879295
+      reciprocal_floor_rows: 1456250
+      nonfinite_rows: 0
+      minimum_positive_normalized: 3.478097530037333e-13
+      maximum_normalized: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      rows: 9022651
+      valid_rows: 4899490
+      invalid_or_zero_rows: 4123161
+      reciprocal_floor_rows: 1136337
+      nonfinite_rows: 0
+      minimum_positive_normalized: 6.874593125663631e-13
+      maximum_normalized: 2.9042654037475586
+    p_ials_survival_user_norm:
+      rows: 9022651
+      valid_rows: 9022651
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 3521
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.369947287661489e-05
+      maximum_normalized: 1.67754065990448
+    p_ials_survival_item_norm:
+      rows: 9022651
+      valid_rows: 5121154
+      invalid_or_zero_rows: 3901497
+      reciprocal_floor_rows: 814431
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.7800929274235386e-06
+      maximum_normalized: 2.730736255645752
+shards:
+- week: 20
+  role: train
+  rows: 1406185
+  C_plus_P:
+    path: C_plus_P/train/week_20.parquet
+    bytes: 158094667
+    sha256: c6310773bd65f8f10027b8cb4cea3fcb3ba949e62bb06b5a7429b955be1c0d39
+    row_groups: 11
+  C_plus_P_plus_E:
+    path: C_plus_P_plus_E/train/week_20.parquet
+    bytes: 237891997
+    sha256: efae842b3b5fbea47faa43470fff62f4df72765f6dde5b4ae2bac03a1ab23551
+    row_groups: 11
+  stable_row_ids_sha256: 7f5e882fc085a73b1c97da03f0e2ca5e0b5bc40b08e80f9d0f833d8d3fb28d11
+  paired_stable_row_ids_sha256: 7f5e882fc085a73b1c97da03f0e2ca5e0b5bc40b08e80f9d0f833d8d3fb28d11
+  shared_C_plus_P_values_sha256: fbe9f94f3bf911fc4d6ff9fcf66e43afa3097e1395b7523ae6ff452553857f17
+  paired_shared_C_plus_P_values_sha256: fbe9f94f3bf911fc4d6ff9fcf66e43afa3097e1395b7523ae6ff452553857f17
+  token_bounds:
+    age:
+      minimum: 2
+      maximum: 54
+      cardinality: 55
+    gender:
+      minimum: 2
+      maximum: 3
+      cardinality: 4
+    geo:
+      minimum: 2
+      maximum: 81
+      cardinality: 82
+    place:
+      minimum: 2
+      maximum: 23
+      cardinality: 24
+    platform:
+      minimum: 2
+      maximum: 12
+      cardinality: 13
+    agent:
+      minimum: 2
+      maximum: 20
+      cardinality: 22
+  P_ranges:
+    p_duration_seconds:
+      minimum: 0.028901733458042145
+      maximum: 1.0404623746871948
+    p_user_show_count:
+      minimum: 0.13097712397575378
+      maximum: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      minimum: 0.2805507779121399
+      maximum: 1.2358003854751587
+    p_user_timespent_sum_seconds:
+      minimum: 0.035851094871759415
+      maximum: 1.4128278493881226
+    p_user_like_count_plus_alpha:
+      minimum: 0.04716981202363968
+      maximum: 2.169811248779297
+    p_user_share_count_plus_alpha:
+      minimum: 0.25
+      maximum: 4.349999904632568
+    p_user_bookmark_count_plus_alpha:
+      minimum: 0.5
+      maximum: 9.600000381469727
+    p_user_comments_count_plus_alpha:
+      minimum: 0.08474576473236084
+      maximum: 2.96610164642334
+    p_user_dislike_count_plus_alpha:
+      minimum: 0.8333333134651184
+      maximum: 33.16666793823242
+    p_user_heartbeat15_count_plus_alpha:
+      minimum: 0.029411764815449715
+      maximum: 1.4460784196853638
+    p_user_heartbeat30_count_plus_alpha:
+      minimum: 0.03546099364757538
+      maximum: 1.453900694847107
+    p_item_show_count:
+      minimum: 0.0
+      maximum: 4.935606002807617
+    p_item_show_count_plus_beta:
+      minimum: 0.005873025394976139
+      maximum: 4.912491798400879
+    p_item_timespent_sum_seconds:
+      minimum: 0.0
+      maximum: 2.2732903957366943
+    p_item_like_count_plus_alpha:
+      minimum: 0.011135857552289963
+      maximum: 2.376391887664795
+    p_item_share_count_plus_alpha:
+      minimum: 0.044247787445783615
+      maximum: 3.070796489715576
+    p_item_bookmark_count_plus_alpha:
+      minimum: 0.20000000298023224
+      maximum: 3.240000009536743
+    p_item_comments_count_plus_alpha:
+      minimum: 0.010309278033673763
+      maximum: 3.6185567378997803
+    p_item_dislike_count_plus_alpha:
+      minimum: 0.3571428656578064
+      maximum: 5.214285850524902
+    p_item_click_on_author_count_plus_alpha:
+      minimum: 0.10638298094272614
+      maximum: 6.021276473999023
+    p_item_heartbeat15_count_plus_alpha:
+      minimum: 0.0005571651272475719
+      maximum: 2.1594607830047607
+    p_item_heartbeat30_count_plus_alpha:
+      minimum: 0.0007937767659313977
+      maximum: 2.584696054458618
+    p_ials_viewtime_dot:
+      minimum: -0.6575524806976318
+      maximum: 1.7247846126556396
+    p_ials_viewtime_user_norm:
+      minimum: 0.08662474900484085
+      maximum: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      minimum: 0.0
+      maximum: 1.4973207712173462
+    p_ials_feedback_dot:
+      minimum: -5.856569290161133
+      maximum: 15.548530578613281
+    p_ials_feedback_user_norm:
+      minimum: 0.0
+      maximum: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      minimum: 0.0
+      maximum: 2.9042654037475586
+    p_ials_survival_dot:
+      minimum: -1.9945064783096313
+      maximum: 4.450972080230713
+    p_ials_survival_user_norm:
+      minimum: 2.369947287661489e-05
+      maximum: 1.67754065990448
+    p_ials_survival_item_norm:
+      minimum: 0.0
+      maximum: 2.730736255645752
+    v_user_history_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_item_history_present:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_metadata_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_duration_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_feedback_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_duration_seconds_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_item_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_ials_viewtime_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+  E_ranges:
+    e_user_avg_timespent_seconds:
+      minimum: 0.04973381385207176
+      maximum: 1.4668771028518677
+    e_user_like_rate:
+      minimum: 0.02520289458334446
+      maximum: 2.1269500255584717
+    e_user_share_rate:
+      minimum: 0.13231198489665985
+      maximum: 4.327225208282471
+    e_user_bookmark_rate:
+      minimum: 0.2506963908672333
+      maximum: 9.964285850524902
+    e_user_comments_rate:
+      minimum: 0.04723108932375908
+      maximum: 2.862283229827881
+    e_user_dislike_rate:
+      minimum: 0.35654595494270325
+      maximum: 24.972549438476562
+    e_user_heartbeat15_rate:
+      minimum: 0.025760792195796967
+      maximum: 1.2736361026763916
+    e_user_heartbeat30_rate:
+      minimum: 0.026640675961971283
+      maximum: 1.4450106620788574
+    e_item_avg_timespent_seconds:
+      minimum: 0.0
+      maximum: 4.435928821563721
+    e_item_like_rate:
+      minimum: 0.009416419081389904
+      maximum: 2.0708892345428467
+    e_item_share_rate:
+      minimum: 0.0021519516594707966
+      maximum: 3.0674846172332764
+    e_item_bookmark_rate:
+      minimum: 0.0021519516594707966
+      maximum: 1.3333333730697632
+    e_item_comments_rate:
+      minimum: 0.014746272936463356
+      maximum: 2.871114492416382
+    e_item_dislike_rate:
+      minimum: 0.004726620391011238
+      maximum: 1.1764706373214722
+    e_item_click_on_author_rate:
+      minimum: 0.008142493665218353
+      maximum: 2.9113924503326416
+    e_item_heartbeat15_rate:
+      minimum: 0.012620482593774796
+      maximum: 1.2273204326629639
+    e_item_heartbeat30_rate:
+      minimum: 0.004143661353737116
+      maximum: 1.1904335021972656
+    e_ials_viewtime_cosine:
+      minimum: -0.7594329118728638
+      maximum: 1.5335662364959717
+    e_ials_feedback_cosine:
+      minimum: -0.9615179300308228
+      maximum: 1.756770372390747
+    e_ials_survival_cosine:
+      minimum: -0.8155330419540405
+      maximum: 1.4660553932189941
+  target_ranges:
+    label_normalized_watch_time:
+      minimum: 0.006369426846504211
+      maximum: 1.0
+    label_timespent_seconds:
+      minimum: 1.0
+      maximum: 157.0
+  denominator_scan:
+    p_duration_seconds:
+      rows: 1406185
+      valid_rows: 1406185
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.028901733458042145
+      maximum_normalized: 1.0404623746871948
+    p_user_show_count:
+      rows: 1406185
+      valid_rows: 1406185
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.13097712397575378
+      maximum_normalized: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      rows: 1406185
+      valid_rows: 1406185
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.2805507779121399
+      maximum_normalized: 1.2358003854751587
+    p_item_show_count:
+      rows: 1406185
+      valid_rows: 953321
+      invalid_or_zero_rows: 452864
+      reciprocal_floor_rows: 145314
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.9077214245917276e-05
+      maximum_normalized: 4.935606002807617
+    p_item_show_count_plus_beta:
+      rows: 1406185
+      valid_rows: 1406185
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 528789
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.005873025394976139
+      maximum_normalized: 4.912491798400879
+    p_ials_viewtime_user_norm:
+      rows: 1406185
+      valid_rows: 1406185
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.08662474900484085
+      maximum_normalized: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      rows: 1406185
+      valid_rows: 953321
+      invalid_or_zero_rows: 452864
+      reciprocal_floor_rows: 47267
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.7515950932865962e-05
+      maximum_normalized: 1.4973207712173462
+    p_ials_feedback_user_norm:
+      rows: 1406185
+      valid_rows: 1111881
+      invalid_or_zero_rows: 294304
+      reciprocal_floor_rows: 228141
+      nonfinite_rows: 0
+      minimum_positive_normalized: 3.478097530037333e-13
+      maximum_normalized: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      rows: 1406185
+      valid_rows: 898314
+      invalid_or_zero_rows: 507871
+      reciprocal_floor_rows: 228547
+      nonfinite_rows: 0
+      minimum_positive_normalized: 8.578880336153338e-13
+      maximum_normalized: 2.9042654037475586
+    p_ials_survival_user_norm:
+      rows: 1406185
+      valid_rows: 1406185
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 509
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.369947287661489e-05
+      maximum_normalized: 1.67754065990448
+    p_ials_survival_item_norm:
+      rows: 1406185
+      valid_rows: 936416
+      invalid_or_zero_rows: 469769
+      reciprocal_floor_rows: 220771
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.7800929274235386e-06
+      maximum_normalized: 2.730736255645752
+- week: 21
+  role: train
+  rows: 1543021
+  C_plus_P:
+    path: C_plus_P/train/week_21.parquet
+    bytes: 170257987
+    sha256: fedb1d62a9df8f4d8751be3b743ba3fa79c2dfa273ccee88ada67183063eeddd
+    row_groups: 12
+  C_plus_P_plus_E:
+    path: C_plus_P_plus_E/train/week_21.parquet
+    bytes: 254169864
+    sha256: 61eb4d2a071346e02d12db2ba7ce6bd0a88b5049e5657b816a35369f8317eba9
+    row_groups: 12
+  stable_row_ids_sha256: 2d20b8748e2c607472cfdb1bc948db3fc44b632216e34ec394ba0b02f73cb2ae
+  paired_stable_row_ids_sha256: 2d20b8748e2c607472cfdb1bc948db3fc44b632216e34ec394ba0b02f73cb2ae
+  shared_C_plus_P_values_sha256: a2ad618afbc13935a1d3810f36bdbbb48178ef0e838216e21190cb7ee206dd43
+  paired_shared_C_plus_P_values_sha256: a2ad618afbc13935a1d3810f36bdbbb48178ef0e838216e21190cb7ee206dd43
+  token_bounds:
+    age:
+      minimum: 2
+      maximum: 54
+      cardinality: 55
+    gender:
+      minimum: 2
+      maximum: 3
+      cardinality: 4
+    geo:
+      minimum: 2
+      maximum: 81
+      cardinality: 82
+    place:
+      minimum: 2
+      maximum: 23
+      cardinality: 24
+    platform:
+      minimum: 2
+      maximum: 12
+      cardinality: 13
+    agent:
+      minimum: 2
+      maximum: 18
+      cardinality: 22
+  P_ranges:
+    p_duration_seconds:
+      minimum: 0.028901733458042145
+      maximum: 1.0404623746871948
+    p_user_show_count:
+      minimum: 0.13097712397575378
+      maximum: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      minimum: 0.2805507779121399
+      maximum: 1.2358003854751587
+    p_user_timespent_sum_seconds:
+      minimum: 0.035851094871759415
+      maximum: 1.4002553224563599
+    p_user_like_count_plus_alpha:
+      minimum: 0.04716981202363968
+      maximum: 2.169811248779297
+    p_user_share_count_plus_alpha:
+      minimum: 0.25
+      maximum: 4.349999904632568
+    p_user_bookmark_count_plus_alpha:
+      minimum: 0.5
+      maximum: 9.600000381469727
+    p_user_comments_count_plus_alpha:
+      minimum: 0.08474576473236084
+      maximum: 2.96610164642334
+    p_user_dislike_count_plus_alpha:
+      minimum: 0.8333333134651184
+      maximum: 33.16666793823242
+    p_user_heartbeat15_count_plus_alpha:
+      minimum: 0.029411764815449715
+      maximum: 1.4460784196853638
+    p_user_heartbeat30_count_plus_alpha:
+      minimum: 0.03546099364757538
+      maximum: 1.453900694847107
+    p_item_show_count:
+      minimum: 0.0
+      maximum: 4.935606002807617
+    p_item_show_count_plus_beta:
+      minimum: 0.005873025394976139
+      maximum: 4.912491798400879
+    p_item_timespent_sum_seconds:
+      minimum: 0.0
+      maximum: 2.2732903957366943
+    p_item_like_count_plus_alpha:
+      minimum: 0.011135857552289963
+      maximum: 2.708240509033203
+    p_item_share_count_plus_alpha:
+      minimum: 0.044247787445783615
+      maximum: 3.070796489715576
+    p_item_bookmark_count_plus_alpha:
+      minimum: 0.20000000298023224
+      maximum: 3.240000009536743
+    p_item_comments_count_plus_alpha:
+      minimum: 0.010309278033673763
+      maximum: 3.6185567378997803
+    p_item_dislike_count_plus_alpha:
+      minimum: 0.3571428656578064
+      maximum: 3.5
+    p_item_click_on_author_count_plus_alpha:
+      minimum: 0.10638298094272614
+      maximum: 6.021276473999023
+    p_item_heartbeat15_count_plus_alpha:
+      minimum: 0.0005571651272475719
+      maximum: 2.1594607830047607
+    p_item_heartbeat30_count_plus_alpha:
+      minimum: 0.0007937767659313977
+      maximum: 2.584696054458618
+    p_ials_viewtime_dot:
+      minimum: -0.6230871081352234
+      maximum: 1.5653289556503296
+    p_ials_viewtime_user_norm:
+      minimum: 0.08662474900484085
+      maximum: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      minimum: 0.0
+      maximum: 1.4973207712173462
+    p_ials_feedback_dot:
+      minimum: -7.847703456878662
+      maximum: 17.597341537475586
+    p_ials_feedback_user_norm:
+      minimum: 0.0
+      maximum: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      minimum: 0.0
+      maximum: 2.9042654037475586
+    p_ials_survival_dot:
+      minimum: -1.9161522388458252
+      maximum: 4.12480354309082
+    p_ials_survival_user_norm:
+      minimum: 2.369947287661489e-05
+      maximum: 1.67754065990448
+    p_ials_survival_item_norm:
+      minimum: 0.0
+      maximum: 2.573340654373169
+    v_user_history_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_item_history_present:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_metadata_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_duration_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_feedback_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_duration_seconds_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_item_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_ials_viewtime_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+  E_ranges:
+    e_user_avg_timespent_seconds:
+      minimum: 0.04973381385207176
+      maximum: 1.4668771028518677
+    e_user_like_rate:
+      minimum: 0.02520289458334446
+      maximum: 2.1269500255584717
+    e_user_share_rate:
+      minimum: 0.13231198489665985
+      maximum: 4.327225208282471
+    e_user_bookmark_rate:
+      minimum: 0.2506963908672333
+      maximum: 9.964285850524902
+    e_user_comments_rate:
+      minimum: 0.04723108932375908
+      maximum: 2.862283229827881
+    e_user_dislike_rate:
+      minimum: 0.35654595494270325
+      maximum: 24.972549438476562
+    e_user_heartbeat15_rate:
+      minimum: 0.025760792195796967
+      maximum: 1.2736361026763916
+    e_user_heartbeat30_rate:
+      minimum: 0.026640675961971283
+      maximum: 1.4450106620788574
+    e_item_avg_timespent_seconds:
+      minimum: 0.0
+      maximum: 2.7249276638031006
+    e_item_like_rate:
+      minimum: 0.009612157009541988
+      maximum: 2.0708892345428467
+    e_item_share_rate:
+      minimum: 0.0021519516594707966
+      maximum: 4.830917835235596
+    e_item_bookmark_rate:
+      minimum: 0.0021519516594707966
+      maximum: 1.3207547664642334
+    e_item_comments_rate:
+      minimum: 0.014746272936463356
+      maximum: 2.871114492416382
+    e_item_dislike_rate:
+      minimum: 0.004726620391011238
+      maximum: 1.165048599243164
+    e_item_click_on_author_rate:
+      minimum: 0.009295839816331863
+      maximum: 2.695035457611084
+    e_item_heartbeat15_rate:
+      minimum: 0.012620482593774796
+      maximum: 1.2273204326629639
+    e_item_heartbeat30_rate:
+      minimum: 0.004143661353737116
+      maximum: 1.1904335021972656
+    e_ials_viewtime_cosine:
+      minimum: -0.836837887763977
+      maximum: 1.538997769355774
+    e_ials_feedback_cosine:
+      minimum: -1.0003093481063843
+      maximum: 1.7626595497131348
+    e_ials_survival_cosine:
+      minimum: -0.6523552536964417
+      maximum: 1.4586327075958252
+  target_ranges:
+    label_normalized_watch_time:
+      minimum: 0.006369426846504211
+      maximum: 1.0
+    label_timespent_seconds:
+      minimum: 1.0
+      maximum: 157.0
+  denominator_scan:
+    p_duration_seconds:
+      rows: 1543021
+      valid_rows: 1543021
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.028901733458042145
+      maximum_normalized: 1.0404623746871948
+    p_user_show_count:
+      rows: 1543021
+      valid_rows: 1543021
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.13097712397575378
+      maximum_normalized: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      rows: 1543021
+      valid_rows: 1543021
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.2805507779121399
+      maximum_normalized: 1.2358003854751587
+    p_item_show_count:
+      rows: 1543021
+      valid_rows: 959935
+      invalid_or_zero_rows: 583086
+      reciprocal_floor_rows: 130993
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.9077214245917276e-05
+      maximum_normalized: 4.935606002807617
+    p_item_show_count_plus_beta:
+      rows: 1543021
+      valid_rows: 1543021
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 667753
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.005873025394976139
+      maximum_normalized: 4.912491798400879
+    p_ials_viewtime_user_norm:
+      rows: 1543021
+      valid_rows: 1543021
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.08662474900484085
+      maximum_normalized: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      rows: 1543021
+      valid_rows: 959935
+      invalid_or_zero_rows: 583086
+      reciprocal_floor_rows: 20367
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.4998842491186224e-05
+      maximum_normalized: 1.4973207712173462
+    p_ials_feedback_user_norm:
+      rows: 1543021
+      valid_rows: 1224135
+      invalid_or_zero_rows: 318886
+      reciprocal_floor_rows: 247307
+      nonfinite_rows: 0
+      minimum_positive_normalized: 3.478097530037333e-13
+      maximum_normalized: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      rows: 1543021
+      valid_rows: 908766
+      invalid_or_zero_rows: 634255
+      reciprocal_floor_rows: 234749
+      nonfinite_rows: 0
+      minimum_positive_normalized: 7.018408749136229e-13
+      maximum_normalized: 2.9042654037475586
+    p_ials_survival_user_norm:
+      rows: 1543021
+      valid_rows: 1543021
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 504
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.369947287661489e-05
+      maximum_normalized: 1.67754065990448
+    p_ials_survival_item_norm:
+      rows: 1543021
+      valid_rows: 954331
+      invalid_or_zero_rows: 588690
+      reciprocal_floor_rows: 193532
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.958127076155506e-06
+      maximum_normalized: 2.573340654373169
+- week: 22
+  role: train
+  rows: 1494808
+  C_plus_P:
+    path: C_plus_P/train/week_22.parquet
+    bytes: 163913559
+    sha256: 5cc1f913b9fee05366ba3cf204dee1139e77d185e1344a97efa74c8751d0031e
+    row_groups: 12
+  C_plus_P_plus_E:
+    path: C_plus_P_plus_E/train/week_22.parquet
+    bytes: 243825184
+    sha256: f0bc0ac53023e0e50a50585896ca1b3cf32f0a240b463016dcc374e08f93eb32
+    row_groups: 12
+  stable_row_ids_sha256: 89761741696f0322ce484a2c7d23dbdccb391d28469d1b0fe98d111714f0c3e6
+  paired_stable_row_ids_sha256: 89761741696f0322ce484a2c7d23dbdccb391d28469d1b0fe98d111714f0c3e6
+  shared_C_plus_P_values_sha256: 258e7fba8af79ad3732f1c4cf01a97e7b8271e2a97f2371d1abc4deb40e988b1
+  paired_shared_C_plus_P_values_sha256: 258e7fba8af79ad3732f1c4cf01a97e7b8271e2a97f2371d1abc4deb40e988b1
+  token_bounds:
+    age:
+      minimum: 2
+      maximum: 54
+      cardinality: 55
+    gender:
+      minimum: 2
+      maximum: 3
+      cardinality: 4
+    geo:
+      minimum: 2
+      maximum: 81
+      cardinality: 82
+    place:
+      minimum: 2
+      maximum: 23
+      cardinality: 24
+    platform:
+      minimum: 2
+      maximum: 12
+      cardinality: 13
+    agent:
+      minimum: 2
+      maximum: 21
+      cardinality: 22
+  P_ranges:
+    p_duration_seconds:
+      minimum: 0.028901733458042145
+      maximum: 1.0404623746871948
+    p_user_show_count:
+      minimum: 0.13097712397575378
+      maximum: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      minimum: 0.2805507779121399
+      maximum: 1.2358003854751587
+    p_user_timespent_sum_seconds:
+      minimum: 0.035851094871759415
+      maximum: 1.4128278493881226
+    p_user_like_count_plus_alpha:
+      minimum: 0.04716981202363968
+      maximum: 2.169811248779297
+    p_user_share_count_plus_alpha:
+      minimum: 0.25
+      maximum: 4.349999904632568
+    p_user_bookmark_count_plus_alpha:
+      minimum: 0.5
+      maximum: 11.300000190734863
+    p_user_comments_count_plus_alpha:
+      minimum: 0.08474576473236084
+      maximum: 2.96610164642334
+    p_user_dislike_count_plus_alpha:
+      minimum: 0.8333333134651184
+      maximum: 33.16666793823242
+    p_user_heartbeat15_count_plus_alpha:
+      minimum: 0.029411764815449715
+      maximum: 1.4460784196853638
+    p_user_heartbeat30_count_plus_alpha:
+      minimum: 0.03546099364757538
+      maximum: 1.453900694847107
+    p_item_show_count:
+      minimum: 0.0
+      maximum: 4.935606002807617
+    p_item_show_count_plus_beta:
+      minimum: 0.005873025394976139
+      maximum: 4.912491798400879
+    p_item_timespent_sum_seconds:
+      minimum: 0.0
+      maximum: 2.2732903957366943
+    p_item_like_count_plus_alpha:
+      minimum: 0.011135857552289963
+      maximum: 2.240534543991089
+    p_item_share_count_plus_alpha:
+      minimum: 0.044247787445783615
+      maximum: 3.070796489715576
+    p_item_bookmark_count_plus_alpha:
+      minimum: 0.20000000298023224
+      maximum: 3.240000009536743
+    p_item_comments_count_plus_alpha:
+      minimum: 0.010309278033673763
+      maximum: 3.6185567378997803
+    p_item_dislike_count_plus_alpha:
+      minimum: 0.3571428656578064
+      maximum: 3.5
+    p_item_click_on_author_count_plus_alpha:
+      minimum: 0.10638298094272614
+      maximum: 6.021276473999023
+    p_item_heartbeat15_count_plus_alpha:
+      minimum: 0.0005571651272475719
+      maximum: 1.994762659072876
+    p_item_heartbeat30_count_plus_alpha:
+      minimum: 0.0007937767659313977
+      maximum: 2.584696054458618
+    p_ials_viewtime_dot:
+      minimum: -0.7943590879440308
+      maximum: 1.6044195890426636
+    p_ials_viewtime_user_norm:
+      minimum: 0.08662474900484085
+      maximum: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      minimum: 0.0
+      maximum: 1.4973207712173462
+    p_ials_feedback_dot:
+      minimum: -6.734075546264648
+      maximum: 14.966364860534668
+    p_ials_feedback_user_norm:
+      minimum: 0.0
+      maximum: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      minimum: 0.0
+      maximum: 2.9042654037475586
+    p_ials_survival_dot:
+      minimum: -2.3612844944000244
+      maximum: 4.435869216918945
+    p_ials_survival_user_norm:
+      minimum: 2.369947287661489e-05
+      maximum: 1.67754065990448
+    p_ials_survival_item_norm:
+      minimum: 0.0
+      maximum: 2.2123117446899414
+    v_user_history_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_item_history_present:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_metadata_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_duration_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_feedback_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_duration_seconds_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_item_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_ials_viewtime_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+  E_ranges:
+    e_user_avg_timespent_seconds:
+      minimum: 0.04973381385207176
+      maximum: 1.4668771028518677
+    e_user_like_rate:
+      minimum: 0.02520289458334446
+      maximum: 2.1269500255584717
+    e_user_share_rate:
+      minimum: 0.13231198489665985
+      maximum: 4.327225208282471
+    e_user_bookmark_rate:
+      minimum: 0.2506963908672333
+      maximum: 9.964285850524902
+    e_user_comments_rate:
+      minimum: 0.04723108932375908
+      maximum: 2.862283229827881
+    e_user_dislike_rate:
+      minimum: 0.35654595494270325
+      maximum: 24.972549438476562
+    e_user_heartbeat15_rate:
+      minimum: 0.025760792195796967
+      maximum: 1.2736361026763916
+    e_user_heartbeat30_rate:
+      minimum: 0.026640675961971283
+      maximum: 1.4450106620788574
+    e_item_avg_timespent_seconds:
+      minimum: 0.0
+      maximum: 3.738854169845581
+    e_item_like_rate:
+      minimum: 0.009612157009541988
+      maximum: 2.0708892345428467
+    e_item_share_rate:
+      minimum: 0.0021519516594707966
+      maximum: 4.4285712242126465
+    e_item_bookmark_rate:
+      minimum: 0.0021519516594707966
+      maximum: 1.4285714626312256
+    e_item_comments_rate:
+      minimum: 0.014746272936463356
+      maximum: 2.871114492416382
+    e_item_dislike_rate:
+      minimum: 0.004782115109264851
+      maximum: 1.1538461446762085
+    e_item_click_on_author_rate:
+      minimum: 0.008142493665218353
+      maximum: 3.085714340209961
+    e_item_heartbeat15_rate:
+      minimum: 0.012620482593774796
+      maximum: 1.2273204326629639
+    e_item_heartbeat30_rate:
+      minimum: 0.004856080748140812
+      maximum: 1.1904335021972656
+    e_ials_viewtime_cosine:
+      minimum: -0.6971150040626526
+      maximum: 1.5362974405288696
+    e_ials_feedback_cosine:
+      minimum: -0.9182173013687134
+      maximum: 1.766081690788269
+    e_ials_survival_cosine:
+      minimum: -0.6534062623977661
+      maximum: 1.4617691040039062
+  target_ranges:
+    label_normalized_watch_time:
+      minimum: 0.006369426846504211
+      maximum: 1.0
+    label_timespent_seconds:
+      minimum: 1.0
+      maximum: 157.0
+  denominator_scan:
+    p_duration_seconds:
+      rows: 1494808
+      valid_rows: 1494808
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.028901733458042145
+      maximum_normalized: 1.0404623746871948
+    p_user_show_count:
+      rows: 1494808
+      valid_rows: 1494808
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.13097712397575378
+      maximum_normalized: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      rows: 1494808
+      valid_rows: 1494808
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.2805507779121399
+      maximum_normalized: 1.2358003854751587
+    p_item_show_count:
+      rows: 1494808
+      valid_rows: 866542
+      invalid_or_zero_rows: 628266
+      reciprocal_floor_rows: 98828
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.9077214245917276e-05
+      maximum_normalized: 4.935606002807617
+    p_item_show_count_plus_beta:
+      rows: 1494808
+      valid_rows: 1494808
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 681398
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.005873025394976139
+      maximum_normalized: 4.912491798400879
+    p_ials_viewtime_user_norm:
+      rows: 1494808
+      valid_rows: 1494808
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.08662474900484085
+      maximum_normalized: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      rows: 1494808
+      valid_rows: 866542
+      invalid_or_zero_rows: 628266
+      reciprocal_floor_rows: 18500
+      nonfinite_rows: 0
+      minimum_positive_normalized: 3.4753222280414775e-05
+      maximum_normalized: 1.4973207712173462
+    p_ials_feedback_user_norm:
+      rows: 1494808
+      valid_rows: 1191169
+      invalid_or_zero_rows: 303639
+      reciprocal_floor_rows: 234517
+      nonfinite_rows: 0
+      minimum_positive_normalized: 3.478097530037333e-13
+      maximum_normalized: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      rows: 1494808
+      valid_rows: 823268
+      invalid_or_zero_rows: 671540
+      reciprocal_floor_rows: 162499
+      nonfinite_rows: 0
+      minimum_positive_normalized: 7.018408749136229e-13
+      maximum_normalized: 2.9042654037475586
+    p_ials_survival_user_norm:
+      rows: 1494808
+      valid_rows: 1494808
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 491
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.369947287661489e-05
+      maximum_normalized: 1.67754065990448
+    p_ials_survival_item_norm:
+      rows: 1494808
+      valid_rows: 861541
+      invalid_or_zero_rows: 633267
+      reciprocal_floor_rows: 115977
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.958127076155506e-06
+      maximum_normalized: 2.2123117446899414
+- week: 23
+  role: train
+  rows: 1617706
+  C_plus_P:
+    path: C_plus_P/train/week_23.parquet
+    bytes: 173891507
+    sha256: 5adcc98aa9a65988a5551690b62aad492229bbcd4d7ee132dd0f10d5d8b37d5c
+    row_groups: 13
+  C_plus_P_plus_E:
+    path: C_plus_P_plus_E/train/week_23.parquet
+    bytes: 257423492
+    sha256: 0e14729d242b14188c9b5b4b7024d91312a8892f94f20cdb65af9a428b220ee5
+    row_groups: 13
+  stable_row_ids_sha256: 4186e0d5b0f454c8280d582e5fb6cc42930b3796cbbfc87439d314f5d1c15f87
+  paired_stable_row_ids_sha256: 4186e0d5b0f454c8280d582e5fb6cc42930b3796cbbfc87439d314f5d1c15f87
+  shared_C_plus_P_values_sha256: dd978a9e18ae5bcb4de4bf8c681f3d19b440a7afe02c80480003b1341896a752
+  paired_shared_C_plus_P_values_sha256: dd978a9e18ae5bcb4de4bf8c681f3d19b440a7afe02c80480003b1341896a752
+  token_bounds:
+    age:
+      minimum: 2
+      maximum: 54
+      cardinality: 55
+    gender:
+      minimum: 2
+      maximum: 3
+      cardinality: 4
+    geo:
+      minimum: 2
+      maximum: 81
+      cardinality: 82
+    place:
+      minimum: 2
+      maximum: 23
+      cardinality: 24
+    platform:
+      minimum: 2
+      maximum: 12
+      cardinality: 13
+    agent:
+      minimum: 2
+      maximum: 20
+      cardinality: 22
+  P_ranges:
+    p_duration_seconds:
+      minimum: 0.028901733458042145
+      maximum: 1.0404623746871948
+    p_user_show_count:
+      minimum: 0.13097712397575378
+      maximum: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      minimum: 0.2805507779121399
+      maximum: 1.2358003854751587
+    p_user_timespent_sum_seconds:
+      minimum: 0.035851094871759415
+      maximum: 1.4002553224563599
+    p_user_like_count_plus_alpha:
+      minimum: 0.04716981202363968
+      maximum: 2.169811248779297
+    p_user_share_count_plus_alpha:
+      minimum: 0.25
+      maximum: 4.349999904632568
+    p_user_bookmark_count_plus_alpha:
+      minimum: 0.5
+      maximum: 11.300000190734863
+    p_user_comments_count_plus_alpha:
+      minimum: 0.08474576473236084
+      maximum: 2.96610164642334
+    p_user_dislike_count_plus_alpha:
+      minimum: 0.8333333134651184
+      maximum: 33.16666793823242
+    p_user_heartbeat15_count_plus_alpha:
+      minimum: 0.029411764815449715
+      maximum: 1.4460784196853638
+    p_user_heartbeat30_count_plus_alpha:
+      minimum: 0.03546099364757538
+      maximum: 1.453900694847107
+    p_item_show_count:
+      minimum: 0.0
+      maximum: 4.935606002807617
+    p_item_show_count_plus_beta:
+      minimum: 0.005873025394976139
+      maximum: 4.912491798400879
+    p_item_timespent_sum_seconds:
+      minimum: 0.0
+      maximum: 2.2732903957366943
+    p_item_like_count_plus_alpha:
+      minimum: 0.011135857552289963
+      maximum: 2.376391887664795
+    p_item_share_count_plus_alpha:
+      minimum: 0.044247787445783615
+      maximum: 3.725663661956787
+    p_item_bookmark_count_plus_alpha:
+      minimum: 0.20000000298023224
+      maximum: 3.240000009536743
+    p_item_comments_count_plus_alpha:
+      minimum: 0.010309278033673763
+      maximum: 3.6185567378997803
+    p_item_dislike_count_plus_alpha:
+      minimum: 0.3571428656578064
+      maximum: 5.214285850524902
+    p_item_click_on_author_count_plus_alpha:
+      minimum: 0.10638298094272614
+      maximum: 6.021276473999023
+    p_item_heartbeat15_count_plus_alpha:
+      minimum: 0.0005571651272475719
+      maximum: 2.1594607830047607
+    p_item_heartbeat30_count_plus_alpha:
+      minimum: 0.0007937767659313977
+      maximum: 2.584696054458618
+    p_ials_viewtime_dot:
+      minimum: -0.5983343124389648
+      maximum: 1.5431829690933228
+    p_ials_viewtime_user_norm:
+      minimum: 0.08662474900484085
+      maximum: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      minimum: 0.0
+      maximum: 1.4973207712173462
+    p_ials_feedback_dot:
+      minimum: -6.973569869995117
+      maximum: 24.43657684326172
+    p_ials_feedback_user_norm:
+      minimum: 0.0
+      maximum: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      minimum: 0.0
+      maximum: 2.9042654037475586
+    p_ials_survival_dot:
+      minimum: -1.5959333181381226
+      maximum: 6.072730541229248
+    p_ials_survival_user_norm:
+      minimum: 2.369947287661489e-05
+      maximum: 1.67754065990448
+    p_ials_survival_item_norm:
+      minimum: 0.0
+      maximum: 2.573340654373169
+    v_user_history_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_item_history_present:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_metadata_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_duration_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_feedback_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_duration_seconds_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_item_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_ials_viewtime_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+  E_ranges:
+    e_user_avg_timespent_seconds:
+      minimum: 0.04973381385207176
+      maximum: 1.4668771028518677
+    e_user_like_rate:
+      minimum: 0.02520289458334446
+      maximum: 2.1269500255584717
+    e_user_share_rate:
+      minimum: 0.13231198489665985
+      maximum: 4.327225208282471
+    e_user_bookmark_rate:
+      minimum: 0.2506963908672333
+      maximum: 9.964285850524902
+    e_user_comments_rate:
+      minimum: 0.04723108932375908
+      maximum: 2.862283229827881
+    e_user_dislike_rate:
+      minimum: 0.35654595494270325
+      maximum: 24.972549438476562
+    e_user_heartbeat15_rate:
+      minimum: 0.025760792195796967
+      maximum: 1.2736361026763916
+    e_user_heartbeat30_rate:
+      minimum: 0.026640675961971283
+      maximum: 1.4450106620788574
+    e_item_avg_timespent_seconds:
+      minimum: 0.0
+      maximum: 3.738854169845581
+    e_item_like_rate:
+      minimum: 0.009612157009541988
+      maximum: 1.742836594581604
+    e_item_share_rate:
+      minimum: 0.0021519516594707966
+      maximum: 2.08695650100708
+    e_item_bookmark_rate:
+      minimum: 0.0021519516594707966
+      maximum: 1.39130437374115
+    e_item_comments_rate:
+      minimum: 0.014746272936463356
+      maximum: 2.871114492416382
+    e_item_dislike_rate:
+      minimum: 0.004726620391011238
+      maximum: 1.1538461446762085
+    e_item_click_on_author_rate:
+      minimum: 0.006952893920242786
+      maximum: 3.741007089614868
+    e_item_heartbeat15_rate:
+      minimum: 0.012620482593774796
+      maximum: 1.2273204326629639
+    e_item_heartbeat30_rate:
+      minimum: 0.004856080748140812
+      maximum: 1.1904335021972656
+    e_ials_viewtime_cosine:
+      minimum: -0.6598363518714905
+      maximum: 1.5453053712844849
+    e_ials_feedback_cosine:
+      minimum: -0.9525068998336792
+      maximum: 1.7636178731918335
+    e_ials_survival_cosine:
+      minimum: -0.6838644742965698
+      maximum: 1.464706540107727
+  target_ranges:
+    label_normalized_watch_time:
+      minimum: 0.006369426846504211
+      maximum: 1.0
+    label_timespent_seconds:
+      minimum: 1.0
+      maximum: 157.0
+  denominator_scan:
+    p_duration_seconds:
+      rows: 1617706
+      valid_rows: 1617706
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.028901733458042145
+      maximum_normalized: 1.0404623746871948
+    p_user_show_count:
+      rows: 1617706
+      valid_rows: 1617706
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.13097712397575378
+      maximum_normalized: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      rows: 1617706
+      valid_rows: 1617706
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.2805507779121399
+      maximum_normalized: 1.2358003854751587
+    p_item_show_count:
+      rows: 1617706
+      valid_rows: 864171
+      invalid_or_zero_rows: 753535
+      reciprocal_floor_rows: 87090
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.9077214245917276e-05
+      maximum_normalized: 4.935606002807617
+    p_item_show_count_plus_beta:
+      rows: 1617706
+      valid_rows: 1617706
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 803209
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.005873025394976139
+      maximum_normalized: 4.912491798400879
+    p_ials_viewtime_user_norm:
+      rows: 1617706
+      valid_rows: 1617706
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.08662474900484085
+      maximum_normalized: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      rows: 1617706
+      valid_rows: 864171
+      invalid_or_zero_rows: 753535
+      reciprocal_floor_rows: 17399
+      nonfinite_rows: 0
+      minimum_positive_normalized: 3.354497312102467e-05
+      maximum_normalized: 1.4973207712173462
+    p_ials_feedback_user_norm:
+      rows: 1617706
+      valid_rows: 1276273
+      invalid_or_zero_rows: 341433
+      reciprocal_floor_rows: 264172
+      nonfinite_rows: 0
+      minimum_positive_normalized: 3.478097530037333e-13
+      maximum_normalized: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      rows: 1617706
+      valid_rows: 821492
+      invalid_or_zero_rows: 796214
+      reciprocal_floor_rows: 183152
+      nonfinite_rows: 0
+      minimum_positive_normalized: 9.347055464695164e-13
+      maximum_normalized: 2.9042654037475586
+    p_ials_survival_user_norm:
+      rows: 1617706
+      valid_rows: 1617706
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 750
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.369947287661489e-05
+      maximum_normalized: 1.67754065990448
+    p_ials_survival_item_norm:
+      rows: 1617706
+      valid_rows: 860023
+      invalid_or_zero_rows: 757683
+      reciprocal_floor_rows: 102812
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.444688213174231e-06
+      maximum_normalized: 2.573340654373169
+- week: 24
+  role: train
+  rows: 1444100
+  C_plus_P:
+    path: C_plus_P/train/week_24.parquet
+    bytes: 156602001
+    sha256: 9d54e2bbcb9ba080b29b4ec0114a676a075ae67b1656a3b11b948c6bee8bfefe
+    row_groups: 12
+  C_plus_P_plus_E:
+    path: C_plus_P_plus_E/train/week_24.parquet
+    bytes: 232356946
+    sha256: d3ef80d180459426e1fc5e8011c2d1edc14c68664091e659725c588a7ea77726
+    row_groups: 12
+  stable_row_ids_sha256: 268ba535b7e1c34cae6b0b4e3e9ebdd16f18c62df2851136837f147c960a9c49
+  paired_stable_row_ids_sha256: 268ba535b7e1c34cae6b0b4e3e9ebdd16f18c62df2851136837f147c960a9c49
+  shared_C_plus_P_values_sha256: 91fd05ce57527c194b1d2e4ffbee206e8b0c5fdce78a42ce3d076a7f1346f5ba
+  paired_shared_C_plus_P_values_sha256: 91fd05ce57527c194b1d2e4ffbee206e8b0c5fdce78a42ce3d076a7f1346f5ba
+  token_bounds:
+    age:
+      minimum: 2
+      maximum: 54
+      cardinality: 55
+    gender:
+      minimum: 2
+      maximum: 3
+      cardinality: 4
+    geo:
+      minimum: 2
+      maximum: 81
+      cardinality: 82
+    place:
+      minimum: 2
+      maximum: 23
+      cardinality: 24
+    platform:
+      minimum: 2
+      maximum: 12
+      cardinality: 13
+    agent:
+      minimum: 2
+      maximum: 19
+      cardinality: 22
+  P_ranges:
+    p_duration_seconds:
+      minimum: 0.028901733458042145
+      maximum: 1.0404623746871948
+    p_user_show_count:
+      minimum: 0.13097712397575378
+      maximum: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      minimum: 0.2805507779121399
+      maximum: 1.2358003854751587
+    p_user_timespent_sum_seconds:
+      minimum: 0.035851094871759415
+      maximum: 1.4128278493881226
+    p_user_like_count_plus_alpha:
+      minimum: 0.04716981202363968
+      maximum: 2.169811248779297
+    p_user_share_count_plus_alpha:
+      minimum: 0.25
+      maximum: 4.349999904632568
+    p_user_bookmark_count_plus_alpha:
+      minimum: 0.5
+      maximum: 11.300000190734863
+    p_user_comments_count_plus_alpha:
+      minimum: 0.08474576473236084
+      maximum: 2.96610164642334
+    p_user_dislike_count_plus_alpha:
+      minimum: 0.8333333134651184
+      maximum: 33.16666793823242
+    p_user_heartbeat15_count_plus_alpha:
+      minimum: 0.029411764815449715
+      maximum: 1.4460784196853638
+    p_user_heartbeat30_count_plus_alpha:
+      minimum: 0.03546099364757538
+      maximum: 1.453900694847107
+    p_item_show_count:
+      minimum: 0.0
+      maximum: 4.2436933517456055
+    p_item_show_count_plus_beta:
+      minimum: 0.005873025394976139
+      maximum: 4.224643230438232
+    p_item_timespent_sum_seconds:
+      minimum: 0.0
+      maximum: 2.111467123031616
+    p_item_like_count_plus_alpha:
+      minimum: 0.011135857552289963
+      maximum: 2.376391887664795
+    p_item_share_count_plus_alpha:
+      minimum: 0.044247787445783615
+      maximum: 3.725663661956787
+    p_item_bookmark_count_plus_alpha:
+      minimum: 0.20000000298023224
+      maximum: 3.240000009536743
+    p_item_comments_count_plus_alpha:
+      minimum: 0.010309278033673763
+      maximum: 3.6185567378997803
+    p_item_dislike_count_plus_alpha:
+      minimum: 0.3571428656578064
+      maximum: 3.5
+    p_item_click_on_author_count_plus_alpha:
+      minimum: 0.10638298094272614
+      maximum: 6.021276473999023
+    p_item_heartbeat15_count_plus_alpha:
+      minimum: 0.0005571651272475719
+      maximum: 2.1594607830047607
+    p_item_heartbeat30_count_plus_alpha:
+      minimum: 0.0007937767659313977
+      maximum: 2.584696054458618
+    p_ials_viewtime_dot:
+      minimum: -0.5571430921554565
+      maximum: 1.5385788679122925
+    p_ials_viewtime_user_norm:
+      minimum: 0.08662474900484085
+      maximum: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      minimum: 0.0
+      maximum: 1.4579397439956665
+    p_ials_feedback_dot:
+      minimum: -8.184257507324219
+      maximum: 16.18630027770996
+    p_ials_feedback_user_norm:
+      minimum: 0.0
+      maximum: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      minimum: 0.0
+      maximum: 2.9042654037475586
+    p_ials_survival_dot:
+      minimum: -1.5468170642852783
+      maximum: 4.760606288909912
+    p_ials_survival_user_norm:
+      minimum: 2.369947287661489e-05
+      maximum: 1.67754065990448
+    p_ials_survival_item_norm:
+      minimum: 0.0
+      maximum: 2.573340654373169
+    v_user_history_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_item_history_present:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_metadata_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_duration_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_feedback_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_duration_seconds_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_item_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_ials_viewtime_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+  E_ranges:
+    e_user_avg_timespent_seconds:
+      minimum: 0.04973381385207176
+      maximum: 1.4668771028518677
+    e_user_like_rate:
+      minimum: 0.02520289458334446
+      maximum: 2.1269500255584717
+    e_user_share_rate:
+      minimum: 0.13231198489665985
+      maximum: 4.327225208282471
+    e_user_bookmark_rate:
+      minimum: 0.2506963908672333
+      maximum: 9.964285850524902
+    e_user_comments_rate:
+      minimum: 0.04723108932375908
+      maximum: 2.862283229827881
+    e_user_dislike_rate:
+      minimum: 0.35654595494270325
+      maximum: 24.972549438476562
+    e_user_heartbeat15_rate:
+      minimum: 0.025760792195796967
+      maximum: 1.2736361026763916
+    e_user_heartbeat30_rate:
+      minimum: 0.026640675961971283
+      maximum: 1.4450106620788574
+    e_item_avg_timespent_seconds:
+      minimum: 0.0
+      maximum: 3.738854169845581
+    e_item_like_rate:
+      minimum: 0.008046569302678108
+      maximum: 2.0708892345428467
+    e_item_share_rate:
+      minimum: 0.0029334116261452436
+      maximum: 1.7307692766189575
+    e_item_bookmark_rate:
+      minimum: 0.004889019299298525
+      maximum: 1.3207547664642334
+    e_item_comments_rate:
+      minimum: 0.014746272936463356
+      maximum: 2.871114492416382
+    e_item_dislike_rate:
+      minimum: 0.0038242542650550604
+      maximum: 1.1111111640930176
+    e_item_click_on_author_rate:
+      minimum: 0.0070693581365048885
+      maximum: 3.741007089614868
+    e_item_heartbeat15_rate:
+      minimum: 0.012620482593774796
+      maximum: 1.2273204326629639
+    e_item_heartbeat30_rate:
+      minimum: 0.004856080748140812
+      maximum: 1.1904335021972656
+    e_ials_viewtime_cosine:
+      minimum: -0.7512428760528564
+      maximum: 1.5356793403625488
+    e_ials_feedback_cosine:
+      minimum: -0.9992973208427429
+      maximum: 1.7461737394332886
+    e_ials_survival_cosine:
+      minimum: -0.7366164922714233
+      maximum: 1.4608272314071655
+  target_ranges:
+    label_normalized_watch_time:
+      minimum: 0.006369426846504211
+      maximum: 1.0
+    label_timespent_seconds:
+      minimum: 1.0
+      maximum: 157.0
+  denominator_scan:
+    p_duration_seconds:
+      rows: 1444100
+      valid_rows: 1444100
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.028901733458042145
+      maximum_normalized: 1.0404623746871948
+    p_user_show_count:
+      rows: 1444100
+      valid_rows: 1444100
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.13097712397575378
+      maximum_normalized: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      rows: 1444100
+      valid_rows: 1444100
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.2805507779121399
+      maximum_normalized: 1.2358003854751587
+    p_item_show_count:
+      rows: 1444100
+      valid_rows: 804259
+      invalid_or_zero_rows: 639841
+      reciprocal_floor_rows: 84998
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.9077214245917276e-05
+      maximum_normalized: 4.2436933517456055
+    p_item_show_count_plus_beta:
+      rows: 1444100
+      valid_rows: 1444100
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 692434
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.005873025394976139
+      maximum_normalized: 4.224643230438232
+    p_ials_viewtime_user_norm:
+      rows: 1444100
+      valid_rows: 1444100
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.08662474900484085
+      maximum_normalized: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      rows: 1444100
+      valid_rows: 804259
+      invalid_or_zero_rows: 639841
+      reciprocal_floor_rows: 24319
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.499871698091738e-05
+      maximum_normalized: 1.4579397439956665
+    p_ials_feedback_user_norm:
+      rows: 1444100
+      valid_rows: 1140592
+      invalid_or_zero_rows: 303508
+      reciprocal_floor_rows: 237398
+      nonfinite_rows: 0
+      minimum_positive_normalized: 3.478097530037333e-13
+      maximum_normalized: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      rows: 1444100
+      valid_rows: 761953
+      invalid_or_zero_rows: 682147
+      reciprocal_floor_rows: 162880
+      nonfinite_rows: 0
+      minimum_positive_normalized: 7.018408749136229e-13
+      maximum_normalized: 2.9042654037475586
+    p_ials_survival_user_norm:
+      rows: 1444100
+      valid_rows: 1444100
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 647
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.369947287661489e-05
+      maximum_normalized: 1.67754065990448
+    p_ials_survival_item_norm:
+      rows: 1444100
+      valid_rows: 789351
+      invalid_or_zero_rows: 654749
+      reciprocal_floor_rows: 85611
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.958127076155506e-06
+      maximum_normalized: 2.573340654373169
+- week: 25
+  role: validation
+  rows: 1516831
+  C_plus_P:
+    path: C_plus_P/validation/week_25.parquet
+    bytes: 158770901
+    sha256: 97bc7c6792833a40b6017ce0a56a40186c270afa8f7549b4644ad12394255112
+    row_groups: 12
+  C_plus_P_plus_E:
+    path: C_plus_P_plus_E/validation/week_25.parquet
+    bytes: 233549592
+    sha256: 870660d6d064f89e9b81f50b41e30f06d08442f7962f69796747ccb7a31e240c
+    row_groups: 12
+  stable_row_ids_sha256: 5743caaa8b85a998b438134d35c0e88bfa2bc82a19b7da9a48c1ee984b10e937
+  paired_stable_row_ids_sha256: 5743caaa8b85a998b438134d35c0e88bfa2bc82a19b7da9a48c1ee984b10e937
+  shared_C_plus_P_values_sha256: ef002f9ebb11482e6a4ebecce8dd3fbf25378f8447f60ffa33c7c7556e1677f0
+  paired_shared_C_plus_P_values_sha256: ef002f9ebb11482e6a4ebecce8dd3fbf25378f8447f60ffa33c7c7556e1677f0
+  token_bounds:
+    age:
+      minimum: 2
+      maximum: 54
+      cardinality: 55
+    gender:
+      minimum: 2
+      maximum: 3
+      cardinality: 4
+    geo:
+      minimum: 2
+      maximum: 81
+      cardinality: 82
+    place:
+      minimum: 2
+      maximum: 23
+      cardinality: 24
+    platform:
+      minimum: 2
+      maximum: 12
+      cardinality: 13
+    agent:
+      minimum: 2
+      maximum: 19
+      cardinality: 22
+  P_ranges:
+    p_duration_seconds:
+      minimum: 0.028901733458042145
+      maximum: 1.0404623746871948
+    p_user_show_count:
+      minimum: 0.13097712397575378
+      maximum: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      minimum: 0.2805507779121399
+      maximum: 1.2358003854751587
+    p_user_timespent_sum_seconds:
+      minimum: 0.035851094871759415
+      maximum: 1.4128278493881226
+    p_user_like_count_plus_alpha:
+      minimum: 0.04716981202363968
+      maximum: 2.169811248779297
+    p_user_share_count_plus_alpha:
+      minimum: 0.25
+      maximum: 4.349999904632568
+    p_user_bookmark_count_plus_alpha:
+      minimum: 0.5
+      maximum: 11.300000190734863
+    p_user_comments_count_plus_alpha:
+      minimum: 0.08474576473236084
+      maximum: 2.96610164642334
+    p_user_dislike_count_plus_alpha:
+      minimum: 0.8333333134651184
+      maximum: 33.16666793823242
+    p_user_heartbeat15_count_plus_alpha:
+      minimum: 0.029411764815449715
+      maximum: 1.4460784196853638
+    p_user_heartbeat30_count_plus_alpha:
+      minimum: 0.03546099364757538
+      maximum: 1.453900694847107
+    p_item_show_count:
+      minimum: 0.0
+      maximum: 4.0254621505737305
+    p_item_show_count_plus_beta:
+      minimum: 0.005873025394976139
+      maximum: 4.007693767547607
+    p_item_timespent_sum_seconds:
+      minimum: 0.0
+      maximum: 2.2732903957366943
+    p_item_like_count_plus_alpha:
+      minimum: 0.011135857552289963
+      maximum: 2.240534543991089
+    p_item_share_count_plus_alpha:
+      minimum: 0.044247787445783615
+      maximum: 3.725663661956787
+    p_item_bookmark_count_plus_alpha:
+      minimum: 0.20000000298023224
+      maximum: 3.240000009536743
+    p_item_comments_count_plus_alpha:
+      minimum: 0.010309278033673763
+      maximum: 3.6185567378997803
+    p_item_dislike_count_plus_alpha:
+      minimum: 0.3571428656578064
+      maximum: 5.214285850524902
+    p_item_click_on_author_count_plus_alpha:
+      minimum: 0.10638298094272614
+      maximum: 4.234042644500732
+    p_item_heartbeat15_count_plus_alpha:
+      minimum: 0.0005571651272475719
+      maximum: 1.994762659072876
+    p_item_heartbeat30_count_plus_alpha:
+      minimum: 0.0007937767659313977
+      maximum: 2.584696054458618
+    p_ials_viewtime_dot:
+      minimum: -0.6057846546173096
+      maximum: 1.5506497621536255
+    p_ials_viewtime_user_norm:
+      minimum: 0.08662474900484085
+      maximum: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      minimum: 0.0
+      maximum: 1.452966570854187
+    p_ials_feedback_dot:
+      minimum: -8.166011810302734
+      maximum: 16.13882827758789
+    p_ials_feedback_user_norm:
+      minimum: 0.0
+      maximum: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      minimum: 0.0
+      maximum: 2.9042654037475586
+    p_ials_survival_dot:
+      minimum: -1.4768826961517334
+      maximum: 4.417749881744385
+    p_ials_survival_user_norm:
+      minimum: 5.210295057622716e-05
+      maximum: 1.67754065990448
+    p_ials_survival_item_norm:
+      minimum: 0.0
+      maximum: 2.2123117446899414
+    v_user_history_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_item_history_present:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_metadata_present:
+      minimum: 1.0
+      maximum: 1.0
+    v_duration_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_viewtime_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_feedback_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_seen:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_seen:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_positive:
+      minimum: 1.0
+      maximum: 1.0
+    v_ials_survival_item_norm_positive:
+      minimum: 0.0
+      maximum: 1.0
+    v_duration_seconds_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_user_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_item_show_count_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_item_show_count_plus_beta_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_viewtime_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 0.0
+    v_ials_viewtime_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_feedback_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_user_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+    v_ials_survival_item_norm_reciprocal_floor_active:
+      minimum: 0.0
+      maximum: 1.0
+  E_ranges:
+    e_user_avg_timespent_seconds:
+      minimum: 0.04973381385207176
+      maximum: 1.4668771028518677
+    e_user_like_rate:
+      minimum: 0.02520289458334446
+      maximum: 2.1269500255584717
+    e_user_share_rate:
+      minimum: 0.13231198489665985
+      maximum: 4.327225208282471
+    e_user_bookmark_rate:
+      minimum: 0.2506963908672333
+      maximum: 9.546961784362793
+    e_user_comments_rate:
+      minimum: 0.04723108932375908
+      maximum: 2.862283229827881
+    e_user_dislike_rate:
+      minimum: 0.35654595494270325
+      maximum: 24.972549438476562
+    e_user_heartbeat15_rate:
+      minimum: 0.025760792195796967
+      maximum: 1.2736361026763916
+    e_user_heartbeat30_rate:
+      minimum: 0.026640675961971283
+      maximum: 1.4450106620788574
+    e_item_avg_timespent_seconds:
+      minimum: 0.0
+      maximum: 3.738854169845581
+    e_item_like_rate:
+      minimum: 0.008046569302678108
+      maximum: 2.0708892345428467
+    e_item_share_rate:
+      minimum: 0.0029334116261452436
+      maximum: 2.222222328186035
+    e_item_bookmark_rate:
+      minimum: 0.0035170502960681915
+      maximum: 1.4285714626312256
+    e_item_comments_rate:
+      minimum: 0.014746272936463356
+      maximum: 2.8633344173431396
+    e_item_dislike_rate:
+      minimum: 0.005153163336217403
+      maximum: 1.0909091234207153
+    e_item_click_on_author_rate:
+      minimum: 0.008588605560362339
+      maximum: 3.085714340209961
+    e_item_heartbeat15_rate:
+      minimum: 0.012232143431901932
+      maximum: 1.2273204326629639
+    e_item_heartbeat30_rate:
+      minimum: 0.004856080748140812
+      maximum: 1.1904335021972656
+    e_ials_viewtime_cosine:
+      minimum: -0.6625053286552429
+      maximum: 1.5259064435958862
+    e_ials_feedback_cosine:
+      minimum: -1.0797078609466553
+      maximum: 1.7629729509353638
+    e_ials_survival_cosine:
+      minimum: -0.6732438802719116
+      maximum: 1.4448661804199219
+  target_ranges:
+    label_normalized_watch_time:
+      minimum: 0.006369426846504211
+      maximum: 1.0
+    label_timespent_seconds:
+      minimum: 1.0
+      maximum: 157.0
+  denominator_scan:
+    p_duration_seconds:
+      rows: 1516831
+      valid_rows: 1516831
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.028901733458042145
+      maximum_normalized: 1.0404623746871948
+    p_user_show_count:
+      rows: 1516831
+      valid_rows: 1516831
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.13097712397575378
+      maximum_normalized: 1.2848232984542847
+    p_user_show_count_plus_beta:
+      rows: 1516831
+      valid_rows: 1516831
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.2805507779121399
+      maximum_normalized: 1.2358003854751587
+    p_item_show_count:
+      rows: 1516831
+      valid_rows: 731844
+      invalid_or_zero_rows: 784987
+      reciprocal_floor_rows: 90430
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.9077214245917276e-05
+      maximum_normalized: 4.0254621505737305
+    p_item_show_count_plus_beta:
+      rows: 1516831
+      valid_rows: 1516831
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 829901
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.005873025394976139
+      maximum_normalized: 4.007693767547607
+    p_ials_viewtime_user_norm:
+      rows: 1516831
+      valid_rows: 1516831
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 0
+      nonfinite_rows: 0
+      minimum_positive_normalized: 0.08662474900484085
+      maximum_normalized: 1.3085548877716064
+    p_ials_viewtime_item_norm:
+      rows: 1516831
+      valid_rows: 731844
+      invalid_or_zero_rows: 784987
+      reciprocal_floor_rows: 20335
+      nonfinite_rows: 0
+      minimum_positive_normalized: 2.7272066290606745e-05
+      maximum_normalized: 1.452966570854187
+    p_ials_feedback_user_norm:
+      rows: 1516831
+      valid_rows: 1199306
+      invalid_or_zero_rows: 317525
+      reciprocal_floor_rows: 244715
+      nonfinite_rows: 0
+      minimum_positive_normalized: 3.478097530037333e-13
+      maximum_normalized: 1.9488091468811035
+    p_ials_feedback_item_norm:
+      rows: 1516831
+      valid_rows: 685697
+      invalid_or_zero_rows: 831134
+      reciprocal_floor_rows: 164510
+      nonfinite_rows: 0
+      minimum_positive_normalized: 6.874593125663631e-13
+      maximum_normalized: 2.9042654037475586
+    p_ials_survival_user_norm:
+      rows: 1516831
+      valid_rows: 1516831
+      invalid_or_zero_rows: 0
+      reciprocal_floor_rows: 620
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.210295057622716e-05
+      maximum_normalized: 1.67754065990448
+    p_ials_survival_item_norm:
+      rows: 1516831
+      valid_rows: 719492
+      invalid_or_zero_rows: 797339
+      reciprocal_floor_rows: 95728
+      nonfinite_rows: 0
+      minimum_positive_normalized: 5.444688213174231e-06
+      maximum_normalized: 2.2123117446899414

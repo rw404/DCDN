@@ -86,7 +86,7 @@ Pin source URL, commit, license, and exact configuration for external implementa
 
 All models use the same examples, labels, shared context encoder `C`, prediction tower/head, loss, optimizer family, maximum training steps/examples, validation cadence, patience, selection metric, effective global batch, and tuning-trial count. Report realized examples seen. Models within one feature regime use exactly the same schema and order. Causal variants intentionally differ only by predeclared `E/R` fields; assert that all `C+P` columns and values remain identical.
 
-The public-core capacity control is `DCNv2-capacity-matched-core(C+P)`, never `DCDN-sham`, and must be resolved for every causal table. Match trainable non-embedding parameters and FLOPs to `DCDN-Core` within ±5%. If ordinary `DCNv2(C+P)` already meets both tolerances, reuse that exact run and do not create a duplicate cell. Otherwise, predeclare two bracketing ranks and choose mechanically—before any model metric—by the smaller frozen distance `|log(P_dcn/P_dcdn)| + |log(F_dcn/F_dcdn)|`, where `P` is trainable non-embedding parameters and `F` is FLOPs/example. If neither bracket meets tolerance, report both as diagnostics and mark exact capacity matching unavailable; never choose the control by validation quality. This is distinct from the production `Hybrid-second-product-control`, which retains the exact FC/projector wrapper and replaces only the reciprocal carrier with a second product carrier.
+The public-core capacity control is reported as `DCNv2-capacity-matched(C+P)`, never `DCDN-sham`, and must be resolved for every causal table. Retain `dcnv2_capacity_matched_core` as the stable internal key and `DCNv2-capacity-matched-core` only as a historical frozen provenance alias; do not rewrite or re-hash existing search/view locks solely for this naming update. Match trainable non-embedding parameters and FLOPs to `DCDN-Core` within ±5%. If ordinary `DCNv2(C+P)` already meets both tolerances, reuse that exact run and do not create a duplicate cell. Otherwise, predeclare two bracketing ranks and choose mechanically—before any model metric—by the smaller frozen distance `|log(P_dcn/P_dcdn)| + |log(F_dcn/F_dcdn)|`, where `P` is trainable non-embedding parameters and `F` is FLOPs/example. If neither bracket meets tolerance, report both as diagnostics and mark exact capacity matching unavailable; never choose the control by validation quality. This is distinct from the production `Hybrid-second-product-control`, which retains the exact FC/projector wrapper and replaces only the reciprocal carrier with a second product carrier.
 
 Confirm the DCDN recurrence from source rather than copying the legacy symbolic expansion. Preserve the residual and separate product/division biases.
 
@@ -137,7 +137,7 @@ For **KuaiRand-Pure** and **VK-LSVD**, run exactly these five rows on the primar
 1. `DCNv2(C+P)`;
 2. `DCNv2(C+P+E/R)`;
 3. `DCDN(C+P)`;
-4. `DCNv2-capacity-matched-core(C+P)`;
+4. `DCNv2-capacity-matched(C+P)`;
 5. `AFN+(C+P)`.
 
 For **KuaiRec**, run the analogous five rows on its primary watch-time target, seeds 42/43/44. Valid `DCNv2(C+P)`, `DCDN(C+P)`, and `AFN+(C+P)` results are reused in later tables; never rerun an identical cell just to populate another table.

@@ -312,7 +312,7 @@ Use “recover the predictive value” rather than “reconstruct every removed 
 | Hybrid-second-product-control | 112 | controls for the extra active branch in the exact production wrapper | mandatory for production-mechanism attribution |
 | DCDN-full | 187 | tests architecture benefit without compression | optional |
 
-Do not use the name `DCDN-sham`. For public raw-core tables, call the rank/width/parameter control **DCNv2-capacity-matched-core**. If ordinary DCNv2 is already within ±5% in trainable non-embedding parameters and FLOPs/example, reuse it; otherwise choose a predeclared bracketing rank mechanically by the frozen parameter/FLOP-distance rule, never by validation quality.
+Do not use the name `DCDN-sham`. For public raw-core tables, use the user-facing/reporting label **DCNv2-capacity-matched**. Retain `dcnv2_capacity_matched_core` as the stable internal key and **DCNv2-capacity-matched-core** only as a historical frozen provenance alias; do not rewrite or re-hash existing search/view locks solely for this naming update. If ordinary DCNv2 is already within ±5% in trainable non-embedding parameters and FLOPs/example, reuse it; otherwise choose a predeclared bracketing rank mechanically by the frozen parameter/FLOP-distance rule, never by validation quality.
 
 This public control is distinct from the production **Hybrid-second-product-control** below. The latter preserves the exact hybrid topology and replaces only the reciprocal carrier with a second product carrier; it is the direct test of reciprocal structure versus another active matrix/compute path.
 
@@ -399,7 +399,7 @@ Core comparison:
 - `DCNv2(C+P)`;
 - `DCNv2(C+P+E)`;
 - `DCDN(C+P)`;
-- resolved `DCNv2-capacity-matched-core(C+P)`, reusing ordinary DCNv2 when it already satisfies the frozen ±5% tolerance.
+- resolved `DCNv2-capacity-matched(C+P)`, reusing ordinary DCNv2 when it already satisfies the frozen ±5% tolerance.
 
 The provisional `31` and `20` counts imply a 39.2% reduction **only inside the numerical operand-plus-engineered subspace**: `51 -> 31`, before validity indicators. They do not imply a 39.2% reduction in all public input fields. Including the six shared C fields gives `57 -> 37`, or 35.1%, before validity indicators; with `|V| = v`, the honest total-field comparison is `(57 + v) -> (37 + v)`, a reduction of `20 / (57 + v)`. Report both the subspace and total-field definitions, and do not compare either percentage with the industrial 40.1% until the code-generated manifest fixes C, P, V, and E exactly.
 
@@ -459,7 +459,7 @@ Headline comparison:
 - `DCNv2(C+P)`;
 - `DCNv2(C+P+R)`;
 - `DCDN(C+P)`;
-- `DCNv2-capacity-matched-core(C+P)`;
+- `DCNv2-capacity-matched(C+P)`;
 - AFN+ as the closest algebraic prior.
 
 Primary target: `long_view`, with LogLoss as the primary metric and ROC-AUC/user-GAUC as secondary metrics. Use AUPRC for rare like/forward/hate targets. Treat `is_click` only as a per-UI/tab secondary target because its released semantics differ between the two-column and single-column interfaces.
@@ -489,7 +489,7 @@ Feature regimes:
 - **P:** lagged `show_cnt`, `show_user_num`, `play_cnt`, `play_user_num`, `hist_play_duration_sum`, complete/valid/long/short-play counts, engagement counts, video duration, shifted safe denominators, and validity indicators. `hist_play_duration_sum` is the accumulated lagged daily total and must not be confused with the current interaction outcome.
 - **E:** lagged play/show, unique-play/unique-show, complete/play or complete/show, valid/long/short rates, average play duration, play-time/show, and engagement/show rates.
 
-Run the causal matrix `DCNv2(C+P)`, `DCNv2(C+P+E)`, `DCDN(C+P)`, `DCNv2-capacity-matched-core(C+P)`, and AFN+. The current interaction's `play_duration` is the label source and `watch_ratio` is derived from that outcome; neither may enter the inputs. KuaiRec has no native like label. Use `clip(current_play_duration, 0, c) / c`, where current HEGM code takes `c` from the 99th percentile of video duration (approximately 60 seconds), and report MAE in seconds and MSE in sec². If HEGM batch-XAUC is retained, use the same qualified name and audit rules as for VK-LSVD. Retain original IDs, timestamp/date, and stable row ID as audit-only columns.
+Run the causal matrix `DCNv2(C+P)`, `DCNv2(C+P+E)`, `DCDN(C+P)`, `DCNv2-capacity-matched(C+P)`, and AFN+. The current interaction's `play_duration` is the label source and `watch_ratio` is derived from that outcome; neither may enter the inputs. KuaiRec has no native like label. Use `clip(current_play_duration, 0, c) / c`, where current HEGM code takes `c` from the 99th percentile of video duration (approximately 60 seconds), and report MAE in seconds and MSE in sec². If HEGM batch-XAUC is retained, use the same qualified name and audit rules as for VK-LSVD. Retain original IDs, timestamp/date, and stable row ID as audit-only columns.
 
 ### Yambda-50M — optional cross-domain evidence only
 
@@ -671,7 +671,7 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
 - KuaiRand-1K is not the headline randomized benchmark because it has only about 43K randomized rows. KuaiRand-27K is optional for a finalist scaling run, not a full grid.
 - KuaiSAR, EB-NeRD, Criteo/Avazu, Tenrec, and MicroLens are outside the deadline scope unless the user explicitly expands it.
 - Main model family follows DCNv2/Wukong comparisons, with AFN+ mandatory as closest algebraic prior. The full eight-model suite is frozen to the shared `C+P` regime; the full-feature DCNv2 arm is a separate causal control.
-- `DCDN-sham` terminology was rejected. Use `DCNv2-capacity-matched-core` for public raw-core tables and `Hybrid-second-product-control` for the exact production/bridge wrapper.
+- `DCDN-sham` terminology was rejected. Use the reporting label `DCNv2-capacity-matched` for public raw-core tables and `Hybrid-second-product-control` for the exact production/bridge wrapper. The stable internal key `dcnv2_capacity_matched_core` and old display alias `DCNv2-capacity-matched-core` remain only as frozen internal provenance; existing search/view locks are not renamed or re-hashed.
 - Explicit reciprocal inputs are an offline-only reviewer control, never a required production A/B arm.
 - Test evaluation is forbidden until the immutable protocol manifest and SHA-256 hash have been recorded after train/validation-only tuning.
 - Industrial reproducibility and A/B documentation are owner-side manuscript work; the public RunPod must neither access industrial data nor wait for it before executing the frozen public protocol.
@@ -723,5 +723,46 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   covering 7,505,820 train and 1,516,831 validation rows. Every shard passed
   independent byte-hash, schema, and row-count re-open checks; sealed week 26
   remained outside the path graph and unopened.
+
+- VK-LSVD runtime/encoder hardening recorded 2026-08-18: the combined fresh
+  `/tmp` suite passed 64 tests. The encoder contract SHA-256 is
+  `16fa99db8e92ce4dd55c0bd5e7d7bfd8af8d3d59251cc769b41988e61d414449`;
+  its C+P identity binds full-scan SHA-256
+  `cc7c74b183688c1125cd3e49d32daed2b1e7560d9ee796cfe93de972792ed612`
+  and deterministic cache-content SHA-256
+  `b732b95f80f9ec28f4d9dd5192bf7dba3ed16bb96093bc5add209743edfff590`.
+- Metric-free VK-LSVD C+P capacity resolution recorded 2026-08-18: the frozen
+  artifact `configs/capacity/vk_lsvd_c_plus_p_v1.json` has SHA-256
+  `d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565`
+  and mechanically selects the two-layer, four-expert rank-12 bracket within
+  the ±5% parameter/FLOP rule. Its reporting label is
+  `DCNv2-capacity-matched`; `dcnv2_capacity_matched_core` remains the
+  canonical runtime key.
+- Actual VK-LSVD C+P premetric Protocol v3 recorded 2026-08-18:
+  `configs/protocols/vk_lsvd_c_plus_p/protocol_frozen.yaml` has SHA-256
+  `1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`;
+  its active registry
+  `artifacts/protocol_state/vk_lsvd_c_plus_p/active_protocol.yaml` has
+  SHA-256
+  `2d76236dece1769c08417cc0322f3b3bc51001cfb52ceb945e24fe237ca0fdb4`.
+  The canonical views-split SHA-256 is
+  `f754784d06141daf27aae45191d30d8468720d7b4d9410d7d6470c4632e67e75`,
+  with 7,505,820 train and 1,516,831 validation rows. Independent
+  `require_views_split`, train/validation `RuntimeIdentity`, active-state,
+  and 70 fresh-`/tmp` Protocol tests passed. No selected-config hash, test
+  row count, or test path is present; `test_unlocked=false`. Capacity
+  resolution and Protocol materialization opened no data row or label, used no
+  GPU, and computed no model metric.
+- Conservative deterministic execution projection recorded 2026-08-18:
+  retain frozen `effective_batch=4096`, floor the nominal 40,000,000-example
+  maximum to 39,997,440 completed examples so the hard maximum is never
+  exceeded, and validate at the first completed batch at or above each
+  declared 4,000,000-example threshold (first at 4,001,792), identically for
+  every model. The declared search lock and hash remain unchanged; this
+  arithmetic execution policy requires no search or Protocol re-hash.
+- Pre-GPU local guards recorded at `2026-08-18T17:05:20.923596Z`: the frozen
+  local estimate is USD 50.88 current and USD 60.75 at a conservative
+  three-hour ETA; storage inspection found 5,564,928 project-owned durable
+  bytes and 62.794891 GiB overlay available, with no violation.
 
 Update this decision log whenever a material choice changes.

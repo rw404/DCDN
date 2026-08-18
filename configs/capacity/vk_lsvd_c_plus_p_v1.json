@@ -1,0 +1,168 @@
+{
+  "candidates": {
+    "capacity_rank_lower": {
+      "adapter_flops": 19712,
+      "adapter_parameters": 9920,
+      "expert_flops": 3245,
+      "expert_parameters": 1536,
+      "flops": 46750,
+      "head_flops": 128,
+      "head_parameters": 65,
+      "interaction_flops": 26910,
+      "interaction_flops_per_layer": 13455,
+      "interaction_parameters": 12868,
+      "interaction_parameters_per_layer": 6434,
+      "low_rank": 12,
+      "num_experts": 4,
+      "num_layers": 2,
+      "parameters": 22853,
+      "ratios_to_target": {
+        "distance": 0.04639896421317034,
+        "eligible_within_plus_or_minus_5_percent": true,
+        "flop_ratio": 0.9889156830393028,
+        "parameter_ratio": 0.9653613821653361
+      }
+    },
+    "capacity_rank_upper": {
+      "adapter_flops": 19712,
+      "adapter_parameters": 9920,
+      "expert_flops": 3527,
+      "expert_parameters": 1677,
+      "flops": 49006,
+      "head_flops": 128,
+      "head_parameters": 65,
+      "interaction_flops": 29166,
+      "interaction_flops_per_layer": 14583,
+      "interaction_parameters": 13996,
+      "interaction_parameters_per_layer": 6998,
+      "low_rank": 13,
+      "num_experts": 4,
+      "num_layers": 2,
+      "parameters": 23981,
+      "ratios_to_target": {
+        "distance": 0.048908970043076774,
+        "eligible_within_plus_or_minus_5_percent": true,
+        "flop_ratio": 1.0366374751449,
+        "parameter_ratio": 1.0130106027964347
+      }
+    }
+  },
+  "contract": "dcdn-vk-capacity-resolution-v1",
+  "counting_contract": {
+    "embedding_policy": "exclude_only_parameters_owned_directly_by_nn_Embedding_modules",
+    "flop_contract": "dcdn-forward-floating-arithmetic-flops-v1",
+    "flop_scalar_operations": [
+      "multiply",
+      "add",
+      "reciprocal",
+      "tanh",
+      "exp",
+      "divide"
+    ],
+    "flop_zero_cost_operations": [
+      "comparison",
+      "mask",
+      "concatenation",
+      "memory_movement",
+      "embedding_lookup"
+    ],
+    "included_components": [
+      "interaction",
+      "visible_adapter",
+      "common_linear_head"
+    ],
+    "parameter_scope": "all_unique_trainable_non_embedding_parameters_in_joint_wrapper"
+  },
+  "decision": {
+    "mode": "fallback_bracket",
+    "optimizer_learning_rate": "inherit_selected_same_unit_DCNv2_learning_rate_after_validation_only_tuning",
+    "ordinary_reused": false,
+    "selected_candidate": "capacity_rank_lower",
+    "selected_low_rank": 12,
+    "selection_rule": "minimum_abs_log_parameter_ratio_plus_abs_log_flop_ratio_then_lower_rank"
+  },
+  "encoder_parameter_audit": {
+    "conclusion": "all_trainable_encoder_parameters_are_nn_Embedding_weights",
+    "parameter_owning_module_types": [
+      "Embedding"
+    ],
+    "trainable_encoder_non_embedding_parameters": 0,
+    "trainable_encoder_parameters_total": 4128,
+    "wrapper_non_embedding_delta": 0
+  },
+  "frozen_bindings": {
+    "encoder_v1_sha256": "16fa99db8e92ce4dd55c0bd5e7d7bfd8af8d3d59251cc769b41988e61d414449",
+    "experiment_matrix_v1_sha256": "867118db089bbbffb4abf02ff7b3c01e2c9f43e804a188a27a3886f66db4e000",
+    "model_sources_v1_sha256": "0844a838e5a68029299a52aaa31b5f74205fe57fd486b51544061b32c571a3f4",
+    "search_space_v1_sha256": "b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344",
+    "vk_denominator_mask_sha256": "9e168fae4014f4763008e89f61324858f17d376f56fb5de46f2775911650bcaa",
+    "vk_features_v1_sha256": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+    "vk_operand_schema_sha256": "bb2f6c47fa12c175a3820830f90ff577acb293c56b107c7d1c40e4c682f2ff4d"
+  },
+  "geometry": {
+    "capacity_num_experts": 4,
+    "capacity_num_layers": 2,
+    "context_bypass_width": 96,
+    "context_embedding_dim": 16,
+    "dcdn_num_layers": 2,
+    "flat_width": 154,
+    "head_output_width": 1,
+    "operand_width": 58,
+    "ordered_context_field_count": 6,
+    "ordinary_dcnv2_num_layers": 2,
+    "representation_width": 64
+  },
+  "identity": {
+    "dataset_id": "vk_lsvd_up0.01_ir0.01",
+    "feature_regime": "C+P"
+  },
+  "metric_firewall": {
+    "data_rows_opened": false,
+    "gpu_used": false,
+    "labels_opened": false,
+    "test_metrics_consulted": false,
+    "validation_metrics_consulted": false
+  },
+  "naming": {
+    "alias_policy": "historical_internal_alias_retained_in_frozen_locks_reporting_label_authoritative",
+    "historical_frozen_display_alias": "DCNv2-capacity-matched-core",
+    "internal_model_key": "dcnv2_capacity_matched_core",
+    "reporting_label": "DCNv2-capacity-matched"
+  },
+  "ordinary_dcnv2": {
+    "adapter_flops": 19712,
+    "adapter_parameters": 9920,
+    "architecture": "DCNv2-full-rank-L2-flat-C-plus-P",
+    "flops": 115320,
+    "head_flops": 128,
+    "head_parameters": 65,
+    "interaction_flops": 95480,
+    "interaction_flops_per_layer": 47740,
+    "interaction_parameters": 47740,
+    "interaction_parameters_per_layer": 23870,
+    "parameters": 57725,
+    "ratios_to_target": {
+      "distance": 1.7831056083121468,
+      "eligible_within_plus_or_minus_5_percent": false,
+      "flop_ratio": 2.439395862419089,
+      "parameter_ratio": 2.4384319689097285
+    }
+  },
+  "resolved_utc": "2026-08-18T16:29:12Z",
+  "schema_version": 1,
+  "status": "resolved_before_first_model_metric",
+  "target": {
+    "adapter_flops": 19712,
+    "adapter_parameters": 9920,
+    "architecture": "DCDN-Core-L2",
+    "flops": 47274,
+    "head_flops": 128,
+    "head_parameters": 65,
+    "interaction_flops": 27434,
+    "interaction_flops_per_layer": 13688,
+    "interaction_parameters": 13688,
+    "interaction_parameters_per_layer": 6844,
+    "parameters": 23673,
+    "reciprocal_flops": 58
+  }
+}

@@ -48,6 +48,9 @@ results/*
 !results/**/*.yaml
 !results/**/*.yml
 
+# Runtime advisory locks are local process state, never durable evidence
+artifacts/protocol_state/**/.active_protocol.yaml.lock
+
 # Third-party checkouts are pinned in manifests rather than vendored implicitly
 third_party/*
 !third_party/README.md

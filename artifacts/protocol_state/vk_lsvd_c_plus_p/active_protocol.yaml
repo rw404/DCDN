@@ -1,0 +1,8 @@
+schema_version: 1
+artifact_role: active_protocol_registry
+dataset_id: vk_lsvd_up0.01_ir0.01
+feature_regime: C+P
+active_protocol_sha256: 1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b
+active_lock_stage: premetric_locked
+parent_premetric_protocol_sha256: null
+test_claim_registry_path: null

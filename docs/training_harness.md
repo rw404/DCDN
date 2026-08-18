@@ -1,0 +1,282 @@
+# Deterministic training harness
+
+This harness is the fail-closed train/validation boundary for the frozen DCDN
+public suite. It now accepts bounded-memory `RawBatchSource` factories and a
+model-owned `TrainableEncodedModel`; it never accepts a precomputed public
+embedding bundle. The legacy encoded-tensor path remains synthetic-only for
+backward determinism tests. No real dataset, GPU, model metric, test claim, or
+protocol activation was used while implementing or testing this integration.
+
+## Premetric execution order
+
+Every real source is label-bearing, so authorization happens before its
+factory is called:
+
+1. Verify the active immutable Protocol v3 artifact and its sidecar.
+2. Verify exact independently declared train and validation `RuntimeIdentity`
+   values, including row counts and all data, views, feature, schema, mask,
+   full-scan, cache, encoder, and full-capacity-artifact hashes.
+3. Verify that the corresponding `RawSourceIdentity` values project to those
+   runtime identities and differ between train and validation only by `split`
+   and `row_count`.
+4. Verify the exact views payload and canonical split hash, frozen search and
+   experiment-matrix hashes, leakage attestations, and local cost/storage
+   guards.
+5. Call `SafetyAttestation.require_split(split, config)`.
+6. Only then call the source factory; compare the returned identity
+   byte-for-byte, check its length and runtime-check mode, and bind it to the
+   encoder.
+7. For every requested index sequence, call `RawFeatureBatch.validate` before
+   the model forward. Always close the source in a `finally` block.
+
+The optimized path sets `runtime_value_checks: false` consistently in the
+resolved config, source, encoder, and DCDN core. It relies on the bound full
+materialized scan and cache-content hashes and performs no per-batch tensor
+value synchronization to the host. The debug path sets the flag to true and
+performs finite/token-range checks. Vectorized device-side safe-reciprocal
+masks remain part of the DCDN arithmetic in both modes. The scientific tuning
+CLI rejects the debug flag before model or source construction; debug mode is
+reserved for targeted tests and a dedicated one-batch implementation-smoke
+path, never a long scientific run.
+
+## Raw VK-LSVD boundary
+
+The production source is
+`dcdn.data.vk_lsvd_runtime.VKLSVDRawBatchSource`, opened through its factory
+with expected full-scan and cache-content hashes and `verify_hashes=True`.
+For the frozen VK-LSVD C+P v2 view, the relevant identities include:
+
+- views manifest:
+  `738d3610fd83a93297d94ccad4c4316dd3ad8b241f8409e84daf5b2322040dbe`;
+- full materialized scan:
+  `cc7c74b183688c1125cd3e49d32daed2b1e7560d9ee796cfe93de972792ed612`;
+- C+P cache content:
+  `b732b95f80f9ec28f4d9dd5192bf7dba3ed16bb96093bc5add209743edfff590`.
+
+The source streams the materialized cache rather than loading the 12 Parquet
+shards into one CPU tensor. It preserves the manifest row order: train is
+weeks 20--24 in manifest order and validation is week 25. Arbitrary,
+nonmonotone, and duplicate requested indices are preserved exactly.
+
+`RawFeatureBatch` contains no field embeddings:
+
+```text
+context_tokens         int64     [B, C]
+operand_features       FP32      [B, P]
+denominator_validity   bool      [B, P]
+targets                FP32      [B, 1]
+global_row_indices     CPU int64 [B]
+```
+
+The trainable shared encoder owns the 16-dimensional categorical embeddings
+and learned numeric-field vector-times-scalar view. Raw P and denominator
+validity reach the controlled model without being replaced by fixed features;
+targets and audit indices remain outside the encoder forward signature.
+
+## Composite model and capacity firewall
+
+The optimizer owns every unique trainable parameter of the full composite:
+encoder, controlled interaction, adapter, and common head. All parameters
+remain FP32, and the frozen public-run contract requires BF16 autocast around
+the forward while sensitive operations preserve their model-level FP32 rules.
+Checkpoint precision is derived from the actual autocast flag, so a standalone
+FP32 synthetic config cannot be mislabeled as BF16. DDP is forbidden and each
+worker exposes one logical `cuda:0` to one independent process.
+
+Before optimizer construction or any source open, the harness also binds every
+runtime interaction-config dataclass to the corresponding frozen search
+architecture (including all
+DNN/DeepFM/AutoInt+/AFN+/Wukong geometry and DCDN/DCN/DCNv2 depth and
+initialization scales). AdamW betas, epsilon, weight decay, validation
+patience, global-L2 clipping, effective batch, BF16 autocast, and the
+one-reduction/second-OOM-stop policy must equal the frozen common contract.
+Microbatch size may vary only as an exact divisor of the unchanged effective
+batch.
+
+The full verified capacity artifact is
+`configs/capacity/vk_lsvd_c_plus_p_v1.json`. Protocol, resolved config, and
+checkpoint bind the SHA-256 of its exact file bytes, not the digest of a
+compact projection. Before the first model metric, the harness:
+
+- validates the artifact and every repository source binding;
+- projects it to the mechanical `capacity_resolution` schema;
+- independently rebuilds DCDN-Core, ordinary full-rank DCNv2, and the adjacent
+  low-rank brackets;
+- requires the two projections to be identical and accepted by
+  `validate_capacity_resolution`;
+- requires the runtime capacity candidate and low rank to equal the artifact's
+  metric-free selected decision; the adjacent upper rank remains diagnostic.
+
+Parameter matching counts trainable adapter/head/interaction parameters and
+excludes every `nn.Embedding`. That exclusion is only the capacity comparison
+scope: encoder embeddings remain trainable and are included in the optimizer
+and checkpoint. FLOPs are deterministic post-encoder forward FLOPs per
+example; embedding lookup and encoder numeric vector multiplication are
+outside this frozen capacity-comparison scope.
+
+## Examples, cadence, and deterministic resume
+
+The declared hard maximum remains 40,000,000 examples and is never rounded
+up. With effective batch 4096, the realized maximum is
+
+```text
+floor(40,000,000 / 4096) * 4096 = 39,997,440.
+```
+
+Validation declarations remain every 4,000,000 examples. A check fires on the
+first completed effective-batch boundary at or after its declaration; the
+first realized check is therefore 4,001,792. Events, checkpoints, and results
+record both the declared threshold and realized examples. The policy is
+identical for every model and does not alter the frozen search hash.
+
+`StatefulPermutationSampler` is the only cursor owner. A microbatch is
+committed only after its forward/backward succeeds, and a checkpoint is
+durable only at accumulation step zero. Resume requires exact equality:
+
+```text
+examples_seen = optimizer_steps * effective_batch_size
+examples_seen = sampler_epoch * train_row_count + sampler_cursor
+```
+
+Checkpoint loading maps the full payload to CPU first so CUDA sampler and RNG
+state cannot violate their CPU contracts. All envelope, metadata, tensor
+shape/dtype/layout, optimizer, sampler, RNG, module extra-state, and harness
+extra-state checks finish before any live component is mutated; RNG restoration
+is last. A pending or nonfinite monitor drain fails before checkpoint mutation.
+
+`last.pt` is the mutable resume checkpoint. Validation-selected best weights
+use immutable generation names such as
+`best-step-000000000123-generation-0000.pt`; an existing generation is never
+overwritten. Every last checkpoint stores the selected generation filename,
+SHA-256, and metric. Resume pre-inspects that complete best envelope, role,
+metric, and digest before loading last, so a stale best cannot be correlated
+with a newer last. Old generations are retained during an active run; terminal
+garbage collection can be performed only after durable result/backup evidence.
+
+An OOM restores the last verified boundary, halves the microbatch to a divisor
+of the unchanged effective batch, records `oom_count: 1`, and immediately
+writes the fallback last checkpoint before continuing. A crash therefore
+cannot resurrect the first-allowance state. A second OOM stops the run.
+
+Fresh execution rejects any existing last pair or best generation. Resume
+requires an intact `last.pt` plus sidecar and never silently starts fresh.
+
+## Best restore and current test firewall
+
+`restore_best_for_evaluation` is a model-only, premetric restore for validation
+latency. It verifies role `best`, exact metric, checkpoint metadata, source
+identity, composite contract, encoder contract, capacity artifact, and parent
+premetric protocol. It leaves optimizer, sampler, scheduler, scaler, RNG, and
+their modes untouched before the harness explicitly selects evaluation mode.
+
+`restore_parent_best_for_final` requires caller-supplied exact parent checkpoint
+metadata and selected-lock lineage; it does not weaken metadata equality to
+bridge tuning and final phases. The selected model digest is seed-invariant and
+covers the exact interaction and head configs. Candidate ID and learning rate
+are independently frozen for the ordinary tuned/fixed models, while seed
+remains exact in the training config, joint model contract, checkpoint, and
+eventual claim. Capacity-control training remains separately blocked until a
+durable selected ordinary-DCNv2 learning-rate artifact is bound; the metric-free
+capacity artifact already fixes the lower-rank architecture but does not select
+that inherited learning rate.
+
+Actual test execution is deliberately unavailable in this harness and CLI.
+Loss-only test evaluation and test latency fail before reserving a claim or
+calling a test factory. The final one-pass metric/uncertainty runner remains
+blocked until the central Protocol claim schema binds the exact
+validation-selected best checkpoint SHA and durable selection receipt. This is
+an explicit remaining protocol blocker, not permission to open test data.
+
+## Numerical monitoring and latency
+
+Activation hooks select suffixes
+`controlled_model.interaction`, `controlled_model.adapter`, and
+`controlled_model.head` on the composite wrapper. Construction requires
+exactly three hooks, and each normal model forward must increase the
+observation count. CPU finite checks are synchronous. CUDA checks use a
+dedicated stream and pinned one-byte flags, with a mandatory drain at durable
+boundaries. A repeated/nonfinite threshold failure stops the run.
+
+Validation latency is end-to-end raw-to-logit model latency after source batch
+materialization; source I/O itself is outside the timed region. A monitored
+warmup first proves finite outputs and hook observations. Hooks are then
+temporarily detached so monitor kernels do not contaminate the timed forwards,
+and are reattached with the exact expected count in `finally`, including on a
+timed-forward exception. Test latency is forbidden. The receipt field is
+`end_to_end_raw_to_logit_validation_latency`, and its scope value is
+`end_to_end_raw_to_logit_model`.
+
+## CLI and worker durability
+
+`scripts/train_model.py` accepts the final VK C+P source/encoder factories but
+requires an actual active premetric Protocol v3 file and state. It has no test
+source/path option. A typical single-process command is stored verbatim in the
+checkpoint and result, without credentials:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python scripts/train_model.py run \
+  --resolved configs/runs/<run-id>.yaml
+```
+
+Paid execution is owned by `scripts/run_worker.py`, one process per physical
+GPU. The worker verifies the registry record, resolved-config sidecar, active
+protocol/data/features digests, and code identity before spawn. Code identity
+is exact `git rev-parse --verify HEAD` plus SHA-256 of
+`git diff --binary HEAD --`; any untracked executable/importable source under
+`src/` or `scripts/` is rejected. The same code identity is rechecked before a
+successful terminal transition. This convention requires the harness code to
+be committed cleanly before a paid smoke.
+
+SIGINT/SIGTERM handlers are installed before child spawn. The supervisor owns
+the child process group in an enclosing `finally`: spawn-transition failures,
+signals, guard failures, and unexpected exceptions stop only that task-owned
+trainer and terminalize a `running` registry record as failed. The worker does
+not mutate the Pod or network volume.
+
+The trainer publishes result JSON and its SHA sidecar as a same-directory,
+exclusive pair: both temporary files are flushed and fsynced, hard-linked
+without overwrite, the directory is fsynced, and the exact bytes are reopened
+and verified. A collision leaves the existing pair untouched; a partial
+publication/failure removes the newly created target so it cannot be mistaken
+for a receipt.
+
+Exit code zero is insufficient for `completed`. The worker reopens the exact
+resolved config, result pair, last checkpoint pair, and selected immutable best
+generation. It checks run/protocol/resolved-config provenance, examples and
+effective-batch equality, declared/realized budgets, finite timing and metric
+fields, OOM limit, source-free test fields, capacity/composite hashes, disabled
+telemetry, local final guards, and the complete drained numerical summary.
+
+## Verification scope
+
+Development checks run only in a fresh `/tmp` repository snapshot. The
+targeted CPU suite covers raw dtype/order/duplicate contracts, optimized
+no-host-sync validation, debug rejection, exact uninterrupted-versus-resumed
+model/optimizer/sampler equality, immutable-best lineage, stale-best
+no-mutation failure, CPU checkpoint mapping, OOM fallback durability, source
+gate order and deterministic close, wrapper hooks, latency hook restoration,
+exact frozen common-training fields, all-nine-model architecture normalization,
+capacity candidate/rank selection, metric-free capacity counts/FLOPs, immutable
+receipt publication, worker provenance, and malformed result rejection.
+Checkpoint tests separately cover pre-mutation component and extra-state
+failures.
+
+Example isolated commands (the environment must already contain the locked
+dependencies) are:
+
+```bash
+env PYTHONPATH=/tmp/<snapshot>/src \
+  /tmp/<test-venv>/bin/pytest -q \
+  tests/test_training_harness.py tests/test_checkpoint_resume.py
+
+/tmp/<test-venv>/bin/ruff check \
+  src/dcdn/training.py src/dcdn/monitor.py src/dcdn/raw.py \
+  src/dcdn/checkpoint.py scripts/train_model.py scripts/run_worker.py \
+  tests/test_training_harness.py tests/test_checkpoint_resume.py
+```
+
+These tests use synthetic CPU data only. They do not open the real cache,
+compute a public model metric, touch test data, activate a real/project
+protocol, launch a GPU job, emit telemetry, or perform Git/network mutations.
+The protocol tests activate only an ephemeral synthetic registry under their
+own `/tmp` directory.
