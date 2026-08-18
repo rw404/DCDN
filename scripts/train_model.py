@@ -39,6 +39,7 @@ from dcdn.training import (
     TrainingConfig,
     TrainingContractError,
     TrainingHarness,
+    TrainingResult,
     resolved_model_components,
     runtime_identity_from_raw,
 )
@@ -216,12 +217,81 @@ def _training_config(payload: Mapping[str, Any]) -> TrainingConfig:
         raise TrainingContractError(f"invalid training config: {exc}") from exc
 
 
-def _require_scientific_runtime_check_mode(config: TrainingConfig) -> None:
-    if config.runtime_value_checks:
+def _validate_execution_contract(
+    execution_kind: Any,
+    config: TrainingConfig,
+    runtime: Mapping[str, Any],
+) -> str:
+    """Validate scientific versus non-scientific execution before model/source use."""
+
+    if type(execution_kind) is not str or execution_kind not in {
+        "implementation_smoke",
+        "scientific_tuning",
+    }:
+        raise TrainingContractError("execution_kind is invalid")
+    if execution_kind == "scientific_tuning":
+        if config.runtime_value_checks:
+            raise TrainingContractError(
+                "scientific tuning requires runtime_value_checks=false"
+            )
+        return execution_kind
+
+    if config.runtime_value_checks is not True:
         raise TrainingContractError(
-            "scientific tuning requires runtime_value_checks=false; true is reserved "
-            "for a dedicated one-batch implementation-smoke path"
+            "implementation smoke requires runtime_value_checks=true"
         )
+    if config.effective_batch_size != 4096:
+        raise TrainingContractError(
+            "implementation smoke requires frozen effective_batch_size=4096"
+        )
+    if runtime.get("resume") is not False:
+        raise TrainingContractError("implementation smoke must be a fresh run")
+    stop_after_examples = runtime.get("stop_after_examples")
+    if (
+        type(stop_after_examples) is not int
+        or stop_after_examples != config.effective_batch_size
+    ):
+        raise TrainingContractError(
+            "implementation smoke must stop after exactly one effective batch"
+        )
+    if runtime.get("latency") is not None:
+        raise TrainingContractError("implementation smoke forbids latency evaluation")
+    if config.validate_every_examples <= config.effective_batch_size:
+        raise TrainingContractError(
+            "implementation smoke must stop before the first validation threshold"
+        )
+    return execution_kind
+
+
+def _validate_result_scope(
+    execution_kind: str,
+    config: TrainingConfig,
+    result: TrainingResult,
+) -> bool:
+    """Return scientific eligibility after enforcing kind-specific result shape."""
+
+    if execution_kind == "implementation_smoke":
+        if (
+            result.examples_seen != config.effective_batch_size
+            or result.optimizer_steps != 1
+            or result.validation_checks != 0
+            or result.best_validation_metric is not None
+            or result.best_checkpoint_sha256 is not None
+            or result.best_checkpoint_filename is not None
+            or result.stopped_reason != "requested_checkpoint_boundary"
+        ):
+            raise TrainingContractError(
+                "implementation smoke produced scientific/validation result state"
+            )
+        return False
+    if execution_kind != "scientific_tuning":
+        raise TrainingContractError("execution_kind is invalid at result boundary")
+    return (
+        result.validation_checks > 0
+        and result.best_validation_metric is not None
+        and result.best_checkpoint_sha256 is not None
+        and result.best_checkpoint_filename is not None
+    )
 
 
 class _RuntimeGuard:
@@ -315,6 +385,7 @@ def _run(resolved_path: Path) -> int:
     payload = load_verified_yaml(resolved_path)
     keys = {
         "schema_version",
+        "execution_kind",
         "run_id",
         "project_root",
         "overlay_path",
@@ -335,8 +406,8 @@ def _run(resolved_path: Path) -> int:
         "runtime",
     }
     _exact_keys(payload, keys, "resolved config")
-    if payload["schema_version"] != 2:
-        raise TrainingContractError("resolved schema_version must equal two")
+    if payload["schema_version"] != 3:
+        raise TrainingContractError("resolved schema_version must equal three")
     root = _path(payload["project_root"], root=PROJECT_ROOT, field="root", inside=True)
     if root != PROJECT_ROOT:
         raise TrainingContractError("project_root does not match this checkout")
@@ -373,7 +444,31 @@ def _run(resolved_path: Path) -> int:
         or training.phase != "tuning"
     ):
         raise TrainingContractError("CLI permits only premetric VK C+P tuning")
-    _require_scientific_runtime_check_mode(training)
+    runtime = _mapping(payload["runtime"], "runtime")
+    _exact_keys(
+        runtime,
+        {
+            "device",
+            "eta_hours",
+            "resume",
+            "stop_after_examples",
+            "latency",
+            "guard_interval_seconds",
+        },
+        "runtime",
+    )
+    if type(runtime["resume"]) is not bool:
+        raise TrainingContractError("runtime.resume must be boolean")
+    execution_kind = _validate_execution_contract(
+        payload["execution_kind"],
+        training,
+        runtime,
+    )
+    eta = Decimal(str(runtime["eta_hours"]))
+    if eta < 0:
+        raise TrainingContractError("runtime.eta_hours must be non-negative")
+    device = _device(runtime["device"])
+
     model_payload = _mapping(payload["model"], "model")
     # selected_configs.lock has one cell per model, not per final seed.  Its
     # digest therefore covers only seed-invariant architecture/head choices;
@@ -411,25 +506,6 @@ def _run(resolved_path: Path) -> int:
         run_seed=training.seed,
         runtime_value_checks=training.runtime_value_checks,
     )
-    runtime = _mapping(payload["runtime"], "runtime")
-    _exact_keys(
-        runtime,
-        {
-            "device",
-            "eta_hours",
-            "resume",
-            "stop_after_examples",
-            "latency",
-            "guard_interval_seconds",
-        },
-        "runtime",
-    )
-    if type(runtime["resume"]) is not bool:
-        raise TrainingContractError("runtime.resume must be boolean")
-    eta = Decimal(str(runtime["eta_hours"]))
-    if eta < 0:
-        raise TrainingContractError("runtime.eta_hours must be non-negative")
-    device = _device(runtime["device"])
     log = CompactEventLog(run_directory / "history.jsonl")
     guard = _RuntimeGuard(
         root,
@@ -498,7 +574,17 @@ def _run(resolved_path: Path) -> int:
         return build
 
     train_factory = source_factory("train")
-    validation_factory = source_factory("validation")
+
+    def forbidden_smoke_validation_factory():
+        raise TrainingContractError(
+            "implementation smoke must not open or evaluate validation"
+        )
+
+    validation_factory = (
+        forbidden_smoke_validation_factory
+        if execution_kind == "implementation_smoke"
+        else source_factory("validation")
+    )
     harness = TrainingHarness(
         model=model,
         config=training,
@@ -517,6 +603,7 @@ def _run(resolved_path: Path) -> int:
         log.emit(
             "run_started",
             run_id=payload["run_id"],
+            execution_kind=execution_kind,
             resolved_config_sha256=verify_sha256_sidecar(resolved_path),
             protocol_sha256=gate.digest,
             joint_model_contract_sha256=model.contract_sha256,
@@ -527,6 +614,11 @@ def _run(resolved_path: Path) -> int:
             validation_factory,
             resume=runtime["resume"],
             stop_after_examples=runtime["stop_after_examples"],
+        )
+        scientific_result_eligible = _validate_result_scope(
+            execution_kind,
+            training,
+            result,
         )
         latency_result = None
         if runtime["latency"] is not None:
@@ -547,7 +639,9 @@ def _run(resolved_path: Path) -> int:
             )
         guard.check(force=True)
         receipt = {
-            "schema_version": 2,
+            "schema_version": 3,
+            "execution_kind": execution_kind,
+            "scientific_result_eligible": scientific_result_eligible,
             "run_id": payload["run_id"],
             "resolved_config_sha256": verify_sha256_sidecar(resolved_path),
             "protocol_sha256": gate.digest,
@@ -562,7 +656,13 @@ def _run(resolved_path: Path) -> int:
             "telemetry": "disabled",
         }
         digest = _write_immutable_json(result_path, receipt)
-        log.emit("result_written", path=result_path.name, sha256=digest)
+        log.emit(
+            "result_written",
+            path=result_path.name,
+            sha256=digest,
+            execution_kind=execution_kind,
+            scientific_result_eligible=scientific_result_eligible,
+        )
         print(json.dumps({"ok": True, "result": str(result_path), "sha256": digest}))
         return 0
     except BaseException as exc:

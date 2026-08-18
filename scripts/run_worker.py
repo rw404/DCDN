@@ -74,6 +74,78 @@ def _inside(path: Path, root: Path, field: str) -> Path:
     return path
 
 
+def _validate_resolved_execution_contract(
+    resolved: Mapping[str, Any],
+) -> str:
+    if resolved.get("schema_version") != 3:
+        raise WorkerError("resolved schema_version must equal three")
+    execution_kind = resolved.get("execution_kind")
+    if type(execution_kind) is not str or execution_kind not in {
+        "implementation_smoke",
+        "scientific_tuning",
+    }:
+        raise WorkerError("resolved execution_kind is invalid")
+    training = _mapping(resolved.get("training"), "resolved.training")
+    runtime = _mapping(resolved.get("runtime"), "resolved.runtime")
+    runtime_value_checks = training.get("runtime_value_checks")
+    if type(runtime_value_checks) is not bool:
+        raise WorkerError("resolved runtime_value_checks must be boolean")
+    if execution_kind == "scientific_tuning":
+        if runtime_value_checks:
+            raise WorkerError("scientific tuning requires runtime_value_checks=false")
+        return execution_kind
+
+    effective_batch = training.get("effective_batch_size")
+    validation_cadence = training.get("validate_every_examples")
+    if (
+        isinstance(effective_batch, bool)
+        or not isinstance(effective_batch, int)
+        or effective_batch != 4096
+        or isinstance(validation_cadence, bool)
+        or not isinstance(validation_cadence, int)
+        or validation_cadence <= effective_batch
+    ):
+        raise WorkerError("implementation smoke training budget is invalid")
+    if runtime_value_checks is not True:
+        raise WorkerError("implementation smoke requires runtime_value_checks=true")
+    if runtime.get("resume") is not False:
+        raise WorkerError("implementation smoke must be a fresh run")
+    if (
+        type(runtime.get("stop_after_examples")) is not int
+        or runtime["stop_after_examples"] != effective_batch
+    ):
+        raise WorkerError(
+            "implementation smoke must stop after exactly one effective batch"
+        )
+    if "latency" not in runtime or runtime["latency"] is not None:
+        raise WorkerError("implementation smoke forbids latency evaluation")
+    return execution_kind
+
+
+def _require_registry_execution_kind(
+    record: Mapping[str, Any],
+    expected: str,
+) -> None:
+    value = record.get("execution_kind")
+    if type(value) is not str or value != expected:
+        raise WorkerError("registry execution_kind differs from resolved config")
+
+
+def _completed_reason(execution_kind: str, result_digest: str) -> str:
+    if _SHA256_RE.fullmatch(result_digest) is None:
+        raise WorkerError("completed result digest is invalid")
+    if execution_kind == "implementation_smoke":
+        scope = "NON-SCIENTIFIC implementation smoke"
+    elif execution_kind == "scientific_tuning":
+        scope = "scientific tuning"
+    else:
+        raise WorkerError("completed execution_kind is invalid")
+    return (
+        f"{scope}; trainer exited successfully; exact immutable result "
+        f"re-opened and verified: {result_digest}"
+    )
+
+
 def _verify_completed_result(
     *,
     project_root: Path,
@@ -81,7 +153,7 @@ def _verify_completed_result(
     expected_resolved_digest: str,
     expected_resolved: Mapping[str, Any],
     run_id: str,
-) -> str:
+) -> tuple[str, bool]:
     """Re-open exact config/result bytes before publishing completed state."""
 
     if verify_sha256_sidecar(resolved_config) != expected_resolved_digest:
@@ -89,6 +161,7 @@ def _verify_completed_result(
     reloaded = load_verified_yaml(resolved_config)
     if reloaded != expected_resolved:
         raise WorkerError("resolved config payload drifted while worker was running")
+    execution_kind = _validate_resolved_execution_contract(reloaded)
     result_path = _inside(
         _resolved_path(
             reloaded.get("result_path"),
@@ -111,6 +184,8 @@ def _verify_completed_result(
         raise WorkerError("result receipt is not strict finite ASCII JSON") from exc
     expected_keys = {
         "schema_version",
+        "execution_kind",
+        "scientific_result_eligible",
         "run_id",
         "resolved_config_sha256",
         "protocol_sha256",
@@ -126,8 +201,12 @@ def _verify_completed_result(
     }
     if not isinstance(receipt, Mapping) or set(receipt) != expected_keys:
         raise WorkerError("result receipt keys mismatch")
-    if receipt["schema_version"] != 2 or receipt["run_id"] != run_id:
+    if receipt["schema_version"] != 3 or receipt["run_id"] != run_id:
         raise WorkerError("result receipt identity mismatch")
+    if receipt["execution_kind"] != execution_kind:
+        raise WorkerError("result receipt execution_kind mismatch")
+    if type(receipt["scientific_result_eligible"]) is not bool:
+        raise WorkerError("result scientific eligibility must be boolean")
     if receipt["resolved_config_sha256"] != expected_resolved_digest:
         raise WorkerError("result receipt resolved-config digest mismatch")
     protocol_path = _inside(
@@ -334,6 +413,34 @@ def _verify_completed_result(
             raise WorkerError("validation latency percentiles are not ordered")
         if latency["scope"] != "end_to_end_raw_to_logit_model":
             raise WorkerError("validation latency scope is invalid")
+
+    scientific_result_eligible = receipt["scientific_result_eligible"]
+    if execution_kind == "implementation_smoke":
+        if scientific_result_eligible is not False:
+            raise WorkerError("implementation smoke must be explicitly non-scientific")
+        if (
+            examples_seen != effective_batch
+            or optimizer_steps != 1
+            or training["validation_checks"] != 0
+            or best_metric is not None
+            or best_digest is not None
+            or best_filename is not None
+            or receipt["selected_validation_metric"] is not None
+            or latency is not None
+            or training["stopped_reason"] != "requested_checkpoint_boundary"
+        ):
+            raise WorkerError(
+                "implementation smoke contains validation/scientific result state"
+            )
+    else:
+        expected_eligibility = (
+            training["validation_checks"] > 0
+            and best_metric is not None
+            and best_digest is not None
+            and best_filename is not None
+        )
+        if scientific_result_eligible is not expected_eligibility:
+            raise WorkerError("scientific result eligibility is inconsistent")
     if receipt["capacity_resolution_sha256"] != resolved_training.get(
         "capacity_resolution_sha256"
     ):
@@ -357,7 +464,7 @@ def _verify_completed_result(
         raise WorkerError("result final storage guard did not pass")
     if receipt["telemetry"] != "disabled":
         raise WorkerError("result telemetry state mismatch")
-    return artifact.digest
+    return artifact.digest, scientific_result_eligible
 
 
 def _stop_child(
@@ -496,6 +603,7 @@ def run_worker(
         != project_root
     ):
         raise WorkerError("resolved project_root mismatch")
+    execution_kind = _validate_resolved_execution_contract(resolved)
     runtime = _mapping(resolved.get("runtime"), "resolved.runtime")
     eta_hours = Decimal(str(runtime.get("eta_hours")))
     if eta_hours < 0:
@@ -508,6 +616,7 @@ def run_worker(
     record = registry.read(run_id)
     if record["status"] != "pending":
         raise WorkerError("worker may claim only a pending run")
+    _require_registry_execution_kind(record, execution_kind)
     if record["resolved_config_sha256"] != resolved_config_digest:
         raise WorkerError("registry resolved_config_sha256 mismatch")
     resolved_training = _mapping(resolved.get("training"), "resolved.training")
@@ -649,7 +758,10 @@ def run_worker(
             if failure_reason is None and return_code == 0:
                 try:
                     _require_code_identity(project_root, record)
-                    result_digest = _verify_completed_result(
+                    (
+                        result_digest,
+                        scientific_result_eligible,
+                    ) = _verify_completed_result(
                         project_root=project_root,
                         resolved_config=resolved_config,
                         expected_resolved_digest=resolved_config_digest,
@@ -667,10 +779,8 @@ def run_worker(
                         "completed",
                         pid=process.pid,
                         gpu=gpu,
-                        reason=(
-                            "trainer exited successfully; exact immutable result "
-                            f"re-opened and verified: {result_digest}"
-                        ),
+                        scientific_result_eligible=scientific_result_eligible,
+                        reason=_completed_reason(execution_kind, result_digest),
                     )
                     return 0
             reason = failure_reason or f"trainer exited with return code {return_code}"

@@ -1359,15 +1359,155 @@ def test_immutable_result_pair_success_collision_and_second_link_cleanup(
     assert not list(tmp_path.glob(".failed.json.sha256.*.tmp"))
 
 
-def test_cli_blocks_debug_value_checks_from_scientific_tuning(
+def test_cli_execution_kind_separates_scientific_and_implementation_scope(
     tmp_path: Path,
 ) -> None:
     train_model = _load_script("train_model")
     frozen = _fixture(tmp_path)
-    train_model._require_scientific_runtime_check_mode(frozen.config)
+    scientific_runtime = {
+        "resume": True,
+        "stop_after_examples": 8192,
+        "latency": {
+            "warmup_repetitions": 1,
+            "measured_repetitions": 1,
+            "batch_size": 1,
+        },
+    }
+    assert (
+        train_model._validate_execution_contract(
+            "scientific_tuning",
+            frozen.config,
+            scientific_runtime,
+        )
+        == "scientific_tuning"
+    )
     debug_config = replace(frozen.config, runtime_value_checks=True)
-    with pytest.raises(TrainingContractError, match="dedicated one-batch"):
-        train_model._require_scientific_runtime_check_mode(debug_config)
+    with pytest.raises(TrainingContractError, match="requires runtime_value_checks"):
+        train_model._validate_execution_contract(
+            "scientific_tuning",
+            debug_config,
+            scientific_runtime,
+        )
+
+    smoke_runtime = {
+        "resume": False,
+        "stop_after_examples": debug_config.effective_batch_size,
+        "latency": None,
+    }
+    assert (
+        train_model._validate_execution_contract(
+            "implementation_smoke",
+            debug_config,
+            smoke_runtime,
+        )
+        == "implementation_smoke"
+    )
+    with pytest.raises(TrainingContractError, match="requires runtime_value_checks"):
+        train_model._validate_execution_contract(
+            "implementation_smoke",
+            frozen.config,
+            smoke_runtime,
+        )
+    short_cadence = replace(
+        debug_config,
+        validate_every_examples=debug_config.effective_batch_size,
+    )
+    with pytest.raises(TrainingContractError, match="before the first validation"):
+        train_model._validate_execution_contract(
+            "implementation_smoke",
+            short_cadence,
+            smoke_runtime,
+        )
+    wrong_effective_batch = replace(debug_config, effective_batch_size=8192)
+    with pytest.raises(TrainingContractError, match="effective_batch_size=4096"):
+        train_model._validate_execution_contract(
+            "implementation_smoke",
+            wrong_effective_batch,
+            {**smoke_runtime, "stop_after_examples": 8192},
+        )
+    for kind in (None, ["implementation_smoke"], "legacy_smoke"):
+        with pytest.raises(TrainingContractError, match="execution_kind"):
+            train_model._validate_execution_contract(
+                kind,
+                debug_config,
+                smoke_runtime,
+            )
+
+
+@pytest.mark.parametrize(
+    ("runtime_patch", "message"),
+    [
+        ({"resume": True}, "fresh run"),
+        ({"stop_after_examples": None}, "exactly one effective batch"),
+        ({"stop_after_examples": True}, "exactly one effective batch"),
+        ({"stop_after_examples": 8192}, "exactly one effective batch"),
+        ({"latency": {"batch_size": 1}}, "forbids latency"),
+    ],
+)
+def test_cli_implementation_smoke_contract_fails_closed(
+    tmp_path: Path,
+    runtime_patch: dict[str, Any],
+    message: str,
+) -> None:
+    train_model = _load_script("train_model")
+    debug_config = replace(_fixture(tmp_path).config, runtime_value_checks=True)
+    runtime = {
+        "resume": False,
+        "stop_after_examples": debug_config.effective_batch_size,
+        "latency": None,
+        **runtime_patch,
+    }
+    with pytest.raises(TrainingContractError, match=message):
+        train_model._validate_execution_contract(
+            "implementation_smoke",
+            debug_config,
+            runtime,
+        )
+
+
+def test_one_batch_implementation_smoke_never_opens_validation(
+    tmp_path: Path,
+) -> None:
+    train_model = _load_script("train_model")
+    frozen = _fixture(tmp_path, runtime_value_checks=True)
+    harness = _build_harness(frozen, tmp_path / "implementation-smoke")
+    opened_train: list[TinyRawSource] = []
+    validation_opened = False
+
+    def forbidden_validation() -> TinyRawSource:
+        nonlocal validation_opened
+        validation_opened = True
+        raise AssertionError("implementation smoke opened validation")
+
+    try:
+        result = harness.fit(
+            _source_factory(
+                frozen.train_identity,
+                runtime_value_checks=True,
+                opened=opened_train,
+            ),
+            forbidden_validation,
+            resume=False,
+            stop_after_examples=frozen.config.effective_batch_size,
+        )
+        assert (
+            train_model._validate_result_scope(
+                "implementation_smoke",
+                frozen.config,
+                result,
+            )
+            is False
+        )
+        assert result.examples_seen == frozen.config.effective_batch_size
+        assert result.optimizer_steps == 1
+        assert result.validation_checks == 0
+        assert result.best_validation_metric is None
+        assert result.best_checkpoint_sha256 is None
+        assert result.best_checkpoint_filename is None
+        assert validation_opened is False
+        assert len(opened_train) == 1 and opened_train[0].close_calls == 1
+    finally:
+        harness.close()
 
 
 def test_cli_binds_exact_views_manifest_before_split_validation(
@@ -1407,24 +1547,31 @@ def test_cli_binds_exact_views_manifest_before_split_validation(
 def _worker_receipt_fixture(
     root: Path,
     *,
+    execution_kind: str = "scientific_tuning",
     mutation: str | None = None,
 ) -> tuple[Any, Path, str, dict[str, Any], str]:
     train_model = _load_script("train_model")
     worker = _load_script("run_worker")
     root.mkdir(parents=True, exist_ok=True)
     run_id = "dcdn-test-run"
+    smoke = execution_kind == "implementation_smoke"
+    if execution_kind not in {"implementation_smoke", "scientific_tuning"}:
+        raise AssertionError(f"unsupported fixture execution_kind: {execution_kind}")
     protocol_path = root / "protocol.yaml"
     protocol_digest = _write_hashed_yaml(protocol_path, {"kind": "protocol"})
     run_directory = root / "run"
     last_digest = _write_hashed_bytes(run_directory / "last.pt", b"last")
-    best_filename = "best-step-000000000001-generation-0000.pt"
-    best_digest = _write_hashed_bytes(
-        run_directory / best_filename,
-        b"best",
+    best_filename = "best-step-000000000977-generation-0000.pt"
+    best_digest = (
+        _write_hashed_bytes(run_directory / best_filename, b"best")
+        if not smoke or mutation == "smoke_validation"
+        else None
     )
     result_path = root / "result.json"
     capacity_digest = sha256_file(CAPACITY_PATH)
     resolved = {
+        "schema_version": 3,
+        "execution_kind": execution_kind,
         "run_id": run_id,
         "result_path": str(result_path),
         "protocol_path": str(protocol_path),
@@ -1432,10 +1579,17 @@ def _worker_receipt_fixture(
         "training": {
             "effective_batch_size": 4096,
             "maximum_train_examples": 40_000_000,
+            "validate_every_examples": 4_000_000,
+            "runtime_value_checks": smoke,
             "reproduction_command": "python scripts/train_model.py --config run.yaml",
             "capacity_resolution_sha256": capacity_digest,
         },
-        "runtime": {"device": "cpu"},
+        "runtime": {
+            "device": "cpu",
+            "resume": False,
+            "stop_after_examples": 4096 if smoke else None,
+            "latency": None,
+        },
     }
     resolved_path = root / "resolved.yaml"
     resolved_digest = _write_hashed_yaml(resolved_path, resolved)
@@ -1450,29 +1604,31 @@ def _worker_receipt_fixture(
         "activation_hook_observations": 3,
     }
     receipt = {
-        "schema_version": 2,
+        "schema_version": 3,
+        "execution_kind": execution_kind,
+        "scientific_result_eligible": not smoke,
         "run_id": run_id,
         "resolved_config_sha256": resolved_digest,
         "protocol_sha256": protocol_digest,
         "training": {
-            "examples_seen": 4096,
-            "optimizer_steps": 1,
-            "validation_checks": 1,
-            "best_validation_metric": 0.25,
+            "examples_seen": 4096 if smoke else 4_001_792,
+            "optimizer_steps": 1 if smoke else 977,
+            "validation_checks": 0 if smoke else 1,
+            "best_validation_metric": None if smoke else 0.25,
             "stopped_reason": "requested_checkpoint_boundary",
             "elapsed_seconds": 1.0,
             "throughput_examples_per_second": 4096.0,
             "peak_vram_bytes": 0,
             "oom_count": 0,
             "last_checkpoint_sha256": last_digest,
-            "best_checkpoint_sha256": best_digest,
-            "best_checkpoint_filename": best_filename,
+            "best_checkpoint_sha256": None if smoke else best_digest,
+            "best_checkpoint_filename": None if smoke else best_filename,
             "numerical_summary": numerical,
             "reproduction_command": resolved["training"]["reproduction_command"],
             "declared_maximum_train_examples": 40_000_000,
             "realized_maximum_train_examples": 39_997_440,
         },
-        "selected_validation_metric": 0.25,
+        "selected_validation_metric": None if smoke else 0.25,
         "test_metrics": None,
         "end_to_end_raw_to_logit_validation_latency": None,
         "capacity_resolution_sha256": capacity_digest,
@@ -1490,6 +1646,37 @@ def _worker_receipt_fixture(
         numerical["nonfinite_by_kind"] = {"activation": 1}
     elif mutation == "no_hooks":
         numerical["activation_hook_observations"] = 0
+    elif mutation == "execution_kind":
+        receipt["execution_kind"] = (
+            "scientific_tuning" if smoke else "implementation_smoke"
+        )
+    elif mutation == "eligibility":
+        receipt["scientific_result_eligible"] = smoke
+    elif mutation == "smoke_validation":
+        if not smoke or best_digest is None:
+            raise AssertionError("smoke_validation requires implementation_smoke")
+        receipt["training"]["validation_checks"] = 1
+        receipt["training"]["best_validation_metric"] = 0.25
+        receipt["training"]["best_checkpoint_sha256"] = best_digest
+        receipt["training"]["best_checkpoint_filename"] = best_filename
+        receipt["selected_validation_metric"] = 0.25
+    elif mutation == "smoke_examples":
+        if not smoke:
+            raise AssertionError("smoke_examples requires implementation_smoke")
+        receipt["training"]["examples_seen"] = 8192
+        receipt["training"]["optimizer_steps"] = 2
+    elif mutation == "smoke_latency":
+        if not smoke:
+            raise AssertionError("smoke_latency requires implementation_smoke")
+        receipt["end_to_end_raw_to_logit_validation_latency"] = {
+            "warmup_repetitions": 1,
+            "measured_repetitions": 2,
+            "batch_size": 1,
+            "p50_ms": 1.0,
+            "p95_ms": 1.1,
+            "p99_ms": 1.2,
+            "scope": "end_to_end_raw_to_logit_model",
+        }
     elif mutation is not None:
         raise AssertionError(f"unknown mutation: {mutation}")
     train_model._write_immutable_json(result_path, receipt)
@@ -1497,21 +1684,30 @@ def _worker_receipt_fixture(
 
 
 @pytest.mark.parametrize(
-    ("mutation", "message"),
+    ("execution_kind", "mutation", "message"),
     [
-        ("resolved_digest", "resolved-config digest"),
-        ("protocol_digest", "protocol digest"),
-        ("nonfinite", "monitor was not durably drained"),
-        ("no_hooks", "hook evidence"),
+        ("scientific_tuning", "resolved_digest", "resolved-config digest"),
+        ("scientific_tuning", "protocol_digest", "protocol digest"),
+        ("scientific_tuning", "nonfinite", "monitor was not durably drained"),
+        ("scientific_tuning", "no_hooks", "hook evidence"),
+        ("scientific_tuning", "execution_kind", "execution_kind mismatch"),
+        ("scientific_tuning", "eligibility", "eligibility is inconsistent"),
+        ("implementation_smoke", "execution_kind", "execution_kind mismatch"),
+        ("implementation_smoke", "eligibility", "explicitly non-scientific"),
+        ("implementation_smoke", "smoke_validation", "contains validation"),
+        ("implementation_smoke", "smoke_examples", "contains validation"),
+        ("implementation_smoke", "smoke_latency", "contains validation"),
     ],
 )
 def test_worker_reopens_exact_result_and_rejects_provenance_or_numerics(
     tmp_path: Path,
+    execution_kind: str,
     mutation: str | None,
     message: str,
 ) -> None:
     worker, resolved_path, digest, resolved, run_id = _worker_receipt_fixture(
         tmp_path,
+        execution_kind=execution_kind,
         mutation=mutation,
     )
     with pytest.raises(worker.WorkerError, match=message):
@@ -1524,9 +1720,20 @@ def test_worker_reopens_exact_result_and_rejects_provenance_or_numerics(
         )
 
 
-def test_worker_accepts_complete_reopened_receipt(tmp_path: Path) -> None:
-    worker, resolved_path, digest, resolved, run_id = _worker_receipt_fixture(tmp_path)
-    result_digest = worker._verify_completed_result(
+@pytest.mark.parametrize(
+    ("execution_kind", "expected_eligibility"),
+    [("scientific_tuning", True), ("implementation_smoke", False)],
+)
+def test_worker_accepts_complete_reopened_receipt(
+    tmp_path: Path,
+    execution_kind: str,
+    expected_eligibility: bool,
+) -> None:
+    worker, resolved_path, digest, resolved, run_id = _worker_receipt_fixture(
+        tmp_path,
+        execution_kind=execution_kind,
+    )
+    result_digest, eligibility = worker._verify_completed_result(
         project_root=tmp_path,
         resolved_config=resolved_path,
         expected_resolved_digest=digest,
@@ -1534,6 +1741,74 @@ def test_worker_accepts_complete_reopened_receipt(tmp_path: Path) -> None:
         run_id=run_id,
     )
     assert len(result_digest) == 64
+    assert eligibility is expected_eligibility
+
+
+def test_worker_execution_kind_preflight_rejects_legacy_and_registry_drift(
+    tmp_path: Path,
+) -> None:
+    worker, _path, _digest, resolved, _run_id = _worker_receipt_fixture(
+        tmp_path,
+        execution_kind="implementation_smoke",
+    )
+    assert (
+        worker._validate_resolved_execution_contract(resolved) == "implementation_smoke"
+    )
+
+    legacy = copy.deepcopy(resolved)
+    legacy.pop("execution_kind")
+    with pytest.raises(worker.WorkerError, match="execution_kind"):
+        worker._validate_resolved_execution_contract(legacy)
+
+    wrong_checks = copy.deepcopy(resolved)
+    wrong_checks["training"]["runtime_value_checks"] = False
+    with pytest.raises(worker.WorkerError, match="runtime_value_checks"):
+        worker._validate_resolved_execution_contract(wrong_checks)
+
+    wrong_stop = copy.deepcopy(resolved)
+    wrong_stop["runtime"]["stop_after_examples"] = 8192
+    with pytest.raises(worker.WorkerError, match="exactly one effective batch"):
+        worker._validate_resolved_execution_contract(wrong_stop)
+
+    missing_latency = copy.deepcopy(resolved)
+    missing_latency["runtime"].pop("latency")
+    with pytest.raises(worker.WorkerError, match="forbids latency"):
+        worker._validate_resolved_execution_contract(missing_latency)
+
+    wrong_effective_batch = copy.deepcopy(resolved)
+    wrong_effective_batch["training"]["effective_batch_size"] = 8192
+    wrong_effective_batch["runtime"]["stop_after_examples"] = 8192
+    with pytest.raises(worker.WorkerError, match="training budget"):
+        worker._validate_resolved_execution_contract(wrong_effective_batch)
+
+    scientific = copy.deepcopy(resolved)
+    scientific["execution_kind"] = "scientific_tuning"
+    scientific["training"]["runtime_value_checks"] = False
+    scientific["runtime"] = {
+        "device": "cpu",
+        "resume": True,
+        "stop_after_examples": 8192,
+        "latency": {"batch_size": 64},
+    }
+    assert (
+        worker._validate_resolved_execution_contract(scientific) == "scientific_tuning"
+    )
+
+    with pytest.raises(worker.WorkerError, match="registry execution_kind"):
+        worker._require_registry_execution_kind(
+            {"execution_kind": "scientific_tuning"},
+            "implementation_smoke",
+        )
+    with pytest.raises(worker.WorkerError, match="registry execution_kind"):
+        worker._require_registry_execution_kind({}, "implementation_smoke")
+    smoke_reason = worker._completed_reason(
+        "implementation_smoke",
+        "a" * 64,
+    )
+    assert smoke_reason.startswith("NON-SCIENTIFIC implementation smoke;")
+    assert worker._completed_reason("scientific_tuning", "b" * 64).startswith(
+        "scientific tuning;"
+    )
 
 
 def test_worker_code_identity_rejects_diff_drift_and_untracked_source(

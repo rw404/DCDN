@@ -34,10 +34,17 @@ resolved config, source, encoder, and DCDN core. It relies on the bound full
 materialized scan and cache-content hashes and performs no per-batch tensor
 value synchronization to the host. The debug path sets the flag to true and
 performs finite/token-range checks. Vectorized device-side safe-reciprocal
-masks remain part of the DCDN arithmetic in both modes. The scientific tuning
-CLI rejects the debug flag before model or source construction; debug mode is
-reserved for targeted tests and a dedicated one-batch implementation-smoke
-path, never a long scientific run.
+masks remain part of the DCDN arithmetic in both modes. Resolved-config schema
+v3 makes that boundary explicit with the required top-level field
+`execution_kind`. `scientific_tuning` requires `runtime_value_checks: false`;
+resume, a later effective-batch stop boundary, and optional validation latency
+retain their existing scientific semantics. `implementation_smoke` requires
+`runtime_value_checks: true`, `resume: false`, `stop_after_examples: 4096`
+(exactly one frozen effective batch), and `latency: null`. Its validation
+factory is a fail-closed sentinel and therefore cannot open validation or emit
+validation/test metrics or a selected best checkpoint. The result is
+permanently labeled `scientific_result_eligible: false`; it is implementation
+evidence only, never a scientific result or a long run.
 
 ## Raw VK-LSVD boundary
 
@@ -209,7 +216,9 @@ timed-forward exception. Test latency is forbidden. The receipt field is
 ## CLI and worker durability
 
 `scripts/train_model.py` accepts the final VK C+P source/encoder factories but
-requires an actual active premetric Protocol v3 file and state. It has no test
+requires an actual active premetric Protocol v3 file and state. Its resolved
+schema version is 3 and requires exactly one of
+`execution_kind: implementation_smoke|scientific_tuning`; it has no test
 source/path option. A typical single-process command is stored verbatim in the
 checkpoint and result, without credentials:
 
@@ -245,7 +254,13 @@ resolved config, result pair, last checkpoint pair, and selected immutable best
 generation. It checks run/protocol/resolved-config provenance, examples and
 effective-batch equality, declared/realized budgets, finite timing and metric
 fields, OOM limit, source-free test fields, capacity/composite hashes, disabled
-telemetry, local final guards, and the complete drained numerical summary.
+telemetry, local final guards, and the complete drained numerical summary. The
+immutable registry record, resolved config, and receipt must carry the same
+`execution_kind`; the immutable result receipt is exact-key schema v3 as well.
+A terminal record also carries the worker-verified boolean
+`scientific_result_eligible`; nonterminal records keep it null, and an
+implementation smoke can transition to completed only with `false` and an
+explicit `NON-SCIENTIFIC implementation smoke` reason.
 
 ## Verification scope
 
@@ -257,7 +272,8 @@ no-mutation failure, CPU checkpoint mapping, OOM fallback durability, source
 gate order and deterministic close, wrapper hooks, latency hook restoration,
 exact frozen common-training fields, all-nine-model architecture normalization,
 capacity candidate/rank selection, metric-free capacity counts/FLOPs, immutable
-receipt publication, worker provenance, and malformed result rejection.
+receipt publication, execution-kind/runtime/result-scope drift, registry
+terminal eligibility, worker provenance, and malformed result rejection.
 Checkpoint tests separately cover pre-mutation component and extra-state
 failures.
 
@@ -272,7 +288,8 @@ env PYTHONPATH=/tmp/<snapshot>/src \
 /tmp/<test-venv>/bin/ruff check \
   src/dcdn/training.py src/dcdn/monitor.py src/dcdn/raw.py \
   src/dcdn/checkpoint.py scripts/train_model.py scripts/run_worker.py \
-  tests/test_training_harness.py tests/test_checkpoint_resume.py
+  src/dcdn/registry.py tests/test_training_harness.py \
+  tests/test_checkpoint_resume.py tests/test_registry.py
 ```
 
 These tests use synthetic CPU data only. They do not open the real cache,

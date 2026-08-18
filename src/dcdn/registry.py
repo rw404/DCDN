@@ -21,6 +21,7 @@ SECRET_RE = re.compile(
     r"AKIA[0-9A-Z]{16}|-----BEGIN (?:RSA |OPENSSH |EC )?PRIVATE KEY-----)"
 )
 STATUSES = frozenset({"pending", "running", "completed", "failed"})
+EXECUTION_KINDS = frozenset({"implementation_smoke", "scientific_tuning"})
 TRANSITIONS = {
     "pending": frozenset({"running", "failed"}),
     "running": frozenset({"completed", "failed"}),
@@ -75,6 +76,25 @@ def validate_run_record(record: Mapping[str, Any]) -> None:
         raise RegistryError("run_id has an invalid format")
     if record.get("status") not in STATUSES:
         raise RegistryError("status is invalid")
+    execution_kind = record.get("execution_kind")
+    if type(execution_kind) is not str or execution_kind not in EXECUTION_KINDS:
+        raise RegistryError("execution_kind is invalid")
+    if "scientific_result_eligible" not in record:
+        raise RegistryError("scientific_result_eligible is required")
+    eligibility = record["scientific_result_eligible"]
+    if record["status"] == "completed":
+        if type(eligibility) is not bool:
+            raise RegistryError(
+                "a completed record requires boolean scientific_result_eligible"
+            )
+        if execution_kind == "implementation_smoke" and eligibility is not False:
+            raise RegistryError(
+                "an implementation smoke can never be a scientific result"
+            )
+    elif eligibility is not None:
+        raise RegistryError(
+            "scientific_result_eligible must remain null before completion"
+        )
     if not isinstance(record.get("seed"), int):
         raise RegistryError("seed must be an integer")
     if (
@@ -186,6 +206,7 @@ class RunRegistry:
         record = {
             **fields,
             "status": "pending",
+            "scientific_result_eligible": None,
             "pid": None,
             "gpu": None,
             "created_at_utc": now,
@@ -223,6 +244,7 @@ class RunRegistry:
         pid: int | None = None,
         gpu: int | None = None,
         reason: str | None = None,
+        scientific_result_eligible: bool | None = None,
     ) -> Mapping[str, Any]:
         if status not in STATUSES:
             raise RegistryError(f"invalid target status: {status}")
@@ -244,6 +266,12 @@ class RunRegistry:
                 current["heartbeat_utc"] = None
                 current["finished_at_utc"] = now
                 current["completion_or_failure_reason"] = reason
+            if status == "completed":
+                current["scientific_result_eligible"] = scientific_result_eligible
+            elif scientific_result_eligible is not None:
+                raise RegistryError(
+                    "scientific_result_eligible is valid only at completion"
+                )
             self._write(current)
         return deepcopy(current)
 
