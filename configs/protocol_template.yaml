@@ -1,0 +1,16 @@
+# TEMPLATE ONLY. This file is intentionally invalid until every UNRESOLVED
+# field is replaced and a byte-level .sha256 sidecar is written.
+schema_version: 1
+dataset_id: UNRESOLVED
+test_unlocked: false
+hashes:
+  data_manifest_sha256: UNRESOLVED
+  features_sha256: UNRESOLVED
+  split_sha256: UNRESOLVED
+  search_space_sha256: UNRESOLVED
+  experiment_matrix_sha256: UNRESOLVED
+  selected_configs_sha256: null
+final_seeds: [42, 43, 44]
+tuning_seed: 42
+tuning_splits: [train, validation]
+test_evaluations_per_final_seed: 1

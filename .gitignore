@@ -20,18 +20,33 @@ wandb/
 mlruns/
 
 # Public data, regenerable caches, and model checkpoints
-data/
+data/*
+!data/manifests/
+!data/manifests/**
 cache/
 checkpoints/
 *.ckpt
 *.pt
 *.pth
 
-# Run/result payloads are registered explicitly; keep only directory markers
+# Run payloads: keep compact registry/commands, not logs or model artifacts
 runs/*
 !runs/.gitkeep
+!runs/registry/
+!runs/registry/**
+!runs/commands/
+!runs/commands/**
+
+# Compact result tables and summaries are versioned explicitly
 results/*
 !results/.gitkeep
+!results/**/
+!results/**/*.csv
+!results/**/*.json
+!results/**/*.md
+!results/**/*.sha256
+!results/**/*.yaml
+!results/**/*.yml
 
 # Third-party checkouts are pinned in manifests rather than vendored implicitly
 third_party/*

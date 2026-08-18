@@ -1,0 +1,52 @@
+schema_version: 1
+status: frozen_before_metrics
+final_seeds: [42, 43, 44]
+tuning_seed: 42
+reuse_identical_cells: true
+
+tier_a:
+  datasets:
+    kuairand_pure:
+      primary_target: long_view
+      full_feature_suffix: R
+    vk_lsvd_up0.01_ir0.01:
+      primary_target: normalized_watch_time
+      full_feature_suffix: E
+    kuairec_big_matrix:
+      primary_target: normalized_watch_time
+      full_feature_suffix: E
+  rows:
+    - model: dcnv2
+      feature_regime: C+P
+    - model: dcnv2
+      feature_regime: C+P+E/R
+    - model: dcdn_core
+      feature_regime: C+P
+    - model: dcnv2_capacity_matched_core
+      feature_regime: C+P
+      match_tolerance_fraction: 0.05
+    - model: afn_plus
+      feature_regime: C+P
+
+tier_b:
+  datasets:
+    - kuairand_pure
+    - vk_lsvd_up0.01_ir0.01
+  feature_regime: C+P
+  primary_targets_only: true
+  models:
+    - dnn
+    - deepfm
+    - dcn
+    - autoint_plus
+    - dcnv2
+    - afn_plus
+    - wukong_small
+    - dcdn_core
+
+constraints:
+  - do_not_run_architecture_zoo_on_kuairec
+  - do_not_expand_tier_b_to_full_feature_regime
+  - do_not_add_secondary_targets_before_mandatory_completion
+  - no_test_metrics_before_protocol_and_selected_configs_lock
+  - no_tuning_after_test_access

@@ -30,3 +30,22 @@ stabilized production hybrid is generally piecewise rational in raw space.
 
 The authoritative execution rules are `AGENTS.md`, `DCDN_HANDOFF.md`, and
 `REMOTE_AGENT_PROMPT.md`. See `RUNBOOK.md` and `STATUS.md` for execution state.
+
+## Reproduce the deterministic preflight
+
+```bash
+source scripts/env.sh
+uv sync --frozen --extra data
+source "${UV_PROJECT_ENVIRONMENT}/bin/activate"
+python scripts/preflight.py --require-data-extra --eta-hours 1
+python -m pytest -q
+ruff format --check src tests scripts
+ruff check src tests scripts
+```
+
+The environment and public-data caches are ephemeral; `uv.lock`, source,
+manifests, compact results, and the run registry remain on persistent storage.
+The exact public experiment matrix is
+`configs/experiment_matrix_v1.yaml`. Dataset-specific protocol files are not
+valid until their unresolved hashes are replaced, sidecars are written, and
+the fail-closed gate accepts them.

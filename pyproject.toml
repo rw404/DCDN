@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dcdn-research"
+version = "0.1.0"
+description = "Reproducible public-experiment code for the Deep Cross-Division Network"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "numpy==2.1.2",
+  "psutil==7.1.0",
+  "PyYAML==6.0.3",
+  "torch==2.8.0",
+]
+
+[project.optional-dependencies]
+data = [
+  "implicit==0.7.3",
+  "polars==1.43.0",
+  # Polars 1.43.0 pins this yanked runtime artifact transitively. Listing the
+  # exact runtime directly is required for uv to accept the frozen Polars pin.
+  "polars-runtime-32==1.43.0",
+  "pyarrow==25.0.0",
+  "scikit-learn==1.9.0",
+  "scipy==1.18.0",
+]
+
+[dependency-groups]
+dev = [
+  "hypothesis==6.161.6",
+  "pytest==9.1.1",
+  "ruff==0.12.12",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["dcdn*"]
+namespaces = false
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-config --strict-markers"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.uv]
+# setuptools is a pinned build backend, not a project runtime API. This also
+# constrains Torch's transitive setuptools requirement to the audited version.
+constraint-dependencies = ["setuptools==80.9.0"]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }

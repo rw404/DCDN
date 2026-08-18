@@ -19,7 +19,7 @@ Audit checkpoint: `2026-08-18T11:59:30Z`
 | File | SHA-256 |
 |---|---|
 | `AGENTS.md` | `e4bbab7cd5570871f070dbca0e5fa214c5bc64c4caac06fa856e2ea9ed6d3cad` |
-| `DCDN_HANDOFF.md` | `867437620d539a05036c9f7c7910c4ea635c232212b989319a20429a8a417fee` |
+| `DCDN_HANDOFF.md` | `2ec830cbfa19aaaaaf8fe4511375572252792b59f931f2ce900bdfebe00cc7ec` |
 | `REMOTE_AGENT_PROMPT.md` | `23e29da22d69b6065bfb2b444e705e344470ceb163c90024ded7dc132ef5f2ca` |
 | `DCDNBlock_provided.py` | `d58c31c03096d112a47718a643fc91bc5dd9b5a53cd7941948145b34335ec1bb` |
 | `DCDNCore_reference.py` | `6b2cdb5db0c248fcd960c42d4ce14873820cc65d382741721214166d5e83d9ac` |
@@ -43,8 +43,9 @@ legacy TeX hash matches the previously completed full source/PDF audit.
 - Local Git repository: initialized on the persistent mount with branch
   `experiments/wsdm27` and SSH remote
   `git@github.com:rw404/DCDN.git`. The remote URL contains no credential.
-- The pre-bootstrap inventory was persisted before `git init`; the initial
-  commit remains gated on explicit staging plus credential and size checks.
+- The pre-bootstrap inventory was persisted before `git init`. Bootstrap
+  commit `c82bfbc` passed explicit staging, credential, and size checks and is
+  pushed to the approved repository branch.
 
 ## Compute
 

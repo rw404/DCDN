@@ -39,5 +39,19 @@ until manual termination.
 8. Uncertainty, efficiency, stability, clean-environment reproduction, and
    durable backup/read audit.
 
-Exact commands are added only after their corresponding implementation is
-validated; `STATUS.md` is updated at every protocol checkpoint.
+## Validated bootstrap commands
+
+```bash
+source scripts/env.sh
+uv sync --frozen --extra data
+source "${UV_PROJECT_ENVIRONMENT}/bin/activate"
+python scripts/preflight.py --require-data-extra --eta-hours 1
+python -m pytest -q
+ruff format --check src tests scripts
+ruff check src tests scripts
+```
+
+For any proposed task, pass a conservative elapsed ETA to `preflight.py`.
+Run `scripts/gpu_smoke.py` with exactly one visible GPU; use one independent
+process per A100 and never DDP. `STATUS.md` is updated at every protocol
+checkpoint.
