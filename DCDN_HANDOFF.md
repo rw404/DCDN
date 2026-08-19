@@ -1038,4 +1038,28 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   Two bounded registry-heartbeat helper timeouts recovered without trainer interruption, and both content-addressed incident receipts are preserved.
   This remains a validation-only per-model choice: selected DeepFM is lower than selected DCDN by `0.000131707735156791` (about 0.627859%) on validation, so it does not support a universal DCDN-superiority claim.
   The next frozen C+P model is DCN; dataset-wide selected configs and final/test remain locked.
+- VK-LSVD `C+P` Original DCN validation selection recorded 2026-08-19:
+  both frozen seed-42 LR candidates completed under clean commit
+  `db4447aecf0d71f3bb120411683b6e25f4fa04de`. LR=0.0003 consumed the
+  full 39,997,440-example budget and reached normalized MSE
+  `0.021035584402689534` after nine validation checks; LR=0.001 stopped
+  by the predeclared patience rule after 24,002,560 examples and six checks
+  at `0.02105195259385249`. Both results are scientifically eligible, have
+  zero OOM/non-finite observations, and contain `test_metrics=null`. Strict
+  minimization selects `dcn_lr_3e_4` (LR=0.0003), lower by
+  `0.000016368191162956236` (about 0.077751%); no tie or post-metric
+  tie-break occurred. Canonical per-model selection receipt SHA-256 is
+  `f352c9d07a9690303d7d0fc5986147310d0f83d9185599b02fcdb58a86e50656`;
+  selected best-checkpoint SHA-256 is
+  `38cd618114fbd2a74355932cf3b1a311dfa01354e105b168ba67cd99a44fd615`.
+  All 11 checkpoint pairs passed strict sidecars, safe CPU `weights_only`,
+  and tensor-finiteness audit; three bounded registry-helper incidents
+  recovered without trainer interruption and are preserved. No checkpoint
+  was deleted. On the matched seed-42 validation protocol, selected DCDN is
+  lower than selected Original DCN by `0.00005830160730017908` (about
+  0.277157%). This supports the narrow DCDN-versus-DCN validation hypothesis
+  and is now reported in README, but it is not the final multi-seed test RQ1
+  verdict and does not establish universal superiority. The next frozen
+  `C+P` model is AutoInt+; dataset-wide selected configs and final/test remain
+  locked.
 Update this decision log whenever a material choice changes.

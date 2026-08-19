@@ -50,6 +50,28 @@ The exact public experiment matrix is
 valid until their unresolved hashes are replaced, sidecars are written, and
 the fail-closed gate accepts them.
 
+## RQ1 validation checkpoint: DCDN versus Original DCN
+
+The frozen VK-LSVD `C+P` seed-42 validation-only tuning comparison currently
+supports the narrow RQ1 hypothesis that `DCDN-Core-L2` improves on the
+original rank-one `DCN` cross network under the matched public protocol:
+
+| Model | Selected learning rate | Normalized validation MSE |
+| --- | ---: | ---: |
+| `DCDN-Core-L2` | `1e-3` | `0.020977282795389355` |
+| Original `DCN` | `3e-4` | `0.021035584402689534` |
+
+Lower is better. DCDN reduces normalized validation MSE by
+`0.00005830160730017908`, or `0.277157%` relative to the selected DCN result.
+Both models used the same `C+P` features, prediction head, loss, tuning budget,
+effective batch size, seed, and validation-selection rule. This is a
+validation result, not a test result, and it does not establish universal
+superiority over all baselines or datasets. The untouched test remains locked
+until the complete mandatory selection matrix is frozen and hashed. Exact
+selection lineage is preserved in
+`results/tuning/vk_lsvd_c_plus_p_dcn_selection_v1.json` and the corresponding
+DCDN selection receipt.
+
 ## Frozen source and model checkpoint
 
 The three approved public sources are byte-verified outside the repository.

@@ -535,6 +535,32 @@ Receipt SHA-256 is `a6ed26dcce171cf8c27cb00e2db57c90cfcead0481251ed8e4a3a830ff81
 All eight checkpoint pairs passed strict sidecar, CPU `weights_only`, metadata, and finite-tensor checks; two recovered registry-helper timeout receipts are preserved and no checkpoint was deleted.
 The next frozen C+P model is DCN. Dataset-wide selected configs and final/test remain locked.
 
+## VK-LSVD C+P Original DCN validation-only selection
+
+Both frozen seed-42 Original DCN candidates completed under clean commit
+`db4447aecf0d71f3bb120411683b6e25f4fa04de` with zero OOM/non-finite
+observations and `test_metrics=null`. LR=0.0003 consumed 39,997,440 examples
+and nine checks, reaching normalized MSE `0.021035584402689534`; LR=0.001
+stopped by validation patience after 24,002,560 examples and six checks at
+`0.02105195259385249`. Strict minimization selects `dcn_lr_3e_4`, lower by
+`0.000016368191162956236` (about 0.077751%), with no tie.
+
+Canonical selection receipt
+`results/tuning/vk_lsvd_c_plus_p_dcn_selection_v1.json` has SHA-256
+`f352c9d07a9690303d7d0fc5986147310d0f83d9185599b02fcdb58a86e50656`;
+selected best-checkpoint SHA-256 is
+`38cd618114fbd2a74355932cf3b1a311dfa01354e105b168ba67cd99a44fd615`.
+All 11 checkpoint pairs passed strict sidecars, CPU `weights_only`, metadata,
+and finite-tensor checks. Three recovered registry-helper incidents are
+preserved; no checkpoint was deleted. Both registries are completed and
+scientifically eligible, both A100s are idle, and no task process remains.
+
+On matched seed-42 validation, selected DCDN (`0.020977282795389355`) is
+lower than selected Original DCN by `0.00005830160730017908`, or about
+0.277157% relative to DCN. README records this as support for the narrow
+validation hypothesis only; the final multi-seed test RQ1 verdict remains
+locked. The next frozen `C+P` model is AutoInt+.
+
 The owner-approved multi-task extension is scheduled only after the mandatory frozen matrix: normalized watch time remains primary, while like/dislike/share/bookmark are auxiliary binary labels when raw schema validation permits them.
 Per target, report ROC-AUC and user-GAUC over users with both classes, plus eligible-user/event coverage and paired user-bootstrap 95% confidence intervals.
 This extension does not alter the current single-target RQ1 selections or expose test data.
