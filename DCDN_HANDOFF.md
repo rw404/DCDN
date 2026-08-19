@@ -997,4 +997,25 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   report the frozen paired seed-42/43/44 test results, uncertainty, effect
   size, and an explicit supported/not-supported/inconclusive hypothesis
   verdict before any modification is discussed.
+- VK-LSVD `C+P` DNN validation selection recorded 2026-08-19: both frozen
+  seed-42 LR candidates completed under clean commit
+  `46add65bea8134d9f1a65373a82d8bcfb5b6579b`. LR=0.0003 stopped by the
+  predeclared validation-patience rule after 28,000,256 examples and seven
+  checks at normalized MSE `0.020930008215596697`; LR=0.001 stopped after
+  32,002,048 examples and eight checks at `0.020899830835974933`. Both are
+  scientifically eligible, with zero OOM/non-finite observations and
+  `test_metrics=null`. Strict minimization selects `dnn_lr_1e_3` (LR=0.001),
+  lower by `0.000030177379621763867` (about 0.144182%); no tie or post-metric
+  tie-break occurred. Canonical per-model selection receipt SHA-256 is
+  `7c851bfb7ca37e822fe05faca78a6488f56c447c995286143379a3611a166204`;
+  selected best-checkpoint SHA-256 is
+  `b9a98fe1fd7eff8963b00fe887b35ce73d2c37c4885b97a08e2f8bc674cf82f1`.
+  All ten checkpoint pairs passed strict sidecar, safe CPU `weights_only`, and
+  tensor-finiteness audit; no checkpoint was deleted. Each run recovered from
+  one bounded registry-heartbeat helper timeout without trainer interruption;
+  both content-addressed incident receipts are preserved. This is validation-
+  only and does not support a universal DCDN-superiority claim: selected DNN
+  is lower than selected DCDN by `0.000077451959414422` (about 0.369218%) on
+  validation. The next frozen C+P model is DeepFM; dataset-wide selected
+  configs and final/test remain locked.
 Update this decision log whenever a material choice changes.

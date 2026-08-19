@@ -485,3 +485,43 @@ This freezes only the C+P+E control LR. It does not answer RQ1 and does not
 unlock test: `test_unlocked=false`, `test_path_available=false`. The RQ1
 README verdict will be written only after the frozen seed-42/43/44 test
 comparisons, paired uncertainty, and effect-size analysis are complete.
+
+### VK-LSVD C+P DNN validation-only selection
+
+Both frozen seed-42 DNN learning-rate candidates completed under clean commit
+`46add65bea8134d9f1a65373a82d8bcfb5b6579b`. LR=0.0003 stopped by the
+predeclared validation-patience rule after 28,000,256 examples, 6,836 optimizer
+steps, and seven validation checks; its minimum normalized MSE is
+`0.020930008215596697`. LR=0.001 stopped by the same rule after 32,002,048
+examples, 7,813 steps, and eight checks; its minimum is
+`0.020899830835974933`. Both results are
+`scientific_result_eligible=true`, have zero OOM and non-finite observations,
+and contain `test_metrics=null`.
+
+Strict validation minimization therefore selects `dnn_lr_1e_3` (LR=0.001),
+lower than LR=0.0003 by `0.000030177379621763867` (about `0.144182%`); no tie
+or post-metric tie-break occurred. The canonical per-model selection receipt
+is `results/tuning/vk_lsvd_c_plus_p_dnn_selection_v1.json`, SHA-256
+`7c851bfb7ca37e822fe05faca78a6488f56c447c995286143379a3611a166204`.
+The selected best checkpoint is
+`runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt`,
+SHA-256
+`b9a98fe1fd7eff8963b00fe887b35ce73d2c37c4885b97a08e2f8bc674cf82f1`.
+All ten DNN checkpoint/sidecar pairs were independently hash-checked and
+reopened with `weights_only=True` on CPU; every tensor is finite. No
+checkpoint was deleted.
+
+Each run recovered from one bounded registry-heartbeat helper timeout without
+interrupting training; the immutable content-addressed incident receipts have
+SHA-256 `f24ffdf95cd57cebf8500fe2fe6b04ad382e22930d56a0c607e794ed51e8e7ed`
+and `0d31cf173c31a7e29bb17e68da9b2643755135a6d43b372b33dccf7af92fd4ee`.
+At the post-selection preflight, estimated spend was USD 121.98, project
+storage was 10.2504 GiB with 39.7496 GiB logical headroom, both A100s were
+idle, and no task-owned run remained active.
+
+This is a per-model validation choice, not the dataset-wide
+`selected_configs.lock`. It also does not establish DCDN superiority: the
+selected DNN validation MSE is lower than selected DCDN by
+`0.000077451959414422` (about `0.369218%`). That comparison remains
+validation-only and descriptive; final claims wait for the untouched test,
+paired uncertainty, and the complete frozen RQ1/RQ2 matrix. Test remains

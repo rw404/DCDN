@@ -1,0 +1,499 @@
+{
+  "artifact_role": "per_model_validation_only_selection_evidence",
+  "candidates": [
+    {
+      "candidate_id": "dnn_lr_3e_4",
+      "checkpoint_lineage": {
+        "best_generations": [
+          {
+            "examples_seen": 4001792,
+            "optimizer_steps": 977,
+            "path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000000977-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "a37043b6d3db70d4e3c4443e21cafe28d6f4578f1997bbe30b30d4dd09e2bfc1",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000000977-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161748,
+            "validation_checks": 1
+          },
+          {
+            "examples_seen": 8003584,
+            "optimizer_steps": 1954,
+            "path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000001954-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "941efe2143ede874de9f8d4b0c4181e98b949bed485a1a944b127d6501dcdba5",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000001954-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161748,
+            "validation_checks": 2
+          },
+          {
+            "examples_seen": 12001280,
+            "optimizer_steps": 2930,
+            "path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "472735d7815d37960aac55fc8f459cd98165b5964d35b0443ae501c92c9fe762",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161748,
+            "validation_checks": 3
+          },
+          {
+            "examples_seen": 16003072,
+            "optimizer_steps": 3907,
+            "path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000003907-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": true,
+            "sha256": "6e58b8aa37237a8b4b57d3741d118d9d07bce6534ba1b4f29a0373668d69a03e",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000003907-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161748,
+            "validation_checks": 4
+          },
+          {
+            "examples_seen": 28000256,
+            "optimizer_steps": 6836,
+            "path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/last.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "last",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "f9f66f07ef16131a43e38f23ce620cfbe7ee6e0c7897ae6eff312eed5764f3a9",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/last.pt.sha256",
+            "sidecar_size_bytes": 74,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161876,
+            "validation_checks": 7
+          }
+        ],
+        "last_checkpoint": {
+          "examples_seen": 28000256,
+          "optimizer_steps": 6836,
+          "path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/last.pt",
+          "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+          "role": "last",
+          "selected_across_candidates": false,
+          "selected_within_candidate": false,
+          "sha256": "f9f66f07ef16131a43e38f23ce620cfbe7ee6e0c7897ae6eff312eed5764f3a9",
+          "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/last.pt.sha256",
+          "sidecar_size_bytes": 74,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 63161876,
+          "validation_checks": 7
+        },
+        "metadata_config_hash": "47c8f510709b25b2d1cfad8e0ff70e9e9ff76c3bb0b2ec15dbbd79e39ea72dd8",
+        "metadata_data_hash": "5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac",
+        "metadata_feature_hash": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+        "metadata_precision": "fp32_parameters_bf16_autocast",
+        "metadata_protocol_hash": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+        "selected_best": {
+          "examples_seen": 16003072,
+          "optimizer_steps": 3907,
+          "path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000003907-generation-0000.pt",
+          "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+          "role": "best",
+          "selected_across_candidates": false,
+          "selected_within_candidate": true,
+          "sha256": "6e58b8aa37237a8b4b57d3741d118d9d07bce6534ba1b4f29a0373668d69a03e",
+          "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000003907-generation-0000.pt.sha256",
+          "sidecar_size_bytes": 108,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 63161748,
+          "validation_checks": 4
+        }
+      },
+      "code_commit": "46add65bea8134d9f1a65373a82d8bcfb5b6579b",
+      "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence_files": {
+        "command": {
+          "path": "runs/commands/vk-cp-tune-dnn-s42-lr3e4-v1.sh",
+          "sha256": "932c865b04a377facafcebf9477d82f7cc6d50f0076141496fb2850ef68478a7",
+          "sidecar_path": "runs/commands/vk-cp-tune-dnn-s42-lr3e4-v1.sh.sha256",
+          "sidecar_size_bytes": 97,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 389
+        },
+        "history": {
+          "json_lines_strictly_parsed": 134,
+          "path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/history.jsonl",
+          "sha256": "1c4e86ba0a453ca716ed6f0e2e5fe31ce2bac75b95e6163ee6b731c05461f95d",
+          "size_bytes": 20589,
+          "test_events": 0,
+          "validation_events": 7
+        },
+        "registry": {
+          "path": "runs/registry/records/vk-cp-tune-dnn-s42-lr3e4-v1.json",
+          "sha256": "1ca72fddc46b5dbc6c573fde730dee5426ab1ebbb877b9252a28cbf1a2e8b82f",
+          "size_bytes": 1394,
+          "status": "completed"
+        },
+        "resolved_config": {
+          "path": "configs/runs/vk-cp-tune-dnn-s42-lr3e4-v1.yaml",
+          "sha256": "9902cdb849d5c781e1a54e3191d39006abe185d0d7e49f647270a2a00e67900e",
+          "sidecar_path": "configs/runs/vk-cp-tune-dnn-s42-lr3e4-v1.yaml.sha256",
+          "sidecar_size_bytes": 99,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 2921
+        },
+        "result": {
+          "path": "results/tuning/vk-cp-tune-dnn-s42-lr3e4-v1.json",
+          "sha256": "191bda44b908ca00cb19b669d1bdd63ef5af393c5c3b9f357626c02f8ae002d2",
+          "sidecar_path": "results/tuning/vk-cp-tune-dnn-s42-lr3e4-v1.json.sha256",
+          "sidecar_size_bytes": 99,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 3686
+        },
+        "worker_log": {
+          "path": "runs/vk-cp-tune-dnn-s42-lr3e4-v1/worker.log",
+          "sha256": "9a53cdab94eab47f957ac0c39d8f51bd5786408660bb4177f5d02d50c782c12a",
+          "size_bytes": 201
+        }
+      },
+      "joint_model_contract_sha256": "d00908da27039dfb19fec50832a03b2bbaed0a5eb4e3c6958342ef527e7e2d6e",
+      "learning_rate": 0.0003,
+      "resolved_model_config_sha256": "0a6ea44bffa7c8cb5bd736370124772afe8141454fdf829f948c113e859259b6",
+      "run_id": "vk-cp-tune-dnn-s42-lr3e4-v1",
+      "scientific_result_eligible": true,
+      "selected": false,
+      "training_summary": {
+        "activation_hook_count": 3,
+        "activation_hook_observations": 28308,
+        "best_validation_metric": 0.020930008215596697,
+        "elapsed_seconds": 3373.076823975891,
+        "examples_seen": 28000256,
+        "nonfinite_total": 0,
+        "oom_count": 0,
+        "optimizer_steps": 6836,
+        "peak_vram_bytes": 114151936,
+        "stopped_reason": "validation_patience",
+        "throughput_examples_per_second": 8301.102364753058,
+        "validation_checks": 7
+      },
+      "validation_metric": 0.020930008215596697
+    },
+    {
+      "candidate_id": "dnn_lr_1e_3",
+      "checkpoint_lineage": {
+        "best_generations": [
+          {
+            "examples_seen": 4001792,
+            "optimizer_steps": 977,
+            "path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000000977-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "c511a1f1adabb8137eec44968c86d22f598c716d7da0beb64d663cbc71b5a51b",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000000977-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161748,
+            "validation_checks": 1
+          },
+          {
+            "examples_seen": 8003584,
+            "optimizer_steps": 1954,
+            "path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000001954-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "08e0c513b99b041db396a52972ceffcdb7c378405c4aa03e14606dfe7c89080f",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000001954-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161748,
+            "validation_checks": 2
+          },
+          {
+            "examples_seen": 12001280,
+            "optimizer_steps": 2930,
+            "path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000002930-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "272376fd7926c7b3eaded6c7cc49bf435d522e3bf1f173147fb8f2a4a2bb5efc",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000002930-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161748,
+            "validation_checks": 3
+          },
+          {
+            "examples_seen": 20000768,
+            "optimizer_steps": 4883,
+            "path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt",
+            "retention_state": "retain_selected_best_required_for_seed_42_final_reuse",
+            "role": "best",
+            "selected_across_candidates": true,
+            "selected_within_candidate": true,
+            "sha256": "b9a98fe1fd7eff8963b00fe887b35ce73d2c37c4885b97a08e2f8bc674cf82f1",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161748,
+            "validation_checks": 5
+          },
+          {
+            "examples_seen": 32002048,
+            "optimizer_steps": 7813,
+            "path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/last.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "last",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "c1dd02fffe362c9dbb05e4bd33003c7a3b7152a5c16554cef4277d12521603cb",
+            "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/last.pt.sha256",
+            "sidecar_size_bytes": 74,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 63161876,
+            "validation_checks": 8
+          }
+        ],
+        "last_checkpoint": {
+          "examples_seen": 32002048,
+          "optimizer_steps": 7813,
+          "path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/last.pt",
+          "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+          "role": "last",
+          "selected_across_candidates": false,
+          "selected_within_candidate": false,
+          "sha256": "c1dd02fffe362c9dbb05e4bd33003c7a3b7152a5c16554cef4277d12521603cb",
+          "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/last.pt.sha256",
+          "sidecar_size_bytes": 74,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 63161876,
+          "validation_checks": 8
+        },
+        "metadata_config_hash": "760ff44473c638328deab8fd8c93c528fcc93e7a6034022f37da9c5cee110e31",
+        "metadata_data_hash": "5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac",
+        "metadata_feature_hash": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+        "metadata_precision": "fp32_parameters_bf16_autocast",
+        "metadata_protocol_hash": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+        "selected_best": {
+          "examples_seen": 20000768,
+          "optimizer_steps": 4883,
+          "path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt",
+          "retention_state": "retain_selected_best_required_for_seed_42_final_reuse",
+          "role": "best",
+          "selected_across_candidates": true,
+          "selected_within_candidate": true,
+          "sha256": "b9a98fe1fd7eff8963b00fe887b35ce73d2c37c4885b97a08e2f8bc674cf82f1",
+          "sidecar_path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt.sha256",
+          "sidecar_size_bytes": 108,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 63161748,
+          "validation_checks": 5
+        }
+      },
+      "code_commit": "46add65bea8134d9f1a65373a82d8bcfb5b6579b",
+      "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence_files": {
+        "command": {
+          "path": "runs/commands/vk-cp-tune-dnn-s42-lr1e3-v1.sh",
+          "sha256": "b0fc8afef38473e95691b867321dcbbf7cf7da27ae904822d173a6a778f78a4f",
+          "sidecar_path": "runs/commands/vk-cp-tune-dnn-s42-lr1e3-v1.sh.sha256",
+          "sidecar_size_bytes": 97,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 389
+        },
+        "history": {
+          "json_lines_strictly_parsed": 144,
+          "path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/history.jsonl",
+          "sha256": "8a2cbf3cbe22653571347f1683ba25fef09d406055be7ecc827725b84adb2183",
+          "size_bytes": 22087,
+          "test_events": 0,
+          "validation_events": 8
+        },
+        "registry": {
+          "path": "runs/registry/records/vk-cp-tune-dnn-s42-lr1e3-v1.json",
+          "sha256": "52400026365149f55104a70abf49eabf5b59e1ccbc7577d1c5d7b9f72d3b0700",
+          "size_bytes": 1394,
+          "status": "completed"
+        },
+        "resolved_config": {
+          "path": "configs/runs/vk-cp-tune-dnn-s42-lr1e3-v1.yaml",
+          "sha256": "1795e59b902ac8aae6a92f0cd367da33bdada77b9692dbcf1d921655931a1902",
+          "sidecar_path": "configs/runs/vk-cp-tune-dnn-s42-lr1e3-v1.yaml.sha256",
+          "sidecar_size_bytes": 99,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 2920
+        },
+        "result": {
+          "path": "results/tuning/vk-cp-tune-dnn-s42-lr1e3-v1.json",
+          "sha256": "e0d777c9d49bcca62cbf97c03fd6d15ddec6c6a16573b36703e0eff527a48b50",
+          "sidecar_path": "results/tuning/vk-cp-tune-dnn-s42-lr1e3-v1.json.sha256",
+          "sidecar_size_bytes": 99,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 3689
+        },
+        "worker_log": {
+          "path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/worker.log",
+          "sha256": "5253b23b6b8bb2a2d65271b450a107515a71ce2a5ed17b863c704c33ef9395c0",
+          "size_bytes": 201
+        }
+      },
+      "joint_model_contract_sha256": "d00908da27039dfb19fec50832a03b2bbaed0a5eb4e3c6958342ef527e7e2d6e",
+      "learning_rate": 0.001,
+      "resolved_model_config_sha256": "0a6ea44bffa7c8cb5bd736370124772afe8141454fdf829f948c113e859259b6",
+      "run_id": "vk-cp-tune-dnn-s42-lr1e3-v1",
+      "scientific_result_eligible": true,
+      "selected": true,
+      "training_summary": {
+        "activation_hook_count": 3,
+        "activation_hook_observations": 32355,
+        "best_validation_metric": 0.020899830835974933,
+        "elapsed_seconds": 3649.6166232880205,
+        "examples_seen": 32002048,
+        "nonfinite_total": 0,
+        "oom_count": 0,
+        "optimizer_steps": 7813,
+        "peak_vram_bytes": 114151936,
+        "stopped_reason": "validation_patience",
+        "throughput_examples_per_second": 8768.605391535248,
+        "validation_checks": 8
+      },
+      "validation_metric": 0.020899830835974933
+    }
+  ],
+  "created_utc": "2026-08-19T14:36:53Z",
+  "dataset_id": "vk_lsvd_up0.01_ir0.01",
+  "feature_regime": "C+P",
+  "frozen_identities": {
+    "capacity_resolution_sha256": "d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565",
+    "data_manifest_sha256": "5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac",
+    "denominator_mask_sha256": "9e168fae4014f4763008e89f61324858f17d376f56fb5de46f2775911650bcaa",
+    "encoder_contract_sha256": "16fa99db8e92ce4dd55c0bd5e7d7bfd8af8d3d59251cc769b41988e61d414449",
+    "experiment_matrix_sha256": "867118db089bbbffb4abf02ff7b3c01e2c9f43e804a188a27a3886f66db4e000",
+    "features_sha256": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+    "full_schema_sha256": "2cfd6d12cd85346e413f476ff223e19d57be213d74fe68b75d6f0ce686c0f091",
+    "operand_schema_sha256": "bb2f6c47fa12c175a3820830f90ff577acb293c56b107c7d1c40e4c682f2ff4d",
+    "premetric_protocol_path": "configs/protocols/vk_lsvd_c_plus_p/protocol_frozen.yaml",
+    "premetric_protocol_sha256": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+    "search_space_sha256": "b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344"
+  },
+  "integrity_audit": {
+    "all_10_checkpoint_sidecars_strictly_verified": true,
+    "all_10_checkpoints_safe_cpu_weights_only_reopened": true,
+    "all_checkpoint_tensor_payloads_finite": true,
+    "both_histories_strict_jsonl_parsed_and_hashed": true,
+    "both_result_sidecars_strictly_verified": true,
+    "both_terminal_registries_reopened_and_hashed": true,
+    "selection_artifact_written_after_terminal_record_reopen": true
+  },
+  "remaining_gates": {
+    "dataset_selected_configs_lock": "pending_all_planned_models",
+    "final_test_runner": "pending",
+    "test": "locked"
+  },
+  "retention_inventory": {
+    "checkpoint_bytes_current": 631617736,
+    "checkpoint_count_current": 10,
+    "checkpoint_sidecar_bytes_current": 1012,
+    "checkpoint_sidecar_count_current": 10,
+    "deletion_performed": false,
+    "proposed_delete_allowlist": [
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000000977-generation-0000.pt",
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000000977-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000001954-generation-0000.pt",
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000001954-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt",
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000003907-generation-0000.pt",
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/best-step-000000003907-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/last.pt",
+      "runs/vk-cp-tune-dnn-s42-lr3e4-v1/last.pt.sha256",
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000000977-generation-0000.pt",
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000000977-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000001954-generation-0000.pt",
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000001954-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000002930-generation-0000.pt",
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000002930-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/last.pt",
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/last.pt.sha256"
+    ],
+    "proposed_redundant_checkpoint_bytes": 568455988,
+    "proposed_redundant_checkpoint_count": 9,
+    "proposed_redundant_sidecar_bytes": 904,
+    "proposed_redundant_sidecar_count": 9,
+    "retain_allowlist": [
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt",
+      "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt.sha256"
+    ],
+    "retain_checkpoint_bytes": 63161748,
+    "retain_checkpoint_sha256": "b9a98fe1fd7eff8963b00fe887b35ce73d2c37c4885b97a08e2f8bc674cf82f1",
+    "retain_sidecar_bytes": 108,
+    "safe_deletion_prerequisite": "selection evidence committed, pushed, and independently read-tested; then exact deletion audit"
+  },
+  "schema_version": 1,
+  "selected": {
+    "best_checkpoint_path": "runs/vk-cp-tune-dnn-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt",
+    "best_checkpoint_sha256": "b9a98fe1fd7eff8963b00fe887b35ce73d2c37c4885b97a08e2f8bc674cf82f1",
+    "candidate_id": "dnn_lr_1e_3",
+    "learning_rate": 0.001,
+    "resolved_config_path": "configs/runs/vk-cp-tune-dnn-s42-lr1e3-v1.yaml",
+    "resolved_config_sha256": "1795e59b902ac8aae6a92f0cd367da33bdada77b9692dbcf1d921655931a1902",
+    "resolved_model_config_sha256": "0a6ea44bffa7c8cb5bd736370124772afe8141454fdf829f948c113e859259b6",
+    "result_path": "results/tuning/vk-cp-tune-dnn-s42-lr1e3-v1.json",
+    "result_sha256": "e0d777c9d49bcca62cbf97c03fd6d15ddec6c6a16573b36703e0eff527a48b50",
+    "run_id": "vk-cp-tune-dnn-s42-lr1e3-v1",
+    "validation_metric": 0.020899830835974933
+  },
+  "selection_comparison": {
+    "absolute_other_minus_selected": 3.0177379621763867e-05,
+    "no_post_metric_tie_break_invented": true,
+    "other_candidate_id": "dnn_lr_3e_4",
+    "other_validation_metric": 0.020930008215596697,
+    "relative_reduction_against_other_percent": 0.14418235917975503,
+    "selected_candidate_id": "dnn_lr_1e_3",
+    "selected_validation_metric": 0.020899830835974933,
+    "tie_break_applied": false,
+    "tie_occurred": false
+  },
+  "selection_rule": {
+    "candidate_budget": 2,
+    "direction": "minimize",
+    "independent_selection_per_tuning_unit": true,
+    "metric": "normalized_mse",
+    "source": "configs/search_space_v1.yaml",
+    "source_sha256": "b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344",
+    "tuning_seed": 42,
+    "tuning_splits": [
+      "train",
+      "validation"
+    ]
+  },
+  "selection_scope": "one_model_only_not_dataset_selected_configs_lock",
+  "status": "selected_on_validation_only",
+  "test_firewall": {
+    "combined_history_test_event_count": 0,
+    "protocol_test_path_available": false,
+    "protocol_test_unlocked": false,
+    "selected_on_validation_only": true,
+    "test_data_accessed": false,
+    "test_metrics_consulted": false,
+    "test_metrics_in_candidate_results": null
+  },
+  "tuning_unit": {
+    "dataset": "vk_lsvd_up0.01_ir0.01",
+    "feature_regime": "C+P",
+    "model": "dnn",
+    "primary_target": "normalized_watch_time"
+  }
+}
