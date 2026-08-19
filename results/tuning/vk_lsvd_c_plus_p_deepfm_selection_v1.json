@@ -1,0 +1,478 @@
+{
+  "artifact_role": "per_model_validation_only_selection_evidence",
+  "candidates": [
+    {
+      "candidate_id": "deepfm_lr_3e_4",
+      "checkpoint_lineage": {
+        "best_generations": [
+          {
+            "examples_seen": 4001792,
+            "optimizer_steps": 977,
+            "path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000000977-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "c28b7c9a5997bad87d30504c6c188fd4ef17cf1f665c808defbce57203c0d272",
+            "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000000977-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 68532147,
+            "validation_checks": 1
+          },
+          {
+            "examples_seen": 8003584,
+            "optimizer_steps": 1954,
+            "path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000001954-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "fba400cdb7b5797a8c3927dc56b1beae07c1ba8c0db7e6884ad0e7a1168ca876",
+            "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000001954-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 68532147,
+            "validation_checks": 2
+          },
+          {
+            "examples_seen": 12001280,
+            "optimizer_steps": 2930,
+            "path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt",
+            "retention_state": "retain_selected_best_required_for_seed_42_final_reuse",
+            "role": "best",
+            "selected_across_candidates": true,
+            "selected_within_candidate": true,
+            "sha256": "f2ec954cc34ed8d6e2bb650899e0a0405dcf11926300a61a97068f0a82d8ecc3",
+            "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 68532147,
+            "validation_checks": 3
+          },
+          {
+            "examples_seen": 24002560,
+            "optimizer_steps": 5860,
+            "path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/last.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "last",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "bcd4f5bf21378f6a709976813bf73c9b06e6678c0719c8b957e6183b9c4755bb",
+            "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/last.pt.sha256",
+            "sidecar_size_bytes": 74,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 68532275,
+            "validation_checks": 6
+          }
+        ],
+        "last_checkpoint": {
+          "examples_seen": 24002560,
+          "optimizer_steps": 5860,
+          "path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/last.pt",
+          "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+          "role": "last",
+          "selected_across_candidates": false,
+          "selected_within_candidate": false,
+          "sha256": "bcd4f5bf21378f6a709976813bf73c9b06e6678c0719c8b957e6183b9c4755bb",
+          "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/last.pt.sha256",
+          "sidecar_size_bytes": 74,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 68532275,
+          "validation_checks": 6
+        },
+        "metadata_config_hash": "8c30c404cfdbe7c59b1dcbf95e2aee986fc4c57081eac97a4199b00d08625423",
+        "metadata_data_hash": "5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac",
+        "metadata_feature_hash": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+        "metadata_precision": "fp32_parameters_bf16_autocast",
+        "metadata_protocol_hash": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+        "selected_best": {
+          "examples_seen": 12001280,
+          "optimizer_steps": 2930,
+          "path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt",
+          "retention_state": "retain_selected_best_required_for_seed_42_final_reuse",
+          "role": "best",
+          "selected_across_candidates": true,
+          "selected_within_candidate": true,
+          "sha256": "f2ec954cc34ed8d6e2bb650899e0a0405dcf11926300a61a97068f0a82d8ecc3",
+          "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt.sha256",
+          "sidecar_size_bytes": 108,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 68532147,
+          "validation_checks": 3
+        }
+      },
+      "code_commit": "cd7d54ca13dd57c21821d704f44090bfc2969c47",
+      "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence_files": {
+        "command": {
+          "path": "runs/commands/vk-cp-tune-deepfm-s42-lr3e4-v1.sh",
+          "sha256": "ba156af7cfef8ea6b9f7f7840b16cb3fa61e3247e83a7fa3410cbd401ad72368",
+          "sidecar_path": "runs/commands/vk-cp-tune-deepfm-s42-lr3e4-v1.sh.sha256",
+          "sidecar_size_bytes": 100,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 395
+        },
+        "history": {
+          "json_lines_strictly_parsed": 114,
+          "path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/history.jsonl",
+          "sha256": "c2d90e9b7555797c28fb98072ac3d3becc68fb5cffb9a0e9e9b50a92d744419a",
+          "size_bytes": 17691,
+          "test_events": 0,
+          "validation_events": 6
+        },
+        "registry": {
+          "path": "runs/registry/records/vk-cp-tune-deepfm-s42-lr3e4-v1.json",
+          "sha256": "b80175aad1f1d37a31a86a53e2d0e5281561e1dca53cb9e610d67f7c81e43a5c",
+          "size_bytes": 1409,
+          "status": "completed"
+        },
+        "registry_incidents": [
+          {
+            "path": "runs/registry/incidents/vk-cp-tune-deepfm-s42-lr3e4-v1-53839f9c1845a64be521de655e2c1cd6916b0b470ee9a9f04c06cb0ebe3cce79.json",
+            "sha256": "53839f9c1845a64be521de655e2c1cd6916b0b470ee9a9f04c06cb0ebe3cce79",
+            "size_bytes": 682
+          },
+          {
+            "path": "runs/registry/incidents/vk-cp-tune-deepfm-s42-lr3e4-v1-b09fd533de4a2fa8639137b4d7efe198fce90a021a08b6927e5a3d4993d37785.json",
+            "sha256": "b09fd533de4a2fa8639137b4d7efe198fce90a021a08b6927e5a3d4993d37785",
+            "size_bytes": 680
+          }
+        ],
+        "resolved_config": {
+          "path": "configs/runs/vk-cp-tune-deepfm-s42-lr3e4-v1.yaml",
+          "sha256": "95851602e547762cc2899e371b663c2fd577d0396339ef73c8061b01d7e341e6",
+          "sidecar_path": "configs/runs/vk-cp-tune-deepfm-s42-lr3e4-v1.yaml.sha256",
+          "sidecar_size_bytes": 102,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 2947
+        },
+        "result": {
+          "path": "results/tuning/vk-cp-tune-deepfm-s42-lr3e4-v1.json",
+          "sha256": "8e6be275fb5d11e0a3a22e48afc7374b48c9dd6d6f861b01f2ee3c939977eddf",
+          "sidecar_path": "results/tuning/vk-cp-tune-deepfm-s42-lr3e4-v1.json.sha256",
+          "sidecar_size_bytes": 102,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 3695
+        },
+        "worker_log": {
+          "path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/worker.log",
+          "sha256": "d0259132e863a961f7e8fc5a7a23bfbaeadfbb43859c9c9a95594bd702155b65",
+          "size_bytes": 204
+        }
+      },
+      "joint_model_contract_sha256": "8d5d107d17cbc8ec2802155641b777607e6ee296e2f88872e54ff46a83004a3a",
+      "learning_rate": 0.0003,
+      "resolved_model_config_sha256": "28b4b548bf30e36c27cc679c19d662caac8d97bd95d2db16b142d5f6f361aec9",
+      "run_id": "vk-cp-tune-deepfm-s42-lr3e4-v1",
+      "scientific_result_eligible": true,
+      "selected": true,
+      "training_summary": {
+        "activation_hook_count": 3,
+        "activation_hook_observations": 24267,
+        "best_validation_metric": 0.020845575060232564,
+        "elapsed_seconds": 2882.635191708803,
+        "examples_seen": 24002560,
+        "nonfinite_total": 0,
+        "oom_count": 0,
+        "optimizer_steps": 5860,
+        "peak_vram_bytes": 173649408,
+        "stopped_reason": "validation_patience",
+        "throughput_examples_per_second": 8326.603404078847,
+        "validation_checks": 6
+      },
+      "validation_metric": 0.020845575060232564
+    },
+    {
+      "candidate_id": "deepfm_lr_1e_3",
+      "checkpoint_lineage": {
+        "best_generations": [
+          {
+            "examples_seen": 4001792,
+            "optimizer_steps": 977,
+            "path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000000977-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "57e8996be18f7d49ecf5ec9218f338adb6468a6679fc4c57d0292b0a2a9ce6fd",
+            "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000000977-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 68532147,
+            "validation_checks": 1
+          },
+          {
+            "examples_seen": 12001280,
+            "optimizer_steps": 2930,
+            "path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000002930-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "d9b4919a1d0dbdf7431d4f2d61bc8e652420aeae395f66dcee0c80749ab48b59",
+            "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000002930-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 68532147,
+            "validation_checks": 3
+          },
+          {
+            "examples_seen": 20000768,
+            "optimizer_steps": 4883,
+            "path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "best",
+            "selected_across_candidates": false,
+            "selected_within_candidate": true,
+            "sha256": "ab298c885998d0d674e601a13802ab7d43e5acda51f8f0f4f0b80401a6820bfa",
+            "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt.sha256",
+            "sidecar_size_bytes": 108,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 68532147,
+            "validation_checks": 5
+          },
+          {
+            "examples_seen": 32002048,
+            "optimizer_steps": 7813,
+            "path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/last.pt",
+            "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+            "role": "last",
+            "selected_across_candidates": false,
+            "selected_within_candidate": false,
+            "sha256": "0d983275feae37f54f872d916c65c0fb69c88f5de471c2cc8d087a5fd741a57f",
+            "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/last.pt.sha256",
+            "sidecar_size_bytes": 74,
+            "sidecar_strictly_verified": true,
+            "size_bytes": 68532275,
+            "validation_checks": 8
+          }
+        ],
+        "last_checkpoint": {
+          "examples_seen": 32002048,
+          "optimizer_steps": 7813,
+          "path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/last.pt",
+          "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+          "role": "last",
+          "selected_across_candidates": false,
+          "selected_within_candidate": false,
+          "sha256": "0d983275feae37f54f872d916c65c0fb69c88f5de471c2cc8d087a5fd741a57f",
+          "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/last.pt.sha256",
+          "sidecar_size_bytes": 74,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 68532275,
+          "validation_checks": 8
+        },
+        "metadata_config_hash": "0d173b2305043497f988de87843190296c8be5a4600eeca10fdf7d841651f88b",
+        "metadata_data_hash": "5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac",
+        "metadata_feature_hash": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+        "metadata_precision": "fp32_parameters_bf16_autocast",
+        "metadata_protocol_hash": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+        "selected_best": {
+          "examples_seen": 20000768,
+          "optimizer_steps": 4883,
+          "path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt",
+          "retention_state": "proposed_redundant_after_selection_evidence_is_committed_pushed_and_read_tested",
+          "role": "best",
+          "selected_across_candidates": false,
+          "selected_within_candidate": true,
+          "sha256": "ab298c885998d0d674e601a13802ab7d43e5acda51f8f0f4f0b80401a6820bfa",
+          "sidecar_path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt.sha256",
+          "sidecar_size_bytes": 108,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 68532147,
+          "validation_checks": 5
+        }
+      },
+      "code_commit": "cd7d54ca13dd57c21821d704f44090bfc2969c47",
+      "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence_files": {
+        "command": {
+          "path": "runs/commands/vk-cp-tune-deepfm-s42-lr1e3-v1.sh",
+          "sha256": "d807963858acd59dd03554cfe47032c6a2b08289029eb79eaa68577a24993a1b",
+          "sidecar_path": "runs/commands/vk-cp-tune-deepfm-s42-lr1e3-v1.sh.sha256",
+          "sidecar_size_bytes": 100,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 395
+        },
+        "history": {
+          "json_lines_strictly_parsed": 139,
+          "path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/history.jsonl",
+          "sha256": "1d2474b25661b59e48463e71b439b8096667441dd2fe06f72a71357c6251bbb4",
+          "size_bytes": 21332,
+          "test_events": 0,
+          "validation_events": 8
+        },
+        "registry": {
+          "path": "runs/registry/records/vk-cp-tune-deepfm-s42-lr1e3-v1.json",
+          "sha256": "2e621df07d62fe84769d033c6a7208a2a906922540e77812e2c8174b2462420c",
+          "size_bytes": 1409,
+          "status": "completed"
+        },
+        "resolved_config": {
+          "path": "configs/runs/vk-cp-tune-deepfm-s42-lr1e3-v1.yaml",
+          "sha256": "115beddf1f07154ea11935281a59ee100818b1630827ffe0679d264daef38710",
+          "sidecar_path": "configs/runs/vk-cp-tune-deepfm-s42-lr1e3-v1.yaml.sha256",
+          "sidecar_size_bytes": 102,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 2946
+        },
+        "result": {
+          "path": "results/tuning/vk-cp-tune-deepfm-s42-lr1e3-v1.json",
+          "sha256": "e5446c90468037a05894f840e24d7e0cc415f8098f5be36f3ff8df3f60105cf7",
+          "sidecar_path": "results/tuning/vk-cp-tune-deepfm-s42-lr1e3-v1.json.sha256",
+          "sidecar_size_bytes": 102,
+          "sidecar_strictly_verified": true,
+          "size_bytes": 3694
+        },
+        "worker_log": {
+          "path": "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/worker.log",
+          "sha256": "198cb863605481f4238518cf426b01e2801eed4d11523f4c9d726d4b53002f13",
+          "size_bytes": 204
+        }
+      },
+      "joint_model_contract_sha256": "8d5d107d17cbc8ec2802155641b777607e6ee296e2f88872e54ff46a83004a3a",
+      "learning_rate": 0.001,
+      "resolved_model_config_sha256": "28b4b548bf30e36c27cc679c19d662caac8d97bd95d2db16b142d5f6f361aec9",
+      "run_id": "vk-cp-tune-deepfm-s42-lr1e3-v1",
+      "scientific_result_eligible": true,
+      "selected": false,
+      "training_summary": {
+        "activation_hook_count": 3,
+        "activation_hook_observations": 32355,
+        "best_validation_metric": 0.020876811708431246,
+        "elapsed_seconds": 3474.6315801572055,
+        "examples_seen": 32002048,
+        "nonfinite_total": 0,
+        "oom_count": 0,
+        "optimizer_steps": 7813,
+        "peak_vram_bytes": 173649408,
+        "stopped_reason": "validation_patience",
+        "throughput_examples_per_second": 9210.19891224039,
+        "validation_checks": 8
+      },
+      "validation_metric": 0.020876811708431246
+    }
+  ],
+  "created_utc": "2026-08-19T16:04:15.544876Z",
+  "dataset_id": "vk_lsvd_up0.01_ir0.01",
+  "feature_regime": "C+P",
+  "frozen_identities": {
+    "capacity_resolution_sha256": "d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565",
+    "data_manifest_sha256": "5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac",
+    "denominator_mask_sha256": "9e168fae4014f4763008e89f61324858f17d376f56fb5de46f2775911650bcaa",
+    "encoder_contract_sha256": "16fa99db8e92ce4dd55c0bd5e7d7bfd8af8d3d59251cc769b41988e61d414449",
+    "experiment_matrix_sha256": "867118db089bbbffb4abf02ff7b3c01e2c9f43e804a188a27a3886f66db4e000",
+    "features_sha256": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+    "full_schema_sha256": "2cfd6d12cd85346e413f476ff223e19d57be213d74fe68b75d6f0ce686c0f091",
+    "operand_schema_sha256": "bb2f6c47fa12c175a3820830f90ff577acb293c56b107c7d1c40e4c682f2ff4d",
+    "premetric_protocol_path": "configs/protocols/vk_lsvd_c_plus_p/protocol_frozen.yaml",
+    "premetric_protocol_sha256": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+    "search_space_sha256": "b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344"
+  },
+  "integrity_audit": {
+    "all_8_checkpoint_sidecars_strictly_verified": true,
+    "all_8_checkpoints_safe_cpu_weights_only_reopened": true,
+    "all_checkpoint_tensor_payloads_finite": true,
+    "both_histories_strict_jsonl_parsed_and_hashed": true,
+    "both_result_sidecars_strictly_verified": true,
+    "both_terminal_registries_reopened_and_hashed": true,
+    "registry_incident_receipts_reopened_and_hashed": true,
+    "selection_artifact_written_after_terminal_record_reopen": true
+  },
+  "remaining_gates": {
+    "dataset_selected_configs_lock": "pending_all_planned_models",
+    "final_test_runner": "pending",
+    "test": "locked"
+  },
+  "retention_inventory": {
+    "checkpoint_bytes_current": 548257432,
+    "checkpoint_count_current": 8,
+    "checkpoint_sidecar_bytes_current": 796,
+    "checkpoint_sidecar_count_current": 8,
+    "deletion_performed": false,
+    "proposed_delete_allowlist": [
+      "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000000977-generation-0000.pt",
+      "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000000977-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000001954-generation-0000.pt",
+      "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000001954-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/last.pt",
+      "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/last.pt.sha256",
+      "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000000977-generation-0000.pt",
+      "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000000977-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000002930-generation-0000.pt",
+      "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000002930-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt",
+      "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/best-step-000000004883-generation-0000.pt.sha256",
+      "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/last.pt",
+      "runs/vk-cp-tune-deepfm-s42-lr1e3-v1/last.pt.sha256"
+    ],
+    "proposed_redundant_checkpoint_bytes": 479725285,
+    "proposed_redundant_checkpoint_count": 7,
+    "proposed_redundant_sidecar_bytes": 688,
+    "proposed_redundant_sidecar_count": 7,
+    "retain_allowlist": [
+      "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt",
+      "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt.sha256"
+    ],
+    "retain_checkpoint_bytes": 68532147,
+    "retain_checkpoint_sha256": "f2ec954cc34ed8d6e2bb650899e0a0405dcf11926300a61a97068f0a82d8ecc3",
+    "retain_sidecar_bytes": 108,
+    "safe_deletion_prerequisite": "selection evidence committed, pushed, and independently read-tested; then exact deletion audit"
+  },
+  "schema_version": 1,
+  "selected": {
+    "best_checkpoint_path": "runs/vk-cp-tune-deepfm-s42-lr3e4-v1/best-step-000000002930-generation-0000.pt",
+    "best_checkpoint_sha256": "f2ec954cc34ed8d6e2bb650899e0a0405dcf11926300a61a97068f0a82d8ecc3",
+    "candidate_id": "deepfm_lr_3e_4",
+    "learning_rate": 0.0003,
+    "resolved_config_path": "configs/runs/vk-cp-tune-deepfm-s42-lr3e4-v1.yaml",
+    "resolved_config_sha256": "95851602e547762cc2899e371b663c2fd577d0396339ef73c8061b01d7e341e6",
+    "resolved_model_config_sha256": "28b4b548bf30e36c27cc679c19d662caac8d97bd95d2db16b142d5f6f361aec9",
+    "result_path": "results/tuning/vk-cp-tune-deepfm-s42-lr3e4-v1.json",
+    "result_sha256": "8e6be275fb5d11e0a3a22e48afc7374b48c9dd6d6f861b01f2ee3c939977eddf",
+    "run_id": "vk-cp-tune-deepfm-s42-lr3e4-v1",
+    "validation_metric": 0.020845575060232564
+  },
+  "selection_comparison": {
+    "absolute_other_minus_selected": 3.123664819868269e-05,
+    "no_post_metric_tie_break_invented": true,
+    "other_candidate_id": "deepfm_lr_1e_3",
+    "other_validation_metric": 0.020876811708431246,
+    "relative_reduction_against_other_percent": 0.1496236524759552,
+    "selected_candidate_id": "deepfm_lr_3e_4",
+    "selected_validation_metric": 0.020845575060232564,
+    "tie_break_applied": false,
+    "tie_occurred": false
+  },
+  "selection_rule": {
+    "candidate_budget": 2,
+    "direction": "minimize",
+    "independent_selection_per_tuning_unit": true,
+    "metric": "normalized_mse",
+    "source": "configs/search_space_v1.yaml",
+    "source_sha256": "b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344",
+    "tuning_seed": 42,
+    "tuning_splits": [
+      "train",
+      "validation"
+    ]
+  },
+  "selection_scope": "one_model_only_not_dataset_selected_configs_lock",
+  "status": "selected_on_validation_only",
+  "test_firewall": {
+    "combined_history_test_event_count": 0,
+    "protocol_test_path_available": false,
+    "protocol_test_unlocked": false,
+    "selected_on_validation_only": true,
+    "test_data_accessed": false,
+    "test_metrics_consulted": false,
+    "test_metrics_in_candidate_results": null
+  },
+  "tuning_unit": {
+    "dataset": "vk_lsvd_up0.01_ir0.01",
+    "feature_regime": "C+P",
+    "model": "deepfm",
+    "primary_target": "normalized_watch_time"
+  }
+}

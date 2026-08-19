@@ -406,7 +406,17 @@ The provisional `31` and `20` counts imply a 39.2% reduction **only inside the n
 Tasks:
 
 - primary: watch-time regression with the code-defined `clip(timespent, 0, c) / c` target, using the exact released or explicitly refit `c`; report MSE in sec² and MAE in seconds;
-- secondary: like/share/dislike prediction; report user-GAUC/AUC, LogLoss, and AUPRC.
+- separately preregistered post-mandatory multi-task extension: keep normalized
+  watch time as the primary head and add like, dislike, share, and bookmark
+  binary heads only when the raw schema validates each label; current-row
+  outcomes remain labels and never become inputs. For every binary target,
+  report ROC-AUC, LogLoss, AUPRC, and user-GAUC. Compute user-GAUC as the
+  unweighted mean of per-user ROC-AUC over users having both positive and
+  negative labels for that target; report eligible-user and eligible-row/event
+  coverage, and use paired user bootstrap 95% confidence intervals. An
+  impression-weighted average may appear only as a labeled sensitivity check.
+  This extension must not alter the frozen single-target RQ1 selections or
+  unlock test access.
 
 The current HEGM evaluator's “XAUC” is a pairwise concordance computed only within contiguous evaluation batches, so it can depend on row order and batch boundaries. If reproduced, call it **HEGM batch-XAUC**, lock batch size/order, and audit permutation and batch-size sensitivity; do not present it as user-GAUC or global concordance. A standard, explicitly defined global or user-grouped ranking metric may be reported separately.
 
@@ -1018,4 +1028,14 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   is lower than selected DCDN by `0.000077451959414422` (about 0.369218%) on
   validation. The next frozen C+P model is DeepFM; dataset-wide selected
   configs and final/test remain locked.
+- VK-LSVD `C+P` DeepFM validation selection recorded 2026-08-19: both frozen seed-42 LR candidates completed under clean commit
+  `cd7d54ca13dd57c21821d704f44090bfc2969c47`.
+  LR=0.0003 stopped after 24,002,560 examples and six validation checks at normalized MSE `0.020845575060232564`; LR=0.001 stopped after 32,002,048 examples and eight checks at `0.020876811708431246`.
+  Both results are scientifically eligible, have zero OOM/non-finite observations, and contain `test_metrics=null`.
+  Strict minimization selects `deepfm_lr_3e_4` (LR=0.0003), lower by `0.00003123664819868269` (about 0.149624%); no tie or post-metric tie-break occurred.
+  Canonical per-model selection receipt SHA-256 is `a6ed26dcce171cf8c27cb00e2db57c90cfcead0481251ed8e4a3a830ff812aeb`; selected best-checkpoint SHA-256 is `f2ec954cc34ed8d6e2bb650899e0a0405dcf11926300a61a97068f0a82d8ecc3`.
+  All eight checkpoint pairs passed strict sidecar, safe CPU `weights_only`, and tensor-finiteness audit; no checkpoint was deleted.
+  Two bounded registry-heartbeat helper timeouts recovered without trainer interruption, and both content-addressed incident receipts are preserved.
+  This remains a validation-only per-model choice: selected DeepFM is lower than selected DCDN by `0.000131707735156791` (about 0.627859%) on validation, so it does not support a universal DCDN-superiority claim.
+  The next frozen C+P model is DCN; dataset-wide selected configs and final/test remain locked.
 Update this decision log whenever a material choice changes.

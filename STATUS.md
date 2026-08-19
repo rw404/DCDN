@@ -524,4 +524,17 @@ This is a per-model validation choice, not the dataset-wide
 selected DNN validation MSE is lower than selected DCDN by
 `0.000077451959414422` (about `0.369218%`). That comparison remains
 validation-only and descriptive; final claims wait for the untouched test,
-paired uncertainty, and the complete frozen RQ1/RQ2 matrix. Test remains
+paired uncertainty, and the complete frozen RQ1/RQ2 matrix. Test remains locked.
+
+## VK-LSVD C+P DeepFM validation-only selection
+
+Both frozen seed-42 DeepFM candidates completed under clean commit `cd7d54ca13dd57c21821d704f44090bfc2969c47` with zero OOM/non-finite observations and `test_metrics=null`.
+LR=0.0003 reached normalized MSE `0.020845575060232564` after 24,002,560 examples and six checks; LR=0.001 reached `0.020876811708431246` after 32,002,048 examples and eight checks.
+Strict minimization selects `deepfm_lr_3e_4`, lower by `0.00003123664819868269` (about 0.149624%), with no tie.
+Receipt SHA-256 is `a6ed26dcce171cf8c27cb00e2db57c90cfcead0481251ed8e4a3a830ff812aeb`; selected best-checkpoint SHA-256 is `f2ec954cc34ed8d6e2bb650899e0a0405dcf11926300a61a97068f0a82d8ecc3`.
+All eight checkpoint pairs passed strict sidecar, CPU `weights_only`, metadata, and finite-tensor checks; two recovered registry-helper timeout receipts are preserved and no checkpoint was deleted.
+The next frozen C+P model is DCN. Dataset-wide selected configs and final/test remain locked.
+
+The owner-approved multi-task extension is scheduled only after the mandatory frozen matrix: normalized watch time remains primary, while like/dislike/share/bookmark are auxiliary binary labels when raw schema validation permits them.
+Per target, report ROC-AUC and user-GAUC over users with both classes, plus eligible-user/event coverage and paired user-bootstrap 95% confidence intervals.
+This extension does not alter the current single-target RQ1 selections or expose test data.

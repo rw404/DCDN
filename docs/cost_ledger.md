@@ -36,16 +36,17 @@ the epoch is currently unknown and must be recorded separately if discovered.
 | 2026-08-19T09:22:40.681483Z | 3.29 assumed | Unavailable and owner-waived | 104.47 current; 104.47 at 0 h ETA | 24.156300 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen AFN+ LR candidates completed validation-only tuning with zero OOM/non-finite observations; a committed streaming-checkpoint verifier reconciled the two false 64-MiB terminal failures without trainer rerun; strict validation minimization selected LR=0.0003 at normalized MSE `0.0208063458817398`; immutable per-model selection receipt SHA-256 `69463d2687d46520ea270ffcdfeaaa8ef47cd11173dc3943780cc4cc486d7e54`; all ten checkpoint pairs passed safe CPU/hash/finiteness audit; storage measured 9,519,565,312 project bytes, 41.134214 GiB logical headroom, and 62.117252 GiB overlay available; both A100s idle and no task-owned training process remained | AFN+ validation choice frozen; retain all checkpoints until evidence commit/push/read-test, continue the remaining seed-42 validation-only model matrix, and keep final/test locked; no provider action performed |
 | 2026-08-19T13:10:53.204095Z | 3.29 assumed | Unavailable and owner-waived | 116.99 current; 116.99 at 0 h ETA | 27.959779 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen VK-LSVD C+P+E full-rank DCNv2 LR candidates completed scientifically eligible validation-only tuning after one exact resume from a checkpoint-file `fsync` EIO; strict minimization selected LR=0.001 at normalized MSE `0.020826933840839952`, lower than LR=0.0003 by `0.000022353418883760273`; immutable selection receipt SHA-256 `85ab7ccbb8d74652f3aa3416a9ada872b36ed2de24c7b8341b56b9b8633f5c41`; all 14 checkpoint pairs passed strict sidecar audit and both terminal best/last pairs passed safe CPU finite-tensor reopen; storage measured 10,374,400,512 project bytes, 40.338087 GiB logical headroom, and 61.975178 GiB overlay available; both A100s idle and no task-owned trainer remained | C+P+E control LR frozen; retain all checkpoints until evidence commit/push/read-test, continue remaining RQ1 validation selections, and keep final/test locked; no provider action performed |
 | 2026-08-19T14:42:01.276325Z | 3.29 assumed | Unavailable and owner-waived | 121.98 current; 121.98 at 0 h ETA | 29.478688 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen VK-LSVD C+P DNN LR candidates completed scientifically eligible validation-only tuning with zero OOM/non-finite observations and `test_metrics=null`; strict minimization selected LR=0.001 at normalized MSE `0.020899830835974933`; immutable selection receipt SHA-256 `7c851bfb7ca37e822fe05faca78a6488f56c447c995286143379a3611a166204`; all ten checkpoint pairs passed strict SHA sidecars and safe CPU finite-tensor reopen; two bounded registry-helper timeouts recovered without trainer interruption; storage measured 11,006,245,888 project bytes, 39.749635 GiB logical headroom, and 61.970650 GiB overlay available; both A100s idle and no task-owned trainer remained | DNN validation choice frozen; retain checkpoints until evidence commit/push/read-test, continue frozen C+P model order with DeepFM, and keep final/test locked; no provider action performed |
+| 2026-08-19T16:19:45.321659Z | 3.29 assumed | Unavailable and owner-waived | 127.34 current; 127.34 at 0 h ETA | 31.107589 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen VK-LSVD C+P DeepFM candidates completed scientifically eligible validation-only tuning with zero OOM/non-finite observations and `test_metrics=null`; strict minimization selected LR=0.0003 at normalized MSE `0.020845575060232564`; immutable selection receipt SHA-256 `a6ed26dcce171cf8c27cb00e2db57c90cfcead0481251ed8e4a3a830ff812aeb`; all eight checkpoint pairs passed strict sidecars and safe CPU finite-tensor reopen; two bounded registry-helper timeouts recovered without trainer interruption; storage measured 11,554,703,872 project bytes, 39.238843 GiB logical headroom, and 61.963726 GiB overlay available; both A100s idle and no task-owned trainer remained | DeepFM validation choice frozen; retain checkpoints until evidence commit/push/read-test, continue frozen C+P model order with DCN, and keep final/test locked; no provider action performed |
 
 Control-plane historical charges and balance are unavailable and are not
 invented. The owner explicitly waived provider-side expiry, credentialed
 inspection, and quota metadata as execution gates. Estimated warning headroom
-at the `2026-08-19T14:42:01.276325Z` checkpoint is USD 248.02 and estimated
-hard-cap headroom is USD 338.02. The USD 370 warning estimate is crossed at
+at the `2026-08-19T16:19:45.321659Z` checkpoint is USD 242.66 and estimated
+hard-cap headroom is USD 332.66. The USD 370 warning estimate is crossed at
 `2026-08-22T18:05:06Z`; the USD 460 cost estimate would be crossed at
 `2026-08-23T21:26:26Z`, so the earlier 120-hour stop remains binding.
 
-The DCDN, ordinary full-rank DCNv2, AFN+, and DNN candidate pairs are
+The DCDN, ordinary full-rank DCNv2, AFN+, DNN, and DeepFM candidate pairs are
 scientifically eligible validation-only tuning, not final/test results. Their
 selected LRs and exact best-checkpoint lineages are durable, but these
 per-model artifacts are not the dataset-wide `selected_configs.lock`. The
@@ -60,7 +61,9 @@ rank-12 `DCNv2-capacity-matched` validation run is complete at normalized MSE
 full-rank DCNv2 remains the lower of the three. AFN+ selected normalized MSE
 is `0.0208063458817398`. DNN selects LR=0.001 at normalized MSE
 `0.020899830835974933`, lower than selected DCDN by about 0.3692% on
-validation. The separate C+P+E ordinary full-rank DCNv2 control now selects
+validation. DeepFM selects LR=0.0003 at normalized MSE `0.020845575060232564`,
+lower than selected DCDN by about 0.6279%; the next frozen C+P model is DCN.
+The separate C+P+E ordinary full-rank DCNv2 control now selects
 LR=0.001 at normalized MSE `0.020826933840839952`; this is a
 validation-only control selection and not an RQ1 verdict. Final/test remains
 locked until every required model
