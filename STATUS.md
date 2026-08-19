@@ -371,3 +371,27 @@ per-model validation selection, not the dataset-wide `selected_configs.lock`.
 The Protocol remains `test_unlocked=false` and `test_path_available=false`;
 the selection histories contain no test event and no test metric was
 consulted.
+
+## VK-LSVD C+P+E premetric checkpoint
+
+A separate Protocol v3 is frozen and active for the already verified
+`C+P+E` feature cache. Frozen protocol SHA-256 is
+`6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739`
+and active-registry SHA-256 is
+`7054e2e493afa49dafab7561ed6b7909e8ef56741976570915aff0bad9c1cce3`.
+The protocol permits only ordinary full-rank DCNv2, so it cannot be reused
+for DCDN or another baseline. Its active stage is `premetric_locked`;
+`test_unlocked=false` and `test_path_available=false`.
+
+The runtime CLI and supervisor now bind dataset, feature regime, required
+model, protocol digest, cache identities, and result payload before and after
+execution. A repository test fixes the exact protocol digest and active
+test-lock state. At `2026-08-19T10:12:29.624367Z`, the local mandatory
+3-hour guard estimated USD 107.21 cumulative and USD 117.08 projected, well
+below the USD 460 cap and before the finalization reserve. Storage measured
+9,519,765,504 project bytes (8.866 GiB), 41.134 GiB logical headroom, and
+62.000 GiB overlay space available. Both A100s were idle at 0 MiB/0%.
+The next action is a clean evidence commit, followed by exact materialization
+and independent prelaunch checks for the two frozen seed-42 validation-only
+DCNv2 learning-rate candidates. No C+P+E validation or test metric has been
+read.

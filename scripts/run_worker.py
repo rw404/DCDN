@@ -59,6 +59,10 @@ from dcdn.selection_artifact import (
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 _TRAIN_SCRIPT = PROJECT_ROOT / "scripts" / "train_model.py"
+_DATASET_ID = "vk_lsvd_up0.01_ir0.01"
+_C_PLUS_P = "C+P"
+_C_PLUS_P_PLUS_E = "C+P+E"
+_FULL_FEATURE_MODEL_KEY = "dcnv2_full_rank"
 _TELEMETRY_ENV = {
     "DO_NOT_TRACK": "1",
     "HF_HUB_DISABLE_TELEMETRY": "1",
@@ -92,6 +96,39 @@ def _mapping(value: Any, field: str) -> Mapping[str, Any]:
     return value
 
 
+def _validate_resolved_feature_regime(training: Mapping[str, Any]) -> None:
+    if training.get("dataset_id") != _DATASET_ID:
+        raise WorkerError("worker supports only the frozen VK dataset")
+    feature_regime = training.get("feature_regime")
+    model_key = training.get("model_key")
+    if feature_regime == _C_PLUS_P:
+        return
+    if feature_regime == _C_PLUS_P_PLUS_E and model_key == _FULL_FEATURE_MODEL_KEY:
+        return
+    raise WorkerError("C+P+E is restricted to dcnv2_full_rank")
+
+
+def _require_protocol_feature_regime(
+    resolved: Mapping[str, Any],
+    protocol: Mapping[str, Any],
+) -> None:
+    training = _mapping(resolved.get("training"), "resolved.training")
+    _validate_resolved_feature_regime(training)
+    if protocol.get("dataset_id") != training.get("dataset_id") or protocol.get(
+        "feature_regime"
+    ) != training.get("feature_regime"):
+        raise WorkerError("resolved feature regime differs from protocol")
+    required_models = protocol.get("required_model_keys")
+    if not isinstance(required_models, list) or any(
+        not isinstance(item, str) for item in required_models
+    ):
+        raise WorkerError("protocol required_model_keys is invalid")
+    if training.get("feature_regime") == _C_PLUS_P_PLUS_E and required_models != [
+        _FULL_FEATURE_MODEL_KEY
+    ]:
+        raise WorkerError("C+P+E requires an isolated dcnv2_full_rank protocol")
+
+
 def _resolved_path(value: Any, *, root: Path, field: str) -> Path:
     if not isinstance(value, str) or not value:
         raise WorkerError(f"{field} must be a non-empty path")
@@ -111,6 +148,7 @@ def _validate_resolved_execution_contract(
     resolved: Mapping[str, Any],
 ) -> str:
     training = _mapping(resolved.get("training"), "resolved.training")
+    _validate_resolved_feature_regime(training)
     is_capacity = training.get("model_key") == "dcnv2_capacity_matched_core"
     schema_version = resolved.get("schema_version")
     if type(schema_version) is not int or (
@@ -484,7 +522,9 @@ def _verify_completed_result(
         project_root,
         "resolved.protocol_path",
     )
-    if receipt["protocol_sha256"] != verify_sha256_sidecar(protocol_path):
+    protocol_artifact = load_verified_yaml_artifact(protocol_path)
+    _require_protocol_feature_regime(reloaded, protocol_artifact.payload)
+    if receipt["protocol_sha256"] != protocol_artifact.digest:
         raise WorkerError("result receipt protocol digest mismatch")
     training = _mapping(receipt["training"], "result.training")
     resolved_training = _mapping(reloaded.get("training"), "resolved.training")
@@ -1716,6 +1756,7 @@ def run_worker(
     protocol_artifact = load_verified_yaml_artifact(protocol_path)
     protocol_digest = protocol_artifact.digest
     protocol_payload = protocol_artifact.payload
+    _require_protocol_feature_regime(resolved, protocol_payload)
     protocol_hashes = _mapping(protocol_payload.get("hashes"), "protocol.hashes")
     if record["protocol_sha256"] != protocol_digest:
         raise WorkerError("registry protocol_sha256 mismatch")

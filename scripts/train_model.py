@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed single-process VK C+P trainer for frozen DCDN experiments."""
+"""Fail-closed single-process VK trainer for frozen DCDN experiments."""
 
 from __future__ import annotations
 
@@ -28,7 +28,11 @@ from dcdn.capacity_artifact import (
 from dcdn.capacity_artifact import (
     sha256_file as capacity_sha256_file,
 )
-from dcdn.data.vk_lsvd_runtime import C_PLUS_P, build_vk_lsvd_raw_source
+from dcdn.data.vk_lsvd_runtime import (
+    C_PLUS_P,
+    C_PLUS_P_PLUS_E,
+    build_vk_lsvd_raw_source,
+)
 from dcdn.encoder import EncoderContractLock, build_trainable_encoded_model
 from dcdn.models import DCNv2CapacityCoreConfig
 from dcdn.protocol import (
@@ -360,11 +364,32 @@ def _expected_identity(
     gate: ProtocolGate,
     lock: EncoderContractLock,
     split: str,
+    *,
+    model_key: str,
 ) -> RawSourceIdentity:
-    if gate.dataset_id != _DATASET_ID or gate.feature_regime != C_PLUS_P:
-        raise TrainingContractError("CLI supports only frozen VK C+P v2")
+    if gate.dataset_id != _DATASET_ID:
+        raise TrainingContractError("CLI supports only the frozen VK dataset")
+    if gate.feature_regime not in {C_PLUS_P, C_PLUS_P_PLUS_E}:
+        raise TrainingContractError("CLI supports only frozen VK C+P or C+P+E")
+    if gate.feature_regime == C_PLUS_P_PLUS_E and (
+        model_key != "dcnv2_full_rank"
+        or gate.required_model_keys != ("dcnv2_full_rank",)
+    ):
+        raise TrainingContractError(
+            "VK C+P+E is restricted to the isolated dcnv2_full_rank protocol"
+        )
     dataset = _mapping(lock.payload["datasets"][_DATASET_ID], "encoder dataset")
-    regime = _mapping(dataset["regimes"][C_PLUS_P], "encoder regime")
+    regime = _mapping(
+        dataset["regimes"][gate.feature_regime],
+        "encoder regime",
+    )
+    allowed_models = regime.get("allowed_models")
+    if not isinstance(allowed_models, list) or any(
+        not isinstance(item, str) for item in allowed_models
+    ):
+        raise TrainingContractError("encoder allowed_models is invalid")
+    if allowed_models and model_key not in allowed_models:
+        raise TrainingContractError("model is forbidden for the frozen feature regime")
     hashes = gate.payload["hashes"]
     return RawSourceIdentity(
         dataset_id=gate.dataset_id,
@@ -525,10 +550,18 @@ def _run(resolved_path: Path) -> int:
 
     if (
         training.dataset_id != _DATASET_ID
-        or training.feature_regime != C_PLUS_P
+        or training.feature_regime != gate.feature_regime
+        or training.feature_regime not in {C_PLUS_P, C_PLUS_P_PLUS_E}
         or training.phase != "tuning"
     ):
-        raise TrainingContractError("CLI permits only premetric VK C+P tuning")
+        raise TrainingContractError("CLI permits only active premetric VK tuning")
+    if training.feature_regime == C_PLUS_P_PLUS_E and (
+        training.model_key != "dcnv2_full_rank"
+        or gate.required_model_keys != ("dcnv2_full_rank",)
+    ):
+        raise TrainingContractError(
+            "VK C+P+E is restricted to the isolated dcnv2_full_rank protocol"
+        )
     runtime = _mapping(payload["runtime"], "runtime")
     _exact_keys(
         runtime,
@@ -627,8 +660,18 @@ def _run(resolved_path: Path) -> int:
     if training.capacity_resolution_sha256 != capacity_digest:
         raise TrainingContractError("capacity artifact digest mismatch")
 
-    train_id = _expected_identity(gate, encoder_lock, "train")
-    validation_id = _expected_identity(gate, encoder_lock, "validation")
+    train_id = _expected_identity(
+        gate,
+        encoder_lock,
+        "train",
+        model_key=training.model_key,
+    )
+    validation_id = _expected_identity(
+        gate,
+        encoder_lock,
+        "validation",
+        model_key=training.model_key,
+    )
     model = build_trainable_encoded_model(
         encoder_contract=encoder_lock,
         dataset_id=training.dataset_id,
@@ -695,7 +738,7 @@ def _run(resolved_path: Path) -> int:
                 cache_root,
                 split=split,  # type: ignore[arg-type]
                 full_scan_manifest_path=scan_path,
-                feature_regime=C_PLUS_P,
+                feature_regime=training.feature_regime,
                 expected_scan_sha256=train_id.full_materialized_scan_sha256,
                 expected_cache_content_sha256=train_id.cache_content_sha256,
                 verify_hashes=True,

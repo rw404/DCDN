@@ -1314,6 +1314,7 @@ def _load_script(name: str) -> Any:
     if name == "train_model":
         runtime_stub = ModuleType(runtime_module_name)
         runtime_stub.C_PLUS_P = "C+P"
+        runtime_stub.C_PLUS_P_PLUS_E = "C+P+E"
 
         def forbidden_runtime(*_args: Any, **_kwargs: Any) -> Any:
             raise AssertionError("writer unit test must not open the VK runtime")
@@ -1333,6 +1334,94 @@ def _load_script(name: str) -> Any:
             else:
                 sys.modules[runtime_module_name] = previous_runtime
     return module
+
+
+def test_full_feature_cli_identity_is_isolated_to_dcnv2() -> None:
+    train_model = _load_script("train_model")
+    encoder = EncoderContractLock.load(ENCODER_PATH)
+    dataset = encoder.payload["datasets"][DATASET_ID]
+    regime = dataset["regimes"]["C+P+E"]
+    gate = SimpleNamespace(
+        dataset_id=DATASET_ID,
+        feature_regime="C+P+E",
+        required_model_keys=("dcnv2_full_rank",),
+        payload={
+            "hashes": {
+                "data_manifest_sha256": dataset["source_manifest_sha256"],
+                "views_manifest_sha256": dataset["views_manifest_sha256"],
+                "features_sha256": dataset["feature_contract_sha256"],
+                "physical_schema_sha256": regime["physical_schema_sha256"],
+                "expanded_schema_sha256": regime["expanded_schema_sha256"],
+                "operand_schema_sha256": regime["operand_schema_sha256"],
+                "denominator_mask_sha256": regime["denominator_mask_sha256"],
+                "full_materialized_scan_sha256": dataset[
+                    "full_materialized_scan_sha256"
+                ],
+                "cache_content_sha256": regime["cache_content_sha256"],
+            }
+        },
+        expected_row_count=lambda split: (7_505_820 if split == "train" else 1_516_831),
+    )
+
+    identity = train_model._expected_identity(
+        gate,
+        encoder,
+        "train",
+        model_key="dcnv2_full_rank",
+    )
+    assert identity.feature_regime == "C+P+E"
+    assert identity.row_count == 7_505_820
+    assert identity.ordered_operand_fields == tuple(regime["ordered_operand_fields"])
+    assert identity.cache_content_sha256 == regime["cache_content_sha256"]
+
+    with pytest.raises(TrainingContractError, match="restricted"):
+        train_model._expected_identity(
+            gate,
+            encoder,
+            "train",
+            model_key="dcdn_core",
+        )
+
+    gate.required_model_keys = ("dcnv2_full_rank", "dcdn_core")
+    with pytest.raises(TrainingContractError, match="isolated"):
+        train_model._expected_identity(
+            gate,
+            encoder,
+            "train",
+            model_key="dcnv2_full_rank",
+        )
+
+
+def test_worker_full_feature_contract_fails_closed_before_spawn() -> None:
+    worker = _load_script("run_worker")
+    resolved = {
+        "training": {
+            "dataset_id": DATASET_ID,
+            "feature_regime": "C+P+E",
+            "model_key": "dcnv2_full_rank",
+        }
+    }
+    protocol = {
+        "dataset_id": DATASET_ID,
+        "feature_regime": "C+P+E",
+        "required_model_keys": ["dcnv2_full_rank"],
+    }
+    worker._require_protocol_feature_regime(resolved, protocol)
+
+    wrong_model = copy.deepcopy(resolved)
+    wrong_model["training"]["model_key"] = "dcdn_core"
+    with pytest.raises(worker.WorkerError, match="restricted"):
+        worker._require_protocol_feature_regime(wrong_model, protocol)
+
+    multi_model = copy.deepcopy(protocol)
+    multi_model["required_model_keys"] = ["dcnv2_full_rank", "dcdn_core"]
+    with pytest.raises(worker.WorkerError, match="isolated"):
+        worker._require_protocol_feature_regime(resolved, multi_model)
+
+    wrong_regime = copy.deepcopy(protocol)
+    wrong_regime["feature_regime"] = "C+P"
+    with pytest.raises(worker.WorkerError, match="differs"):
+        worker._require_protocol_feature_regime(resolved, wrong_regime)
 
 
 def _write_hashed_bytes(path: Path, data: bytes) -> str:
@@ -1596,7 +1685,14 @@ def _worker_receipt_fixture(
     if execution_kind not in {"implementation_smoke", "scientific_tuning"}:
         raise AssertionError(f"unsupported fixture execution_kind: {execution_kind}")
     protocol_path = root / "protocol.yaml"
-    protocol_digest = _write_hashed_yaml(protocol_path, {"kind": "protocol"})
+    protocol_digest = _write_hashed_yaml(
+        protocol_path,
+        {
+            "dataset_id": DATASET_ID,
+            "feature_regime": FEATURE_REGIME,
+            "required_model_keys": ["dcdn_core"],
+        },
+    )
     run_directory = root / "run"
     last_digest = (
         _write_sparse_hashed_file(run_directory / "last.pt", 64 * 1024 * 1024 + 17)
@@ -1619,6 +1715,9 @@ def _worker_receipt_fixture(
         "protocol_path": str(protocol_path),
         "run_directory": str(run_directory),
         "training": {
+            "dataset_id": DATASET_ID,
+            "feature_regime": FEATURE_REGIME,
+            "model_key": "dcdn_core",
             "effective_batch_size": 4096,
             "maximum_train_examples": 40_000_000,
             "validate_every_examples": 4_000_000,
@@ -2593,6 +2692,8 @@ def test_worker_schema_v3_noncapacity_and_v4_capacity_are_disjoint() -> None:
         "schema_version": 3,
         "execution_kind": "scientific_tuning",
         "training": {
+            "dataset_id": DATASET_ID,
+            "feature_regime": FEATURE_REGIME,
             "model_key": "dcnv2_full_rank",
             "runtime_value_checks": False,
         },

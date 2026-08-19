@@ -1200,3 +1200,29 @@ def test_final_gate_authorizes_parent_bound_checkpoint_without_resave(
             seed=44,
             checkpoint_protocol_sha256=prepared.final_gate.digest,
         )
+
+
+def test_repository_vk_c_plus_p_plus_e_protocol_is_isolated_and_test_locked() -> None:
+    repository_root = Path(__file__).resolve().parents[1]
+    protocol_path = (
+        repository_root
+        / "configs/protocols/vk_lsvd_c_plus_p_plus_e/protocol_frozen.yaml"
+    )
+    active_path = (
+        repository_root
+        / "artifacts/protocol_state/vk_lsvd_c_plus_p_plus_e/active_protocol.yaml"
+    )
+
+    verify_sha256_sidecar(protocol_path)
+    verify_sha256_sidecar(active_path)
+    gate = ProtocolGate.load(protocol_path, active_registry_path=active_path)
+    gate.require_active()
+
+    assert gate.digest == (
+        "6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739"
+    )
+    assert gate.dataset_id == "vk_lsvd_up0.01_ir0.01"
+    assert gate.feature_regime == "C+P+E"
+    assert gate.required_model_keys == ("dcnv2_full_rank",)
+    assert gate.payload["test_unlocked"] is False
+    assert gate.payload["test_path_available"] is False

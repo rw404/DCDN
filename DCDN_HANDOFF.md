@@ -913,4 +913,20 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   finiteness checks; no checkpoint was deleted. This is another per-model
   validation-only choice, not `selected_configs.lock`; test remains locked
   and no test event or test metric informed selection.
+
+- VK-LSVD `C+P+E` premetric protocol isolated and activated 2026-08-19.
+  The immutable Protocol v3 artifact
+  `configs/protocols/vk_lsvd_c_plus_p_plus_e/protocol_frozen.yaml` has
+  SHA-256
+  `6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739`;
+  its separate active-registry SHA-256 is
+  `7054e2e493afa49dafab7561ed6b7909e8ef56741976570915aff0bad9c1cce3`.
+  It remains `premetric_locked`, permits only `dcnv2_full_rank`, binds the
+  already verified `C+P+E` cache and feature identities, and keeps both
+  `test_unlocked=false` and `test_path_available=false`. The CLI and worker
+  now fail closed on dataset/regime/model mismatches before source or model
+  construction and repeat the protocol/regime checks after result reopen.
+  The next executable action is the frozen seed-42 validation-only pair for
+  learning rates 0.0003 and 0.001, one process per A100; no `C+P+E` metric
+  has been observed yet and no test path has been opened.
 Update this decision log whenever a material choice changes.

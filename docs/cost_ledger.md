@@ -60,3 +60,14 @@ is `0.0208063458817398`. Final/test remains locked until every required model
 selection and checkpoint lineage is frozen, the one-pass final runner is
 implemented and audited, and the protocol lifecycle explicitly activates test
 access; `test_unlocked=false`.
+
+## 2026-08-19 C+P+E premetric checkpoint
+
+At `2026-08-19T10:12:29.624367Z`, the immutable ledger epoch still yielded
+24.986562 elapsed hours. At the owner-approved USD 3.29/hour estimate plus
+the fixed USD 25 storage reserve, estimated cumulative spend was USD 107.21
+and a conservative three-hour mandatory compute projection was USD 117.08.
+The projected end remained before the finalization reserve and the local
+guard returned `launch_allowed=true`. Storage was also healthy at
+9,519,765,504 project bytes, 41.134027 GiB logical headroom, and 62.000469
+GiB overlay space available. No provider action or GPU job was performed.
