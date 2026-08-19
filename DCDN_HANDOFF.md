@@ -888,4 +888,29 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   control by `0.000027363324549955` (about 0.1303%), but ordinary full-rank
   DCNv2 remains lower than DCDN by `0.000068805368277723`. These are
   validation-only comparisons; test remains locked and no test claim is made.
+- VK-LSVD C+P AFN+ validation selection recorded 2026-08-19: the two frozen
+  seed-42 LR candidates completed the same training/validation-only protocol.
+  LR=0.0003 reached normalized MSE `0.0208063458817398` after 36,003,840
+  examples and nine validation checks; LR=0.001 reached
+  `0.02082650517903153` after 24,002,560 examples and six checks. Both stopped
+  by the predeclared validation patience rule with zero OOM/non-finite
+  observations. Their trainers had already written valid immutable results
+  and checkpoint pairs when the former generic 64-MiB artifact cap caused a
+  false supervisor terminal failure. Commit
+  `f450c67efdce86d5dc788c79f4ccbaf173501ca7` replaced only checkpoint
+  verification with a streaming, sidecar-bound reader and added an exact
+  reconciliation gate. It preserved each full prior failed record and SHA,
+  reverified result/last/best twice, required the original trainer PID to be
+  dead, and published both registries as completed/scientifically eligible.
+  Strict validation minimization selects `afn_plus_lr_3e_4` (LR=0.0003),
+  lower by `0.00002015929729173166` (about 0.0968%); no tie or post-metric
+  tie-break occurred. Canonical selection receipt SHA-256 is
+  `69463d2687d46520ea270ffcdfeaaa8ef47cd11173dc3943780cc4cc486d7e54`.
+  The retained best checkpoint SHA-256 is
+  `42dd6b18e0cfb51769e81718a86163d09057546b5cf00f7b10f8ad5a7d42dc8d`.
+  All ten AFN checkpoint/sidecar pairs passed streaming hash, safe CPU
+  `weights_only=True`, accumulation-boundary, metadata-lineage, and tensor-
+  finiteness checks; no checkpoint was deleted. This is another per-model
+  validation-only choice, not `selected_configs.lock`; test remains locked
+  and no test event or test metric informed selection.
 Update this decision log whenever a material choice changes.

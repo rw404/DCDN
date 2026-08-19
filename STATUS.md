@@ -325,3 +325,49 @@ authorization SHA-256
 Capacity-control configuration/prelaunch evidence is the remaining run gate.
 Final/test access remains forbidden: the active protocol has
 `test_unlocked=false` and no test path.
+
+## AFN+ validation-only selection
+
+Both frozen seed-42 AFN+ C+P learning-rate candidates completed under the
+same Protocol v3 and validation-only split. LR=0.0003 stopped by validation
+patience after 36,003,840 examples, 8,790 optimizer steps, and nine validation
+checks; its minimum normalized MSE is `0.0208063458817398`. LR=0.001 stopped
+after 24,002,560 examples, 5,860 steps, and six validation checks; its minimum
+is `0.02082650517903153`. Both runs recorded zero OOM and zero non-finite
+observations, fully drained asynchronous numerical monitors, and all three
+activation hooks.
+
+The original supervisors produced complete immutable results and checkpoints
+but then recorded a technical failure because the old generic artifact reader
+incorrectly capped checkpoint verification at 64 MiB. Commit
+`f450c67efdce86d5dc788c79f4ccbaf173501ca7` added streaming checkpoint
+verification without relaxing the bounded JSON/YAML reader. Its exact,
+fresh-only reconciliation path re-opened each result and its last/best
+checkpoint twice, preserved the full prior failed registry record and SHA-256,
+and changed only the terminal registry state. The reconciled registry SHA-256
+values are `045ec6196e1132d5b9eb694d0e8b089421fcc48cf2006e7efa7235f78ce94fc8`
+for LR=0.0003 and
+`bc78b4ed089267f4aab7d2137663867dca93f7ffd45431316da638fd4f3ccd8d`
+for LR=0.001; both are now `completed` and
+`scientific_result_eligible=true`.
+
+Strict minimization therefore selects `afn_plus_lr_3e_4`, LR=0.0003. It is
+lower by `0.00002015929729173166` (about `0.096796%`) than LR=0.001; no tie
+occurred and no post-metric tie-break was invented. The canonical per-model
+selection receipt is
+`results/tuning/vk_lsvd_c_plus_p_afn_plus_selection_v1.json`, SHA-256
+`69463d2687d46520ea270ffcdfeaaa8ef47cd11173dc3943780cc4cc486d7e54`.
+The retained selected checkpoint is
+`runs/vk-cp-tune-afn-plus-s42-lr3e4-v1/best-step-000000005860-generation-0000.pt`,
+SHA-256
+`42dd6b18e0cfb51769e81718a86163d09057546b5cf00f7b10f8ad5a7d42dc8d`.
+
+All ten AFN checkpoint/sidecar pairs (792,256,766 checkpoint bytes) passed
+strict streaming hashes, safe CPU `weights_only=True` reopen, accumulation-
+boundary, metadata-lineage, and tensor-finiteness checks. Nine redundant
+pairs remain present and are only proposed for deletion after the complete
+AFN evidence is committed, pushed, and independently read-tested. This is one
+per-model validation selection, not the dataset-wide `selected_configs.lock`.
+The Protocol remains `test_unlocked=false` and `test_path_available=false`;
+the selection histories contain no test event and no test metric was
+consulted.

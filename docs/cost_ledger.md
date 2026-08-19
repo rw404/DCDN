@@ -33,27 +33,30 @@ the epoch is currently unknown and must be recorded separately if discovered.
 | 2026-08-19T01:12:20.526933Z | 3.29 assumed | Unavailable and owner-waived | 77.59 current; no new run projected | 15.984035 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; after committed registry/worker hardening, ordinary full-rank DCNv2 LR=0.0003 exact resume-v2 completed scientifically eligible validation-only tuning at 39,997,440 examples with zero OOM/non-finite observations and `test_metrics=null`; result SHA-256 `0e6381d016a65a48d9f12f48b6c871ae242139b2e9a2341f1ecba3efd03cf58e`; two bounded heartbeat-helper timeouts recovered with byte-identical local/persistent incident receipts; storage guard measured 1,461,672,448 project bytes and 62.267612 GiB overlay available; independent terminal audit found both A100s idle, zero task PIDs, and no running registry record | Strict validation-only minimization selects LR=0.0003; canonical selection receipt SHA-256 `869cbcb7a227b274700cda142f23c59040497bfdfe4da101888e2cc63f39d67a`; bind it before capacity-control tuning; final/test remains locked; no provider action performed |
 | 2026-08-19T05:35:14.818387Z | 3.29 assumed | Unavailable and owner-waived | 92.00 current; no new run projected | 20.365783 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; clean commit `bc584157a5845571e72acde7d5075dd5f5d3bcc2` passed 534 local CPU tests; immutable compact capacity authorization SHA-256 `d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2` and sidecar independently reopened; storage guard measured 8,303,755,776 project bytes, 42.266525 GiB logical headroom, and 62.153824 GiB overlay available | Compact LR-binding gate closed; next materialize/audit schema-v4 capacity-control run; final/test remains locked; no provider action performed |
 | 2026-08-19T06:56:00.678840Z | 3.29 assumed | Unavailable and owner-waived | 96.43 current; no new run projected | 21.711855 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; rank-12 `DCNv2-capacity-matched(C+P)` completed 39,997,440 examples and nine validation checks with zero OOM/non-finite observations; immutable result SHA-256 `fdcf94786df724aa0a91a525b8e23f296530b8837e2669a2bedfe719bc6d0507`; best validation MSE `0.02100464611993931`; storage guard measured 8,726,980,608 project bytes, 41.872366 GiB logical headroom, and 62.145443 GiB overlay available | Capacity-control validation cell complete and scientifically eligible; DCDN is lower by 0.1303% on validation, while full-rank DCNv2 remains lower than DCDN; continue remaining seed-42 validation-only tuning; final/test remains locked; no provider action performed |
+| 2026-08-19T09:22:40.681483Z | 3.29 assumed | Unavailable and owner-waived | 104.47 current; 104.47 at 0 h ETA | 24.156300 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen AFN+ LR candidates completed validation-only tuning with zero OOM/non-finite observations; a committed streaming-checkpoint verifier reconciled the two false 64-MiB terminal failures without trainer rerun; strict validation minimization selected LR=0.0003 at normalized MSE `0.0208063458817398`; immutable per-model selection receipt SHA-256 `69463d2687d46520ea270ffcdfeaaa8ef47cd11173dc3943780cc4cc486d7e54`; all ten checkpoint pairs passed safe CPU/hash/finiteness audit; storage measured 9,519,565,312 project bytes, 41.134214 GiB logical headroom, and 62.117252 GiB overlay available; both A100s idle and no task-owned training process remained | AFN+ validation choice frozen; retain all checkpoints until evidence commit/push/read-test, continue the remaining seed-42 validation-only model matrix, and keep final/test locked; no provider action performed |
 
 Control-plane historical charges and balance are unavailable and are not
 invented. The owner explicitly waived provider-side expiry, credentialed
 inspection, and quota metadata as execution gates. Estimated warning headroom
-at the `2026-08-19T05:35:14.818387Z` checkpoint is USD 278.00 and estimated
-hard-cap headroom is USD 368.00. The USD 370 warning estimate is crossed at
+at the `2026-08-19T09:22:40.681483Z` checkpoint is USD 265.53 and estimated
+hard-cap headroom is USD 355.53. The USD 370 warning estimate is crossed at
 `2026-08-22T18:05:06Z`; the USD 460 cost estimate would be crossed at
 `2026-08-23T21:26:26Z`, so the earlier 120-hour stop remains binding.
 
-The DCDN and ordinary full-rank DCNv2 candidate pairs are scientifically
-eligible validation-only tuning, not final/test results. Their selected LRs
-and exact best-checkpoint lineages are durable, but these per-model artifacts
-are not the dataset-wide `selected_configs.lock`. The first two LR=0.0003
-attempts remain recorded as execution failures; hardened resume-v2 is the
-scientifically eligible completion. Strict validation minimization selects
-ordinary DCNv2 LR=0.0003. Compact authorization SHA-256
+The DCDN, ordinary full-rank DCNv2, and AFN+ candidate pairs are
+scientifically eligible validation-only tuning, not final/test results. Their
+selected LRs and exact best-checkpoint lineages are durable, but these
+per-model artifacts are not the dataset-wide `selected_configs.lock`. The
+first two ordinary-DCNv2 LR=0.0003 attempts remain recorded as execution
+failures; hardened resume-v2 is the scientifically eligible completion. Strict
+validation minimization selects ordinary DCNv2 LR=0.0003 and AFN+ LR=0.0003.
+Compact authorization SHA-256
 `d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2`
-binds that receipt and inherited LR. The bound rank-12
-`DCNv2-capacity-matched` validation run is complete at normalized MSE
+binds the ordinary-DCNv2 receipt and inherited capacity-control LR. The bound
+rank-12 `DCNv2-capacity-matched` validation run is complete at normalized MSE
 `0.02100464611993931`; DCDN is lower by about 0.1303% on validation, while
-full-rank DCNv2 remains the lower of the three. Final/test remains locked until
-every required model selection and checkpoint lineage is frozen, the one-pass
-final runner is implemented and audited, and the protocol lifecycle explicitly
-activates test access; `test_unlocked=false`.
+full-rank DCNv2 remains the lower of the three. AFN+ selected normalized MSE
+is `0.0208063458817398`. Final/test remains locked until every required model
+selection and checkpoint lineage is frozen, the one-pass final runner is
+implemented and audited, and the protocol lifecycle explicitly activates test
+access; `test_unlocked=false`.
