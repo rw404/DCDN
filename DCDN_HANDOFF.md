@@ -964,4 +964,37 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   compilation clean. Another attempt requires a new clean committed/pushed
   code identity and fresh run IDs; neither failed pair will be overwritten.
   Test remains locked.
+- VK-LSVD `C+P+E` ordinary full-rank DCNv2 validation selection recorded
+  2026-08-19: the second retry pair under clean commit
+  `c8d82f8f9edfcbbed5d78fea18bc797484cdad8a` completed the frozen seed-42
+  tuning unit. LR=0.0003 completed 39,997,440 examples and nine validation
+  checks at minimum normalized MSE `0.020849287259723712`; immutable result
+  SHA-256 is
+  `b46d2129618be37c7c318ecd6aa99e0507b1d02c6ebe00c05fd3f388499b1232`.
+  LR=0.001 first encountered a checkpoint-file `fsync` `EIO`; the incomplete
+  check-four observation is not selection evidence and the immutable failure
+  receipt SHA-256 is
+  `be53192dcff1e57a0b5f5a0808c9aa3a40cd6b109454e3d7349c43340d1e26fc`.
+  Exact resume from 12,001,280 examples recomputed check four identically and
+  completed the same 39,997,440-example/nine-check budget. Its immutable
+  result SHA-256 is
+  `7ec7c16b5bb5f6c345dc7bd35953e43ce4ea2a072b7acf8544228171600ce3ef`.
+  Strict validation minimization selects `dcnv2_full_rank_lr_1e_3`
+  (`learning_rate=0.001`) at `0.020826933840839952`, lower than LR=0.0003 by
+  `0.000022353418883760273` (about 0.107214%); no tie occurred. Both terminal
+  results are scientifically eligible, with zero OOM/non-finite observations
+  and `test_metrics=null`. The canonical per-model selection receipt is
+  `results/tuning/vk_lsvd_c_plus_p_plus_e_dcnv2_full_rank_selection_v1.json`,
+  SHA-256
+  `85ab7ccbb8d74652f3aa3416a9ada872b36ed2de24c7b8341b56b9b8633f5c41`.
+  The retained selected checkpoint is
+  `runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/best-step-000000007813-generation-0000.pt`,
+  SHA-256
+  `858fec98f915cdec9dea8dac0aebd1156f06d36eabd966c9aa4fc522c015d23f`;
+  best/last CPU finite-tensor reopen and all 14 checkpoint sidecars passed.
+  No checkpoint was deleted. This freezes only the C+P+E control LR and does
+  not answer RQ1. Final/test remains locked; after RQ1 completes, README must
+  report the frozen paired seed-42/43/44 test results, uncertainty, effect
+  size, and an explicit supported/not-supported/inconclusive hypothesis
+  verdict before any modification is discussed.
 Update this decision log whenever a material choice changes.

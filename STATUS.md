@@ -441,3 +441,47 @@ bytecode compilation clean. At
 storage remained healthy at 9,520,076,800 project bytes, both A100s were idle,
 and no task process remained. Before another retry: commit/push the fix and
 evidence, then materialize fresh IDs. Test remains locked.
+
+### C+P+E DCNv2 validation-only selection
+
+The second retry pair under clean commit
+`c8d82f8f9edfcbbed5d78fea18bc797484cdad8a` completed the frozen seed-42
+validation-only tuning unit. LR=0.0003 consumed the full realized budget of
+39,997,440 examples, made 9,765 optimizer steps and nine validation checks,
+and reached normalized MSE `0.020849287259723712`. Its immutable result
+SHA-256 is
+`b46d2129618be37c7c318ecd6aa99e0507b1d02c6ebe00c05fd3f388499b1232`.
+
+The LR=0.001 attempt suffered a checkpoint-file `fsync` `EIO` after its
+validation split for check four had been computed but before a durable
+checkpoint/result could be published. That attempt remains a technical
+failure, and the incomplete check-four observation was excluded from
+selection. Failure receipt SHA-256 is
+`be53192dcff1e57a0b5f5a0808c9aa3a40cd6b109454e3d7349c43340d1e26fc`.
+Exact resume from the last accumulation-boundary checkpoint at 12,001,280
+examples recomputed check four identically, then completed 39,997,440
+examples, 9,765 steps, and nine validation checks. Its immutable result
+SHA-256 is
+`7ec7c16b5bb5f6c345dc7bd35953e43ce4ea2a072b7acf8544228171600ce3ef`.
+
+Strict minimization selects `dcnv2_full_rank_lr_1e_3` (LR=0.001) at
+`0.020826933840839952`. It is lower than LR=0.0003 by
+`0.000022353418883760273` (about `0.107214%`); there is no tie. Both terminal
+results are `scientific_result_eligible=true`, with zero OOM and non-finite
+observations and `test_metrics=null`. Both candidate best/last checkpoints
+passed strict sidecar checks and safe CPU `weights_only=True` finite-tensor
+reopen. The selected best checkpoint is
+`runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/best-step-000000007813-generation-0000.pt`,
+SHA-256
+`858fec98f915cdec9dea8dac0aebd1156f06d36eabd966c9aa4fc522c015d23f`.
+
+Canonical selection receipt
+`results/tuning/vk_lsvd_c_plus_p_plus_e_dcnv2_full_rank_selection_v1.json`
+has SHA-256
+`85ab7ccbb8d74652f3aa3416a9ada872b36ed2de24c7b8341b56b9b8633f5c41`.
+All 14 current checkpoint/sidecar pairs remain intact; no cleanup is allowed
+until this evidence is committed, pushed, and independently read-tested.
+This freezes only the C+P+E control LR. It does not answer RQ1 and does not
+unlock test: `test_unlocked=false`, `test_path_available=false`. The RQ1
+README verdict will be written only after the frozen seed-42/43/44 test
+comparisons, paired uncertainty, and effect-size analysis are complete.

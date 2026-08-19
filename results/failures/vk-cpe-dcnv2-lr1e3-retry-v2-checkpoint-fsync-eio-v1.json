@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "artifact_role": "single_technical_midtraining_checkpoint_publish_failure",
+  "created_utc": "2026-08-19T12:15:52Z",
+  "dataset_id": "vk_lsvd_up0.01_ir0.01",
+  "feature_regime": "C+P+E",
+  "model_key": "dcnv2_full_rank",
+  "candidate_id": "dcnv2_full_rank_lr_1e_3",
+  "learning_rate": 0.001,
+  "run_id": "vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2",
+  "code_commit": "c8d82f8f9edfcbbed5d78fea18bc797484cdad8a",
+  "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "protocol_sha256": "6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739",
+  "test_unlocked": false,
+  "test_path_available": false,
+  "status": "failed",
+  "scientific_result_eligible": null,
+  "started_at_utc": "2026-08-19T11:25:40Z",
+  "finished_at_utc": "2026-08-19T12:10:05Z",
+  "failure_kind": "persistent_fuse_checkpoint_file_fsync_eio",
+  "failure_message": "OSError: [Errno 5] Input/output error",
+  "failed_operation": "best checkpoint temporary-file fsync before atomic publication after the fourth validation pass",
+  "failure_classification": "infrastructure_io_failure_not_scientific_result",
+  "trainer_exit_code": 1,
+  "result_artifact_created": false,
+  "failed_temporary_checkpoint_present_after_cleanup": false,
+  "attempted_validation": {
+    "check": 4,
+    "examples_seen": 16003072,
+    "normalized_mse": 0.020892833222676325,
+    "durable_validation_event_written": false,
+    "durable_best_checkpoint_written": false,
+    "scientific_selection_eligible": false
+  },
+  "last_durable_progress": {
+    "optimizer_steps": 2930,
+    "examples_seen": 12001280,
+    "validation_checks": 3,
+    "bad_validation_checks": 0,
+    "best_metric": 0.020902883430498828,
+    "accumulation_boundary": true,
+    "sampler_epoch": 1,
+    "sampler_cursor": 4495460,
+    "sampler_dataset_size": 7505820,
+    "oom_count": 0,
+    "numerical_summary": {
+      "submitted": 61254,
+      "completed": 61254,
+      "pending": 0,
+      "nonfinite_total": 0,
+      "nonfinite_by_kind": {},
+      "activation_hook_count": 3,
+      "activation_hook_observations": 12132
+    }
+  },
+  "artifacts": {
+    "resolved_config": {
+      "path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2.yaml",
+      "bytes": 3061,
+      "sha256": "e5e73645b161bdcd39550e4fed1b86787d6ddbdfe634a100bbcd0b9533b279d5"
+    },
+    "command": {
+      "path": "runs/commands/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2.sh",
+      "bytes": 439,
+      "sha256": "4239c387533657b95cadb3376d4233d76e97e185da8585da41ff00a1f99fb1cf"
+    },
+    "registry": {
+      "path": "runs/registry/records/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2.json",
+      "bytes": 1390,
+      "sha256": "3e04497f3bdae0a7cfafbf6406823204b56fd58bc63d20b6fd1e23c943945a03"
+    },
+    "history": {
+      "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/history.jsonl",
+      "bytes": 10632,
+      "sha256": "948f30e84d9c19c386bda59fbe77b762688b9003d09e8ca4729c0c2edb00b08f"
+    },
+    "worker_log": {
+      "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/worker.log",
+      "bytes": 1958,
+      "sha256": "e9b41df7bc0ae11a77515a4c1371025bcd0f7c59b50cf9cac48bf09c60910ce1"
+    },
+    "last_checkpoint": {
+      "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/last.pt",
+      "bytes": 61004780,
+      "sha256": "9a84b1732fbc312ae19167b0bb84a349c5be2a45e659e523ab0937cc9bdaee12"
+    },
+    "selected_best_checkpoint": {
+      "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/best-step-000000002930-generation-0000.pt",
+      "bytes": 61004652,
+      "sha256": "d928b05c03585e64c61191c67da348aad97b2c764b54ac9071e7ce24349b2987"
+    }
+  },
+  "checkpoint_audit": {
+    "sidecars_verified": true,
+    "cpu_weights_only_reopen": true,
+    "tensor_count": 61,
+    "tensor_elements": 7738873,
+    "all_tensors_finite": true,
+    "config_hash": "5dcbb2d4928dc4f7a95838830f2914a0fa2ceb77069a8706ba19fca91ad8251d"
+  },
+  "resume_policy": {
+    "eligible": true,
+    "required_mode": "exact deterministic resume from the last durable accumulation boundary",
+    "new_run_id_required": true,
+    "training_mapping_must_remain_identical": true,
+    "failed_run_id_reuse_forbidden": true,
+    "attempted_check_4_must_be_recomputed": true
+  }
+}
