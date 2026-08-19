@@ -155,9 +155,14 @@ Updated: `2026-08-19T05:35:14Z`
   `artifacts/selection/vk_lsvd_c_plus_p_capacity_lr_binding_v1.json`, SHA-256
   `d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2`.
   It binds the metric-free rank-12 capacity control to inherited LR 0.0003 and
-  preserves the closed test firewall. Capacity tuning still requires a clean
-  schema-v4 resolved config, pending registry record, and immediate prelaunch
-  guards. Final/test remains blocked because `test_unlocked=false`, the
+  preserves the closed test firewall. The schema-v4 capacity-control run is
+  now complete and scientifically eligible on validation: rank-12
+  `DCNv2-capacity-matched(C+P)` reached normalized MSE
+  `0.02100464611993931`. DCDN's selected validation MSE
+  `0.020977282795389355` is lower by `0.000027363324549955` (about 0.1303%),
+  while ordinary full-rank DCNv2 remains lower than DCDN at
+  `0.020908477427111632`. This is validation-only evidence, not a test claim.
+  Final/test remains blocked because `test_unlocked=false`, the
   dataset-wide selected-config lock is incomplete, and the one-pass final/test
   runner is not yet implemented and audited.
 - The current `DCNvsDDN.tex` remains the legacy Russian `DCN vs DDN` draft
@@ -190,12 +195,37 @@ task-owned training/worker processes remained.
 This historical checkpoint validated implementation paths only. The subsequent
 DCDN and ordinary-DCNv2 tuning selections described below are now complete.
 The compact authorization now durably binds the selected ordinary-DCNv2
-receipt and LR. The exact next action is to materialize and audit a clean
-schema-v4 capacity-control run, then continue the remaining eligible seed-42
+receipt and LR, and the bound schema-v4 capacity-control run has completed.
+The exact next action is to continue the remaining eligible seed-42
 validation-only tuning units. Before any final/test access, freeze every
 selected configuration and exact best-checkpoint lineage, implement/audit the
 one-pass final runner, and activate a new protocol revision through the
 existing lifecycle gates. Test access remains locked.
+
+## VK-LSVD capacity-control validation result
+
+The mechanically selected rank-12 `DCNv2-capacity-matched(C+P)` control ran
+under Git commit `eb5ffb026c62b86378ace59803d4f4a8c5b38c9d`, Protocol v3
+SHA-256 `1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`,
+seed 42, and inherited ordinary-DCNv2 LR 0.0003. It completed 39,997,440
+training examples, 9,765 optimizer steps, and nine validation checks with
+zero OOM and zero non-finite observations. The immutable result SHA-256 is
+`fdcf94786df724aa0a91a525b8e23f296530b8837e2669a2bedfe719bc6d0507`.
+
+The selected validation checkpoint is
+`runs/vk-cp-tune-dcnv2-capacity-matched-r12-l2-s42-lr3e4-v1/best-step-000000006836-generation-0000.pt`,
+SHA-256
+`ee0495ebd57c49fbf4b89d8b15fe0c1ea404ca26578d2b1dd0710c3567dd7984`,
+at 28,000,256 examples with normalized MSE `0.02100464611993931`.
+The terminal `last.pt` SHA-256 is
+`fc4f5d1ef34785e6a908fd928d3d7ea4aa1356bceba0ce7816967d0c9ff5a29e`.
+Both checkpoint sidecars pass, both payloads reopen with
+`weights_only=True` on CPU, all 181 tensors / 7,590,647 elements are finite,
+and both carry the exact capacity authorization SHA-256
+`d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2`.
+The terminal registry is `completed` with
+`scientific_result_eligible=true`; test remains locked and no test evaluation
+was performed.
 
 ## DCDN validation-only selection
 

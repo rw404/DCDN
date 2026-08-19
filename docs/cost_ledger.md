@@ -32,6 +32,7 @@ the epoch is currently unknown and must be recorded separately if discovered.
 | 2026-08-18T23:05:25Z | 3.29 assumed | Unavailable and owner-waived | 70.63 current; no new run projected | 13.868611 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; ordinary full-rank DCNv2 LR=0.001 completed as scientifically eligible validation-only tuning, while LR=0.0003 and its exact resume failed on repeated supervisor/registry `EIO` and remain scientifically ineligible; read-only storage snapshot measured 1,398,235,574 project bytes and 66,952,908,800 overlay bytes available; both A100s were at 0 MiB and 0%, GPU compute-apps were empty, and zero task-owned training/worker processes remained | Block a third LR=0.0003 resume until registry/worker hardening, fault-injection tests, and a clean commit/new run ID; capacity control and final/test remain locked; no provider action performed |
 | 2026-08-19T01:12:20.526933Z | 3.29 assumed | Unavailable and owner-waived | 77.59 current; no new run projected | 15.984035 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; after committed registry/worker hardening, ordinary full-rank DCNv2 LR=0.0003 exact resume-v2 completed scientifically eligible validation-only tuning at 39,997,440 examples with zero OOM/non-finite observations and `test_metrics=null`; result SHA-256 `0e6381d016a65a48d9f12f48b6c871ae242139b2e9a2341f1ecba3efd03cf58e`; two bounded heartbeat-helper timeouts recovered with byte-identical local/persistent incident receipts; storage guard measured 1,461,672,448 project bytes and 62.267612 GiB overlay available; independent terminal audit found both A100s idle, zero task PIDs, and no running registry record | Strict validation-only minimization selects LR=0.0003; canonical selection receipt SHA-256 `869cbcb7a227b274700cda142f23c59040497bfdfe4da101888e2cc63f39d67a`; bind it before capacity-control tuning; final/test remains locked; no provider action performed |
 | 2026-08-19T05:35:14.818387Z | 3.29 assumed | Unavailable and owner-waived | 92.00 current; no new run projected | 20.365783 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; clean commit `bc584157a5845571e72acde7d5075dd5f5d3bcc2` passed 534 local CPU tests; immutable compact capacity authorization SHA-256 `d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2` and sidecar independently reopened; storage guard measured 8,303,755,776 project bytes, 42.266525 GiB logical headroom, and 62.153824 GiB overlay available | Compact LR-binding gate closed; next materialize/audit schema-v4 capacity-control run; final/test remains locked; no provider action performed |
+| 2026-08-19T06:56:00.678840Z | 3.29 assumed | Unavailable and owner-waived | 96.43 current; no new run projected | 21.711855 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; rank-12 `DCNv2-capacity-matched(C+P)` completed 39,997,440 examples and nine validation checks with zero OOM/non-finite observations; immutable result SHA-256 `fdcf94786df724aa0a91a525b8e23f296530b8837e2669a2bedfe719bc6d0507`; best validation MSE `0.02100464611993931`; storage guard measured 8,726,980,608 project bytes, 41.872366 GiB logical headroom, and 62.145443 GiB overlay available | Capacity-control validation cell complete and scientifically eligible; DCDN is lower by 0.1303% on validation, while full-rank DCNv2 remains lower than DCDN; continue remaining seed-42 validation-only tuning; final/test remains locked; no provider action performed |
 
 Control-plane historical charges and balance are unavailable and are not
 invented. The owner explicitly waived provider-side expiry, credentialed
@@ -49,9 +50,10 @@ attempts remain recorded as execution failures; hardened resume-v2 is the
 scientifically eligible completion. Strict validation minimization selects
 ordinary DCNv2 LR=0.0003. Compact authorization SHA-256
 `d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2`
-now binds that receipt and inherited LR. `DCNv2-capacity-matched` tuning still
-requires a clean schema-v4 resolved config, registry record, and immediate
-prelaunch audit. Final/test remains locked until every
-required model selection and checkpoint lineage is frozen, the one-pass final
-runner is implemented and audited, and the protocol lifecycle explicitly
+binds that receipt and inherited LR. The bound rank-12
+`DCNv2-capacity-matched` validation run is complete at normalized MSE
+`0.02100464611993931`; DCDN is lower by about 0.1303% on validation, while
+full-rank DCNv2 remains the lower of the three. Final/test remains locked until
+every required model selection and checkpoint lineage is frozen, the one-pass
+final runner is implemented and audited, and the protocol lifecycle explicitly
 activates test access; `test_unlocked=false`.

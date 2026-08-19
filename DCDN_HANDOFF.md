@@ -867,6 +867,25 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   the frozen search/protocol/capacity inputs, and binds
   `capacity_rank_lower` (rank 12) to inherited LR 0.0003 without using a
   validation metric for rank selection. The full local CPU suite passed
-  534 tests; test remains locked. This closes the compact-authorization gate
-  only; a clean schema-v4 run config/registry/prelaunch audit remains required.
+  534 tests; test remains locked. The bound clean schema-v4 capacity-control
+  run is now complete as recorded below.
+
+- VK-LSVD C+P capacity-control validation result recorded 2026-08-19: the
+  mechanically selected rank-12 `DCNv2-capacity-matched(C+P)` control ran
+  under clean commit `eb5ffb026c62b86378ace59803d4f4a8c5b38c9d`, inherited
+  the frozen ordinary-DCNv2 LR 0.0003 through compact authorization SHA-256
+  `d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2`,
+  and completed the same 39,997,440-example seed-42 validation-only budget.
+  Its immutable result SHA-256 is
+  `fdcf94786df724aa0a91a525b8e23f296530b8837e2669a2bedfe719bc6d0507`;
+  the selected validation MSE is `0.02100464611993931` at step 6,836, with
+  selected best-checkpoint SHA-256
+  `ee0495ebd57c49fbf4b89d8b15fe0c1ea404ca26578d2b1dd0710c3567dd7984`.
+  The run made nine validation checks, reported zero OOM and zero non-finite
+  observations, and completed with `scientific_result_eligible=true`. Safe
+  CPU-only reopen verified every tensor in both best and terminal checkpoints
+  as finite. On validation, selected DCDN is lower than this capacity-matched
+  control by `0.000027363324549955` (about 0.1303%), but ordinary full-rank
+  DCNv2 remains lower than DCDN by `0.000068805368277723`. These are
+  validation-only comparisons; test remains locked and no test claim is made.
 Update this decision log whenever a material choice changes.
