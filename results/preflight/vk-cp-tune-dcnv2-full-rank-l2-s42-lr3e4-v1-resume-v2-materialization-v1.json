@@ -1,0 +1,124 @@
+{
+  "artifact_role": "exact_resume_materialization_prelaunch_audit",
+  "checkpoint": {
+    "accumulation_boundary": true,
+    "all_tensors_cpu_finite": true,
+    "bad_validation_checks": 2,
+    "best_metric": 0.020944034950275366,
+    "examples_seen": 24002560,
+    "last_checkpoint_path": "runs/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1/last.pt",
+    "last_checkpoint_sha256": "9861dc7ee7cf09eafdd36cb7d0e329152634fd6b326db3db176220986e8aff25",
+    "numerical_nonfinite_total": 0,
+    "numerical_pending": 0,
+    "oom_count": 0,
+    "optimizer_steps": 5860,
+    "safe_load": "torch.load(map_location=cpu,weights_only=true)",
+    "sampler_cursor": 1485100,
+    "sampler_dataset_size": 7505820,
+    "sampler_epoch": 3,
+    "selected_best_checkpoint_path": "runs/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1/best-step-000000003907-generation-0000.pt",
+    "selected_best_checkpoint_sha256": "dd5a16517aef488361385974ba1c9eb53e3e25c816725340325d57ddb4303da6",
+    "tensor_count": 61,
+    "tensor_elements": 7695233,
+    "validation_checks": 6
+  },
+  "code_identity": {
+    "code_commit": "d55d61b3a09c95045872f49893377c01f57c2d45",
+    "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tracked_diff_empty": true,
+    "worker_code_identity_guard_passed": true
+  },
+  "created_utc": "2026-08-19T00:49:51Z",
+  "exact_invocation": "bash runs/commands/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v2.sh",
+  "fuse_helper_preflight": {
+    "path": "results/preflight/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v2-registry-fuse-preflight-v1.json",
+    "sha256": "ce9460641c73fc95776d450d05f7685fffb6e0d059514c66c01aeb5f5d650296"
+  },
+  "guards": {
+    "active_registry_sha256": "2d76236dece1769c08417cc0322f3b3bc51001cfb52ceb945e24fe237ca0fdb4",
+    "active_runs": 0,
+    "auto_stop_requirement": "owner_waived_no_provider_mutation",
+    "cost": {
+      "accounting_basis": "local_owner_approved_estimate",
+      "estimated_spend_usd": "76.22",
+      "eta_hours": "3",
+      "hard_cap_usd": "460",
+      "launch_allowed": true,
+      "ledger_epoch_utc": "2026-08-18T09:13:18Z",
+      "now_utc": "2026-08-19T00:47:21.871448Z",
+      "projected_spend_usd": "86.09",
+      "reserve_start_utc": "2026-08-23T01:13:18Z",
+      "status": "ok"
+    },
+    "gpu": {
+      "gpu_0_memory_used_mib": 0,
+      "gpu_0_utilization_percent": 0,
+      "gpu_1_memory_used_mib": 0,
+      "gpu_1_utilization_percent": 0,
+      "nvidia_compute_applications": 0
+    },
+    "processes": {
+      "post_resolution_matching_processes": 0,
+      "stale_patch_hunks_landed": false,
+      "stale_patch_pid": 528220,
+      "stale_patch_pid_absent_after_owner_resolution": true,
+      "task_training_or_helper_processes": 0
+    },
+    "storage": {
+      "ok": true,
+      "overlay_available_gib": 62.27976989746094,
+      "persistent_fs_type": "fuse",
+      "project_gib": 1.3046221733093262,
+      "violations": []
+    },
+    "test_path_available": false,
+    "test_unlocked": false
+  },
+  "launch_performed": false,
+  "new_artifacts": {
+    "command_path": "runs/commands/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v2.sh",
+    "command_sha256": "a02aa088afe3be429acf2fc07b8036fc41e9142805824f8ee12fa4c27624c43c",
+    "command_sidecar_sha256": "9a72e9122f33131e6b2b815ca144ec4ad93a1be56774700edac1eb16014d7378",
+    "config_path": "configs/runs/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v2.yaml",
+    "config_sha256": "1f1c3e7167394cc1726cdd0e1a9d00a1f5e01e27711684065ecee65a6adae454",
+    "config_sidecar_sha256": "dcdbf4b9ac9e1dc41923a4ba19dd95b839f0356f403028a5951f98aa82e02d16",
+    "pending_record_path": "runs/registry/records/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v2.json",
+    "pending_record_sha256": "859c7df75129a0be6cfc9c01b2bef0fa9089f68d3844fce36a171b1189ee8469",
+    "pending_record_status": "pending"
+  },
+  "no_launch_scope": {
+    "data_opened": false,
+    "gpu_used": false,
+    "log_path_exists": false,
+    "model_metrics_computed": false,
+    "result_path_exists": false,
+    "test_data_accessed": false,
+    "worker_started": false
+  },
+  "old_evidence_unchanged": {
+    "failure_snapshot_resume_v1_sha256": "a42d29bf579656dae1fc5eab06f2046bea60e4c5ff8e37e69049740f3f28c5ef",
+    "history_sha256": "0a41ba1321dcc51069a46fa3823683374afc345c9681bd0bd53570acdaa3fc42",
+    "original_failed_record_sha256": "b1465fa2134c1edccaf7eb5a01a4b52a62a9f88deb6d530efa5daff611e30094",
+    "resume_v1_failed_record_sha256": "a189f0a1303901b79360d6807dddcbb32a07c2c932c4170d6db3aa62f8168d6a"
+  },
+  "parent_lineage": {
+    "failure_snapshot_path": "results/failures/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v1-supervisor-eio-v1.json",
+    "failure_snapshot_sha256": "a42d29bf579656dae1fc5eab06f2046bea60e4c5ff8e37e69049740f3f28c5ef",
+    "parent_registry_path": "runs/registry/records/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v1.json",
+    "parent_registry_sha256": "a189f0a1303901b79360d6807dddcbb32a07c2c932c4170d6db3aa62f8168d6a",
+    "parent_run_id": "vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v1",
+    "parent_status": "failed"
+  },
+  "resolved_config_contract": {
+    "allowed_top_level_deltas_only": [
+      "run_id",
+      "result_path",
+      "runtime.resume"
+    ],
+    "original_reproduction_command_preserved": true,
+    "run_directory_preserved": true,
+    "training_config_byte_semantics_equal": true
+  },
+  "run_id": "vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v2",
+  "schema_version": 1
+}

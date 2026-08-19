@@ -1,0 +1,47 @@
+{
+  "artifact_role": "cpu_only_persistent_fuse_registry_helper_preflight",
+  "code_commit": "d55d61b3a09c95045872f49893377c01f57c2d45",
+  "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "created_utc": "2026-08-19T00:45:58Z",
+  "helper_process_count": 8,
+  "helper_processes": {
+    "all_reaped": true,
+    "cuda_visible_devices": "",
+    "no_proc_entries_after_cleanup": true,
+    "world_size": "1"
+  },
+  "incident_recovery": {
+    "bytes_equal_between_local_and_persistent_receipts": true,
+    "local_incident_sha256": "8787f62e26cb15e4fba3582b412dd2ec2cbe1c642925309ab8aae2f225ac4e44",
+    "persistent_incident_sha256": "8787f62e26cb15e4fba3582b412dd2ec2cbe1c642925309ab8aae2f225ac4e44",
+    "synthetic_timeout_error_type": "RegistryHelperTimeout",
+    "synthetic_timeout_stage": "helper_timeout"
+  },
+  "model_metrics_computed": false,
+  "operations": {
+    "ensure_running": "running",
+    "heartbeat_timestamps_present": true,
+    "relaxed_heartbeats": 3,
+    "terminal_reconcile_statuses": [
+      "failed",
+      "failed"
+    ],
+    "terminal_record_sha256_before_cleanup": "a91bb3affaff3edeb325360127abf4d285d288b1389286f2a28dfff9a5236e11"
+  },
+  "registry_helper_sha256": "9fc17fd8b2e52d70249ba9a55537d0e26addf571852b03dccba22c614b94e950",
+  "registry_sha256": "a8e9dd3ce872243e7f1ee4606639896b964f1bbe23283b324904b3f402d725c6",
+  "run_id": "registry-fuse-resume-v2-preflight",
+  "run_worker_sha256": "572a814a046ef0747400fed93898ffc4c620586edfa1848b1376ee2eba9938ee",
+  "schema_version": 1,
+  "storage": {
+    "independent_devices": true,
+    "overlay_device": 41,
+    "persistent_registry_under_project": true,
+    "registry_device": 80,
+    "temporary_files_before_cleanup": 0,
+    "temporary_overlay_removed": true,
+    "temporary_registry_removed": true
+  },
+  "supervised_exec_sha256": "899ecb9eefea3c69457d20b6ad02baba8e3253511f68f75d9ce329681dc50fed",
+  "test_data_accessed": false
+}

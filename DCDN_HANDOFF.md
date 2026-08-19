@@ -820,33 +820,41 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   selected ordinary-DCNv2 LR, and final/test remains locked pending all model
   selections and an audited one-pass runner; `test_unlocked=false`.
 
-- VK-LSVD C+P ordinary full-rank DCNv2 validation status recorded 2026-08-18:
-  the frozen seed-42 LR=0.001 candidate completed as scientifically eligible
-  validation-only tuning under Git commit
-  `028b9c11a827a5821d20376c39bdc171fa032cf8`. Its normalized MSE is
-  `0.02091150474550729`; it stopped by validation patience after 28,000,256
-  examples and seven checks, with zero OOM/non-finite events and
-  `test_metrics=null`. Resolved-config SHA-256 is
-  `7e5450a2ca7d0ef49ab3bec08b4c36348e4429d34990d7dc104a0492175b98c9`,
-  immutable result SHA-256 is
-  `51a39053240683b8b8c90688844b2a4a544b678db71dd2559e61eefec8fe1e23`,
-  and retained best-checkpoint SHA-256 is
-  `166d3f65b65e9332fddc62a102a21f2358c9fca96606bafad9065f06659317d9`.
-  The paired frozen LR=0.0003 candidate did not complete: the original
-  supervisor encountered persistent-filesystem `EIO` after the durable
-  12,001,280-example boundary, and an exact resume encountered repeated
-  registry/supervisor `EIO` after the durable 24,002,560-example boundary.
-  Neither attempt is a scientific result and neither produced a result JSON.
-  Their immutable failure snapshot SHA-256 values are
+- VK-LSVD C+P ordinary full-rank DCNv2 validation selection recorded
+  2026-08-19: the seed-42 LR=0.001 candidate completed under Git commit
+  `028b9c11a827a5821d20376c39bdc171fa032cf8` with normalized MSE
+  `0.02091150474550729`; immutable result SHA-256 is
+  `51a39053240683b8b8c90688844b2a4a544b678db71dd2559e61eefec8fe1e23`.
+  The paired LR=0.0003 candidate first suffered two supervisor/registry `EIO`
+  execution failures after the durable 12,001,280- and 24,002,560-example
+  boundaries. Those attempts remain scientifically ineligible; their failure
+  snapshot SHA-256 values are
   `82a7858c1f8eed49c3c4f958a58907166faaf19dee4082903276329cdd1bfab4`
   and
-  `a42d29bf579656dae1fc5eab06f2046bea60e4c5ff8e37e69049740f3f28c5ef`;
-  the finite accumulation-boundary exact-resume checkpoint SHA-256 is
-  `9861dc7ee7cf09eafdd36cb7d0e329152634fd6b326db3db176220986e8aff25`.
-  A third resume on the current supervisor is forbidden until registry/worker
-  hardening and fault-injection tests pass and a clean commit plus new
-  immutable run ID are prepared. Therefore the ordinary-DCNv2 LR is not yet
-  selected, `DCNv2-capacity-matched` remains gated, no manuscript claim may
-  use the incomplete pair, and `test_unlocked=false`.
+  `a42d29bf579656dae1fc5eab06f2046bea60e4c5ff8e37e69049740f3f28c5ef`.
+  After registry/worker hardening and fault-injection regression under commit
+  `d55d61b3a09c95045872f49893377c01f57c2d45`, exact resume-v2 completed the
+  same candidate at the 39,997,440-example floor with nine validation checks,
+  zero OOM/non-finite events, and `test_metrics=null`. Its result SHA-256 is
+  `0e6381d016a65a48d9f12f48b6c871ae242139b2e9a2341f1ecba3efd03cf58e`;
+  two heartbeat-helper timeouts recovered within the bounded degraded window
+  and have byte-identical local/persistent incident receipts with SHA-256
+  `5bc1a25000ba591c322007f56c48705aca52a60e257c22199a765ed1d06891c0`
+  and
+  `87d24564d6ebae0eaf5b3ca5977e1f521c6be6265851849b64da3c6c0c9bb1da`.
+  Strict minimization of frozen `normalized_mse` selects
+  `dcnv2_full_rank_lr_3e_4` (`learning_rate=0.0003`) at
+  `0.020908477427111632`, better than LR=0.001 by
+  `0.000003027318395658`; no tie or post-metric tie-break occurred. The
+  canonical validation-only selection artifact SHA-256 is
+  `869cbcb7a227b274700cda142f23c59040497bfdfe4da101888e2cc63f39d67a`.
+  The retained selected best checkpoint is
+  `best-step-000000006836-generation-0000.pt`, SHA-256
+  `f3a27d6522df474f1cea06abe302d289ff9fc331e9ae7135baa9589a3427618c`;
+  it passed strict sidecar and safe CPU-only `weights_only=True` tensor-
+  finiteness checks. No checkpoint was deleted. This durable per-model choice
+  clears only the ordinary-DCNv2 LR dependency for capacity-control binding;
+  the dataset-wide `selected_configs.lock` remains incomplete and
+  `test_unlocked=false`.
 
 Update this decision log whenever a material choice changes.

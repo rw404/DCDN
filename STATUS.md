@@ -1,6 +1,6 @@
 # DCDN execution status
 
-Updated: `2026-08-18T23:05:25Z`
+Updated: `2026-08-19T01:22:10Z`
 
 ## Current checkpoint
 
@@ -15,9 +15,10 @@ Updated: `2026-08-18T23:05:25Z`
 - The owner waived provider-side expiry, credentialed billing inspection, and
   control-plane quota evidence. Frozen accounting is USD 3.29 per elapsed hour
   plus a USD 25 storage reserve.
-- Estimated incremental spend at completion of the DCDN tuning pair is USD
-  64.54, with USD 305.46 warning-threshold headroom and USD 395.46 hard-cap
-  headroom under the owner-approved local accounting basis.
+- Estimated spend at the successful ordinary-DCNv2 resume-v2 terminal
+  checkpoint is USD 77.59, with USD 292.41 warning-threshold headroom and
+  USD 382.41 hard-cap headroom under the owner-approved local accounting
+  basis.
 - Test access remains locked. No local test data, labels, DCDN outputs, or
   project-generated metrics were read. A credential-free HEGM provenance
   lookup unexpectedly exposed a published benchmark table from incompatible
@@ -109,11 +110,15 @@ Updated: `2026-08-18T23:05:25Z`
   optimizer/runtime fairness fields, exact capacity candidate/rank, Protocol
   v3 identities, same-FD runtime sources, whole-model checkpoints, numerical
   monitoring, and immutable worker receipts. A fresh independent snapshot
-  passed 263 synthetic CPU tests, Ruff, formatting, and compilation. Independent
-  review authorizes only two one-effective-batch implementation smoke runs
-  after clean Git provenance. Ordinary seed-42 validation tuning may follow a
-  successful smoke; capacity-control tuning remains locked until a durable
-  selected-DCNv2 learning-rate binding exists, and final/test remains locked.
+  passed 263 synthetic CPU tests, Ruff, formatting, and compilation. That
+  historical review authorized the two implementation smokes, which later
+  completed. After two supervisor/registry `EIO` failures, commit
+  `d55d61b3a09c95045872f49893377c01f57c2d45` added isolated bounded registry
+  helpers, durable incident receipts, idempotent terminal reconciliation, and
+  Linux parent-death supervision; targeted fault injection and the full fresh
+  regression passed before resume-v2. Capacity-control tuning now requires a
+  validator-owned binding of the selected ordinary-DCNv2 receipt below;
+  final/test remains locked.
 - The two authorized one-effective-batch implementation smokes completed under
   exact Git commit `38268f305a6c60ae6b8e2fc2f0e62982b03198b1`, empty tracked-diff
   SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`,
@@ -145,8 +150,9 @@ Updated: `2026-08-18T23:05:25Z`
   and no unregistered tie-break was applied. The per-model selection artifact
   SHA-256 is
   `66458ce3d96d6e4f5d5382dab904a5c120134ba52385d8a5bcdbd9d3c2bccb49`.
-  `DCNv2-capacity-matched` remains blocked until the selected ordinary-DCNv2
-  learning rate is durably bound. Final/test remains blocked because
+  The ordinary-DCNv2 choice is now frozen below. `DCNv2-capacity-matched` may
+  proceed only after its resolved configuration durably binds that receipt and
+  inherited learning rate. Final/test remains blocked because
   `test_unlocked=false`, the dataset-wide selected-config lock is incomplete,
   and the one-pass final/test runner is not yet implemented and audited.
 - The current `DCNvsDDN.tex` remains the legacy Russian `DCN vs DDN` draft
@@ -177,13 +183,13 @@ sidecars. All matched their pre-cleanup sizes and SHA-256 values; zero
 task-owned training/worker processes remained.
 
 This historical checkpoint validated implementation paths only. The subsequent
-DCDN tuning unit described below is now complete. The exact next action is to
-continue the remaining eligible seed-42 validation-only tuning units, with test
-access still locked. Before the capacity-matched row, durably bind the selected
-ordinary-DCNv2 learning rate; before any final/test access, freeze every
-selected configuration and exact best-checkpoint lineage, implement/audit the
-one-pass final runner, and activate a new protocol revision through the
-existing lifecycle gates.
+DCDN and ordinary-DCNv2 tuning selections described below are now complete.
+The exact next action is to bind the selected ordinary-DCNv2 receipt and LR
+into a collision-safe capacity-control configuration, then continue the
+remaining eligible seed-42 validation-only tuning units. Before any final/test
+access, freeze every selected configuration and exact best-checkpoint lineage,
+implement/audit the one-pass final runner, and activate a new protocol revision
+through the existing lifecycle gates. Test access remains locked.
 
 ## DCDN validation-only selection
 
@@ -223,31 +229,60 @@ it stopped by validation patience with zero OOM/non-finite events and
 `7e5450a2ca7d0ef49ab3bec08b4c36348e4429d34990d7dc104a0492175b98c9`,
 immutable result SHA-256 is
 `51a39053240683b8b8c90688844b2a4a544b678db71dd2559e61eefec8fe1e23`,
-and retained best-checkpoint SHA-256 is
+and its within-candidate best-checkpoint SHA-256 is
 `166d3f65b65e9332fddc62a102a21f2358c9fca96606bafad9065f06659317d9`.
 
-The frozen LR=0.0003 candidate remains incomplete. Its original supervisor
-failed with persistent-filesystem `EIO` after the durable 12,001,280-example
-boundary; an exact resume failed with repeated registry/supervisor `EIO`
-after the durable 24,002,560-example boundary. Both attempts are execution
-failures, not scientific results, have no result JSON, and have
-`test_metrics=null`. The immutable failure snapshot SHA-256 values are
+The frozen LR=0.0003 candidate originally suffered two supervisor/registry
+`EIO` execution failures after durable 12,001,280- and 24,002,560-example
+boundaries. Those two attempts remain scientifically ineligible and have no
+result JSON. Their immutable failure snapshot SHA-256 values are
 `82a7858c1f8eed49c3c4f958a58907166faaf19dee4082903276329cdd1bfab4`
 and
 `a42d29bf579656dae1fc5eab06f2046bea60e4c5ff8e37e69049740f3f28c5ef`.
-The finite exact-resume accumulation-boundary checkpoint has SHA-256
-`9861dc7ee7cf09eafdd36cb7d0e329152634fd6b326db3db176220986e8aff25`.
+After the hardening commit above, exact resume-v2 continued from checkpoint
+SHA-256
+`9861dc7ee7cf09eafdd36cb7d0e329152634fd6b326db3db176220986e8aff25`
+at 24,002,560 examples and completed the same candidate at the frozen
+39,997,440-example floor. It made nine validation checks, reported zero OOM
+and zero non-finite observations, and contains `test_metrics=null`. The
+resume-v2 resolved-config SHA-256 is
+`1f1c3e7167394cc1726cdd0e1a9d00a1f5e01e27711684065ecee65a6adae454`
+and immutable result SHA-256 is
+`0e6381d016a65a48d9f12f48b6c871ae242139b2e9a2341f1ecba3efd03cf58e`.
 
-The paired selection is unresolved. Do not select LR=0.001 by default.
-Before another exact resume, harden registry/worker writes, pass targeted
-fault-injection and regression tests, commit the clean implementation, and
-materialize a new immutable resume run ID. `DCNv2-capacity-matched` remains
-blocked, final/test access remains forbidden (`test_unlocked=false`), and no
-manuscript claim may use the incomplete pair.
+Strict minimization of frozen validation `normalized_mse` selects
+`dcnv2_full_rank_lr_3e_4` (`learning_rate=0.0003`) at
+`0.020908477427111632`, versus `0.02091150474550729` for LR=0.001. The
+absolute improvement is `0.000003027318395658`; no tie occurred and no
+post-metric tie-break was invented. The canonical per-model selection artifact
+is `results/tuning/vk_lsvd_c_plus_p_dcnv2_full_rank_selection_v1.json`,
+SHA-256
+`869cbcb7a227b274700cda142f23c59040497bfdfe4da101888e2cc63f39d67a`.
+It freezes candidate ID, LR, the seed-invariant model-config SHA-256
+`25a5e2b040fe5ff52981a8499d7d4f8dd453bdd91d24e0d5a2b40b49d7521dcc`,
+and the selected best checkpoint
+`runs/vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1/best-step-000000006836-generation-0000.pt`,
+SHA-256
+`f3a27d6522df474f1cea06abe302d289ff9fc331e9ae7135baa9589a3427618c`.
+The selected best passed strict sidecar, CPU-only `weights_only=True`, and
+tensor-finiteness checks. All 10 current DCNv2 checkpoint/sidecar pairs were
+inventoried; nine pairs are proposed deletion candidates only after durable
+commit/push/read-test prerequisites. No checkpoint was deleted.
 
-The read-only local guard at `2026-08-18T23:05:25Z` estimated cumulative
-spend at USD 70.63 (13.868611 hours at USD 3.29/hour plus the fixed USD 25
-storage reserve). It measured 1,398,235,574 project bytes (about 1.302 GiB)
-and 66,952,908,800 overlay bytes available (about 62.354 GiB). Both A100s
-were at 0 MiB and 0% utilization, GPU compute-apps were empty, and zero
-task-owned training/worker processes remained.
+Two heartbeat-helper timeouts during resume-v2 recovered within the fixed
+degraded window. Their local and persistent incident receipts are byte-equal,
+with SHA-256 values
+`5bc1a25000ba591c322007f56c48705aca52a60e257c22199a765ed1d06891c0`
+and
+`87d24564d6ebae0eaf5b3ca5977e1f521c6be6265851849b64da3c6c0c9bb1da`.
+The terminal receipt's local guard at `2026-08-19T01:12:20.526933Z` estimated
+cumulative spend at USD 77.59 (15.984035 hours at USD 3.29/hour plus the
+fixed USD 25 storage reserve). It measured 1,461,672,448 project bytes
+(about 1.361 GiB) and 62.267612 GiB overlay space available. Independent
+terminal audit found zero task-owned training/worker PIDs, zero running
+registry records, and both A100s idle.
+
+This is still one per-model validation selection, not the final dataset
+`selected_configs.lock`. The capacity-control run requires a validator-owned
+binding of this exact receipt and LR. Final/test access remains forbidden:
+the active protocol has `test_unlocked=false` and no test path.
