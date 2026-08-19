@@ -1017,6 +1017,53 @@ def _validated_capacity_candidate(
     return candidate
 
 
+def _validate_capacity_projection_for_feature_regime(
+    config: TrainingConfig,
+    *,
+    controlled: ProvenancedControlledModel,
+    artifact: Mapping[str, Any],
+    projection: Mapping[str, Any],
+    search_lock: SearchSpaceLock,
+) -> None:
+    """Recompute C+P capacity controls without misapplying them to C+P+E."""
+
+    if config.feature_regime == "C+P+E":
+        if controlled.model_key != "dcnv2_full_rank":
+            raise TrainingContractError(
+                "C+P+E capacity provenance is restricted to dcnv2_full_rank"
+            )
+        return
+    if config.feature_regime != "C+P":
+        raise TrainingContractError(
+            "unsupported feature regime for capacity provenance"
+        )
+    geometry = artifact["geometry"]
+    mechanical = resolve_metric_free_capacity_preflight(
+        encoder_spec=controlled.encoder_spec,
+        dcdn_config=DCDNCoreConfig(
+            num_layers=geometry["dcdn_num_layers"],
+            div_eps=1e-2,
+            product_init_scale=0.1,
+            div_init_scale=0.1,
+            runtime_value_checks=False,
+        ),
+        ordinary_dcnv2_config=DCNv2FullRankConfig(
+            num_layers=geometry["ordinary_dcnv2_num_layers"],
+            product_init_scale=0.1,
+        ),
+        capacity_num_layers=geometry["capacity_num_layers"],
+        capacity_num_experts=geometry["capacity_num_experts"],
+        capacity_product_init_scale=0.1,
+        head_config=HeadConfig(hidden_dims=(), dropout=0.0, output_dim=1),
+        init_seed=config.seed,
+        search_lock=search_lock,
+    )
+    if projection != mechanical:
+        raise TrainingContractError(
+            "full capacity artifact projection differs from mechanical resolver"
+        )
+
+
 def validate_frozen_training_contract(
     config: TrainingConfig,
     *,
@@ -1655,31 +1702,13 @@ class TrainingHarness:
                 raise TrainingContractError(
                     "provided capacity projection differs from the full artifact"
                 )
-            geometry = artifact["geometry"]
-            mechanical = resolve_metric_free_capacity_preflight(
-                encoder_spec=controlled.encoder_spec,
-                dcdn_config=DCDNCoreConfig(
-                    num_layers=geometry["dcdn_num_layers"],
-                    div_eps=1e-2,
-                    product_init_scale=0.1,
-                    div_init_scale=0.1,
-                    runtime_value_checks=False,
-                ),
-                ordinary_dcnv2_config=DCNv2FullRankConfig(
-                    num_layers=geometry["ordinary_dcnv2_num_layers"],
-                    product_init_scale=0.1,
-                ),
-                capacity_num_layers=geometry["capacity_num_layers"],
-                capacity_num_experts=geometry["capacity_num_experts"],
-                capacity_product_init_scale=0.1,
-                head_config=HeadConfig(hidden_dims=(), dropout=0.0, output_dim=1),
-                init_seed=config.seed,
+            _validate_capacity_projection_for_feature_regime(
+                config,
+                controlled=controlled,
+                artifact=artifact,
+                projection=projection,
                 search_lock=search_lock,
             )
-            if projection != mechanical:
-                raise TrainingContractError(
-                    "full capacity artifact projection differs from mechanical resolver"
-                )
             self.capacity_artifact: Mapping[str, Any] | None = artifact
             self.capacity_resolution = projection
             self.capacity_resolution_sha256 = artifact_digest

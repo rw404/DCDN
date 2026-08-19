@@ -395,3 +395,26 @@ The next action is a clean evidence commit, followed by exact materialization
 and independent prelaunch checks for the two frozen seed-42 validation-only
 DCNv2 learning-rate candidates. No C+P+E validation or test metric has been
 read.
+
+### First C+P+E launch: technical pre-training failure
+
+Both initially materialized candidates failed before the first training batch.
+The common harness attempted to compare the frozen C+P capacity-control
+projection against a mechanical projection built from the wider C+P+E
+encoder. Both histories contain exactly one `local_guard` event; neither run
+created a checkpoint or result, and no validation/test event occurred. Their
+registry records are terminal `failed` with
+`scientific_result_eligible=null`. Immutable paired failure receipt SHA-256 is
+`d60f40816564427f41cf0e9748fc4d76f3fd6e613aab73d781630d9c2d6c0bee`.
+
+The narrow correction keeps every artifact, digest, repository, C+P
+mechanical-capacity, and model-key gate intact. It only prevents the C+P
+capacity projection from being recomputed on C+P+E, which is allowed solely
+for ordinary full-rank DCNv2. Focused training-harness regression passed
+74/74. At `2026-08-19T10:40:53.693746Z`, estimated cumulative spend was USD
+108.76; both A100s were idle at 0 MiB/0%, and no task process remained. The
+original run IDs are immutable failures. A fresh full CPU regression
+passed 541/541 tests; Ruff check/format and targeted bytecode compilation also
+passed. The next action is the clean fix/evidence commit and push, then fresh
+candidate IDs with the exact same frozen learning rates and budgets. Test
+remains locked.

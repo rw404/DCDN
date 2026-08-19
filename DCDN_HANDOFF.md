@@ -929,4 +929,22 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   The next executable action is the frozen seed-42 validation-only pair for
   learning rates 0.0003 and 0.001, one process per A100; no `C+P+E` metric
   has been observed yet and no test path has been opened.
+
+- The first VK-LSVD `C+P+E` DCNv2 pair stopped before any training batch on
+  2026-08-19. The shared harness incorrectly recomputed the C+P-only
+  capacity-control projection on the wider C+P+E encoder and rejected both
+  candidates with `full capacity artifact projection differs from mechanical
+  resolver`. Both registry records remain technical failures with
+  `scientific_result_eligible=null`; their histories contain only the local
+  guard, with no train, validation, checkpoint, result, or test event. The
+  immutable paired failure receipt SHA-256 is
+  `d60f40816564427f41cf0e9748fc4d76f3fd6e613aab73d781630d9c2d6c0bee`.
+  The corrective code retains exact artifact/SHA/repository validation for
+  all raw executions, preserves mechanical recomputation for C+P, and allows
+  C+P+E provenance only for `dcnv2_full_rank` without treating the wider
+  encoder as the C+P capacity-control object. Focused harness regression is
+  74/74 PASS, and the fresh full CPU suite is 541/541 PASS with Ruff and
+  targeted bytecode compilation clean. Retry requires a clean
+  committed/pushed fix and fresh run IDs; the failed IDs will never be
+  overwritten. Test remains locked.
 Update this decision log whenever a material choice changes.

@@ -71,3 +71,13 @@ The projected end remained before the finalization reserve and the local
 guard returned `launch_allowed=true`. Storage was also healthy at
 9,519,765,504 project bytes, 41.134027 GiB logical headroom, and 62.000469
 GiB overlay space available. No provider action or GPU job was performed.
+
+At `2026-08-19T10:40:53.693746Z`, estimated cumulative spend was USD 108.76.
+The first C+P+E pair had stopped within seconds at a shared harness
+capacity-projection preflight, before any training batch or validation/test
+metric. Both A100s and all task processes were idle after the failure. The
+paired technical-failure receipt SHA-256 is
+`d60f40816564427f41cf0e9748fc4d76f3fd6e613aab73d781630d9c2d6c0bee`.
+The failures do not complete a scientific cell; retry is allowed only after
+the scoped fix passes regression, is committed/pushed, and new run IDs are
+materialized under the new clean code identity.

@@ -679,6 +679,66 @@ def test_all_runtime_architectures_bind_exactly_to_frozen_search_and_capacity(
         )
 
 
+def test_c_plus_p_plus_e_does_not_recompute_c_plus_p_capacity_projection(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    frozen = _fixture(tmp_path)
+    artifact = load_verified_capacity_artifact(CAPACITY_PATH)
+    projection = capacity_resolution_projection(artifact)
+    resolver_calls = 0
+
+    def matching_projection(**_kwargs: Any) -> dict[str, Any]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return dict(projection)
+
+    monkeypatch.setattr(
+        training_module,
+        "resolve_metric_free_capacity_preflight",
+        matching_projection,
+    )
+    cpe_config = replace(
+        frozen.config,
+        feature_regime="C+P+E",
+        model_key="dcnv2_full_rank",
+        candidate_id="dcnv2_full_rank_lr_3e_4",
+    )
+    training_module._validate_capacity_projection_for_feature_regime(
+        cpe_config,
+        controlled=SimpleNamespace(model_key="dcnv2_full_rank"),
+        artifact=artifact,
+        projection=projection,
+        search_lock=frozen.search,
+    )
+    assert resolver_calls == 0
+
+    training_module._validate_capacity_projection_for_feature_regime(
+        frozen.config,
+        controlled=SimpleNamespace(
+            model_key="dcdn_core",
+            encoder_spec=SimpleNamespace(),
+        ),
+        artifact=artifact,
+        projection=projection,
+        search_lock=frozen.search,
+    )
+    assert resolver_calls == 1
+
+    with pytest.raises(TrainingContractError, match="restricted"):
+        training_module._validate_capacity_projection_for_feature_regime(
+            replace(
+                cpe_config,
+                model_key="dcdn_core",
+                candidate_id="dcdn_core_l2_lr_3e_4",
+            ),
+            controlled=SimpleNamespace(model_key="dcdn_core"),
+            artifact=artifact,
+            projection=projection,
+            search_lock=frozen.search,
+        )
+
+
 def test_raw_contract_preserves_duplicate_nonmonotone_order_and_optimized_no_sync(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

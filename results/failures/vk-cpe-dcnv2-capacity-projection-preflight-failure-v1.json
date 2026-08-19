@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "artifact_role": "paired_technical_pretraining_failure",
+  "created_utc": "2026-08-19T10:39:46Z",
+  "dataset_id": "vk_lsvd_up0.01_ir0.01",
+  "feature_regime": "C+P+E",
+  "model_key": "dcnv2_full_rank",
+  "code_commit": "9725cbca1d00544258e052fa90255c67881b2183",
+  "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "protocol_sha256": "6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739",
+  "test_unlocked": false,
+  "test_path_available": false,
+  "failure_kind": "c_plus_p_capacity_projection_misapplied_to_c_plus_p_plus_e_encoder",
+  "failure_message": "full capacity artifact projection differs from mechanical resolver",
+  "failure_classification": "implementation_preflight_failure_not_scientific_result",
+  "training_batch_started": false,
+  "validation_event_observed": false,
+  "test_event_observed": false,
+  "result_artifact_created": false,
+  "checkpoint_artifact_created": false,
+  "history_event_names": [
+    "local_guard"
+  ],
+  "candidates": [
+    {
+      "run_id": "vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1",
+      "learning_rate": 0.0003,
+      "status": "failed",
+      "scientific_result_eligible": null,
+      "resolved_config": {
+        "path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1.yaml",
+        "sha256": "fb04e93b75cd0763c10c48074111cb02a92fc2074f6f27e4675ac74470696398"
+      },
+      "command": {
+        "path": "runs/commands/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1.sh",
+        "sha256": "e6e50f065035c0c082f41ded73d5cb3452751b3af58d39162465cc73716ca859"
+      },
+      "registry": {
+        "path": "runs/registry/records/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1.json",
+        "bytes": 1345,
+        "sha256": "9cfd935fd18290281b05bef68b8e602be9993e86035a759915fb745db83f2f9a"
+      },
+      "history": {
+        "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1/history.jsonl",
+        "bytes": 128,
+        "sha256": "9491112de09240d86189f5d92d6be0fb6f71fc0da134e8de9d60bc91707f3521"
+      },
+      "worker_log": {
+        "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1/worker.log",
+        "bytes": 802,
+        "sha256": "910bb426122d9c7e6ad813d148c1a4959dac3aed977dd9637fdeb50c81c9a936"
+      }
+    },
+    {
+      "run_id": "vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1",
+      "learning_rate": 0.001,
+      "status": "failed",
+      "scientific_result_eligible": null,
+      "resolved_config": {
+        "path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1.yaml",
+        "sha256": "ef7775e979ebeb32efb7000b01adc7581d39f98bdbdf417f0c900d6a953fee32"
+      },
+      "command": {
+        "path": "runs/commands/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1.sh",
+        "sha256": "71852f4f56b8869dc24f20dd763de663f973307a278f9bf6749329bf51159c72"
+      },
+      "registry": {
+        "path": "runs/registry/records/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1.json",
+        "bytes": 1345,
+        "sha256": "6a3bf2975b631807643f1c6b450c3d387c4967faaae6bb9c82184b00e29a82a4"
+      },
+      "history": {
+        "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1/history.jsonl",
+        "bytes": 128,
+        "sha256": "d6ccfbbf879dd3dba0bbd3c54918dbace45ed279c482c6c3b254e6b2f56c2be2"
+      },
+      "worker_log": {
+        "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1/worker.log",
+        "bytes": 802,
+        "sha256": "910bb426122d9c7e6ad813d148c1a4959dac3aed977dd9637fdeb50c81c9a936"
+      }
+    }
+  ],
+  "corrective_action": {
+    "scope": "capacity provenance validation only",
+    "c_plus_p_behavior": "unchanged and still mechanically recomputed",
+    "c_plus_p_plus_e_behavior": "verified C+P capacity artifact retained as provenance without recomputing it on the wider encoder",
+    "allowed_c_plus_p_plus_e_model_key": "dcnv2_full_rank",
+    "original_run_ids_reused": false,
+    "retry_requires_clean_committed_code_and_new_run_ids": true
+  }
+}
