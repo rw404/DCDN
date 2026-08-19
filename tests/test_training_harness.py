@@ -1664,12 +1664,8 @@ def test_final_seed_selection_receipt_is_verified_before_model_creation(
         {"scope": "validation_only", "test_metrics": None},
     )
     checkpoint_path = tmp_path / "runs/selected/best.pt"
-    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
-    checkpoint_path.write_bytes(b"synthetic-checkpoint")
-    checkpoint_sha256 = hashlib.sha256(checkpoint_path.read_bytes()).hexdigest()
-    checkpoint_path.with_name(f"{checkpoint_path.name}.sha256").write_text(
-        f"{checkpoint_sha256}  {checkpoint_path.name}\n",
-        encoding="ascii",
+    checkpoint_sha256 = _write_sparse_hashed_file(
+        checkpoint_path, 64 * 1024 * 1024 + 17
     )
 
     receipt_path = tmp_path / "results/tuning/selection.json"

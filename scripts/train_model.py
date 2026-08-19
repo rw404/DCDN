@@ -28,6 +28,7 @@ from dcdn.capacity_artifact import (
 from dcdn.capacity_artifact import (
     sha256_file as capacity_sha256_file,
 )
+from dcdn.checkpoint import verify_checkpoint_sidecar
 from dcdn.data.vk_lsvd_runtime import (
     C_PLUS_P,
     C_PLUS_P_PLUS_E,
@@ -601,7 +602,7 @@ def _require_final_seed_selection(
         actual_digest = (
             read_verified_artifact(evidence_path).digest
             if path_name == "result_path"
-            else verify_sha256_sidecar(evidence_path)
+            else verify_checkpoint_sidecar(evidence_path)
         )
         if actual_digest != expected_digest:
             raise TrainingContractError(f"selection {path_name} digest mismatch")
