@@ -1,0 +1,84 @@
+schema_version: 3
+execution_kind: scientific_tuning
+run_id: vk-cp-tune-autoint-plus-s42-lr3e4-v1
+project_root: /workspace/codex-home/dcdn/deep_division_network
+overlay_path: /home/codex/.cache/dcdn-public
+protocol_path: configs/protocols/vk_lsvd_c_plus_p/protocol_frozen.yaml
+active_protocol_path: artifacts/protocol_state/vk_lsvd_c_plus_p/active_protocol.yaml
+views_manifest_path: data/manifests/vk_lsvd_views_v1.yaml
+search_space_path: configs/search_space_v1.yaml
+encoder_contract_path: configs/encoder_v1.yaml
+capacity_artifact_path: configs/capacity/vk_lsvd_c_plus_p_v1.json
+full_scan_manifest_path: data/manifests/vk_lsvd_full_scan_v1.yaml
+runtime_cache_root: /home/codex/.cache/dcdn-public/runtime/vk_lsvd/c_plus_p_v2
+model:
+  interaction_config:
+    model_key: autoint_plus
+    attention_layers: 2
+    attention_dim: 16
+    num_heads: 2
+    dnn_hidden_dims:
+    - 256
+    - 128
+    dropout: 0.1
+    scale_attention: true
+    layer_norm: true
+  head_config:
+    hidden_dims: []
+    dropout: 0.0
+    output_dim: 1
+  init_seed: 42
+training:
+  dataset_id: vk_lsvd_up0.01_ir0.01
+  model_key: autoint_plus
+  feature_regime: C+P
+  candidate_id: autoint_plus_lr_3e_4
+  seed: 42
+  phase: tuning
+  learning_rate: 0.0003
+  microbatch_size: 4096
+  effective_batch_size: 4096
+  maximum_train_examples: 40000000
+  validate_every_examples: 4000000
+  patience_validation_checks: 3
+  loss: normalized_mean_squared_error
+  selection_metric: normalized_mse
+  selection_direction: minimize
+  search_space_sha256: b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344
+  experiment_matrix_sha256: 867118db089bbbffb4abf02ff7b3c01e2c9f43e804a188a27a3886f66db4e000
+  encoder_contract_sha256: 16fa99db8e92ce4dd55c0bd5e7d7bfd8af8d3d59251cc769b41988e61d414449
+  capacity_resolution_sha256: d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565
+  resolved_model_config_sha256: 081379713f270ad56b05b676a13281a5c329a9612d19117439eeecb10fb5a5d9
+  full_schema_sha256: 2cfd6d12cd85346e413f476ff223e19d57be213d74fe68b75d6f0ce686c0f091
+  operand_schema_sha256: bb2f6c47fa12c175a3820830f90ff577acb293c56b107c7d1c40e4c682f2ff4d
+  denominator_mask_sha256: 9e168fae4014f4763008e89f61324858f17d376f56fb5de46f2775911650bcaa
+  weight_decay: 1.0e-06
+  adam_betas:
+  - 0.9
+  - 0.999
+  adam_epsilon: 1.0e-08
+  gradient_clip_l2: 1.0
+  autocast_bfloat16: true
+  checkpoint_every_examples: null
+  allow_one_oom_microbatch_reduction: true
+  numerical_nonfinite_limit: 1
+  runtime_value_checks: false
+  reproduction_command: bash runs/commands/vk-cp-tune-autoint-plus-s42-lr3e4-v1.sh
+leakage_checks:
+  source_manifest_verified: true
+  split_verified: true
+  ordered_schema_verified: true
+  row_alignment_verified: true
+  temporal_leakage_check_passed: true
+  reciprocal_mask_verified: true
+  full_operand_scan_passed: true
+registry_root: runs/registry
+run_directory: runs/vk-cp-tune-autoint-plus-s42-lr3e4-v1
+result_path: results/tuning/vk-cp-tune-autoint-plus-s42-lr3e4-v1.json
+runtime:
+  device: cuda:0
+  eta_hours: 3
+  resume: false
+  stop_after_examples: null
+  latency: null
+  guard_interval_seconds: 30

@@ -561,6 +561,35 @@ lower than selected Original DCN by `0.00005830160730017908`, or about
 validation hypothesis only; the final multi-seed test RQ1 verdict remains
 locked. The next frozen `C+P` model is AutoInt+.
 
+## VK-LSVD C+P AutoInt+ validation-only selection
+
+Both frozen seed-42 AutoInt+ candidates completed under clean commit
+`eb4e826d9c1e4d4ddf2a6c0ee9423b0bce5c5b41` with zero OOM/non-finite
+observations and `test_metrics=null`. LR=0.0003 consumed 39,997,440 examples
+and nine validation checks, reaching normalized MSE
+`0.020879945407626305`; LR=0.001 stopped by the predeclared patience rule
+after 32,002,048 examples and eight checks at `0.02105809059370641`. Strict
+minimization selects `autoint_plus_lr_3e_4`, lower by
+`0.0001781451860801038` (about `0.845970%`), with no tie or post-metric
+tie-break.
+
+Canonical selection receipt
+`results/tuning/vk_lsvd_c_plus_p_autoint_plus_selection_v1.json` has SHA-256
+`45ab5878b7a7ad5b57be418e6d17b5583b7cc84130fbef3a856af275c82169bb`;
+selected best-checkpoint SHA-256 is
+`73f5b18db38d19020f550c99f639694a7ccd3d39a296b6bfdb026c783f54397f`.
+All 12 checkpoint pairs passed strict sidecars, CPU `weights_only`, metadata,
+and finite-tensor checks. No checkpoint was deleted. Both registries are
+completed and scientifically eligible, both A100s are idle, and no task
+process remains.
+
+On matched seed-42 validation, selected AutoInt+ is lower than selected DCDN
+by `0.00009733738776305026`, or about `0.464013%` relative to DCDN. This does
+not invalidate the narrower DCDN-versus-Original-DCN validation result, but it
+does reject any current claim of universal DCDN superiority. README records
+both facts. The next frozen `C+P` model is Wukong-small; dataset-wide selected
+configs and final/test remain locked.
+
 The owner-approved multi-task extension is scheduled only after the mandatory frozen matrix: normalized watch time remains primary, while like/dislike/share/bookmark are auxiliary binary labels when raw schema validation permits them.
 Per target, report ROC-AUC and user-GAUC over users with both classes, plus eligible-user/event coverage and paired user-bootstrap 95% confidence intervals.
 This extension does not alter the current single-target RQ1 selections or expose test data.

@@ -1,0 +1,19 @@
+{
+  "artifact_role": "run_registry_io_incident",
+  "degraded_deadline_seconds": 180.0,
+  "detail": "registry helper exceeded 10.000s",
+  "errno": null,
+  "error_stage": "helper_timeout",
+  "error_type": "RegistryHelperTimeout",
+  "first_failure_monotonic": 15717052.489555085,
+  "first_failure_utc": "2026-08-19T18:53:32.527680Z",
+  "heartbeat_interval_seconds": 30.0,
+  "incident_id": "registry-io-944811-1787165612527664387-1",
+  "operation": "heartbeat",
+  "operation_timeout_seconds": 10.0,
+  "receipt_scope": "supervisor_io_evidence_not_registry_state",
+  "run_id": "vk-cp-tune-autoint-plus-s42-lr1e3-v1",
+  "schema_version": 1,
+  "supervisor_pid": 944570,
+  "trainer_pid": 944811
+}

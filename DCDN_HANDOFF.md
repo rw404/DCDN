@@ -1062,4 +1062,25 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   verdict and does not establish universal superiority. The next frozen
   `C+P` model is AutoInt+; dataset-wide selected configs and final/test remain
   locked.
+- VK-LSVD `C+P` AutoInt+ validation selection recorded 2026-08-19: both
+  frozen seed-42 LR candidates completed under clean commit
+  `eb4e826d9c1e4d4ddf2a6c0ee9423b0bce5c5b41`. LR=0.0003 consumed the
+  full 39,997,440-example budget and reached normalized MSE
+  `0.020879945407626305` after nine validation checks; LR=0.001 stopped by
+  the predeclared patience rule after 32,002,048 examples and eight checks
+  at `0.02105809059370641`. Both results are scientifically eligible, have
+  zero OOM/non-finite observations, and contain `test_metrics=null`. Strict
+  minimization selects `autoint_plus_lr_3e_4` (LR=0.0003), lower by
+  `0.0001781451860801038` (about 0.845970%); no tie or post-metric tie-break
+  occurred. Canonical per-model selection receipt SHA-256 is
+  `45ab5878b7a7ad5b57be418e6d17b5583b7cc84130fbef3a856af275c82169bb`;
+  selected best-checkpoint SHA-256 is
+  `73f5b18db38d19020f550c99f639694a7ccd3d39a296b6bfdb026c783f54397f`.
+  All 12 checkpoint pairs passed strict sidecars, safe CPU `weights_only`,
+  metadata, and tensor-finiteness audit; no checkpoint was deleted. Selected
+  AutoInt+ is lower than selected DCDN by `0.00009733738776305026` (about
+  0.464013%) on matched validation. This is a valid scientific negative for
+  universal DCDN superiority, while the narrow DCDN-versus-Original-DCN
+  validation result remains positive. The next frozen `C+P` model is
+  Wukong-small; dataset-wide selected configs and final/test remain locked.
 Update this decision log whenever a material choice changes.

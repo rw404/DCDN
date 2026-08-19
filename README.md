@@ -72,6 +72,14 @@ selection lineage is preserved in
 `results/tuning/vk_lsvd_c_plus_p_dcn_selection_v1.json` and the corresponding
 DCDN selection receipt.
 
+This narrow result is not a universal baseline win. Under the same frozen
+seed-42 validation protocol, selected AutoInt+ reaches `0.020879945407626305`,
+which is lower than selected DCDN by `0.00009733738776305026` (about
+`0.464013%`). The exact AutoInt+ selection lineage is preserved in
+`results/tuning/vk_lsvd_c_plus_p_autoint_plus_selection_v1.json`. Model-wide
+and dataset-wide claims remain pending the complete frozen matrix, untouched
+test evaluation, paired uncertainty, and effect-size analysis.
+
 ## Frozen source and model checkpoint
 
 The three approved public sources are byte-verified outside the repository.
