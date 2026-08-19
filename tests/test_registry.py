@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import errno
+import hashlib
 import json
+import os
 from pathlib import Path
 
 import pytest
 
-from dcdn.registry import RegistryError, RunRegistry
+from dcdn.registry import RegistryError, RegistryIOError, RunRegistry
+from dcdn.registry_helper import execute_request
 
 DIGEST = "a" * 64
 COMMIT = "b" * 40
@@ -182,3 +186,248 @@ def test_completion_requires_eligibility_and_failure_forbids_it(
             scientific_result_eligible=False,
         )
     assert registry.read(failed_id)["status"] == "running"
+
+
+def test_heartbeat_uses_unique_temp_and_skips_file_and_directory_fsync(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    run_id = "relaxed-heartbeat"
+    registry.create_pending(**pending_fields(run_id))
+    registry.ensure_running(run_id, pid=1234, gpu=0)
+    legacy_temporary = registry.records / f".{run_id}.json.{os.getpid()}.tmp"
+    legacy_temporary.write_text("stale", encoding="ascii")
+    sync_calls: list[Path] = []
+    file_sync_calls: list[int] = []
+    monkeypatch.setattr(
+        registry,
+        "_sync_directory",
+        lambda path: sync_calls.append(path),
+    )
+    monkeypatch.setattr(
+        "dcdn.registry.os.fsync",
+        lambda descriptor: file_sync_calls.append(descriptor),
+    )
+
+    registry.heartbeat(run_id, pid=1234)
+
+    assert sync_calls == []
+    assert file_sync_calls == []
+    assert legacy_temporary.read_text(encoding="ascii") == "stale"
+    registry.ensure_terminal(
+        run_id,
+        "failed",
+        pid=1234,
+        gpu=0,
+        reason="synthetic terminal",
+    )
+    assert sync_calls == [registry.records]
+    assert len(file_sync_calls) == 1
+
+
+@pytest.mark.parametrize(
+    ("error_number", "transient"),
+    [(errno.EIO, True), (errno.ENOSPC, False)],
+)
+def test_registry_io_error_classifies_errno(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    error_number: int,
+    transient: bool,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    run_id = f"errno-{error_number}"
+    registry.create_pending(**pending_fields(run_id))
+    registry.ensure_running(run_id, pid=100, gpu=0)
+
+    def fail_replace(_source: object, _target: object) -> None:
+        raise OSError(error_number, "synthetic registry failure")
+
+    monkeypatch.setattr("dcdn.registry.os.replace", fail_replace)
+    with pytest.raises(RegistryIOError) as caught:
+        registry.heartbeat(run_id, pid=100)
+    assert caught.value.stage == "record_replace"
+    assert caught.value.errno == error_number
+    assert caught.value.transient_candidate is transient
+
+
+def test_terminal_reconcile_survives_ambiguous_post_replace_eio(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    run_id = "terminal-reconcile"
+    registry.create_pending(**pending_fields(run_id))
+    registry.ensure_running(run_id, pid=200, gpu=1)
+    calls = 0
+    real_sync = registry._sync_directory
+
+    def fail_once(path: Path) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise RegistryIOError(
+                "directory_fsync",
+                OSError(errno.EIO, "synthetic ambiguous durability"),
+            )
+        real_sync(path)
+
+    monkeypatch.setattr(registry, "_sync_directory", fail_once)
+    with pytest.raises(RegistryIOError, match="directory_fsync"):
+        registry.ensure_terminal(
+            run_id,
+            "completed",
+            pid=200,
+            gpu=1,
+            reason="verified exact output",
+            scientific_result_eligible=True,
+        )
+    assert registry.read(run_id)["status"] == "completed"
+
+    reconciled = registry.ensure_terminal(
+        run_id,
+        "completed",
+        pid=200,
+        gpu=1,
+        reason="verified exact output",
+        scientific_result_eligible=True,
+    )
+    assert reconciled["status"] == "completed"
+    with pytest.raises(RegistryError, match="conflicting terminal"):
+        registry.ensure_terminal(
+            run_id,
+            "failed",
+            pid=200,
+            gpu=1,
+            reason="must not downgrade completed",
+        )
+
+
+def test_incident_receipt_is_hash_bound_idempotent_and_reopened(
+    tmp_path: Path,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    payload = {
+        "schema_version": 1,
+        "artifact_role": "run_registry_io_incident",
+        "incident_id": "registry-io-test-1",
+        "run_id": "incident-run",
+        "operation": "heartbeat",
+        "errno": errno.EIO,
+    }
+    first = registry.publish_incident(payload)
+    second = registry.publish_incident(payload)
+
+    assert first == second
+    path = Path(first["path"])
+    assert path.name.endswith(f"-{first['sha256']}.json")
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == first["sha256"]
+    path.write_bytes(b"corrupt\n")
+    with pytest.raises(RegistryError, match="collision"):
+        registry.publish_incident(payload)
+
+
+def test_terminal_reconcile_enforces_and_preserves_exact_owner(
+    tmp_path: Path,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    running_id = "terminal-owner-running"
+    registry.create_pending(**pending_fields(running_id))
+    registry.ensure_running(running_id, pid=300, gpu=0)
+    with pytest.raises(RegistryError, match="owner mismatch"):
+        registry.ensure_terminal(
+            running_id,
+            "failed",
+            pid=301,
+            gpu=0,
+            reason="wrong owner",
+        )
+    assert registry.read(running_id)["status"] == "running"
+
+    pending_id = "terminal-owner-pending"
+    registry.create_pending(**pending_fields(pending_id))
+    failed = registry.ensure_terminal(
+        pending_id,
+        "failed",
+        pid=302,
+        gpu=1,
+        reason="spawn failed before claim reconciliation",
+    )
+    assert failed["pid"] == 302
+    assert failed["gpu"] == 1
+    assert (
+        registry.ensure_terminal(
+            pending_id,
+            "failed",
+            pid=302,
+            gpu=1,
+            reason="spawn failed before claim reconciliation",
+        )["status"]
+        == "failed"
+    )
+
+
+def test_incident_post_link_eio_preserves_target_for_reconcile(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    payload = {
+        "schema_version": 1,
+        "artifact_role": "run_registry_io_incident",
+        "incident_id": "registry-io-post-link",
+        "run_id": "incident-post-link",
+        "operation": "heartbeat",
+    }
+    calls = 0
+    real_sync = registry._sync_directory
+
+    def fail_once(path: Path) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise RegistryIOError(
+                "directory_fsync",
+                OSError(errno.EIO, "synthetic post-link ambiguity"),
+            )
+        real_sync(path)
+
+    monkeypatch.setattr(registry, "_sync_directory", fail_once)
+    with pytest.raises(RegistryIOError, match="directory_fsync"):
+        registry.publish_incident(payload)
+    targets = list(registry.incidents.glob("*.json"))
+    assert len(targets) == 1
+    preserved = targets[0].read_bytes()
+
+    receipt = registry.publish_incident(payload)
+    assert Path(receipt["path"]).read_bytes() == preserved
+    assert hashlib.sha256(preserved).hexdigest() == receipt["sha256"]
+
+
+def test_registry_helper_executes_idempotent_requests(
+    tmp_path: Path,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    run_id = "helper-idempotent"
+    registry.create_pending(**pending_fields(run_id))
+    common = {
+        "registry_root": str(registry.root),
+        "run_id": run_id,
+        "pid": 444,
+    }
+    assert execute_request({**common, "operation": "ensure_running", "gpu": 0}) == {
+        "status": "running"
+    }
+    heartbeat = execute_request({**common, "operation": "heartbeat"})
+    assert heartbeat["status"] == "running"
+    assert execute_request(
+        {
+            **common,
+            "operation": "ensure_terminal",
+            "status": "failed",
+            "gpu": 0,
+            "reason": "synthetic helper terminal",
+            "scientific_result_eligible": None,
+        }
+    ) == {"status": "failed"}

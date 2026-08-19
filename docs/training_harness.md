@@ -242,6 +242,63 @@ signals, guard failures, and unexpected exceptions stop only that task-owned
 trainer and terminalize a `running` registry record as failed. The worker does
 not mutate the Pod or network volume.
 
+The trainer command is wrapped by the Linux-only supervised-exec module. It
+sets PR_SET_PDEATHSIG to SIGKILL, verifies the exact expected worker PID after
+prctl, and then execs the trainer without changing PID. A worker SIGKILL
+therefore cannot leave a task-owned GPU trainer running; a parent-race exits
+before trainer exec.
+
+Registry persistence is isolated from the trainer. Every registry mutation runs
+in a CUDA-hidden, telemetry-disabled one-shot helper process. Every helper uses
+the same supervised-exec parent-death binding to the exact worker PID as the
+trainer. One outer owner retains every helper Popen across operation deadlines
+and exceptions, permits at most one helper, and releases a handle only after
+poll or wait confirms reap. At a 10-second operation timeout the supervisor
+sends SIGKILL exactly once and launches no replacement until the old helper is
+reaped.
+An unreaped helper is polled without blocking while training remains live only
+within the same 180-second degraded window. A successfully claimed run emits
+one coalesced heartbeat every 30 seconds. Heartbeats use a same-directory
+unique temporary file, buffered flush, atomic replace, and exact reopen, but
+deliberately omit both file and directory fsync. Creation, ownership, terminal
+transitions, and incident receipts retain full file-plus-directory durability.
+
+Only a typed allowlist of connection/stale-mount errors, including EIO, is a
+candidate for bounded retry. The first such heartbeat failure starts one fixed
+180-second degraded deadline; training may continue during that window while
+one helper at a time retries with bounded backoff. Hard failures such as
+ENOSPC, EDQUOT, EROFS, malformed registry bytes, owner mismatch, or helper
+protocol corruption stop the trainer immediately. Timeout is evidence of an
+unresolved operation, never evidence that a write did not occur, so retries
+use idempotent ensure_running/ensure_terminal reconciliation.
+
+At the first degraded heartbeat, the supervisor writes a canonical SHA-256
+bound incident receipt to the configured local overlay only if it is on a
+filesystem independent of the registry. A successful later heartbeat or
+terminal operation copies the same incident payload into the persistent
+registry incidents directory, using an immutable filename that embeds the
+content digest. Incident schema v1 is separate from the run-record schema,
+contains no model/data metrics, and is supervisor I/O evidence only; it does
+not itself prove a registry transition. Failure to create independent
+emergency evidence is fail-closed.
+
+After the trainer is dead, the worker publishes one fixed terminal intent for
+at most 300 seconds. Ambiguous full-durability failures reopen and reconcile
+that exact status, reason, PID/GPU owner, and scientific-eligibility value. A
+verified completed intent is never downgraded to failed. The enclosing cleanup
+always stops the trainer and holds the GPU worker lock through the final
+bounded helper wait/poll cleanup attempt. An unreaped helper has already
+received SIGKILL and remains parent-death-bound to the worker; it cannot be
+forgotten and replaced by a concurrent helper. If persistent storage never
+recovers, the task exits as an execution failure with no trainer process; the
+registry can remain stale running and must be audited/reconciled before any
+later launch.
+
+These helper modules change executable code identity but do not change the
+run-record schema. Therefore any resume after this hardening must bind the new
+tracked helper/worker/registry bytes in a newly verified code commit/diff hash;
+a pending record frozen against earlier bytes cannot be reused unchanged.
+
 The trainer publishes result JSON and its SHA sidecar as a same-directory,
 exclusive pair: both temporary files are flushed and fsynced, hard-linked
 without overwrite, the directory is fsynced, and the exact bytes are reopened
@@ -274,6 +331,12 @@ exact frozen common-training fields, all-nine-model architecture normalization,
 capacity candidate/rank selection, metric-free capacity counts/FLOPs, immutable
 receipt publication, execution-kind/runtime/result-scope drift, registry
 terminal eligibility, worker provenance, and malformed result rejection.
+Registry fault injection additionally covers stale same-PID temporary files,
+heartbeat directory-fsync coalescing, typed EIO versus ENOSPC classification,
+an ambiguous post-replace terminal EIO followed by exact reconciliation,
+hash-bound incident reopen/collision handling, a killed 10-second helper,
+transient recovery with persistent incident publication, hard-error stop, the
+180-second degraded deadline, and byte-for-byte reuse of terminal intent.
 Checkpoint tests separately cover pre-mutation component and extra-state
 failures.
 

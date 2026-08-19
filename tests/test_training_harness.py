@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import signal
 import sys
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
@@ -75,6 +76,13 @@ SPLIT_MAPPING = {
     "validation_week": 25,
     "test": None,
 }
+
+
+class _ReapedProcess:
+    pid = 12345
+
+    def poll(self) -> int:
+        return 0
 
 
 def _write_hashed_yaml(path: Path, payload: dict[str, Any]) -> str:
@@ -1850,3 +1858,477 @@ def test_worker_code_identity_rejects_diff_drift_and_untracked_source(
     untracked = b"src/dcdn/new_module.py\0"
     with pytest.raises(worker.WorkerError, match="untracked"):
         worker._require_code_identity(tmp_path, record)
+
+
+def test_registry_helper_timeout_is_transient_and_bounded(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worker = _load_script("run_worker")
+
+    class FakeProcess:
+        pid = 9876
+        stdin = None
+        stdout = __import__("io").BytesIO()
+        stderr = __import__("io").BytesIO()
+
+        def __init__(self) -> None:
+            self.running = True
+
+        def poll(self) -> int | None:
+            return None if self.running else -signal.SIGKILL
+
+        def wait(self, timeout: float | None = None) -> int:
+            del timeout
+            self.running = False
+            return -signal.SIGKILL
+
+    process = FakeProcess()
+    monkeypatch.setattr(
+        worker.os,
+        "killpg",
+        lambda _pid, _signal: setattr(process, "running", False),
+    )
+    pending = worker._PendingRegistryOperation(
+        process=process,
+        request={"operation": "heartbeat"},
+        started_at=0.0,
+    )
+    assert worker._poll_registry_operation(pending, 9.999) is None
+    result = worker._poll_registry_operation(pending, 10.0)
+    assert result is not None
+    assert result.ok is False
+    assert result.transient_candidate is True
+    assert result.stage == "helper_timeout"
+
+
+def test_heartbeat_controller_retries_then_persists_incident() -> None:
+    worker = _load_script("run_worker")
+    starts: list[tuple[dict[str, Any], float]] = []
+    outcomes = [
+        worker._RegistryOperationResult(
+            ok=False,
+            transient_candidate=True,
+            error_type="RegistryIOError",
+            message="synthetic EIO",
+            stage="record_replace",
+            errno=5,
+        ),
+        worker._RegistryOperationResult(
+            ok=True,
+            result={
+                "status": "running",
+                "incident": {"path": "/persistent/incident", "sha256": "c" * 64},
+            },
+        ),
+    ]
+
+    def start(request: Any, now: float, owner: Any) -> Any:
+        starts.append((dict(request), now))
+        pending = worker._PendingRegistryOperation(
+            _ReapedProcess(),
+            dict(request),
+            now,
+        )
+        owner.adopt(pending)
+        return pending
+
+    def poll(_pending: Any, _now: float) -> Any:
+        return outcomes.pop(0)
+
+    local_payloads: list[dict[str, Any]] = []
+
+    def persist_local(_overlay: Path, _registry: Path, payload: Any) -> Any:
+        local_payloads.append(dict(payload))
+        return {"path": "/overlay/incident", "sha256": "c" * 64}
+
+    controller = worker._HeartbeatController(
+        registry_root=Path("/persistent/registry"),
+        overlay_path=Path("/local/overlay"),
+        run_id="controller-recovery",
+        pid=321,
+        now=0.0,
+        start_fn=start,
+        poll_fn=poll,
+        emergency_writer=persist_local,
+    )
+    assert controller.tick(29.999) is None
+    assert starts == []
+    assert controller.tick(30.0) is None
+    assert controller.tick(30.1) is None
+    assert len(local_payloads) == 1
+    assert controller.local_receipt is not None
+    assert controller.tick(31.2) is None
+    assert "incident" in starts[-1][0]
+    assert controller.tick(31.3) is None
+    assert controller.pending_incident is None
+    assert controller.local_receipt is None
+    assert controller.persistent_receipts[0]["sha256"] == "c" * 64
+
+
+def test_heartbeat_controller_stops_on_hard_error_and_180_second_deadline() -> None:
+    worker = _load_script("run_worker")
+
+    def controller_for(result: Any) -> Any:
+        def start(request: Any, now: float, owner: Any) -> Any:
+            pending = worker._PendingRegistryOperation(
+                _ReapedProcess(),
+                dict(request),
+                now,
+            )
+            owner.adopt(pending)
+            return pending
+
+        return worker._HeartbeatController(
+            registry_root=Path("/persistent/registry"),
+            overlay_path=Path("/local/overlay"),
+            run_id="controller-failure",
+            pid=654,
+            now=0.0,
+            start_fn=start,
+            poll_fn=lambda _pending, _now: result,
+            emergency_writer=lambda *_args: {
+                "path": "/overlay/incident",
+                "sha256": "e" * 64,
+            },
+        )
+
+    hard = controller_for(
+        worker._RegistryOperationResult(
+            ok=False,
+            transient_candidate=False,
+            error_type="RegistryIOError",
+            message="no space",
+            stage="temporary_create",
+            errno=28,
+        )
+    )
+    assert hard.tick(30.0) is None
+    hard_reason = hard.tick(30.1)
+    assert hard_reason is not None
+    assert "hard registry heartbeat failure" in hard_reason
+
+    transient = controller_for(
+        worker._RegistryOperationResult(
+            ok=False,
+            transient_candidate=True,
+            error_type="RegistryIOError",
+            message="synthetic EIO",
+            stage="record_replace",
+            errno=5,
+        )
+    )
+    assert transient.tick(30.0) is None
+    assert transient.tick(30.1) is None
+    deadline_reason = transient.tick(210.0)
+    assert deadline_reason is not None
+    assert "deadline" in deadline_reason
+
+
+def test_terminal_registry_retry_reuses_the_exact_intent() -> None:
+    worker = _load_script("run_worker")
+    clock = [0.0]
+    requests: list[dict[str, Any]] = []
+    outcomes = [
+        worker._RegistryOperationResult(
+            ok=False,
+            transient_candidate=True,
+            error_type="RegistryIOError",
+            message="synthetic EIO",
+            stage="directory_fsync",
+            errno=5,
+        ),
+        worker._RegistryOperationResult(
+            ok=True,
+            result={"status": "completed"},
+        ),
+    ]
+
+    def start(request: Any, now: float, owner: Any) -> Any:
+        requests.append(dict(request))
+        pending = worker._PendingRegistryOperation(
+            _ReapedProcess(),
+            dict(request),
+            now,
+        )
+        owner.adopt(pending)
+        return pending
+
+    intent = {
+        "operation": "ensure_terminal",
+        "registry_root": "/persistent/registry",
+        "run_id": "exact-terminal-intent",
+        "status": "completed",
+        "pid": 999,
+        "gpu": 1,
+        "reason": "verified immutable result",
+        "scientific_result_eligible": True,
+    }
+    result = worker._run_registry_operation_until(
+        intent,
+        deadline_monotonic=100.0,
+        helper_owner=worker._RegistryHelperOwner(),
+        now_fn=lambda: clock[0],
+        sleep_fn=lambda delay: clock.__setitem__(0, clock[0] + delay),
+        start_fn=start,
+        poll_fn=lambda _pending, _now: outcomes.pop(0),
+    )
+    assert result == {"status": "completed"}
+    assert requests == [intent, intent]
+
+
+@pytest.mark.parametrize("deadline", [30.0, 300.0])
+def test_synchronous_registry_deadline_retains_unreaped_owner(
+    monkeypatch: pytest.MonkeyPatch,
+    deadline: float,
+) -> None:
+    worker = _load_script("run_worker")
+
+    class NeverReapedProcess:
+        pid = 8765
+        stdin = None
+        stdout = __import__("io").BytesIO()
+        stderr = __import__("io").BytesIO()
+
+        def __init__(self) -> None:
+            self.wait_calls = 0
+
+        def poll(self) -> None:
+            return None
+
+        def wait(self, timeout: float | None = None) -> int:
+            del timeout
+            self.wait_calls += 1
+            raise worker.subprocess.TimeoutExpired("registry-helper", 0)
+
+    process = NeverReapedProcess()
+    clock = [0.0]
+    starts: list[Any] = []
+    kills: list[tuple[int, int]] = []
+    owner = worker._RegistryHelperOwner()
+
+    def start(request: Any, now: float, helper_owner: Any) -> Any:
+        pending = worker._PendingRegistryOperation(process, dict(request), now)
+        helper_owner.adopt(pending)
+        starts.append(pending)
+        return pending
+
+    def poll(pending: Any, now: float) -> Any:
+        if now >= 10.0 and not pending.timeout_reported:
+            worker._signal_pending_registry_helper(pending)
+            pending.timeout_reported = True
+            return worker._RegistryOperationResult(
+                ok=False,
+                transient_candidate=True,
+                error_type="RegistryHelperTimeout",
+                message="synthetic never-reaped helper",
+                stage="helper_timeout",
+                retain_pending=True,
+            )
+        return None
+
+    monkeypatch.setattr(
+        worker.os,
+        "killpg",
+        lambda pid, signum: kills.append((pid, signum)),
+    )
+    with pytest.raises(worker.WorkerError, match="absolute deadline"):
+        worker._run_registry_operation_until(
+            {"operation": "ensure_terminal"},
+            deadline_monotonic=deadline,
+            helper_owner=owner,
+            now_fn=lambda: clock[0],
+            sleep_fn=lambda _delay: clock.__setitem__(0, clock[0] + 10.0),
+            start_fn=start,
+            poll_fn=poll,
+        )
+    assert len(starts) == 1
+    assert owner.pending is starts[0]
+    assert kills == [(process.pid, signal.SIGKILL)]
+    with pytest.raises(worker.WorkerError, match="cannot release"):
+        owner.release(starts[0])
+
+    with pytest.raises(worker.WorkerError, match="remains unreaped"):
+        worker._run_registry_operation_until(
+            {"operation": "ensure_terminal"},
+            deadline_monotonic=deadline + 30.0,
+            helper_owner=owner,
+            now_fn=lambda: clock[0],
+            start_fn=start,
+            poll_fn=poll,
+        )
+    assert len(starts) == 1
+
+    with pytest.raises(worker.WorkerError, match="cleanup deadline"):
+        owner.close(
+            deadline_monotonic=deadline + 0.2,
+            now_fn=lambda: clock[0],
+            sleep_fn=lambda delay: clock.__setitem__(0, clock[0] + delay),
+        )
+    assert process.wait_calls >= 1
+    assert owner.pending is starts[0]
+    assert kills == [(process.pid, signal.SIGKILL)]
+
+
+def test_unreaped_timeout_keeps_training_until_180_and_retries_after_reap(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worker = _load_script("run_worker")
+
+    class DelayedReapProcess:
+        pid = 7654
+        stdin = None
+        stdout = __import__("io").BytesIO()
+        stderr = __import__("io").BytesIO()
+
+        def __init__(self, reap_at: float) -> None:
+            self.now = 0.0
+            self.reap_at = reap_at
+
+        def poll(self) -> int | None:
+            return -signal.SIGKILL if self.now >= self.reap_at else None
+
+        def wait(self, timeout: float | None = None) -> int:
+            del timeout
+            if self.now < self.reap_at:
+                raise worker.subprocess.TimeoutExpired("helper", 0)
+            return -signal.SIGKILL
+
+    kills: list[tuple[int, int]] = []
+    monkeypatch.setattr(
+        worker.os,
+        "killpg",
+        lambda pid, signum: kills.append((pid, signum)),
+    )
+    stuck = DelayedReapProcess(reap_at=999.0)
+    starts: list[Any] = []
+
+    def start_stuck(request: Any, now: float, owner: Any) -> Any:
+        pending = worker._PendingRegistryOperation(stuck, dict(request), now)
+        owner.adopt(pending)
+        starts.append(pending)
+        return pending
+
+    stuck_controller = worker._HeartbeatController(
+        registry_root=Path("/persistent/registry"),
+        overlay_path=Path("/local/overlay"),
+        run_id="unreaped-deadline",
+        pid=765,
+        now=-30.0,
+        start_fn=start_stuck,
+        emergency_writer=lambda *_args: {
+            "path": "/overlay/incident",
+            "sha256": "f" * 64,
+        },
+    )
+    assert stuck_controller.tick(0.0) is None
+    stuck.now = 10.0
+    assert stuck_controller.tick(10.0) is None
+    assert len(starts) == 1
+    assert kills == [(stuck.pid, signal.SIGKILL)]
+    stuck.now = 179.0
+    assert stuck_controller.tick(179.0) is None
+    assert len(starts) == 1
+    assert len(kills) == 1
+    deadline_reason = stuck_controller.tick(180.0)
+    assert deadline_reason is not None
+    assert "deadline" in deadline_reason
+    assert len(kills) == 1
+
+    recovering = DelayedReapProcess(reap_at=20.0)
+    recovery_starts: list[Any] = []
+
+    def start_recovering(request: Any, now: float, owner: Any) -> Any:
+        if not recovery_starts:
+            pending = worker._PendingRegistryOperation(
+                recovering,
+                dict(request),
+                now,
+            )
+        else:
+            pending = worker._PendingRegistryOperation(
+                _ReapedProcess(),
+                dict(request),
+                now,
+            )
+        owner.adopt(pending)
+        recovery_starts.append(pending)
+        return pending
+
+    def poll_recovering(pending: Any, now: float) -> Any:
+        if pending.process is recovering:
+            recovering.now = now
+            return worker._poll_registry_operation(pending, now)
+        return worker._RegistryOperationResult(
+            ok=True,
+            result={
+                "status": "running",
+                "incident": {
+                    "path": "/persistent/incident",
+                    "sha256": "a" * 64,
+                },
+            },
+        )
+
+    recovered = worker._HeartbeatController(
+        registry_root=Path("/persistent/registry"),
+        overlay_path=Path("/local/overlay"),
+        run_id="unreaped-recovery",
+        pid=766,
+        now=-30.0,
+        start_fn=start_recovering,
+        poll_fn=poll_recovering,
+        emergency_writer=lambda *_args: {
+            "path": "/overlay/incident",
+            "sha256": "a" * 64,
+        },
+    )
+    assert recovered.tick(0.0) is None
+    assert recovered.tick(10.0) is None
+    assert len(recovery_starts) == 1
+    assert recovered.tick(19.0) is None
+    assert len(recovery_starts) == 1
+    assert recovered.tick(20.0) is None
+    assert recovered.tick(20.1) is None
+    assert len(recovery_starts) == 2
+    assert "incident" in recovery_starts[1].request
+    assert recovered.tick(20.2) is None
+    assert recovered.pending_incident is None
+
+
+def test_worker_trainer_command_binds_expected_parent() -> None:
+    worker = _load_script("run_worker")
+    resolved = Path("/persistent/config.yaml")
+    command = worker._trainer_command(resolved)
+    separator = command.index("--")
+    assert command[:separator] == [
+        sys.executable,
+        "-m",
+        "dcdn.supervised_exec",
+        "--expected-parent-pid",
+        str(os.getpid()),
+    ]
+    assert command[separator + 1 :] == [
+        sys.executable,
+        str(worker._TRAIN_SCRIPT),
+        "run",
+        "--resolved",
+        str(resolved),
+    ]
+
+
+def test_registry_helper_command_binds_expected_parent() -> None:
+    worker = _load_script("run_worker")
+    command = worker._registry_helper_command()
+    separator = command.index("--")
+    assert command[:separator] == [
+        sys.executable,
+        "-m",
+        "dcdn.supervised_exec",
+        "--expected-parent-pid",
+        str(os.getpid()),
+    ]
+    assert command[separator + 1 :] == [
+        sys.executable,
+        "-m",
+        "dcdn.registry_helper",
+    ]

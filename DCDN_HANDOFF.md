@@ -820,4 +820,33 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   selected ordinary-DCNv2 LR, and final/test remains locked pending all model
   selections and an audited one-pass runner; `test_unlocked=false`.
 
+- VK-LSVD C+P ordinary full-rank DCNv2 validation status recorded 2026-08-18:
+  the frozen seed-42 LR=0.001 candidate completed as scientifically eligible
+  validation-only tuning under Git commit
+  `028b9c11a827a5821d20376c39bdc171fa032cf8`. Its normalized MSE is
+  `0.02091150474550729`; it stopped by validation patience after 28,000,256
+  examples and seven checks, with zero OOM/non-finite events and
+  `test_metrics=null`. Resolved-config SHA-256 is
+  `7e5450a2ca7d0ef49ab3bec08b4c36348e4429d34990d7dc104a0492175b98c9`,
+  immutable result SHA-256 is
+  `51a39053240683b8b8c90688844b2a4a544b678db71dd2559e61eefec8fe1e23`,
+  and retained best-checkpoint SHA-256 is
+  `166d3f65b65e9332fddc62a102a21f2358c9fca96606bafad9065f06659317d9`.
+  The paired frozen LR=0.0003 candidate did not complete: the original
+  supervisor encountered persistent-filesystem `EIO` after the durable
+  12,001,280-example boundary, and an exact resume encountered repeated
+  registry/supervisor `EIO` after the durable 24,002,560-example boundary.
+  Neither attempt is a scientific result and neither produced a result JSON.
+  Their immutable failure snapshot SHA-256 values are
+  `82a7858c1f8eed49c3c4f958a58907166faaf19dee4082903276329cdd1bfab4`
+  and
+  `a42d29bf579656dae1fc5eab06f2046bea60e4c5ff8e37e69049740f3f28c5ef`;
+  the finite accumulation-boundary exact-resume checkpoint SHA-256 is
+  `9861dc7ee7cf09eafdd36cb7d0e329152634fd6b326db3db176220986e8aff25`.
+  A third resume on the current supervisor is forbidden until registry/worker
+  hardening and fault-injection tests pass and a clean commit plus new
+  immutable run ID are prepared. Therefore the ordinary-DCNv2 LR is not yet
+  selected, `DCNv2-capacity-matched` remains gated, no manuscript claim may
+  use the incomplete pair, and `test_unlocked=false`.
+
 Update this decision log whenever a material choice changes.

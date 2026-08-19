@@ -1,6 +1,6 @@
 # DCDN execution status
 
-Updated: `2026-08-18T21:24:26Z`
+Updated: `2026-08-18T23:05:25Z`
 
 ## Current checkpoint
 
@@ -211,3 +211,43 @@ and read-tests the durable evidence.
 This is one per-model validation selection, not the final dataset
 `selected_configs.lock`. The active protocol remains premetric and
 `test_unlocked=false`; no test data, label, or metric was accessed.
+
+## Ordinary DCNv2 validation-only status
+
+The frozen LR=0.001 candidate
+`vk-cp-tune-dcnv2-full-rank-l2-s42-lr1e3-v1` completed as scientifically
+eligible validation-only tuning. It minimized normalized MSE to
+`0.02091150474550729` after 28,000,256 examples and seven validation checks;
+it stopped by validation patience with zero OOM/non-finite events and
+`test_metrics=null`. Resolved-config SHA-256 is
+`7e5450a2ca7d0ef49ab3bec08b4c36348e4429d34990d7dc104a0492175b98c9`,
+immutable result SHA-256 is
+`51a39053240683b8b8c90688844b2a4a544b678db71dd2559e61eefec8fe1e23`,
+and retained best-checkpoint SHA-256 is
+`166d3f65b65e9332fddc62a102a21f2358c9fca96606bafad9065f06659317d9`.
+
+The frozen LR=0.0003 candidate remains incomplete. Its original supervisor
+failed with persistent-filesystem `EIO` after the durable 12,001,280-example
+boundary; an exact resume failed with repeated registry/supervisor `EIO`
+after the durable 24,002,560-example boundary. Both attempts are execution
+failures, not scientific results, have no result JSON, and have
+`test_metrics=null`. The immutable failure snapshot SHA-256 values are
+`82a7858c1f8eed49c3c4f958a58907166faaf19dee4082903276329cdd1bfab4`
+and
+`a42d29bf579656dae1fc5eab06f2046bea60e4c5ff8e37e69049740f3f28c5ef`.
+The finite exact-resume accumulation-boundary checkpoint has SHA-256
+`9861dc7ee7cf09eafdd36cb7d0e329152634fd6b326db3db176220986e8aff25`.
+
+The paired selection is unresolved. Do not select LR=0.001 by default.
+Before another exact resume, harden registry/worker writes, pass targeted
+fault-injection and regression tests, commit the clean implementation, and
+materialize a new immutable resume run ID. `DCNv2-capacity-matched` remains
+blocked, final/test access remains forbidden (`test_unlocked=false`), and no
+manuscript claim may use the incomplete pair.
+
+The read-only local guard at `2026-08-18T23:05:25Z` estimated cumulative
+spend at USD 70.63 (13.868611 hours at USD 3.29/hour plus the fixed USD 25
+storage reserve). It measured 1,398,235,574 project bytes (about 1.302 GiB)
+and 66,952,908,800 overlay bytes available (about 62.354 GiB). Both A100s
+were at 0 MiB and 0% utilization, GPU compute-apps were empty, and zero
+task-owned training/worker processes remained.

@@ -13,9 +13,11 @@ import re
 import signal
 import subprocess
 import sys
+import tempfile
 import time
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from contextlib import suppress
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -51,6 +53,14 @@ class WorkerError(RuntimeError):
 
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 _BEST_CHECKPOINT_RE = re.compile(r"^best-step-[0-9]{12}-generation-[0-9]{4}\.pt$")
+_REGISTRY_HELPER_MODULE = "dcdn.registry_helper"
+_HEARTBEAT_INTERVAL_SECONDS = 30.0
+_REGISTRY_OPERATION_TIMEOUT_SECONDS = 10.0
+_REGISTRY_DEGRADED_DEADLINE_SECONDS = 180.0
+_RUNNING_PUBLISH_DEADLINE_SECONDS = 30.0
+_TERMINAL_PUBLISH_DEADLINE_SECONDS = 300.0
+_REGISTRY_RETRY_DELAYS_SECONDS = (1.0, 2.0, 5.0, 10.0, 15.0, 30.0)
+_REGISTRY_RESPONSE_LIMIT_BYTES = 64 * 1024
 
 
 def _mapping(value: Any, field: str) -> Mapping[str, Any]:
@@ -467,6 +477,630 @@ def _verify_completed_result(
     return artifact.digest, scientific_result_eligible
 
 
+@dataclass(frozen=True)
+class _RegistryOperationResult:
+    ok: bool
+    result: Mapping[str, Any] | None = None
+    transient_candidate: bool = False
+    error_type: str | None = None
+    message: str | None = None
+    stage: str | None = None
+    errno: int | None = None
+    retain_pending: bool = False
+    failure_already_reported: bool = False
+
+
+@dataclass
+class _PendingRegistryOperation:
+    process: subprocess.Popen[bytes]
+    request: Mapping[str, Any]
+    started_at: float
+    kill_sent: bool = False
+    timeout_reported: bool = False
+
+
+def _registry_helper_environment() -> dict[str, str]:
+    environment = os.environ.copy()
+    for name in (
+        "RANK",
+        "LOCAL_RANK",
+        "MASTER_ADDR",
+        "MASTER_PORT",
+        "CUDA_VISIBLE_DEVICES",
+    ):
+        environment.pop(name, None)
+    environment["CUDA_VISIBLE_DEVICES"] = ""
+    environment["WORLD_SIZE"] = "1"
+    for name, value in _TELEMETRY_ENV.items():
+        environment[name] = value
+    source_path = str(PROJECT_ROOT / "src")
+    inherited_python_path = environment.get("PYTHONPATH")
+    environment["PYTHONPATH"] = source_path + (
+        os.pathsep + inherited_python_path if inherited_python_path else ""
+    )
+    return environment
+
+
+def _signal_pending_registry_helper(
+    pending: _PendingRegistryOperation,
+) -> None:
+    if pending.kill_sent:
+        return
+    with suppress(ProcessLookupError):
+        os.killpg(pending.process.pid, signal.SIGKILL)
+    pending.kill_sent = True
+
+
+@dataclass
+class _RegistryHelperOwner:
+    pending: _PendingRegistryOperation | None = None
+
+    def require_idle(self) -> None:
+        if self.pending is not None:
+            raise WorkerError(
+                "cannot start a registry helper while the previous helper "
+                "remains unreaped"
+            )
+
+    def adopt(self, pending: _PendingRegistryOperation) -> None:
+        self.require_idle()
+        self.pending = pending
+
+    def release(self, pending: _PendingRegistryOperation) -> None:
+        if self.pending is not pending:
+            raise WorkerError("registry helper owner lost process identity")
+        if pending.process.poll() is None:
+            raise WorkerError("cannot release an unreaped registry helper")
+        self.pending = None
+
+    def close(
+        self,
+        *,
+        deadline_monotonic: float,
+        now_fn: Callable[[], float] = time.monotonic,
+        sleep_fn: Callable[[float], None] = time.sleep,
+    ) -> None:
+        pending = self.pending
+        if pending is None:
+            return
+        _signal_pending_registry_helper(pending)
+        while True:
+            if pending.process.poll() is not None:
+                self.release(pending)
+                return
+            try:
+                pending.process.wait(timeout=0)
+            except subprocess.TimeoutExpired:
+                pass
+            else:
+                self.release(pending)
+                return
+            now = now_fn()
+            if now >= deadline_monotonic:
+                raise WorkerError(
+                    "registry helper remained unreaped at the cleanup deadline"
+                )
+            sleep_fn(min(0.1, max(0.0, deadline_monotonic - now)))
+
+
+def _registry_helper_command() -> list[str]:
+    return [
+        sys.executable,
+        "-m",
+        "dcdn.supervised_exec",
+        "--expected-parent-pid",
+        str(os.getpid()),
+        "--",
+        sys.executable,
+        "-m",
+        _REGISTRY_HELPER_MODULE,
+    ]
+
+
+def _start_registry_operation(
+    request: Mapping[str, Any],
+    now: float,
+    owner: _RegistryHelperOwner,
+) -> _PendingRegistryOperation:
+    owner.require_idle()
+    body = (
+        json.dumps(request, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+        + "\n"
+    ).encode("ascii")
+    if len(body) > _REGISTRY_RESPONSE_LIMIT_BYTES:
+        raise WorkerError("registry helper request exceeds the bounded limit")
+    try:
+        process = subprocess.Popen(
+            _registry_helper_command(),
+            cwd="/tmp",
+            env=_registry_helper_environment(),
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            start_new_session=True,
+        )
+    except OSError as exc:
+        raise WorkerError(f"could not start registry helper: {exc}") from exc
+    pending = _PendingRegistryOperation(process, dict(request), now)
+    owner.adopt(pending)
+    try:
+        if process.stdin is None:
+            raise WorkerError("registry helper stdin was not created")
+        process.stdin.write(body)
+        process.stdin.close()
+    except BaseException:
+        _signal_pending_registry_helper(pending)
+        raise
+    return pending
+
+
+def _bounded_pipe_read(pipe: Any, *, field: str) -> bytes:
+    if pipe is None:
+        raise WorkerError(f"registry helper {field} pipe was not created")
+    data = pipe.read(_REGISTRY_RESPONSE_LIMIT_BYTES + 1)
+    if len(data) > _REGISTRY_RESPONSE_LIMIT_BYTES:
+        raise WorkerError(f"registry helper {field} exceeded the bounded limit")
+    return data
+
+
+def _poll_registry_operation(
+    pending: _PendingRegistryOperation,
+    now: float,
+    *,
+    timeout_seconds: float = _REGISTRY_OPERATION_TIMEOUT_SECONDS,
+) -> _RegistryOperationResult | None:
+    return_code = pending.process.poll()
+    if pending.timeout_reported:
+        if return_code is None:
+            try:
+                pending.process.wait(timeout=0)
+            except subprocess.TimeoutExpired:
+                return None
+        return _RegistryOperationResult(
+            ok=False,
+            transient_candidate=True,
+            error_type="RegistryHelperReapedAfterTimeout",
+            message="timed-out registry helper was reaped",
+            stage="helper_reaped_after_timeout",
+            failure_already_reported=True,
+        )
+    if return_code is None:
+        if now - pending.started_at < timeout_seconds:
+            return None
+        _signal_pending_registry_helper(pending)
+        pending.timeout_reported = True
+        return _RegistryOperationResult(
+            ok=False,
+            transient_candidate=True,
+            error_type="RegistryHelperTimeout",
+            message=f"registry helper exceeded {timeout_seconds:.3f}s",
+            stage="helper_timeout",
+            retain_pending=True,
+        )
+    stdout = _bounded_pipe_read(pending.process.stdout, field="stdout")
+    stderr = _bounded_pipe_read(pending.process.stderr, field="stderr")
+    try:
+        response = json.loads(stdout.decode("ascii"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        detail = stderr.decode("utf-8", errors="replace")[:500]
+        raise WorkerError(
+            "registry helper returned malformed JSON"
+            + (f": {detail}" if detail else "")
+        ) from exc
+    if not isinstance(response, Mapping) or type(response.get("ok")) is not bool:
+        raise WorkerError("registry helper response schema is invalid")
+    if response["ok"]:
+        if return_code != 0 or not isinstance(response.get("result"), Mapping):
+            raise WorkerError("registry helper success response is inconsistent")
+        return _RegistryOperationResult(ok=True, result=dict(response["result"]))
+    if return_code == 0 or type(response.get("transient_candidate")) is not bool:
+        raise WorkerError("registry helper failure response is inconsistent")
+    error_number = response.get("errno")
+    if error_number is not None and (
+        isinstance(error_number, bool) or not isinstance(error_number, int)
+    ):
+        raise WorkerError("registry helper errno is invalid")
+    values: dict[str, str | None] = {}
+    for field in ("error_type", "message", "stage"):
+        value = response.get(field)
+        if value is not None and not isinstance(value, str):
+            raise WorkerError(f"registry helper {field} is invalid")
+        values[field] = value
+    return _RegistryOperationResult(
+        ok=False,
+        transient_candidate=response["transient_candidate"],
+        error_type=values["error_type"],
+        message=values["message"],
+        stage=values["stage"],
+        errno=error_number,
+    )
+
+
+def _registry_failure_text(result: _RegistryOperationResult) -> str:
+    return (
+        f"{result.error_type or 'RegistryOperationError'} at "
+        f"{result.stage or 'unknown'} (errno={result.errno}): "
+        f"{result.message or 'no detail'}"
+    )
+
+
+def _run_registry_operation_until(
+    request: Mapping[str, Any],
+    *,
+    deadline_monotonic: float,
+    helper_owner: _RegistryHelperOwner,
+    now_fn: Callable[[], float] = time.monotonic,
+    sleep_fn: Callable[[float], None] = time.sleep,
+    start_fn: Callable[
+        [Mapping[str, Any], float, _RegistryHelperOwner],
+        _PendingRegistryOperation,
+    ] = _start_registry_operation,
+    poll_fn: Callable[
+        [_PendingRegistryOperation, float], _RegistryOperationResult | None
+    ] = _poll_registry_operation,
+) -> Mapping[str, Any]:
+    retry_index = 0
+    while True:
+        helper_owner.require_idle()
+        now = now_fn()
+        if now >= deadline_monotonic:
+            raise WorkerError("registry operation exhausted its absolute deadline")
+        pending = start_fn(request, now, helper_owner)
+        if helper_owner.pending is not pending:
+            raise WorkerError("registry helper was not adopted by its outer owner")
+        result: _RegistryOperationResult | None = None
+        reported_timeout: _RegistryOperationResult | None = None
+        try:
+            while result is None:
+                now = now_fn()
+                if now >= deadline_monotonic:
+                    _signal_pending_registry_helper(pending)
+                    raise WorkerError(
+                        "registry operation exhausted its absolute deadline"
+                    )
+                result = poll_fn(pending, now)
+                if result is not None and result.retain_pending:
+                    reported_timeout = result
+                    result = None
+                elif result is not None and result.failure_already_reported:
+                    result = reported_timeout or result
+                if result is None:
+                    sleep_fn(min(0.1, max(0.0, deadline_monotonic - now)))
+        except BaseException:
+            if pending.process.poll() is None:
+                _signal_pending_registry_helper(pending)
+            else:
+                helper_owner.release(pending)
+            raise
+        helper_owner.release(pending)
+        if result.ok:
+            if result.result is None:
+                raise WorkerError("registry helper omitted its result")
+            return result.result
+        if not result.transient_candidate:
+            raise WorkerError(
+                "hard registry failure: " + _registry_failure_text(result)
+            )
+        delay = _REGISTRY_RETRY_DELAYS_SECONDS[
+            min(retry_index, len(_REGISTRY_RETRY_DELAYS_SECONDS) - 1)
+        ]
+        retry_index += 1
+        remaining = deadline_monotonic - now_fn()
+        if remaining <= 0:
+            raise WorkerError(
+                "transient registry failure exhausted its absolute deadline: "
+                + _registry_failure_text(result)
+            )
+        sleep_fn(min(delay, remaining))
+
+
+def _require_independent_incident_overlay(
+    overlay_path: Path,
+    registry_root: Path,
+) -> None:
+    try:
+        overlay_device = os.stat(overlay_path).st_dev
+        registry_device = os.stat(registry_root).st_dev
+    except OSError as exc:
+        raise WorkerError(f"could not preflight incident filesystems: {exc}") from exc
+    if overlay_device == registry_device:
+        raise WorkerError(
+            "emergency incident overlay is not independent of the registry filesystem"
+        )
+
+
+def _write_emergency_incident(
+    overlay_path: Path,
+    registry_root: Path,
+    payload: Mapping[str, Any],
+) -> Mapping[str, str]:
+    del registry_root
+    temporary: Path | None = None
+    descriptor = -1
+    try:
+        directory = overlay_path / "dcdn-supervisor-incidents"
+        directory.mkdir(mode=0o750, parents=True, exist_ok=True)
+        data = (
+            json.dumps(payload, sort_keys=True, indent=2, ensure_ascii=True) + "\n"
+        ).encode("ascii")
+        digest = hashlib.sha256(data).hexdigest()
+        target = directory / f"{payload['run_id']}-{digest}.json"
+        if target.exists():
+            if target.read_bytes() != data:
+                raise WorkerError("emergency incident hash-path collision")
+        else:
+            descriptor, raw_temporary = tempfile.mkstemp(
+                prefix=f".{target.name}.{os.getpid()}-",
+                suffix=".tmp",
+                dir=directory,
+            )
+            temporary = Path(raw_temporary)
+            os.fchmod(descriptor, 0o640)
+            with os.fdopen(descriptor, "wb", closefd=True) as handle:
+                descriptor = -1
+                handle.write(data)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.link(temporary, target)
+            directory_descriptor = os.open(directory, os.O_RDONLY)
+            try:
+                os.fsync(directory_descriptor)
+            finally:
+                os.close(directory_descriptor)
+        if target.read_bytes() != data:
+            raise WorkerError("emergency incident reopen verification failed")
+    except OSError as exc:
+        raise WorkerError(f"could not persist emergency incident: {exc}") from exc
+    finally:
+        if descriptor >= 0:
+            with suppress(OSError):
+                os.close(descriptor)
+        if temporary is not None:
+            with suppress(OSError):
+                temporary.unlink(missing_ok=True)
+    return {"path": str(target), "sha256": digest}
+
+
+class _HeartbeatController:
+    def __init__(
+        self,
+        *,
+        registry_root: Path,
+        overlay_path: Path,
+        run_id: str,
+        pid: int,
+        now: float,
+        helper_owner: _RegistryHelperOwner | None = None,
+        start_fn: Callable[
+            [Mapping[str, Any], float, _RegistryHelperOwner],
+            _PendingRegistryOperation,
+        ] = _start_registry_operation,
+        poll_fn: Callable[
+            [_PendingRegistryOperation, float], _RegistryOperationResult | None
+        ] = _poll_registry_operation,
+        emergency_writer: Callable[
+            [Path, Path, Mapping[str, Any]], Mapping[str, str]
+        ] = _write_emergency_incident,
+    ) -> None:
+        self.registry_root = registry_root
+        self.overlay_path = overlay_path
+        self.run_id = run_id
+        self.pid = pid
+        self._helper_owner = helper_owner or _RegistryHelperOwner()
+        self._start_fn = start_fn
+        self._poll_fn = poll_fn
+        self._emergency_writer = emergency_writer
+        self._pending: _PendingRegistryOperation | None = None
+        self._next_due = now + _HEARTBEAT_INTERVAL_SECONDS
+        self._degraded_since: float | None = None
+        self._retry_index = 0
+        self._incident: Mapping[str, Any] | None = None
+        self._local_receipt: Mapping[str, str] | None = None
+        self._persistent_receipts: list[Mapping[str, str]] = []
+        self._incident_sequence = 0
+
+    @property
+    def pending_incident(self) -> Mapping[str, Any] | None:
+        return self._incident
+
+    @property
+    def persistent_receipts(self) -> tuple[Mapping[str, str], ...]:
+        return tuple(self._persistent_receipts)
+
+    @property
+    def local_receipt(self) -> Mapping[str, str] | None:
+        return self._local_receipt
+
+    def _heartbeat_request(self) -> Mapping[str, Any]:
+        request: dict[str, Any] = {
+            "operation": "heartbeat",
+            "registry_root": str(self.registry_root),
+            "run_id": self.run_id,
+            "pid": self.pid,
+        }
+        if self._incident is not None:
+            request["incident"] = dict(self._incident)
+        return request
+
+    def _begin_incident(
+        self,
+        result: _RegistryOperationResult,
+        *,
+        started_at: float,
+    ) -> None:
+        self._incident_sequence += 1
+        incident_id = (
+            f"registry-io-{self.pid}-{time.time_ns()}-{self._incident_sequence}"
+        )
+        self._incident = {
+            "schema_version": 1,
+            "artifact_role": "run_registry_io_incident",
+            "incident_id": incident_id,
+            "run_id": self.run_id,
+            "supervisor_pid": os.getpid(),
+            "trainer_pid": self.pid,
+            "first_failure_utc": datetime.now(UTC)
+            .isoformat(timespec="microseconds")
+            .replace("+00:00", "Z"),
+            "first_failure_monotonic": started_at,
+            "operation": "heartbeat",
+            "error_type": result.error_type,
+            "error_stage": result.stage,
+            "errno": result.errno,
+            "detail": (result.message or "no detail")[:500],
+            "heartbeat_interval_seconds": _HEARTBEAT_INTERVAL_SECONDS,
+            "operation_timeout_seconds": _REGISTRY_OPERATION_TIMEOUT_SECONDS,
+            "degraded_deadline_seconds": _REGISTRY_DEGRADED_DEADLINE_SECONDS,
+            "receipt_scope": "supervisor_io_evidence_not_registry_state",
+        }
+        self._local_receipt = self._emergency_writer(
+            self.overlay_path,
+            self.registry_root,
+            self._incident,
+        )
+
+    def _record_success(
+        self,
+        result: _RegistryOperationResult,
+        *,
+        now: float,
+    ) -> str | None:
+        if self._incident is not None:
+            incident_receipt = (
+                result.result.get("incident") if result.result is not None else None
+            )
+            if not isinstance(incident_receipt, Mapping):
+                return "registry recovered without a persistent incident receipt"
+            digest = incident_receipt.get("sha256")
+            if not isinstance(digest, str) or _SHA256_RE.fullmatch(digest) is None:
+                return "persistent incident receipt digest is invalid"
+            if (
+                self._local_receipt is None
+                or self._local_receipt.get("sha256") != digest
+            ):
+                return (
+                    "persistent incident receipt does not match the fixed "
+                    "local incident digest"
+                )
+            self._persistent_receipts.append(dict(incident_receipt))
+        self._degraded_since = None
+        self._retry_index = 0
+        self._incident = None
+        self._local_receipt = None
+        self._next_due = now + _HEARTBEAT_INTERVAL_SECONDS
+        return None
+
+    def _record_failure(
+        self,
+        result: _RegistryOperationResult,
+        *,
+        started_at: float,
+        now: float,
+    ) -> str | None:
+        if not result.transient_candidate:
+            return "hard registry heartbeat failure: " + _registry_failure_text(result)
+        if self._degraded_since is None:
+            self._degraded_since = started_at
+            try:
+                self._begin_incident(result, started_at=started_at)
+            except WorkerError as exc:
+                return str(exc)
+        assert self._degraded_since is not None
+        elapsed = now - self._degraded_since
+        if elapsed >= _REGISTRY_DEGRADED_DEADLINE_SECONDS:
+            return (
+                "transient registry heartbeat failures exceeded the 180-second "
+                "degraded deadline: " + _registry_failure_text(result)
+            )
+        delay = _REGISTRY_RETRY_DELAYS_SECONDS[
+            min(self._retry_index, len(_REGISTRY_RETRY_DELAYS_SECONDS) - 1)
+        ]
+        self._retry_index += 1
+        self._next_due = min(
+            now + delay,
+            self._degraded_since + _REGISTRY_DEGRADED_DEADLINE_SECONDS,
+        )
+        return None
+
+    def tick(self, now: float) -> str | None:
+        if self._pending is not None:
+            pending = self._pending
+            if self._degraded_since is not None and (
+                now - self._degraded_since >= _REGISTRY_DEGRADED_DEADLINE_SECONDS
+            ):
+                return (
+                    "registry heartbeat degraded deadline elapsed with an "
+                    "unreaped timed-out helper"
+                )
+            try:
+                result = self._poll_fn(pending, now)
+            except WorkerError as exc:
+                if pending.process.poll() is not None:
+                    self._helper_owner.release(pending)
+                    self._pending = None
+                return f"registry helper protocol failure: {exc}"
+            if result is None:
+                return None
+            if result.retain_pending:
+                return self._record_failure(
+                    result,
+                    started_at=pending.started_at,
+                    now=now,
+                )
+            self._helper_owner.release(pending)
+            if result.failure_already_reported:
+                self._pending = None
+                self._next_due = now
+                return None
+            self._pending = None
+            if result.ok:
+                return self._record_success(result, now=now)
+            return self._record_failure(
+                result,
+                started_at=pending.started_at,
+                now=now,
+            )
+        if self._degraded_since is not None and (
+            now - self._degraded_since >= _REGISTRY_DEGRADED_DEADLINE_SECONDS
+        ):
+            return "registry heartbeat degraded deadline elapsed before retry"
+        if now >= self._next_due:
+            try:
+                pending = self._start_fn(
+                    self._heartbeat_request(),
+                    now,
+                    self._helper_owner,
+                )
+                if self._helper_owner.pending is not pending:
+                    raise WorkerError(
+                        "registry helper was not adopted by its outer owner"
+                    )
+                self._pending = pending
+            except WorkerError as exc:
+                return f"could not start registry heartbeat helper: {exc}"
+        return None
+
+    def close(
+        self,
+        *,
+        deadline_monotonic: float | None = None,
+        now_fn: Callable[[], float] = time.monotonic,
+        sleep_fn: Callable[[float], None] = time.sleep,
+    ) -> None:
+        if self._pending is None:
+            return
+        pending = self._pending
+        deadline = now_fn() + 2.0 if deadline_monotonic is None else deadline_monotonic
+        if self._helper_owner.pending is not pending:
+            raise WorkerError("heartbeat lost registry helper ownership")
+        self._helper_owner.close(
+            deadline_monotonic=deadline,
+            now_fn=now_fn,
+            sleep_fn=sleep_fn,
+        )
+        self._pending = None
+
+
 def _stop_child(
     process: subprocess.Popen[bytes], *, grace_seconds: float = 20.0
 ) -> None:
@@ -519,6 +1153,22 @@ def _worker_environment(gpu: int) -> dict[str, str]:
     for name, value in _TELEMETRY_ENV.items():
         environment[name] = value
     return environment
+
+
+def _trainer_command(resolved_config: Path) -> list[str]:
+    return [
+        sys.executable,
+        "-m",
+        "dcdn.supervised_exec",
+        "--expected-parent-pid",
+        str(os.getpid()),
+        "--",
+        sys.executable,
+        str(_TRAIN_SCRIPT),
+        "run",
+        "--resolved",
+        str(resolved_config),
+    ]
 
 
 def _require_code_identity(project_root: Path, record: Mapping[str, Any]) -> None:
@@ -668,7 +1318,13 @@ def run_worker(
 
     lock_path = registry.locks / f"physical-gpu-{gpu}.worker.lock"
     lock_descriptor = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o640)
+    helper_owner = _RegistryHelperOwner()
     process: subprocess.Popen[bytes] | None = None
+    heartbeat: _HeartbeatController | None = None
+    terminal_intent: dict[str, Any] | None = None
+    terminal_attempted = False
+    terminal_published = False
+    terminal_deadline: float | None = None
     stop_signal: int | None = None
     previous_handlers: dict[int, Any] = {}
 
@@ -692,14 +1348,12 @@ def run_worker(
             overlay_path=overlay_path,
             eta_hours=eta_hours,
         )
+        _require_independent_incident_overlay(
+            overlay_path,
+            registry_root,
+        )
         _require_code_identity(project_root, record)
-        command = [
-            sys.executable,
-            str(_TRAIN_SCRIPT),
-            "run",
-            "--resolved",
-            str(resolved_config),
-        ]
+        command = _trainer_command(resolved_config)
         environment = _worker_environment(gpu)
         with log_path.open("ab", buffering=0) as log_handle:
             if stop_signal is not None:
@@ -716,15 +1370,30 @@ def run_worker(
                 start_new_session=True,
             )
             try:
-                registry.transition(
-                    run_id,
-                    "running",
-                    pid=process.pid,
-                    gpu=gpu,
+                _run_registry_operation_until(
+                    {
+                        "operation": "ensure_running",
+                        "registry_root": str(registry_root),
+                        "run_id": run_id,
+                        "pid": process.pid,
+                        "gpu": gpu,
+                    },
+                    deadline_monotonic=(
+                        time.monotonic() + _RUNNING_PUBLISH_DEADLINE_SECONDS
+                    ),
+                    helper_owner=helper_owner,
                 )
             except BaseException:
                 _stop_child(process)
                 raise
+            heartbeat = _HeartbeatController(
+                registry_root=registry_root,
+                overlay_path=overlay_path,
+                run_id=run_id,
+                pid=process.pid,
+                now=time.monotonic(),
+                helper_owner=helper_owner,
+            )
 
             failure_reason: str | None = None
             try:
@@ -734,8 +1403,12 @@ def run_worker(
                         failure_reason = f"worker received signal {stop_signal}"
                         _stop_child(process)
                         break
-                    registry.heartbeat(run_id, pid=process.pid)
                     now = time.monotonic()
+                    heartbeat_failure = heartbeat.tick(now)
+                    if heartbeat_failure is not None:
+                        failure_reason = heartbeat_failure
+                        _stop_child(process)
+                        break
                     if now - last_guard >= 30.0:
                         try:
                             _guard(
@@ -748,11 +1421,23 @@ def run_worker(
                             _stop_child(process)
                             break
                         last_guard = now
-                    time.sleep(min(poll_seconds, 15.0))
+                    time.sleep(min(poll_seconds, 5.0))
             except BaseException as exc:
                 failure_reason = (
                     f"worker supervisor failure: {type(exc).__name__}: {exc}"
                 )
+                _stop_child(process)
+            try:
+                if terminal_deadline is None:
+                    terminal_deadline = (
+                        time.monotonic() + _TERMINAL_PUBLISH_DEADLINE_SECONDS
+                    )
+                heartbeat.close(deadline_monotonic=terminal_deadline)
+            except BaseException as exc:
+                if failure_reason is None:
+                    failure_reason = (
+                        f"registry helper cleanup failure: {type(exc).__name__}: {exc}"
+                    )
                 _stop_child(process)
             return_code = process.wait()
             if failure_reason is None and return_code == 0:
@@ -774,46 +1459,147 @@ def run_worker(
                         f"{type(exc).__name__}: {exc}"
                     )
                 else:
-                    registry.transition(
-                        run_id,
-                        "completed",
-                        pid=process.pid,
-                        gpu=gpu,
-                        scientific_result_eligible=scientific_result_eligible,
-                        reason=_completed_reason(execution_kind, result_digest),
+                    terminal_intent = {
+                        "operation": "ensure_terminal",
+                        "registry_root": str(registry_root),
+                        "run_id": run_id,
+                        "status": "completed",
+                        "pid": process.pid,
+                        "gpu": gpu,
+                        "reason": _completed_reason(
+                            execution_kind,
+                            result_digest,
+                        ),
+                        "scientific_result_eligible": scientific_result_eligible,
+                    }
+                    if heartbeat.pending_incident is not None:
+                        terminal_intent["incident"] = dict(heartbeat.pending_incident)
+                    if terminal_deadline is None:
+                        terminal_deadline = (
+                            time.monotonic() + _TERMINAL_PUBLISH_DEADLINE_SECONDS
+                        )
+                    terminal_attempted = True
+                    terminal_result = _run_registry_operation_until(
+                        terminal_intent,
+                        deadline_monotonic=terminal_deadline,
+                        helper_owner=helper_owner,
                     )
+                    if terminal_result.get("status") != "completed":
+                        raise WorkerError(
+                            "terminal helper did not reconcile completed state"
+                        )
+                    terminal_published = True
                     return 0
             reason = failure_reason or f"trainer exited with return code {return_code}"
-            registry.transition(
-                run_id,
-                "failed",
-                pid=process.pid,
-                gpu=gpu,
-                reason=reason[:1000],
+            terminal_intent = {
+                "operation": "ensure_terminal",
+                "registry_root": str(registry_root),
+                "run_id": run_id,
+                "status": "failed",
+                "pid": process.pid,
+                "gpu": gpu,
+                "reason": reason[:1000],
+                "scientific_result_eligible": None,
+            }
+            if heartbeat.pending_incident is not None:
+                terminal_intent["incident"] = dict(heartbeat.pending_incident)
+            if terminal_deadline is None:
+                terminal_deadline = (
+                    time.monotonic() + _TERMINAL_PUBLISH_DEADLINE_SECONDS
+                )
+            terminal_attempted = True
+            terminal_result = _run_registry_operation_until(
+                terminal_intent,
+                deadline_monotonic=terminal_deadline,
+                helper_owner=helper_owner,
             )
+            if terminal_result.get("status") != "failed":
+                raise WorkerError("terminal helper did not reconcile failed state")
+            terminal_published = True
             return 2
     finally:
+        trainer_cleanup_error: BaseException | None = None
+        helper_cleanup_error: BaseException | None = None
         try:
             if process is not None and process.poll() is None:
-                _stop_child(process)
+                try:
+                    _stop_child(process)
+                except BaseException as exc:
+                    trainer_cleanup_error = exc
+            if heartbeat is not None:
+                try:
+                    if terminal_deadline is None:
+                        terminal_deadline = (
+                            time.monotonic() + _TERMINAL_PUBLISH_DEADLINE_SECONDS
+                        )
+                    heartbeat.close(deadline_monotonic=terminal_deadline)
+                except BaseException as exc:
+                    helper_cleanup_error = exc
+            if (
+                process is not None
+                and process.poll() is not None
+                and terminal_intent is None
+            ):
+                terminal_intent = {
+                    "operation": "ensure_terminal",
+                    "registry_root": str(registry_root),
+                    "run_id": run_id,
+                    "status": "failed",
+                    "pid": process.pid,
+                    "gpu": gpu,
+                    "reason": ("worker owner exited before a terminal transition"),
+                    "scientific_result_eligible": None,
+                }
+                if heartbeat is not None and heartbeat.pending_incident is not None:
+                    terminal_intent["incident"] = dict(heartbeat.pending_incident)
+            if (
+                terminal_intent is not None
+                and not terminal_published
+                and not terminal_attempted
+            ):
+                if terminal_deadline is None:
+                    terminal_deadline = (
+                        time.monotonic() + _TERMINAL_PUBLISH_DEADLINE_SECONDS
+                    )
+                terminal_attempted = True
+                terminal_result = _run_registry_operation_until(
+                    terminal_intent,
+                    deadline_monotonic=terminal_deadline,
+                    helper_owner=helper_owner,
+                )
+                if terminal_result.get("status") != terminal_intent["status"]:
+                    raise WorkerError("terminal helper did not reconcile exact intent")
+                terminal_published = True
+            if helper_cleanup_error is not None:
+                raise WorkerError(
+                    "registry helper could not be reaped cleanly: "
+                    f"{type(helper_cleanup_error).__name__}: "
+                    f"{helper_cleanup_error}"
+                ) from helper_cleanup_error
+            if trainer_cleanup_error is not None:
+                raise WorkerError(
+                    "trainer could not be reaped cleanly; terminal state was "
+                    "not published: "
+                    f"{type(trainer_cleanup_error).__name__}: "
+                    f"{trainer_cleanup_error}"
+                ) from trainer_cleanup_error
+        finally:
             try:
-                current = registry.read(run_id)
-                if current["status"] == "running":
-                    registry.transition(
-                        run_id,
-                        "failed",
-                        pid=process.pid if process is not None else None,
-                        gpu=gpu,
-                        reason="worker owner exited before a terminal transition",
+                if helper_owner.pending is not None:
+                    cleanup_deadline = max(
+                        terminal_deadline or 0.0,
+                        time.monotonic() + 2.0,
+                    )
+                    helper_owner.close(
+                        deadline_monotonic=cleanup_deadline,
                     )
             finally:
                 for signum, handler in previous_handlers.items():
                     signal.signal(signum, handler)
-        finally:
-            try:
-                fcntl.flock(lock_descriptor, fcntl.LOCK_UN)
-            finally:
-                os.close(lock_descriptor)
+                try:
+                    fcntl.flock(lock_descriptor, fcntl.LOCK_UN)
+                finally:
+                    os.close(lock_descriptor)
 
 
 def _parser() -> argparse.ArgumentParser:
