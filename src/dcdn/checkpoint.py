@@ -361,6 +361,34 @@ def _read_sidecar(path: Path) -> str:
         raise CheckpointIntegrityError(str(exc)) from exc
 
 
+def verify_checkpoint_sidecar(path: str | Path) -> str:
+    """Stream and verify one checkpoint against its strict adjacent sidecar.
+
+    Checkpoints may legitimately exceed the generic protocol-artifact size cap.
+    This verifier never deserializes the payload and keeps memory usage bounded.
+    """
+
+    checkpoint_path = Path(path).absolute()
+    expected_digest = _read_sidecar(checkpoint_path)
+    try:
+        with checkpoint_path.open("rb") as checkpoint_file:
+            actual_digest = _sha256_open_file(checkpoint_file)
+    except FileNotFoundError as exc:
+        raise CheckpointIntegrityError(
+            f"checkpoint is unavailable: {checkpoint_path}"
+        ) from exc
+    except OSError as exc:
+        raise CheckpointIntegrityError(
+            f"checkpoint could not be read: {checkpoint_path}"
+        ) from exc
+    if actual_digest != expected_digest:
+        raise CheckpointIntegrityError(
+            "checkpoint SHA-256 mismatch: "
+            f"expected={expected_digest}, actual={actual_digest}"
+        )
+    return actual_digest
+
+
 def _load_verified_payload(
     path: Path, *, map_location: str | torch.device | Mapping[str, str] = "cpu"
 ) -> tuple[Mapping[str, Any], str]:

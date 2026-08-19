@@ -33,13 +33,17 @@ from dcdn.checkpoint import (
     CheckpointMetadata,
     _load_verified_payload,
     canonical_json_bytes,
+    verify_checkpoint_sidecar,
 )
 from dcdn.protocol import (
     load_verified_yaml_artifact,
     read_verified_artifact,
     verify_sha256_sidecar,
 )
-from dcdn.registry import RunRegistry
+from dcdn.registry import (
+    CHECKPOINT_SIZE_VERIFIER_FAILURE_REASON,
+    RunRegistry,
+)
 from dcdn.selection_artifact import (
     CAPACITY_CANDIDATE_ID,
     CAPACITY_LOW_RANK,
@@ -611,7 +615,7 @@ def _verify_completed_result(
     if (
         not isinstance(last_digest, str)
         or _SHA256_RE.fullmatch(last_digest) is None
-        or verify_sha256_sidecar(run_directory / "last.pt") != last_digest
+        or verify_checkpoint_sidecar(run_directory / "last.pt") != last_digest
     ):
         raise WorkerError("result last checkpoint is missing, stale, or corrupt")
     best_metric = training["best_validation_metric"]
@@ -628,7 +632,7 @@ def _verify_completed_result(
         or _SHA256_RE.fullmatch(best_digest) is None
         or not isinstance(best_filename, str)
         or _BEST_CHECKPOINT_RE.fullmatch(best_filename) is None
-        or verify_sha256_sidecar(run_directory / best_filename) != best_digest
+        or verify_checkpoint_sidecar(run_directory / best_filename) != best_digest
     ):
         raise WorkerError("result best generation is missing, stale, or corrupt")
     if is_capacity:
@@ -1512,6 +1516,144 @@ def _require_code_identity(project_root: Path, record: Mapping[str, Any]) -> Non
             )
 
 
+def reconcile_checkpoint_size_failure(
+    *,
+    project_root: Path,
+    registry_root: Path,
+    run_id: str,
+    gpu: int,
+    resolved_config: Path,
+) -> int:
+    """Re-verify one immutable result rejected only by the old 64 MiB gate."""
+
+    if project_root != PROJECT_ROOT:
+        raise WorkerError("project_root does not match this checkout")
+    if gpu not in (0, 1):
+        raise WorkerError("gpu must be physical index zero or one")
+    registry_root = _inside(registry_root, project_root, "registry_root")
+    resolved_config = _inside(resolved_config, project_root, "resolved_config")
+    registry = RunRegistry(registry_root)
+    record = registry.read(run_id)
+    if (
+        record.get("status") != "failed"
+        or record.get("scientific_result_eligible") is not None
+        or record.get("completion_or_failure_reason")
+        != CHECKPOINT_SIZE_VERIFIER_FAILURE_REASON
+        or record.get("execution_kind") != "scientific_tuning"
+        or record.get("gpu") != gpu
+    ):
+        raise WorkerError("run is not the known checkpoint-size verifier failure")
+    expected_config_path = resolved_config.relative_to(project_root).as_posix()
+    if record.get("resolved_config_path") != expected_config_path:
+        raise WorkerError("reconciliation resolved-config path mismatch")
+    recorded_pid = record.get("pid")
+    if not isinstance(recorded_pid, int) or recorded_pid <= 0:
+        raise WorkerError("failed record does not preserve the trainer PID")
+    try:
+        os.kill(recorded_pid, 0)
+    except ProcessLookupError:
+        pass
+    except PermissionError as exc:
+        raise WorkerError("failed trainer PID ownership cannot be verified") from exc
+    else:
+        raise WorkerError("failed trainer PID is still alive or was reused")
+
+    resolved_artifact = load_verified_yaml_artifact(resolved_config)
+    if resolved_artifact.digest != record.get("resolved_config_sha256"):
+        raise WorkerError("reconciliation resolved-config digest mismatch")
+    resolved = resolved_artifact.payload
+    if (
+        resolved.get("run_id") != run_id
+        or _validate_resolved_execution_contract(resolved) != "scientific_tuning"
+    ):
+        raise WorkerError("reconciliation resolved execution identity mismatch")
+
+    head = subprocess.run(
+        ["git", "rev-parse", "--verify", "HEAD"],
+        cwd=project_root,
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        check=False,
+    )
+    if head.returncode != 0:
+        raise WorkerError("reconciliation could not resolve verifier HEAD")
+    try:
+        verifier_commit = head.stdout.decode("ascii").strip()
+    except UnicodeDecodeError as exc:
+        raise WorkerError("reconciliation verifier HEAD is not ASCII") from exc
+    _require_code_identity(
+        project_root,
+        {
+            "code_commit": verifier_commit,
+            "code_diff_sha256": EMPTY_DIFF_SHA256,
+        },
+    )
+
+    result_digest, scientific_result_eligible = _verify_completed_result(
+        project_root=project_root,
+        resolved_config=resolved_config,
+        expected_resolved_digest=resolved_artifact.digest,
+        expected_resolved=resolved,
+        run_id=run_id,
+    )
+    if scientific_result_eligible is not True:
+        raise WorkerError("reconciliation result is not scientifically eligible")
+    run_directory = _inside(
+        _resolved_path(
+            resolved.get("run_directory"),
+            root=project_root,
+            field="resolved.run_directory",
+        ),
+        project_root,
+        "resolved.run_directory",
+    )
+    try:
+        last_size = (run_directory / "last.pt").stat().st_size
+    except OSError as exc:
+        raise WorkerError("reconciliation last checkpoint is unavailable") from exc
+    if last_size <= 64 * 1024 * 1024:
+        raise WorkerError("failed run does not exhibit the repaired size condition")
+
+    _require_code_identity(
+        project_root,
+        {
+            "code_commit": verifier_commit,
+            "code_diff_sha256": EMPTY_DIFF_SHA256,
+        },
+    )
+    failed_record_path = registry.records / f"{run_id}.json"
+    try:
+        failed_record_digest = hashlib.sha256(
+            failed_record_path.read_bytes()
+        ).hexdigest()
+    except OSError as exc:
+        raise WorkerError("failed registry record could not be hashed") from exc
+    reconciled = registry.reconcile_checkpoint_size_verifier_failure(
+        run_id,
+        expected_failed_record_sha256=failed_record_digest,
+        verifier_code_commit=verifier_commit,
+        verifier_code_diff_sha256=EMPTY_DIFF_SHA256,
+        result_sha256=result_digest,
+    )
+    if (
+        reconciled.get("status") != "completed"
+        or reconciled.get("scientific_result_eligible") is not True
+        or reconciled.get("terminal_reconciliation", {}).get("result_sha256")
+        != result_digest
+    ):
+        raise WorkerError("reconciled registry record failed exact reopen")
+    verified_again, eligible_again = _verify_completed_result(
+        project_root=project_root,
+        resolved_config=resolved_config,
+        expected_resolved_digest=resolved_artifact.digest,
+        expected_resolved=resolved,
+        run_id=run_id,
+    )
+    if verified_again != result_digest or eligible_again is not True:
+        raise WorkerError("post-reconciliation result verification drifted")
+    return 0
+
+
 def run_worker(
     *,
     project_root: Path,
@@ -1943,20 +2085,48 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--gpu", type=int, choices=(0, 1), required=True)
     parser.add_argument("--resolved", type=Path, required=True)
     parser.add_argument("--poll-seconds", type=float, default=5.0)
+    parser.add_argument(
+        "--reconcile-checkpoint-size-failure",
+        action="store_true",
+        help="re-verify and reconcile only the known legacy 64 MiB verifier failure",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    result = run_worker(
-        project_root=args.project_root.resolve(strict=True),
-        registry_root=args.registry_root.resolve(strict=True),
-        run_id=args.run_id,
-        gpu=args.gpu,
-        resolved_config=args.resolved.resolve(strict=True),
-        poll_seconds=args.poll_seconds,
+    project_root = args.project_root.resolve(strict=True)
+    registry_root = args.registry_root.resolve(strict=True)
+    resolved_config = args.resolved.resolve(strict=True)
+    if args.reconcile_checkpoint_size_failure:
+        result = reconcile_checkpoint_size_failure(
+            project_root=project_root,
+            registry_root=registry_root,
+            run_id=args.run_id,
+            gpu=args.gpu,
+            resolved_config=resolved_config,
+        )
+        mode = "checkpoint_size_failure_reconciliation"
+    else:
+        result = run_worker(
+            project_root=project_root,
+            registry_root=registry_root,
+            run_id=args.run_id,
+            gpu=args.gpu,
+            resolved_config=resolved_config,
+            poll_seconds=args.poll_seconds,
+        )
+        mode = "worker"
+    print(
+        json.dumps(
+            {
+                "ok": result == 0,
+                "run_id": args.run_id,
+                "gpu": args.gpu,
+                "mode": mode,
+            }
+        )
     )
-    print(json.dumps({"ok": result == 0, "run_id": args.run_id, "gpu": args.gpu}))
     return result
 
 

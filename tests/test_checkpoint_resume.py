@@ -20,6 +20,7 @@ from dcdn.checkpoint import (
     load_checkpoint,
     load_model_checkpoint_for_evaluation,
     save_checkpoint,
+    verify_checkpoint_sidecar,
 )
 from dcdn.reproducibility import seed_everything
 from dcdn.sampler import SamplerStateError, StatefulPermutationSampler
@@ -27,6 +28,34 @@ from dcdn.sampler import SamplerStateError, StatefulPermutationSampler
 DATASET_SIZE = 32
 BATCH_SIZE = 4
 SAMPLER_SEED = 919
+
+
+def _write_checkpoint_sidecar(path: Path) -> str:
+    with path.open("rb") as handle:
+        digest = hashlib.file_digest(handle, "sha256").hexdigest()
+    path.with_name(f"{path.name}.sha256").write_text(
+        f"{digest}  {path.name}\n",
+        encoding="ascii",
+    )
+    return digest
+
+
+def test_checkpoint_sidecar_verifier_streams_beyond_protocol_limit(
+    tmp_path: Path,
+) -> None:
+    checkpoint = tmp_path / "large.pt"
+    with checkpoint.open("wb") as handle:
+        handle.seek(64 * 1024 * 1024)
+        handle.write(b"checkpoint-tail")
+    digest = _write_checkpoint_sidecar(checkpoint)
+
+    assert verify_checkpoint_sidecar(checkpoint) == digest
+
+    with checkpoint.open("r+b") as handle:
+        handle.seek(-1, 2)
+        handle.write(b"X")
+    with pytest.raises(CheckpointIntegrityError, match="SHA-256 mismatch"):
+        verify_checkpoint_sidecar(checkpoint)
 
 
 def _synthetic_train_data() -> tuple[torch.Tensor, torch.Tensor]:

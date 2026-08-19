@@ -10,7 +10,7 @@ import sys
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
-from types import ModuleType
+from types import ModuleType, SimpleNamespace
 from typing import Any, Literal
 
 import pytest
@@ -47,6 +47,10 @@ from dcdn.raw import (
     RawContractError,
     RawFeatureBatch,
     RawSourceIdentity,
+)
+from dcdn.registry import (
+    CHECKPOINT_SIZE_VERIFIER_FAILURE_REASON,
+    RunRegistry,
 )
 from dcdn.sampler import StatefulPermutationSampler
 from dcdn.search_space import SearchSpaceLock
@@ -1342,6 +1346,20 @@ def _write_hashed_bytes(path: Path, data: bytes) -> str:
     return digest
 
 
+def _write_sparse_hashed_file(path: Path, size_bytes: int) -> str:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("wb") as handle:
+        handle.seek(size_bytes - 1)
+        handle.write(b"\0")
+    with path.open("rb") as handle:
+        digest = hashlib.file_digest(handle, "sha256").hexdigest()
+    path.with_name(f"{path.name}.sha256").write_text(
+        f"{digest}  {path.name}\n",
+        encoding="ascii",
+    )
+    return digest
+
+
 def test_immutable_result_pair_success_collision_and_second_link_cleanup(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -1568,6 +1586,7 @@ def _worker_receipt_fixture(
     *,
     execution_kind: str = "scientific_tuning",
     mutation: str | None = None,
+    oversize_last: bool = False,
 ) -> tuple[Any, Path, str, dict[str, Any], str]:
     train_model = _load_script("train_model")
     worker = _load_script("run_worker")
@@ -1579,7 +1598,11 @@ def _worker_receipt_fixture(
     protocol_path = root / "protocol.yaml"
     protocol_digest = _write_hashed_yaml(protocol_path, {"kind": "protocol"})
     run_directory = root / "run"
-    last_digest = _write_hashed_bytes(run_directory / "last.pt", b"last")
+    last_digest = (
+        _write_sparse_hashed_file(run_directory / "last.pt", 64 * 1024 * 1024 + 17)
+        if oversize_last
+        else _write_hashed_bytes(run_directory / "last.pt", b"last")
+    )
     best_filename = "best-step-000000000977-generation-0000.pt"
     best_digest = (
         _write_hashed_bytes(run_directory / best_filename, b"best")
@@ -1774,6 +1797,83 @@ def test_worker_accepts_complete_reopened_receipt(
     )
     assert len(result_digest) == 64
     assert eligibility is expected_eligibility
+
+
+def test_worker_reconciles_known_oversize_checkpoint_failure(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    worker, resolved_path, digest, resolved, run_id = _worker_receipt_fixture(
+        tmp_path,
+        execution_kind="scientific_tuning",
+        oversize_last=True,
+    )
+    monkeypatch.setattr(worker, "PROJECT_ROOT", tmp_path)
+    registry_root = tmp_path / "runs" / "registry"
+    registry = RunRegistry(registry_root)
+    execution_commit = "b" * 40
+    empty_diff = hashlib.sha256(b"").hexdigest()
+    registry.create_pending(
+        run_id=run_id,
+        execution_kind="scientific_tuning",
+        seed=42,
+        code_commit=execution_commit,
+        code_diff_sha256=empty_diff,
+        resolved_config_path=resolved_path.relative_to(tmp_path).as_posix(),
+        resolved_config_sha256=digest,
+        data_manifest_sha256="1" * 64,
+        features_sha256="2" * 64,
+        protocol_sha256=verify_sha256_sidecar(Path(resolved["protocol_path"])),
+        reproduction_command_path="runs/commands/reconcile.sh",
+        history_path="runs/reconcile/history.jsonl",
+        log_path="runs/reconcile/worker.log",
+    )
+    registry.ensure_running(run_id, pid=98765, gpu=0)
+    failed = registry.ensure_terminal(
+        run_id,
+        "failed",
+        pid=98765,
+        gpu=0,
+        reason=CHECKPOINT_SIZE_VERIFIER_FAILURE_REASON,
+    )
+
+    def missing_pid(_pid: int, _signal: int) -> None:
+        raise ProcessLookupError
+
+    verifier_commit = "c" * 40
+
+    def fake_git(command: list[str], **_kwargs: Any) -> SimpleNamespace:
+        if command[1:] == ["rev-parse", "--verify", "HEAD"]:
+            stdout = f"{verifier_commit}\n".encode("ascii")
+        elif command[1:4] == ["diff", "--binary", "HEAD"] or command[1:4] == [
+            "ls-files",
+            "--others",
+            "--exclude-standard",
+        ]:
+            stdout = b""
+        else:
+            raise AssertionError(f"unexpected Git command: {command}")
+        return SimpleNamespace(returncode=0, stdout=stdout, stderr=b"")
+
+    monkeypatch.setattr(worker.os, "kill", missing_pid)
+    monkeypatch.setattr(worker.subprocess, "run", fake_git)
+    assert (
+        worker.reconcile_checkpoint_size_failure(
+            project_root=tmp_path,
+            registry_root=registry_root,
+            run_id=run_id,
+            gpu=0,
+            resolved_config=resolved_path,
+        )
+        == 0
+    )
+    completed = registry.read(run_id)
+    assert completed["status"] == "completed"
+    assert completed["scientific_result_eligible"] is True
+    assert completed["terminal_reconciliation"]["prior_record"] == failed
+    assert completed["terminal_reconciliation"][
+        "result_sha256"
+    ] == verify_sha256_sidecar(Path(resolved["result_path"]))
 
 
 def test_worker_execution_kind_preflight_rejects_legacy_and_registry_drift(

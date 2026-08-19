@@ -8,7 +8,12 @@ from pathlib import Path
 
 import pytest
 
-from dcdn.registry import RegistryError, RegistryIOError, RunRegistry
+from dcdn.registry import (
+    CHECKPOINT_SIZE_VERIFIER_FAILURE_REASON,
+    RegistryError,
+    RegistryIOError,
+    RunRegistry,
+)
 from dcdn.registry_helper import execute_request
 
 DIGEST = "a" * 64
@@ -507,3 +512,54 @@ def test_partial_capacity_registry_binding_is_rejected(tmp_path: Path) -> None:
     fields["model_key"] = "dcnv2_capacity_matched_core"
     with pytest.raises(RegistryError, match="incomplete"):
         registry.create_pending(**fields)
+
+
+def test_checkpoint_size_verifier_reconciliation_preserves_failure_record(
+    tmp_path: Path,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    run_id = "checkpoint-size-reconciliation"
+    registry.create_pending(**pending_fields(run_id))
+    registry.ensure_running(run_id, pid=4567, gpu=1)
+    failed = registry.ensure_terminal(
+        run_id,
+        "failed",
+        pid=4567,
+        gpu=1,
+        reason=CHECKPOINT_SIZE_VERIFIER_FAILURE_REASON,
+    )
+    record_path = registry.records / f"{run_id}.json"
+    prior_digest = hashlib.sha256(record_path.read_bytes()).hexdigest()
+
+    with pytest.raises(RegistryError, match="digest drifted"):
+        registry.reconcile_checkpoint_size_verifier_failure(
+            run_id,
+            expected_failed_record_sha256="0" * 64,
+            verifier_code_commit="c" * 40,
+            verifier_code_diff_sha256=hashlib.sha256(b"").hexdigest(),
+            result_sha256="d" * 64,
+        )
+    assert registry.read(run_id)["status"] == "failed"
+
+    reconciled = registry.reconcile_checkpoint_size_verifier_failure(
+        run_id,
+        expected_failed_record_sha256=prior_digest,
+        verifier_code_commit="c" * 40,
+        verifier_code_diff_sha256=hashlib.sha256(b"").hexdigest(),
+        result_sha256="d" * 64,
+    )
+    evidence = reconciled["terminal_reconciliation"]
+    assert reconciled["status"] == "completed"
+    assert reconciled["scientific_result_eligible"] is True
+    assert evidence["prior_record_sha256"] == prior_digest
+    assert evidence["prior_record"] == failed
+    assert evidence["result_sha256"] == "d" * 64
+
+    repeated = registry.reconcile_checkpoint_size_verifier_failure(
+        run_id,
+        expected_failed_record_sha256=prior_digest,
+        verifier_code_commit="c" * 40,
+        verifier_code_diff_sha256=hashlib.sha256(b"").hexdigest(),
+        result_sha256="d" * 64,
+    )
+    assert repeated == reconciled

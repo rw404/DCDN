@@ -70,6 +70,11 @@ _ORDINARY_SELECTION_SHA256 = (
     "869cbcb7a227b274700cda142f23c59040497bfdfe4da101888e2cc63f39d67a"
 )
 _EMPTY_DIFF_SHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+CHECKPOINT_SIZE_VERIFIER_FAILURE_REASON = (
+    "trainer result verification failed: ProtocolError: artifact exceeds the "
+    "67108864-byte safety limit"
+)
+_CHECKPOINT_SIZE_RECONCILIATION_KIND = "checkpoint_sidecar_generic_limit_v1"
 
 
 class RegistryError(RuntimeError):
@@ -181,6 +186,64 @@ def validate_run_record(record: Mapping[str, Any]) -> None:
         "log_path",
     ):
         _validate_relative_path(record.get(name), name)
+
+    reconciliation = record.get("terminal_reconciliation")
+    if reconciliation is not None:
+        expected_keys = {
+            "schema_version",
+            "failure_kind",
+            "prior_record_sha256",
+            "prior_record",
+            "verifier_code_commit",
+            "verifier_code_diff_sha256",
+            "result_sha256",
+            "reconciled_at_utc",
+        }
+        if (
+            not isinstance(reconciliation, Mapping)
+            or set(reconciliation) != expected_keys
+        ):
+            raise RegistryError("terminal reconciliation schema is invalid")
+        prior = reconciliation["prior_record"]
+        if (
+            type(reconciliation["schema_version"]) is not int
+            or reconciliation["schema_version"] != 1
+            or reconciliation["failure_kind"] != _CHECKPOINT_SIZE_RECONCILIATION_KIND
+            or record["status"] != "completed"
+            or record["scientific_result_eligible"] is not True
+            or not isinstance(prior, Mapping)
+        ):
+            raise RegistryError("terminal reconciliation values are invalid")
+        if (
+            prior.get("terminal_reconciliation") is not None
+            or prior.get("run_id") != run_id
+            or prior.get("status") != "failed"
+            or prior.get("scientific_result_eligible") is not None
+            or prior.get("completion_or_failure_reason")
+            != CHECKPOINT_SIZE_VERIFIER_FAILURE_REASON
+            or prior.get("code_commit") != record.get("code_commit")
+            or prior.get("code_diff_sha256") != record.get("code_diff_sha256")
+            or prior.get("pid") != record.get("pid")
+            or prior.get("gpu") != record.get("gpu")
+        ):
+            raise RegistryError("terminal reconciliation prior record is invalid")
+        validate_run_record(prior)
+        _validate_digest(
+            reconciliation["prior_record_sha256"],
+            "terminal_reconciliation.prior_record_sha256",
+        )
+        _validate_digest(
+            reconciliation["result_sha256"],
+            "terminal_reconciliation.result_sha256",
+        )
+        if (
+            not isinstance(reconciliation["verifier_code_commit"], str)
+            or COMMIT_RE.fullmatch(reconciliation["verifier_code_commit"]) is None
+            or reconciliation["verifier_code_diff_sha256"] != _EMPTY_DIFF_SHA256
+            or not isinstance(reconciliation["reconciled_at_utc"], str)
+            or not reconciliation["reconciled_at_utc"].endswith("Z")
+        ):
+            raise RegistryError("terminal reconciliation verifier identity is invalid")
 
     present_capacity_fields = set(record) & _CAPACITY_BINDING_FIELDS
     if present_capacity_fields:
@@ -559,6 +622,89 @@ class RunRegistry:
             current["completion_or_failure_reason"] = reason
             if status == "completed":
                 current["scientific_result_eligible"] = scientific_result_eligible
+            self._write(current, durability="full")
+        return deepcopy(current)
+
+    def reconcile_checkpoint_size_verifier_failure(
+        self,
+        run_id: str,
+        *,
+        expected_failed_record_sha256: str,
+        verifier_code_commit: str,
+        verifier_code_diff_sha256: str,
+        result_sha256: str,
+    ) -> Mapping[str, Any]:
+        """Repair only the known post-result checkpoint-size verifier defect."""
+
+        _validate_digest(
+            expected_failed_record_sha256,
+            "expected_failed_record_sha256",
+        )
+        _validate_digest(result_sha256, "result_sha256")
+        if (
+            not isinstance(verifier_code_commit, str)
+            or COMMIT_RE.fullmatch(verifier_code_commit) is None
+            or verifier_code_diff_sha256 != _EMPTY_DIFF_SHA256
+        ):
+            raise RegistryError("reconciliation verifier code identity is invalid")
+        with self._lock(run_id):
+            target = self._record_path(run_id)
+            previous_bytes = self._read_bytes(
+                target,
+                stage="reconciliation_record_read",
+            )
+            previous_digest = hashlib.sha256(previous_bytes).hexdigest()
+            current = dict(self.read(run_id))
+            existing = current.get("terminal_reconciliation")
+            if current["status"] == "completed":
+                if (
+                    isinstance(existing, Mapping)
+                    and existing.get("prior_record_sha256")
+                    == expected_failed_record_sha256
+                    and existing.get("verifier_code_commit") == verifier_code_commit
+                    and existing.get("verifier_code_diff_sha256")
+                    == verifier_code_diff_sha256
+                    and existing.get("result_sha256") == result_sha256
+                ):
+                    self._sync_directory(self.records)
+                    return deepcopy(self.read(run_id))
+                raise RegistryError("completed record has different reconciliation")
+            if current["status"] != "failed":
+                raise RegistryError("only a failed record can be reconciled")
+            if previous_digest != expected_failed_record_sha256:
+                raise RegistryError(
+                    "failed record digest drifted before reconciliation"
+                )
+            if (
+                current.get("completion_or_failure_reason")
+                != CHECKPOINT_SIZE_VERIFIER_FAILURE_REASON
+                or current.get("execution_kind") != "scientific_tuning"
+                or current.get("scientific_result_eligible") is not None
+            ):
+                raise RegistryError("failed record is ineligible for reconciliation")
+
+            prior_record = deepcopy(current)
+            now = _utc_now()
+            current["status"] = "completed"
+            current["scientific_result_eligible"] = True
+            current["updated_at_utc"] = now
+            current["finished_at_utc"] = now
+            current["heartbeat_utc"] = None
+            current["completion_or_failure_reason"] = (
+                "trainer result re-verified after checkpoint-size verifier correction; "
+                f"prior_record_sha256={previous_digest}; "
+                f"result_sha256={result_sha256}"
+            )
+            current["terminal_reconciliation"] = {
+                "schema_version": 1,
+                "failure_kind": _CHECKPOINT_SIZE_RECONCILIATION_KIND,
+                "prior_record_sha256": previous_digest,
+                "prior_record": prior_record,
+                "verifier_code_commit": verifier_code_commit,
+                "verifier_code_diff_sha256": verifier_code_diff_sha256,
+                "result_sha256": result_sha256,
+                "reconciled_at_utc": now,
+            }
             self._write(current, durability="full")
         return deepcopy(current)
 

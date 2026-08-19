@@ -359,6 +359,17 @@ the worker-verified boolean
 implementation smoke can transition to completed only with `false` and an
 explicit `NON-SCIENTIFIC implementation smoke` reason.
 
+Checkpoint integrity is verified by a checkpoint-specific streaming SHA-256
+reader, so legitimate optimizer checkpoints are not subject to the generic
+64 MiB JSON/YAML artifact cap. The generic cap remains unchanged. A historical
+run rejected only by that old cap may be repaired without trainer execution by
+passing `--reconcile-checkpoint-size-failure` to the same worker command. This
+path requires the exact legacy failure reason, a dead recorded trainer PID, an
+oversize `last.pt`, a clean committed verifier checkout, and two successful
+full result/checkpoint reopen passes. The completed record embeds its entire
+prior failed record, prior record SHA-256, verifier commit/empty diff, result
+SHA-256, and reconciliation UTC; no metric or checkpoint bytes are rewritten.
+
 ## Verification scope
 
 Development checks run only in a fresh `/tmp` repository snapshot. The
