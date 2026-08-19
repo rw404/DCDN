@@ -38,6 +38,7 @@ from dcdn.models import DCNv2CapacityCoreConfig
 from dcdn.protocol import (
     ProtocolGate,
     load_verified_yaml,
+    load_verified_yaml_artifact,
     read_verified_artifact,
     verify_sha256_sidecar,
 )
@@ -426,6 +427,190 @@ def _load_exact_views_manifest(
     return views
 
 
+def _strict_json_mapping(data: bytes, field: str) -> Mapping[str, Any]:
+    def reject_constant(value: str) -> None:
+        raise ValueError(f"non-finite JSON constant {value!r}")
+
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if not isinstance(key, str) or key in result:
+                raise ValueError(f"duplicate or invalid JSON key: {key!r}")
+            result[key] = value
+        return result
+
+    try:
+        payload = json.loads(
+            data.decode("utf-8"),
+            object_pairs_hook=unique_object,
+            parse_constant=reject_constant,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        raise TrainingContractError(f"{field} is not strict finite JSON") from exc
+    if not isinstance(payload, Mapping):
+        raise TrainingContractError(f"{field} root must be a mapping")
+    return payload
+
+
+def _require_sha256(value: Any, field: str) -> str:
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(character not in "0123456789abcdef" for character in value)
+    ):
+        raise TrainingContractError(f"{field} must be a lowercase SHA-256")
+    return value
+
+
+def _require_final_seed_selection(
+    *,
+    root: Path,
+    training: TrainingConfig,
+    model_payload: Mapping[str, Any],
+    capacity_binding_path: Path | None,
+    capacity_binding: CapacityBindingEvidence | None,
+) -> None:
+    if training.phase == "tuning":
+        if (
+            training.selection_receipt_path is not None
+            or training.selection_receipt_sha256 is not None
+        ):
+            raise TrainingContractError(
+                "tuning must not carry a final selection receipt"
+            )
+        return
+    if training.seed not in {43, 44}:
+        raise TrainingContractError(
+            "training CLI final phase is reserved for validation-only seeds 43 and 44"
+        )
+    if (
+        training.selection_receipt_path is None
+        or training.selection_receipt_sha256 is None
+    ):
+        raise TrainingContractError(
+            "final-seed validation requires a selection receipt"
+        )
+    receipt_path = _path(
+        training.selection_receipt_path,
+        root=root,
+        field="training.selection_receipt_path",
+        inside=True,
+    )
+    receipt = read_verified_artifact(receipt_path)
+    if receipt.digest != training.selection_receipt_sha256:
+        raise TrainingContractError("selection receipt digest mismatch")
+
+    if training.model_key == "dcnv2_capacity_matched_core":
+        if (
+            capacity_binding_path is None
+            or capacity_binding is None
+            or receipt_path != capacity_binding_path
+            or receipt.digest != capacity_binding.sha256
+        ):
+            raise TrainingContractError(
+                "capacity final seed is not bound to its compact authorization"
+            )
+        return
+
+    payload = _strict_json_mapping(receipt.data, "selection receipt")
+    if (
+        payload.get("artifact_role") != "per_model_validation_only_selection_evidence"
+        or payload.get("dataset_id") != training.dataset_id
+        or payload.get("feature_regime") != training.feature_regime
+    ):
+        raise TrainingContractError("selection receipt identity mismatch")
+    selected = _mapping(payload.get("selected"), "selection receipt selected")
+    firewall = _mapping(payload.get("test_firewall"), "selection receipt test_firewall")
+    required_firewall = {
+        "protocol_test_unlocked": False,
+        "protocol_test_path_available": False,
+    }
+    for name, expected in required_firewall.items():
+        if firewall.get(name) is not expected:
+            raise TrainingContractError("selection receipt test firewall is open")
+    for name in (
+        "selected_on_validation_only",
+        "test_data_accessed",
+        "test_metrics_consulted",
+    ):
+        expected = name == "selected_on_validation_only"
+        if firewall.get(name) is not expected:
+            raise TrainingContractError(
+                f"selection receipt firewall field {name} is invalid"
+            )
+    if (
+        selected.get("candidate_id") != training.candidate_id
+        or type(selected.get("learning_rate")) is not float
+        or selected["learning_rate"] != training.learning_rate
+    ):
+        raise TrainingContractError("final seed differs from the selected candidate")
+
+    selected_config_path = _path(
+        selected.get("resolved_config_path"),
+        root=root,
+        field="selection resolved_config_path",
+        inside=True,
+    )
+    selected_config_sha256 = _require_sha256(
+        selected.get("resolved_config_sha256"),
+        "selection resolved_config_sha256",
+    )
+    selected_config = load_verified_yaml_artifact(selected_config_path)
+    if selected_config.digest != selected_config_sha256:
+        raise TrainingContractError("selected resolved config digest mismatch")
+    selected_training = _mapping(
+        selected_config.payload.get("training"),
+        "selected resolved config training",
+    )
+    selected_model = _mapping(
+        selected_config.payload.get("model"),
+        "selected resolved config model",
+    )
+    if (
+        selected_training.get("phase") != "tuning"
+        or selected_training.get("seed") != 42
+        or selected_training.get("dataset_id") != training.dataset_id
+        or selected_training.get("feature_regime") != training.feature_regime
+        or selected_training.get("model_key") != training.model_key
+        or selected_training.get("candidate_id") != training.candidate_id
+        or selected_training.get("learning_rate") != training.learning_rate
+        or selected_training.get("resolved_model_config_sha256")
+        != training.resolved_model_config_sha256
+        or selected_model.get("interaction_config")
+        != model_payload.get("interaction_config")
+        or selected_model.get("head_config") != model_payload.get("head_config")
+    ):
+        raise TrainingContractError(
+            "final seed model/config differs from validation-only selection"
+        )
+
+    for path_name, digest_name in (
+        ("result_path", "result_sha256"),
+        ("best_checkpoint_path", "best_checkpoint_sha256"),
+    ):
+        evidence_path = _path(
+            selected.get(path_name),
+            root=root,
+            field=f"selection {path_name}",
+            inside=True,
+        )
+        expected_digest = _require_sha256(
+            selected.get(digest_name),
+            f"selection {digest_name}",
+        )
+        actual_digest = (
+            read_verified_artifact(evidence_path).digest
+            if path_name == "result_path"
+            else verify_sha256_sidecar(evidence_path)
+        )
+        if actual_digest != expected_digest:
+            raise TrainingContractError(f"selection {path_name} digest mismatch")
+
+    metric = selected.get("validation_metric")
+    if type(metric) is not float or not math.isfinite(metric) or metric < 0.0:
+        raise TrainingContractError("selection validation_metric is invalid")
+
+
 def _run(resolved_path: Path) -> int:
     payload = load_verified_yaml(resolved_path)
     base_keys = {
@@ -552,9 +737,10 @@ def _run(resolved_path: Path) -> int:
         training.dataset_id != _DATASET_ID
         or training.feature_regime != gate.feature_regime
         or training.feature_regime not in {C_PLUS_P, C_PLUS_P_PLUS_E}
-        or training.phase != "tuning"
+        or (training.phase, training.seed)
+        not in {("tuning", 42), ("final", 43), ("final", 44)}
     ):
-        raise TrainingContractError("CLI permits only active premetric VK tuning")
+        raise TrainingContractError("CLI permits only active premetric VK validation")
     if training.feature_regime == C_PLUS_P_PLUS_E and (
         training.model_key != "dcnv2_full_rank"
         or gate.required_model_keys != ("dcnv2_full_rank",)
@@ -644,6 +830,13 @@ def _run(resolved_path: Path) -> int:
         ).hexdigest()
     if model_digest != training.resolved_model_config_sha256:
         raise TrainingContractError("resolved model digest mismatch")
+    _require_final_seed_selection(
+        root=root,
+        training=training,
+        model_payload=model_payload,
+        capacity_binding_path=capacity_binding_path,
+        capacity_binding=capacity_binding,
+    )
     interaction, head, init_seed = resolved_model_components(model_payload)
     if is_capacity and (
         not isinstance(interaction, DCNv2CapacityCoreConfig)

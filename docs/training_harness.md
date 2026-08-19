@@ -215,13 +215,26 @@ the ordinary selection-receipt SHA, the compact authorization SHA, and the
 premetric Protocol SHA. The code path is fail-closed until the compact
 artifact is materialized and audited; this implementation change does not
 itself create that production artifact or authorize a launch.
+Final-seed validation training for seeds 43 and 44 still uses the active
+premetric protocol and never opens test. Its immutable training config carries
+the selected validation receipt path and SHA. Before model or source creation,
+the trainer reopens that receipt, the selected seed-42 resolved config/result,
+and the selected best checkpoint; candidate, learning rate, architecture,
+feature regime, model digest, test-firewall attestations, and all sidecars must
+match exactly. Null receipt fields are omitted from legacy tuning checkpoints.
+
+Model-only final restore accepts an expected checkpoint SHA and rejects a
+digest mismatch before `load_state_dict`, so wrong-weight lineage is non-mutating.
 
 Actual test execution is deliberately unavailable in this harness and CLI.
 Loss-only test evaluation and test latency fail before reserving a claim or
-calling a test factory. The final one-pass metric/uncertainty runner remains
-blocked until the central Protocol claim schema binds the exact
-validation-selected best checkpoint SHA and durable selection receipt. This is
-an explicit remaining protocol blocker, not permission to open test data.
+calling a test factory. The central claim schema now binds the exact selection
+receipt, seed-specific run config and validation result, selected metric, and
+best-checkpoint SHA. The remaining blocker is the final one-pass
+metric/uncertainty bundle runner: it must reserve that exact claim, prevalidate
+checkpoint metadata and SHA, mark the claim opened immediately before source
+construction, read test exactly once, write the durable bundle, and mark the
+claim completed. Until that runner exists and passes audit, test stays locked.
 
 ## Numerical monitoring and latency
 

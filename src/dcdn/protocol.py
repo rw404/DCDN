@@ -30,9 +30,9 @@ SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 ALLOWED_SPLITS = frozenset({"train", "validation", "test"})
 FINAL_SEEDS = (42, 43, 44)
 PROTOCOL_SCHEMA_VERSION = 3
-SELECTED_CONFIGS_SCHEMA_VERSION = 1
+SELECTED_CONFIGS_SCHEMA_VERSION = 2
 ACTIVE_PROTOCOL_SCHEMA_VERSION = 1
-TEST_CLAIMS_SCHEMA_VERSION = 2
+TEST_CLAIMS_SCHEMA_VERSION = 3
 
 BASE_HASH_KEYS = frozenset(
     {
@@ -189,6 +189,37 @@ def _require_nonempty_string(value: Any, field: str) -> str:
     }:
         raise ProtocolError(f"{field} must be resolved")
     return value
+
+
+def _require_finite_number(value: Any, field: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        raise ProtocolError(f"{field} must be a finite number")
+    normalized = float(value)
+    if not math.isfinite(normalized):
+        raise ProtocolError(f"{field} must be a finite number")
+    return normalized
+
+
+def _require_repo_relative_path(
+    value: Any,
+    field: str,
+    *,
+    prefix: str,
+    suffix: str,
+) -> str:
+    text = _require_nonempty_string(value, field)
+    path = Path(text)
+    if (
+        path.is_absolute()
+        or path.as_posix() != text
+        or any(part in {"", ".", ".."} for part in path.parts)
+        or not text.startswith(prefix)
+        or not text.endswith(suffix)
+    ):
+        raise ProtocolError(
+            f"{field} must be a canonical repository-relative {prefix}*{suffix} path"
+        )
+    return text
 
 
 def _require_positive_int(value: Any, field: str) -> int:
@@ -805,11 +836,90 @@ SELECTED_MODEL_KEYS = frozenset(
     {
         "candidate_id",
         "resolved_config_sha256",
+        "selection_receipt_path",
+        "selection_receipt_sha256",
         "selected_on_validation_only",
         "test_data_accessed",
         "test_metrics_consulted",
+        "final_seed_lineage",
     }
 )
+FINAL_SEED_LINEAGE_KEYS = frozenset(
+    {
+        "resolved_run_config_path",
+        "resolved_run_config_sha256",
+        "validation_result_path",
+        "validation_result_sha256",
+        "best_checkpoint_path",
+        "best_checkpoint_sha256",
+        "selected_validation_metric",
+    }
+)
+
+
+def _validate_final_seed_lineage(
+    payload: Any,
+    *,
+    model_key: str,
+) -> None:
+    field = f"selected model {model_key}.final_seed_lineage"
+    if not isinstance(payload, Mapping):
+        raise ProtocolError(f"{field} must be a mapping")
+    expected_seed_keys = {str(seed) for seed in FINAL_SEEDS}
+    if set(payload) != expected_seed_keys:
+        raise ProtocolError(f"{field} must contain exactly seeds {FINAL_SEEDS}")
+
+    seen_config_paths: set[str] = set()
+    seen_result_paths: set[str] = set()
+    seen_checkpoint_paths: set[str] = set()
+    for seed in FINAL_SEEDS:
+        seed_key = str(seed)
+        item = payload[seed_key]
+        item_field = f"{field}.{seed_key}"
+        if not isinstance(item, Mapping):
+            raise ProtocolError(f"{item_field} must be a mapping")
+        _require_exact_keys(item, FINAL_SEED_LINEAGE_KEYS, item_field)
+        config_path = _require_repo_relative_path(
+            item.get("resolved_run_config_path"),
+            f"{item_field}.resolved_run_config_path",
+            prefix="configs/runs/",
+            suffix=".yaml",
+        )
+        result_path = _require_repo_relative_path(
+            item.get("validation_result_path"),
+            f"{item_field}.validation_result_path",
+            prefix="results/",
+            suffix=".json",
+        )
+        checkpoint_path = _require_repo_relative_path(
+            item.get("best_checkpoint_path"),
+            f"{item_field}.best_checkpoint_path",
+            prefix="runs/",
+            suffix=".pt",
+        )
+        for name in (
+            "resolved_run_config_sha256",
+            "validation_result_sha256",
+            "best_checkpoint_sha256",
+        ):
+            _require_sha256(item.get(name), f"{item_field}.{name}")
+        metric = _require_finite_number(
+            item.get("selected_validation_metric"),
+            f"{item_field}.selected_validation_metric",
+        )
+        if metric < 0:
+            raise ProtocolError(
+                f"{item_field}.selected_validation_metric must be non-negative"
+            )
+        seen_config_paths.add(config_path)
+        seen_result_paths.add(result_path)
+        seen_checkpoint_paths.add(checkpoint_path)
+    if (
+        len(seen_config_paths) != len(FINAL_SEEDS)
+        or len(seen_result_paths) != len(FINAL_SEEDS)
+        or len(seen_checkpoint_paths) != len(FINAL_SEEDS)
+    ):
+        raise ProtocolError(f"{field} paths must be unique across final seeds")
 
 
 def _validate_selected_configs(payload: Mapping[str, Any]) -> None:
@@ -819,7 +929,10 @@ def _validate_selected_configs(payload: Mapping[str, Any]) -> None:
         type(schema_version) is not int
         or schema_version != SELECTED_CONFIGS_SCHEMA_VERSION
     ):
-        raise ProtocolError("selected_configs.lock schema_version must equal 1")
+        raise ProtocolError(
+            f"selected_configs.lock schema_version must equal "
+            f"{SELECTED_CONFIGS_SCHEMA_VERSION}"
+        )
     if payload.get("artifact_role") != "final_selected_configs_lock":
         raise ProtocolError("selected_configs.lock artifact_role is invalid")
     _require_nonempty_string(payload.get("dataset_id"), "selected dataset_id")
@@ -860,6 +973,21 @@ def _validate_selected_configs(payload: Mapping[str, Any]) -> None:
             selected.get("resolved_config_sha256"),
             f"selected model {model_key}.resolved_config_sha256",
         )
+        receipt_path = _require_repo_relative_path(
+            selected.get("selection_receipt_path"),
+            f"selected model {model_key}.selection_receipt_path",
+            prefix="",
+            suffix=".json",
+        )
+        if not receipt_path.startswith(("results/tuning/", "artifacts/selection/")):
+            raise ProtocolError(
+                f"selected model {model_key}.selection_receipt_path is outside "
+                "the allowed evidence roots"
+            )
+        _require_sha256(
+            selected.get("selection_receipt_sha256"),
+            f"selected model {model_key}.selection_receipt_sha256",
+        )
         if selected.get("selected_on_validation_only") is not True:
             raise ProtocolError(f"selected model {model_key} must be validation-only")
         if selected.get("test_data_accessed") is not False:
@@ -870,6 +998,10 @@ def _validate_selected_configs(payload: Mapping[str, Any]) -> None:
             raise ProtocolError(
                 f"selected model {model_key} must attest no test metrics"
             )
+        _validate_final_seed_lineage(
+            selected.get("final_seed_lineage"),
+            model_key=model_key,
+        )
 
 
 @dataclass(frozen=True)
@@ -938,6 +1070,36 @@ class SelectedConfigsLock:
             raise ProtocolError(
                 "resolved_config_sha256 does not match selected_configs.lock"
             )
+
+    def require_final_seed(
+        self,
+        *,
+        model_key: str,
+        seed: int,
+        resolved_run_config_sha256: str,
+        checkpoint_sha256: str,
+    ) -> Mapping[str, Any]:
+        if type(seed) is not int or seed not in FINAL_SEEDS:
+            raise ProtocolError(f"final seed must be one of {FINAL_SEEDS}")
+        if model_key not in self.payload["selected_models"]:
+            raise ProtocolError(f"model is not in selected_configs.lock: {model_key}")
+        lineage = self.payload["selected_models"][model_key]["final_seed_lineage"][
+            str(seed)
+        ]
+        _require_sha256(
+            resolved_run_config_sha256,
+            "resolved_run_config_sha256",
+        )
+        _require_sha256(checkpoint_sha256, "checkpoint_sha256")
+        if lineage["resolved_run_config_sha256"] != resolved_run_config_sha256:
+            raise ProtocolError(
+                "resolved_run_config_sha256 does not match selected_configs.lock"
+            )
+        if lineage["best_checkpoint_sha256"] != checkpoint_sha256:
+            raise ProtocolError(
+                "checkpoint_sha256 does not match selected_configs.lock"
+            )
+        return lineage
 
 
 ACTIVE_STATE_KEYS = frozenset(
@@ -1140,8 +1302,13 @@ CLAIM_KEYS = frozenset(
         "parent_premetric_protocol_sha256",
         "selected_configs_sha256",
         "checkpoint_protocol_sha256",
+        "selection_receipt_sha256",
         "candidate_id",
         "resolved_config_sha256",
+        "resolved_run_config_sha256",
+        "validation_result_sha256",
+        "checkpoint_sha256",
+        "selected_validation_metric",
         "runtime_identity",
         "result_receipt_sha256",
         "result_row_count",
@@ -1233,9 +1400,21 @@ def _validate_claim_registry(payload: Mapping[str, Any]) -> None:
             "parent_premetric_protocol_sha256",
             "selected_configs_sha256",
             "checkpoint_protocol_sha256",
+            "selection_receipt_sha256",
             "resolved_config_sha256",
+            "resolved_run_config_sha256",
+            "validation_result_sha256",
+            "checkpoint_sha256",
         ):
             _require_sha256(claim.get(name), f"{field}.{name}")
+        metric = _require_finite_number(
+            claim.get("selected_validation_metric"),
+            f"{field}.selected_validation_metric",
+        )
+        if metric < 0:
+            raise ProtocolError(
+                f"{field}.selected_validation_metric must be non-negative"
+            )
         if (
             claim["parent_premetric_protocol_sha256"]
             != claim["checkpoint_protocol_sha256"]
@@ -1286,8 +1465,13 @@ class TestEvaluationClaim:
     parent_premetric_protocol_sha256: str
     selected_configs_sha256: str
     checkpoint_protocol_sha256: str
+    selection_receipt_sha256: str
     candidate_id: str
     resolved_config_sha256: str
+    resolved_run_config_sha256: str
+    validation_result_sha256: str
+    checkpoint_sha256: str
+    selected_validation_metric: float
     runtime_identity: RuntimeIdentity
     result_receipt_sha256: str | None
     result_row_count: int | None
@@ -1351,7 +1535,9 @@ class TestClaimRegistry:
         checkpoint_protocol_sha256: str,
         candidate_id: str,
         resolved_config_sha256: str,
-    ) -> SelectedConfigsLock:
+        resolved_run_config_sha256: str,
+        checkpoint_sha256: str,
+    ) -> tuple[SelectedConfigsLock, Mapping[str, Any]]:
         if not gate.test_unlocked:
             raise ProtocolError("test lifecycle requires a final protocol")
         active = gate.require_active()
@@ -1364,6 +1550,11 @@ class TestClaimRegistry:
         _require_sha256(checkpoint_protocol_sha256, "checkpoint_protocol_sha256")
         _require_nonempty_string(candidate_id, "test claim candidate_id")
         _require_sha256(resolved_config_sha256, "test claim resolved_config_sha256")
+        _require_sha256(
+            resolved_run_config_sha256,
+            "test claim resolved_run_config_sha256",
+        )
+        _require_sha256(checkpoint_sha256, "test claim checkpoint_sha256")
 
         selected = SelectedConfigsLock.load(selected_configs_path)
         selected.require_for_protocol(gate)
@@ -1372,17 +1563,24 @@ class TestClaimRegistry:
             candidate_id=candidate_id,
             resolved_config_sha256=resolved_config_sha256,
         )
+        lineage = selected.require_final_seed(
+            model_key=model_key,
+            seed=seed,
+            resolved_run_config_sha256=resolved_run_config_sha256,
+            checkpoint_sha256=checkpoint_sha256,
+        )
         if checkpoint_protocol_sha256 != gate.parent_premetric_digest:
             raise ProtocolError(
                 "test checkpoint must remain bound to the parent premetric protocol"
             )
-        return selected
+        return selected, lineage
 
     def _binding_record(
         self,
         *,
         gate: ProtocolGate,
         selected: SelectedConfigsLock,
+        lineage: Mapping[str, Any],
         runtime_identity: RuntimeIdentity,
         model_key: str,
         seed: int,
@@ -1393,6 +1591,7 @@ class TestClaimRegistry:
         parent_digest = gate.parent_premetric_digest
         if parent_digest is None:
             raise ProtocolError("final protocol is missing its parent digest")
+        selected_model = selected.payload["selected_models"][model_key]
         return {
             "model_key": model_key,
             "seed": seed,
@@ -1400,8 +1599,13 @@ class TestClaimRegistry:
             "parent_premetric_protocol_sha256": parent_digest,
             "selected_configs_sha256": selected.digest,
             "checkpoint_protocol_sha256": checkpoint_protocol_sha256,
+            "selection_receipt_sha256": selected_model["selection_receipt_sha256"],
             "candidate_id": candidate_id,
             "resolved_config_sha256": resolved_config_sha256,
+            "resolved_run_config_sha256": lineage["resolved_run_config_sha256"],
+            "validation_result_sha256": lineage["validation_result_sha256"],
+            "checkpoint_sha256": lineage["best_checkpoint_sha256"],
+            "selected_validation_metric": float(lineage["selected_validation_metric"]),
             "runtime_identity": _runtime_identity_payload(runtime_identity),
         }
 
@@ -1461,8 +1665,13 @@ class TestClaimRegistry:
             parent_premetric_protocol_sha256=record["parent_premetric_protocol_sha256"],
             selected_configs_sha256=record["selected_configs_sha256"],
             checkpoint_protocol_sha256=record["checkpoint_protocol_sha256"],
+            selection_receipt_sha256=record["selection_receipt_sha256"],
             candidate_id=record["candidate_id"],
             resolved_config_sha256=record["resolved_config_sha256"],
+            resolved_run_config_sha256=record["resolved_run_config_sha256"],
+            validation_result_sha256=record["validation_result_sha256"],
+            checkpoint_sha256=record["checkpoint_sha256"],
+            selected_validation_metric=float(record["selected_validation_metric"]),
             runtime_identity=identity,
             result_receipt_sha256=record["result_receipt_sha256"],
             result_row_count=record["result_row_count"],
@@ -1491,10 +1700,12 @@ class TestClaimRegistry:
         checkpoint_protocol_sha256: str,
         candidate_id: str,
         resolved_config_sha256: str,
+        resolved_run_config_sha256: str,
+        checkpoint_sha256: str,
     ) -> TestEvaluationClaim:
         """Reserve or recover the same still-reserved final test cell."""
 
-        selected = self._require_bindings(
+        selected, lineage = self._require_bindings(
             gate=gate,
             selected_configs_path=selected_configs_path,
             runtime_identity=runtime_identity,
@@ -1503,10 +1714,13 @@ class TestClaimRegistry:
             checkpoint_protocol_sha256=checkpoint_protocol_sha256,
             candidate_id=candidate_id,
             resolved_config_sha256=resolved_config_sha256,
+            resolved_run_config_sha256=resolved_run_config_sha256,
+            checkpoint_sha256=checkpoint_sha256,
         )
         binding = self._binding_record(
             gate=gate,
             selected=selected,
+            lineage=lineage,
             runtime_identity=runtime_identity,
             model_key=model_key,
             seed=seed,
@@ -1573,7 +1787,7 @@ class TestClaimRegistry:
             raise ProtocolError("transition requires a TestEvaluationClaim")
         if claim.registry_path != self.path:
             raise ProtocolError("claim is bound to a different central registry")
-        selected = self._require_bindings(
+        selected, lineage = self._require_bindings(
             gate=gate,
             selected_configs_path=selected_configs_path,
             runtime_identity=runtime_identity,
@@ -1582,10 +1796,13 @@ class TestClaimRegistry:
             checkpoint_protocol_sha256=claim.checkpoint_protocol_sha256,
             candidate_id=claim.candidate_id,
             resolved_config_sha256=claim.resolved_config_sha256,
+            resolved_run_config_sha256=claim.resolved_run_config_sha256,
+            checkpoint_sha256=claim.checkpoint_sha256,
         )
         expected = self._binding_record(
             gate=gate,
             selected=selected,
+            lineage=lineage,
             runtime_identity=runtime_identity,
             model_key=claim.model_key,
             seed=claim.seed,
@@ -1602,8 +1819,13 @@ class TestClaimRegistry:
             ),
             "selected_configs_sha256": claim.selected_configs_sha256,
             "checkpoint_protocol_sha256": claim.checkpoint_protocol_sha256,
+            "selection_receipt_sha256": claim.selection_receipt_sha256,
             "candidate_id": claim.candidate_id,
             "resolved_config_sha256": claim.resolved_config_sha256,
+            "resolved_run_config_sha256": claim.resolved_run_config_sha256,
+            "validation_result_sha256": claim.validation_result_sha256,
+            "checkpoint_sha256": claim.checkpoint_sha256,
+            "selected_validation_metric": claim.selected_validation_metric,
             "runtime_identity": _runtime_identity_payload(claim.runtime_identity),
         }
         for name in CLAIM_BINDING_KEYS:
@@ -1850,6 +2072,8 @@ class ProtocolGate:
         model_key: str | None = None,
         candidate_id: str | None = None,
         resolved_config_sha256: str | None = None,
+        resolved_run_config_sha256: str | None = None,
+        checkpoint_sha256: str | None = None,
         seed: int | None = None,
         checkpoint_protocol_sha256: str | None = None,
     ) -> TestEvaluationClaim | None:
@@ -1875,6 +2099,8 @@ class ProtocolGate:
                     model_key,
                     candidate_id,
                     resolved_config_sha256,
+                    resolved_run_config_sha256,
+                    checkpoint_sha256,
                     seed,
                     checkpoint_protocol_sha256,
                 )
@@ -1889,6 +2115,8 @@ class ProtocolGate:
             "model_key": model_key,
             "candidate_id": candidate_id,
             "resolved_config_sha256": resolved_config_sha256,
+            "resolved_run_config_sha256": resolved_run_config_sha256,
+            "checkpoint_sha256": checkpoint_sha256,
             "seed": seed,
             "checkpoint_protocol_sha256": checkpoint_protocol_sha256,
         }
@@ -1901,6 +2129,8 @@ class ProtocolGate:
         assert model_key is not None
         assert candidate_id is not None
         assert resolved_config_sha256 is not None
+        assert resolved_run_config_sha256 is not None
+        assert checkpoint_sha256 is not None
         assert seed is not None
         assert checkpoint_protocol_sha256 is not None
         selected = SelectedConfigsLock.load(selected_configs_path)
@@ -1909,6 +2139,12 @@ class ProtocolGate:
             model_key=model_key,
             candidate_id=candidate_id,
             resolved_config_sha256=resolved_config_sha256,
+        )
+        selected.require_final_seed(
+            model_key=model_key,
+            seed=seed,
+            resolved_run_config_sha256=resolved_run_config_sha256,
+            checkpoint_sha256=checkpoint_sha256,
         )
         if type(seed) is not int or seed not in FINAL_SEEDS:
             raise ProtocolError(f"final test seed must be one of {FINAL_SEEDS}")
@@ -1930,4 +2166,6 @@ class ProtocolGate:
             checkpoint_protocol_sha256=checkpoint_protocol_sha256,
             candidate_id=candidate_id,
             resolved_config_sha256=resolved_config_sha256,
+            resolved_run_config_sha256=resolved_run_config_sha256,
+            checkpoint_sha256=checkpoint_sha256,
         )

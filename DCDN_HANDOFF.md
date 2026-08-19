@@ -1102,4 +1102,18 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   `0.00008251113095933404`. The seed-42 `C+P` selection suite is complete;
   next freeze the dataset-wide selected-config lock and audit the final runner.
   Final/test remains locked.
+- Final-seed lineage safety gate recorded 2026-08-19: the selected-config
+  lock advances to schema v2 and requires exact seed-42/43/44 run-config,
+  validation-result, selected-metric, and best-checkpoint lineage plus the
+  immutable per-model selection receipt. The central test-claim registry
+  advances to schema v3 and binds the same seed-specific facts. Validation-
+  only final training is permitted only for seeds 43 and 44 under the active
+  premetric protocol; both worker and trainer reject a missing or mismatched
+  receipt before model/source construction, and model-only restore rejects an
+  unexpected checkpoint SHA before mutating the model. Legacy seed-42 tuning
+  checkpoint serialization remains byte-compatible by omitting null final
+  fields. Full repository CPU regression passed 543 tests. This closes the
+  claim-lineage schema blocker but does not unlock test: the audited one-pass
+  metric/uncertainty bundle runner is still absent, so test access remains
+  forbidden.
 Update this decision log whenever a material choice changes.

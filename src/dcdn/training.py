@@ -201,6 +201,8 @@ class TrainingConfig:
     numerical_nonfinite_limit: int = 1
     runtime_value_checks: bool = True
     reproduction_command: str = ""
+    selection_receipt_path: str | None = None
+    selection_receipt_sha256: str | None = None
     ordinary_dcnv2_selection_sha256: str | None = None
     capacity_lr_binding_sha256: str | None = None
 
@@ -287,6 +289,27 @@ class TrainingConfig:
                 or SHA256_RE.fullmatch(getattr(self, name)) is None
             ):
                 raise ValueError(f"{name} must be a lowercase SHA-256 digest")
+        receipt_bindings = (
+            self.selection_receipt_path,
+            self.selection_receipt_sha256,
+        )
+        if any(value is not None for value in receipt_bindings):
+            if self.phase != "final" or any(
+                value is None for value in receipt_bindings
+            ):
+                raise ValueError(
+                    "selection receipt path and digest are a final-phase pair"
+                )
+            assert self.selection_receipt_path is not None
+            assert self.selection_receipt_sha256 is not None
+            receipt_path = Path(self.selection_receipt_path)
+            if (
+                receipt_path.is_absolute()
+                or receipt_path.as_posix() != self.selection_receipt_path
+                or any(part in {"", ".", ".."} for part in receipt_path.parts)
+                or not self.selection_receipt_path.endswith(".json")
+            ):
+                raise ValueError("selection_receipt_path must be repository-relative")
         capacity_bindings = (
             self.ordinary_dcnv2_selection_sha256,
             self.capacity_lr_binding_sha256,
@@ -373,6 +396,8 @@ def training_config_payload(config: TrainingConfig) -> dict[str, Any]:
 
     payload = asdict(config)
     for name in (
+        "selection_receipt_path",
+        "selection_receipt_sha256",
         "ordinary_dcnv2_selection_sha256",
         "capacity_lr_binding_sha256",
     ):
@@ -613,6 +638,8 @@ class SafetyAttestation:
         config: TrainingConfig,
         *,
         checkpoint_protocol_sha256: str | None = None,
+        resolved_run_config_sha256: str | None = None,
+        checkpoint_sha256: str | None = None,
     ) -> TestEvaluationClaim | None:
         """Run Protocol v3 before a factory; test returns a reserved claim only."""
 
@@ -634,6 +661,10 @@ class SafetyAttestation:
                 resolved_config_sha256=(
                     config.resolved_model_config_sha256 if split == "test" else None
                 ),
+                resolved_run_config_sha256=(
+                    resolved_run_config_sha256 if split == "test" else None
+                ),
+                checkpoint_sha256=(checkpoint_sha256 if split == "test" else None),
                 seed=config.seed if split == "test" else None,
                 checkpoint_protocol_sha256=(
                     checkpoint_protocol_sha256 if split == "test" else None
@@ -2573,6 +2604,7 @@ class TrainingHarness:
             checkpoint_path,
             model=self.model,
             expected_metadata=parent_checkpoint_metadata,
+            expected_sha256=expected_checkpoint_sha256,
             expected_mode="train",
             map_location="cpu",
             extra_state_validator=lambda extra, progress: (

@@ -630,3 +630,29 @@ def test_model_only_extra_rejection_is_non_mutating(tmp_path: Path) -> None:
         )
     _assert_bundle_state(target, before)
     _assert_rng_state(rng_before)
+
+
+def test_model_only_digest_rejection_is_non_mutating(tmp_path: Path) -> None:
+    source = _new_bundle(seed=93)
+    _run_steps(source, 1)
+    checkpoint_path = tmp_path / "wrong-digest-best.pt"
+    record = _save_training_checkpoint(checkpoint_path, source, global_step=1)
+
+    target = _new_bundle(seed=94)
+    target.model.eval()
+    before = _bundle_state(target)
+    rng_before = _rng_state()
+    wrong_digest = "0" * 64 if record.sha256 != "0" * 64 else "1" * 64
+
+    with pytest.raises(
+        CheckpointCompatibilityError,
+        match="digest differs from the expected immutable lineage",
+    ):
+        load_model_checkpoint_for_evaluation(
+            checkpoint_path,
+            model=target.model,
+            expected_metadata=_metadata(),
+            expected_sha256=wrong_digest,
+        )
+    _assert_bundle_state(target, before)
+    _assert_rng_state(rng_before)

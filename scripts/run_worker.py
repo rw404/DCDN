@@ -167,6 +167,38 @@ def _validate_resolved_execution_contract(
     runtime_value_checks = training.get("runtime_value_checks")
     if type(runtime_value_checks) is not bool:
         raise WorkerError("resolved runtime_value_checks must be boolean")
+    phase = training.get("phase")
+    seed = training.get("seed")
+    selection_path = training.get("selection_receipt_path")
+    selection_sha256 = training.get("selection_receipt_sha256")
+    if phase == "tuning":
+        if type(seed) is not int or seed != 42:
+            raise WorkerError("tuning is reserved for exact integer seed 42")
+        if selection_path is not None or selection_sha256 is not None:
+            raise WorkerError("tuning must not carry a final selection receipt")
+    elif phase == "final":
+        if execution_kind != "scientific_tuning":
+            raise WorkerError("final seed validation must be scientific tuning")
+        if type(seed) is not int or seed not in {43, 44}:
+            raise WorkerError("final validation is reserved for seeds 43 and 44")
+        if type(selection_path) is not str or type(selection_sha256) is not str:
+            raise WorkerError("final validation requires a selection receipt")
+        receipt_path = Path(selection_path)
+        if (
+            receipt_path.is_absolute()
+            or receipt_path.as_posix() != selection_path
+            or ".." in receipt_path.parts
+            or receipt_path.suffix != ".json"
+        ):
+            raise WorkerError(
+                "training.selection_receipt_path must be repository-relative JSON"
+            )
+        if _SHA256_RE.fullmatch(selection_sha256) is None:
+            raise WorkerError(
+                "training.selection_receipt_sha256 must be a lowercase SHA-256"
+            )
+    else:
+        raise WorkerError("training.phase must be tuning or final")
     if execution_kind == "scientific_tuning":
         if runtime_value_checks:
             raise WorkerError("scientific tuning requires runtime_value_checks=false")
@@ -315,6 +347,48 @@ def _verify_capacity_binding(
     return evidence
 
 
+def _verify_final_selection_receipt(
+    resolved: Mapping[str, Any],
+    project_root: Path,
+    *,
+    capacity_evidence: CapacityBindingEvidence | None,
+) -> None:
+    """Re-open the exact final-seed selection receipt before paid work."""
+
+    training = _mapping(resolved.get("training"), "resolved.training")
+    if training.get("phase") == "tuning":
+        return
+    receipt_path = _inside(
+        _resolved_path(
+            training.get("selection_receipt_path"),
+            root=project_root,
+            field="training.selection_receipt_path",
+        ),
+        project_root,
+        "training.selection_receipt_path",
+    )
+    try:
+        artifact = read_verified_artifact(receipt_path)
+    except Exception as exc:
+        raise WorkerError(f"selection receipt verification failed: {exc}") from exc
+    if artifact.digest != training.get("selection_receipt_sha256"):
+        raise WorkerError("selection receipt digest differs from resolved config")
+    if capacity_evidence is not None:
+        binding_path = _inside(
+            _resolved_path(
+                resolved.get("capacity_lr_binding_path"),
+                root=project_root,
+                field="resolved.capacity_lr_binding_path",
+            ),
+            project_root,
+            "resolved.capacity_lr_binding_path",
+        )
+        if receipt_path != binding_path or artifact.digest != capacity_evidence.sha256:
+            raise WorkerError(
+                "capacity final seed is not bound to its compact authorization"
+            )
+
+
 def _verify_capacity_checkpoint_binding(
     path: Path,
     *,
@@ -449,6 +523,11 @@ def _verify_completed_result(
         raise WorkerError("resolved config payload drifted while worker was running")
     execution_kind = _validate_resolved_execution_contract(reloaded)
     capacity_evidence = _verify_capacity_binding(reloaded, project_root)
+    _verify_final_selection_receipt(
+        reloaded,
+        project_root,
+        capacity_evidence=capacity_evidence,
+    )
     is_capacity = capacity_evidence is not None
     result_path = _inside(
         _resolved_path(
@@ -1775,7 +1854,10 @@ def run_worker(
     )
     if recorded_resolved != resolved_config:
         raise WorkerError("registry resolved_config_path mismatch")
-    _verify_capacity_binding(resolved, project_root, record=record)
+    capacity_evidence = _verify_capacity_binding(resolved, project_root, record=record)
+    _verify_final_selection_receipt(
+        resolved, project_root, capacity_evidence=capacity_evidence
+    )
     log_path = _inside(
         _resolved_path(record["log_path"], root=project_root, field="record.log_path"),
         project_root,
@@ -1935,8 +2017,13 @@ def run_worker(
                                 f"registry identity drifted: {identity_field}"
                             )
                     _require_code_identity(project_root, post_run_record)
-                    _verify_capacity_binding(
+                    capacity_evidence = _verify_capacity_binding(
                         resolved, project_root, record=post_run_record
+                    )
+                    _verify_final_selection_receipt(
+                        resolved,
+                        project_root,
+                        capacity_evidence=capacity_evidence,
                     )
                     (
                         result_digest,
@@ -1999,10 +2086,15 @@ def run_worker(
                                 f"completed registry identity drifted: {identity_field}"
                             )
                     _require_code_identity(project_root, completed_record)
-                    _verify_capacity_binding(
+                    capacity_evidence = _verify_capacity_binding(
                         resolved,
                         project_root,
                         record=completed_record,
+                    )
+                    _verify_final_selection_receipt(
+                        resolved,
+                        project_root,
+                        capacity_evidence=capacity_evidence,
                     )
                     terminal_published = True
                     return 0

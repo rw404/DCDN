@@ -135,7 +135,7 @@ The artifact must be named exactly `selected_configs.lock`, have its own strict
 sidecar, and parse as exactly:
 
 ```yaml
-schema_version: 1
+schema_version: 2
 artifact_role: final_selected_configs_lock
 dataset_id: <same dataset>
 feature_regime: <same regime>
@@ -149,6 +149,18 @@ selected_models:
   <model key>:
     candidate_id: <resolved non-empty candidate identity>
     resolved_config_sha256: <exact resolved config digest>
+    selection_receipt_path: <repository-relative validation selection receipt>
+    selection_receipt_sha256: <exact receipt digest>
+    final_seed_lineage:
+      "<each exact key: 42, 43, and 44>":
+        resolved_run_config_path: <configs/runs/*.yaml>
+        resolved_run_config_sha256: <exact run config digest>
+        validation_result_path: <results/*.json>
+        validation_result_sha256: <exact validation result digest>
+        best_checkpoint_path: <runs/*.pt>
+        best_checkpoint_sha256: <exact selected best digest>
+        selected_validation_metric: <finite non-negative value>
+
     selected_on_validation_only: true
     test_data_accessed: false
     test_metrics_consulted: false
@@ -156,9 +168,13 @@ selected_models:
 
 `selected_models` must contain exactly one entry for every
 `required_model_keys` item and no other model. No root or per-model extension
-keys are allowed. `SelectedConfigsLock.require_for_protocol` checks every
+keys are allowed. `final_seed_lineage` must contain all three exact string keys
+`42`, `43`, and `44`, and no others. `SelectedConfigsLock.require_for_protocol` checks every
 binding and the exact artifact digest; `require_model` binds a test request to
-the current model, candidate, and resolved configuration.
+the current model, candidate, and seed-invariant resolved configuration.
+`require_final_seed` additionally binds seed 42/43/44 to its immutable run
+config, validation result, selected metric, and exact best-checkpoint SHA before
+a central test claim can be reserved.
 
 ## Persistent activation state
 
@@ -271,6 +287,8 @@ reserved = final_gate.require_split(
     model_key=current_model_key,
     candidate_id=current_candidate_id,
     resolved_config_sha256=current_resolved_config_sha256,
+    resolved_run_config_sha256=current_resolved_run_config_sha256,
+    checkpoint_sha256=selected_best_checkpoint_sha256,
     seed=current_seed,
     checkpoint_protocol_sha256=parent_gate.digest,
 )
@@ -278,9 +296,10 @@ reserved = final_gate.require_split(
 
 Reservation does not authorize opening the test source. It durably binds the
 dataset, regime, model, seed, final protocol, parent protocol, selected-lock
-digest, parent-bound checkpoint, candidate, resolved config, and the complete
-test `RuntimeIdentity`. An exact duplicate request can recover the same token
-only while it remains `reserved`. Binding drift is rejected.
+digest, selection-receipt digest, seed-invariant model config, seed-specific run
+config and validation result, exact selected metric and best-checkpoint SHA,
+and the complete test `RuntimeIdentity`. An exact duplicate request can recover
+the same token only while it remains `reserved`. Binding drift is rejected.
 
 Immediately before invoking the source factory, consume the at-most-once
 opening permission:
@@ -323,7 +342,7 @@ The active final gate supplies evaluation-only authorization.
 
 ## Central test lifecycle registry
 
-The central `test_claim_registry.yaml` uses lifecycle schema version 2. Its
+The central `test_claim_registry.yaml` uses lifecycle schema version 3. Its
 source and strict sidecar are verified from the same opened file descriptors.
 Every reservation or transition runs under the same central exclusive lock,
 loads the verified registry bytes, validates the exact schema and all existing
@@ -336,8 +355,10 @@ Each record has an opaque unique 64-hex `claim_id`, one of the exact states
 - model key and final seed;
 - final and parent premetric protocol digests;
 - selected-config lock digest;
-- parent-bound checkpoint digest;
-- candidate ID and resolved-config digest;
+- validation-only selection-receipt digest;
+- candidate ID and seed-invariant resolved-model digest;
+- seed-specific resolved run-config and validation-result digests;
+- exact selected validation metric and parent-bound best-checkpoint digest;
 - the complete test `RuntimeIdentity`;
 - nullable completion evidence while reserved/opened;
 - a required receipt digest and full result row count when completed.

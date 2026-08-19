@@ -101,9 +101,24 @@ def write_hashed(path: Path, payload: dict[str, Any] | str) -> str:
     return artifact_digest
 
 
+def final_seed_lineage(model_key: str) -> dict[str, dict[str, Any]]:
+    return {
+        str(seed): {
+            "resolved_run_config_path": f"configs/runs/{model_key}-s{seed}.yaml",
+            "resolved_run_config_sha256": digest(f"{model_key}-config-{seed}"),
+            "validation_result_path": f"results/tuning/{model_key}-s{seed}.json",
+            "validation_result_sha256": digest(f"{model_key}-result-{seed}"),
+            "best_checkpoint_path": f"runs/{model_key}-s{seed}/best.pt",
+            "best_checkpoint_sha256": digest(f"{model_key}-best-{seed}"),
+            "selected_validation_metric": 0.01 + seed / 100000.0,
+        }
+        for seed in (42, 43, 44)
+    }
+
+
 def selected_payload(parent_gate: ProtocolGate) -> dict[str, Any]:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "artifact_role": "final_selected_configs_lock",
         "dataset_id": parent_gate.dataset_id,
         "feature_regime": parent_gate.feature_regime,
@@ -123,9 +138,14 @@ def selected_payload(parent_gate: ProtocolGate) -> dict[str, Any]:
             model_key: {
                 "candidate_id": f"{model_key}-candidate-7",
                 "resolved_config_sha256": digest(f"{model_key}-resolved-config"),
+                "selection_receipt_path": (
+                    f"results/tuning/{model_key}_selection_v1.json"
+                ),
+                "selection_receipt_sha256": digest(f"{model_key}-selection"),
                 "selected_on_validation_only": True,
                 "test_data_accessed": False,
                 "test_metrics_consulted": False,
+                "final_seed_lineage": final_seed_lineage(model_key),
             }
             for model_key in parent_gate.required_model_keys
         },
@@ -232,6 +252,17 @@ def model_selection(
     )
 
 
+def seed_checkpoint_binding(
+    prepared: PreparedProtocol,
+    model_key: str,
+    seed: int,
+) -> tuple[str, str]:
+    lineage = prepared.selected_payload["selected_models"][model_key][
+        "final_seed_lineage"
+    ][str(seed)]
+    return lineage["resolved_run_config_sha256"], lineage["best_checkpoint_sha256"]
+
+
 def claim_test(
     prepared: PreparedProtocol,
     *,
@@ -242,6 +273,9 @@ def claim_test(
         prepared,
         model_key,
     )
+    resolved_run_config, checkpoint_sha256 = seed_checkpoint_binding(
+        prepared, model_key, seed
+    )
     return prepared.final_gate.require_split(
         "test",
         runtime_identity=runtime_identity(prepared.final_gate.payload, "test"),
@@ -249,6 +283,8 @@ def claim_test(
         model_key=model_key,
         candidate_id=candidate_id,
         resolved_config_sha256=resolved_config,
+        resolved_run_config_sha256=resolved_run_config,
+        checkpoint_sha256=checkpoint_sha256,
         seed=seed,
         checkpoint_protocol_sha256=prepared.parent_gate.digest,
     )
@@ -897,13 +933,22 @@ def test_test_reservation_is_durable_recoverable_and_parent_bound(
         reserved.selected_configs_sha256
         == prepared.final_gate.payload["hashes"]["selected_configs_sha256"]
     )
+    selected_model = prepared.selected_payload["selected_models"][REQUIRED_MODELS[0]]
+    lineage = selected_model["final_seed_lineage"]["42"]
+    assert (
+        reserved.selection_receipt_sha256 == selected_model["selection_receipt_sha256"]
+    )
+    assert reserved.resolved_run_config_sha256 == lineage["resolved_run_config_sha256"]
+    assert reserved.validation_result_sha256 == lineage["validation_result_sha256"]
+    assert reserved.checkpoint_sha256 == lineage["best_checkpoint_sha256"]
+    assert reserved.selected_validation_metric == lineage["selected_validation_metric"]
     assert reserved.runtime_identity == runtime_identity(
         prepared.final_gate.payload,
         "test",
     )
 
     registry = load_verified_yaml(prepared.claims_path)
-    assert registry["schema_version"] == 2
+    assert registry["schema_version"] == 3
     assert len(registry["claims"]) == 1
     assert registry["claims"][0]["state"] == "reserved"
     assert registry["claims"][0]["claim_id"] == reserved.claim_id
@@ -924,6 +969,9 @@ def test_test_reservation_is_durable_recoverable_and_parent_bound(
         prepared,
         REQUIRED_MODELS[1],
     )
+    resolved_run_config, checkpoint_sha256 = seed_checkpoint_binding(
+        prepared, model_key, 42
+    )
     identity = runtime_identity(prepared.final_gate.payload, "test")
     with pytest.raises(ProtocolError, match="candidate_id"):
         prepared.final_gate.require_split(
@@ -933,6 +981,8 @@ def test_test_reservation_is_durable_recoverable_and_parent_bound(
             model_key=model_key,
             candidate_id="wrong-candidate",
             resolved_config_sha256=config_digest,
+            resolved_run_config_sha256=resolved_run_config,
+            checkpoint_sha256=checkpoint_sha256,
             seed=42,
             checkpoint_protocol_sha256=prepared.parent_gate.digest,
         )
@@ -944,6 +994,8 @@ def test_test_reservation_is_durable_recoverable_and_parent_bound(
             model_key=model_key,
             candidate_id=candidate_id,
             resolved_config_sha256=digest("wrong-config"),
+            resolved_run_config_sha256=resolved_run_config,
+            checkpoint_sha256=checkpoint_sha256,
             seed=42,
             checkpoint_protocol_sha256=prepared.parent_gate.digest,
         )
@@ -955,10 +1007,12 @@ def test_test_reservation_is_durable_recoverable_and_parent_bound(
             model_key=model_key,
             candidate_id=candidate_id,
             resolved_config_sha256=config_digest,
+            resolved_run_config_sha256=resolved_run_config,
+            checkpoint_sha256=checkpoint_sha256,
             seed=42,
             checkpoint_protocol_sha256=prepared.final_gate.digest,
         )
-    with pytest.raises(ProtocolError, match="final test seed"):
+    with pytest.raises(ProtocolError, match="final seed"):
         prepared.final_gate.require_split(
             "test",
             runtime_identity=identity,
@@ -966,6 +1020,8 @@ def test_test_reservation_is_durable_recoverable_and_parent_bound(
             model_key=model_key,
             candidate_id=candidate_id,
             resolved_config_sha256=config_digest,
+            resolved_run_config_sha256=resolved_run_config,
+            checkpoint_sha256=checkpoint_sha256,
             seed=42.0,  # type: ignore[arg-type]
             checkpoint_protocol_sha256=prepared.parent_gate.digest,
         )
@@ -1105,6 +1161,9 @@ def test_claim_registry_cannot_be_redirected_to_a_run_directory(
     run_dir.mkdir()
     alternate = ClaimRegistry(run_dir / "test_claim_registry.yaml")
     model_key, candidate_id, config_digest = model_selection(prepared)
+    resolved_run_config, checkpoint_sha256 = seed_checkpoint_binding(
+        prepared, model_key, 42
+    )
     with pytest.raises(ProtocolError, match="not the active pinned registry"):
         alternate.claim(
             gate=prepared.final_gate,
@@ -1115,6 +1174,8 @@ def test_claim_registry_cannot_be_redirected_to_a_run_directory(
             checkpoint_protocol_sha256=prepared.parent_gate.digest,
             candidate_id=candidate_id,
             resolved_config_sha256=config_digest,
+            resolved_run_config_sha256=resolved_run_config,
+            checkpoint_sha256=checkpoint_sha256,
         )
 
 
@@ -1171,6 +1232,12 @@ def test_final_gate_authorizes_parent_bound_checkpoint_without_resave(
     prepared = prepare_final(tmp_path, activate_final=True)
     model_key, candidate_id, config_digest = model_selection(prepared)
     identity = runtime_identity(prepared.final_gate.payload, "test")
+    resolved_run_config, checkpoint_sha256 = seed_checkpoint_binding(
+        prepared, model_key, 44
+    )
+    other_run_config, other_checkpoint_sha256 = seed_checkpoint_binding(
+        prepared, REQUIRED_MODELS[1], 44
+    )
 
     claim = prepared.final_gate.require_split(
         "test",
@@ -1179,6 +1246,8 @@ def test_final_gate_authorizes_parent_bound_checkpoint_without_resave(
         model_key=model_key,
         candidate_id=candidate_id,
         resolved_config_sha256=config_digest,
+        resolved_run_config_sha256=resolved_run_config,
+        checkpoint_sha256=checkpoint_sha256,
         seed=44,
         checkpoint_protocol_sha256=prepared.parent_gate.digest,
     )
@@ -1197,6 +1266,8 @@ def test_final_gate_authorizes_parent_bound_checkpoint_without_resave(
             resolved_config_sha256=prepared.selected_payload["selected_models"][
                 REQUIRED_MODELS[1]
             ]["resolved_config_sha256"],
+            resolved_run_config_sha256=other_run_config,
+            checkpoint_sha256=other_checkpoint_sha256,
             seed=44,
             checkpoint_protocol_sha256=prepared.final_gate.digest,
         )

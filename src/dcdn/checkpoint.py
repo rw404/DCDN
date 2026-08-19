@@ -1042,6 +1042,7 @@ def load_model_checkpoint_for_evaluation(
     *,
     model: nn.Module,
     expected_metadata: CheckpointMetadata,
+    expected_sha256: str | None = None,
     expected_mode: str = "train",
     map_location: str | torch.device | Mapping[str, str] = "cpu",
     extra_state_validator: ExtraStateValidator | None = None,
@@ -1061,6 +1062,12 @@ def load_model_checkpoint_for_evaluation(
         raise TypeError("model must be an nn.Module")
     if not isinstance(expected_metadata, CheckpointMetadata):
         raise TypeError("expected_metadata must be CheckpointMetadata")
+    if expected_sha256 is not None and (
+        not isinstance(expected_sha256, str)
+        or len(expected_sha256) != 64
+        or any(character not in "0123456789abcdef" for character in expected_sha256)
+    ):
+        raise ValueError("expected_sha256 must be a lowercase SHA-256")
     if not isinstance(expected_mode, str) or not expected_mode.strip():
         raise ValueError("expected_mode must be a non-empty string")
     if expected_mode != expected_mode.strip():
@@ -1071,6 +1078,10 @@ def load_model_checkpoint_for_evaluation(
         raise TypeError("restore_model must be boolean")
 
     payload, digest = _load_verified_payload(Path(path), map_location=map_location)
+    if expected_sha256 is not None and digest != expected_sha256:
+        raise CheckpointCompatibilityError(
+            "checkpoint digest differs from the expected immutable lineage"
+        )
     _require_exact_keys(
         payload,
         {

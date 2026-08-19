@@ -1643,6 +1643,98 @@ def test_cli_execution_kind_separates_scientific_and_implementation_scope(
             )
 
 
+def test_final_seed_selection_receipt_is_verified_before_model_creation(
+    tmp_path: Path,
+) -> None:
+    train_model = _load_script("train_model")
+    frozen = _fixture(tmp_path)
+    model_payload = _model_payload(runtime_value_checks=False)
+
+    selected_config_path = tmp_path / "configs/runs/selected.yaml"
+    selected_config_sha256 = _write_hashed_yaml(
+        selected_config_path,
+        {
+            "training": training_module.training_config_payload(frozen.config),
+            "model": model_payload,
+        },
+    )
+    result_path = tmp_path / "results/tuning/selected.json"
+    result_sha256 = train_model._write_immutable_json(
+        result_path,
+        {"scope": "validation_only", "test_metrics": None},
+    )
+    checkpoint_path = tmp_path / "runs/selected/best.pt"
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    checkpoint_path.write_bytes(b"synthetic-checkpoint")
+    checkpoint_sha256 = hashlib.sha256(checkpoint_path.read_bytes()).hexdigest()
+    checkpoint_path.with_name(f"{checkpoint_path.name}.sha256").write_text(
+        f"{checkpoint_sha256}  {checkpoint_path.name}\n",
+        encoding="ascii",
+    )
+
+    receipt_path = tmp_path / "results/tuning/selection.json"
+    receipt_sha256 = train_model._write_immutable_json(
+        receipt_path,
+        {
+            "artifact_role": "per_model_validation_only_selection_evidence",
+            "dataset_id": frozen.config.dataset_id,
+            "feature_regime": frozen.config.feature_regime,
+            "status": "selected_on_validation_only",
+            "selected": {
+                "candidate_id": frozen.config.candidate_id,
+                "learning_rate": frozen.config.learning_rate,
+                "resolved_config_path": "configs/runs/selected.yaml",
+                "resolved_config_sha256": selected_config_sha256,
+                "result_path": "results/tuning/selected.json",
+                "result_sha256": result_sha256,
+                "best_checkpoint_path": "runs/selected/best.pt",
+                "best_checkpoint_sha256": checkpoint_sha256,
+                "validation_metric": 0.125,
+            },
+            "test_firewall": {
+                "protocol_test_unlocked": False,
+                "protocol_test_path_available": False,
+                "selected_on_validation_only": True,
+                "test_data_accessed": False,
+                "test_metrics_consulted": False,
+            },
+        },
+    )
+    final_config = replace(
+        frozen.config,
+        phase="final",
+        seed=43,
+        selection_receipt_path="results/tuning/selection.json",
+        selection_receipt_sha256=receipt_sha256,
+    )
+    final_model_payload = copy.deepcopy(model_payload)
+    final_model_payload["init_seed"] = 43
+    train_model._require_final_seed_selection(
+        root=tmp_path,
+        training=final_config,
+        model_payload=final_model_payload,
+        capacity_binding_path=None,
+        capacity_binding=None,
+    )
+
+    with pytest.raises(TrainingContractError, match="selected candidate"):
+        train_model._require_final_seed_selection(
+            root=tmp_path,
+            training=replace(final_config, candidate_id="dcdn_core_l2_lr_1e_3"),
+            model_payload=final_model_payload,
+            capacity_binding_path=None,
+            capacity_binding=None,
+        )
+    with pytest.raises(TrainingContractError, match="selection receipt digest"):
+        train_model._require_final_seed_selection(
+            root=tmp_path,
+            training=replace(final_config, selection_receipt_sha256="0" * 64),
+            model_payload=final_model_payload,
+            capacity_binding_path=None,
+            capacity_binding=None,
+        )
+
+
 @pytest.mark.parametrize(
     ("runtime_patch", "message"),
     [
@@ -1798,6 +1890,8 @@ def _worker_receipt_fixture(
         "protocol_path": str(protocol_path),
         "run_directory": str(run_directory),
         "training": {
+            "phase": "tuning",
+            "seed": 42,
             "dataset_id": DATASET_ID,
             "feature_regime": FEATURE_REGIME,
             "model_key": "dcdn_core",
@@ -2107,6 +2201,41 @@ def test_worker_execution_kind_preflight_rejects_legacy_and_registry_drift(
     assert (
         worker._validate_resolved_execution_contract(scientific) == "scientific_tuning"
     )
+
+    receipt_digest = _write_hashed_bytes(tmp_path / "selection.json", b"{}")
+    final = copy.deepcopy(scientific)
+    final["training"].update(
+        {
+            "phase": "final",
+            "seed": 43,
+            "selection_receipt_path": "selection.json",
+            "selection_receipt_sha256": receipt_digest,
+        }
+    )
+    assert worker._validate_resolved_execution_contract(final) == "scientific_tuning"
+    worker._verify_final_selection_receipt(final, tmp_path, capacity_evidence=None)
+
+    wrong_final_seed = copy.deepcopy(final)
+    wrong_final_seed["training"]["seed"] = 42
+    with pytest.raises(worker.WorkerError, match="seeds 43 and 44"):
+        worker._validate_resolved_execution_contract(wrong_final_seed)
+
+    missing_receipt = copy.deepcopy(final)
+    missing_receipt["training"].pop("selection_receipt_sha256")
+    with pytest.raises(worker.WorkerError, match="requires a selection receipt"):
+        worker._validate_resolved_execution_contract(missing_receipt)
+
+    final_smoke = copy.deepcopy(final)
+    final_smoke["execution_kind"] = "implementation_smoke"
+    with pytest.raises(worker.WorkerError, match="must be scientific tuning"):
+        worker._validate_resolved_execution_contract(final_smoke)
+
+    wrong_receipt = copy.deepcopy(final)
+    wrong_receipt["training"]["selection_receipt_sha256"] = "0" * 64
+    with pytest.raises(worker.WorkerError, match="digest differs"):
+        worker._verify_final_selection_receipt(
+            wrong_receipt, tmp_path, capacity_evidence=None
+        )
 
     with pytest.raises(worker.WorkerError, match="registry execution_kind"):
         worker._require_registry_execution_kind(
@@ -2647,6 +2776,8 @@ def test_training_config_capacity_bindings_are_exact_and_legacy_payload_is_stabl
     legacy = training_module.training_config_payload(frozen.config)
     assert "ordinary_dcnv2_selection_sha256" not in legacy
     assert "capacity_lr_binding_sha256" not in legacy
+    assert "selection_receipt_path" not in legacy
+    assert "selection_receipt_sha256" not in legacy
 
     capacity = replace(
         frozen.config,
@@ -2659,6 +2790,26 @@ def test_training_config_capacity_bindings_are_exact_and_legacy_payload_is_stabl
     serialized = training_module.training_config_payload(capacity)
     assert serialized["ordinary_dcnv2_selection_sha256"] == (ORDINARY_SELECTION_SHA256)
     assert serialized["capacity_lr_binding_sha256"] == "a" * 64
+    final_config = replace(
+        frozen.config,
+        phase="final",
+        seed=43,
+        selection_receipt_path="results/tuning/selected.json",
+        selection_receipt_sha256="b" * 64,
+    )
+    final_serialized = training_module.training_config_payload(final_config)
+    assert final_serialized["selection_receipt_path"] == (
+        "results/tuning/selected.json"
+    )
+    assert final_serialized["selection_receipt_sha256"] == "b" * 64
+    with pytest.raises(ValueError, match="final-phase pair"):
+        replace(
+            frozen.config,
+            selection_receipt_path="results/tuning/selected.json",
+            selection_receipt_sha256="b" * 64,
+        )
+    with pytest.raises(ValueError, match="final-phase pair"):
+        replace(final_config, selection_receipt_sha256=None)
 
     with pytest.raises(ValueError, match="capacity-only"):
         replace(
@@ -2777,6 +2928,8 @@ def test_worker_schema_v3_noncapacity_and_v4_capacity_are_disjoint() -> None:
         "training": {
             "dataset_id": DATASET_ID,
             "feature_regime": FEATURE_REGIME,
+            "phase": "tuning",
+            "seed": 42,
             "model_key": "dcnv2_full_rank",
             "runtime_value_checks": False,
         },
