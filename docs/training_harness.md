@@ -12,7 +12,10 @@ protocol activation was used while implementing or testing this integration.
 Every real source is label-bearing, so authorization happens before its
 factory is called:
 
-1. Verify the active immutable Protocol v3 artifact and its sidecar.
+1. Verify the active immutable Protocol v3 artifact and its sidecar. For the
+   capacity control only, also reopen the validation-only ordinary-DCNv2
+   selection receipt and the compact capacity-LR authorization before model,
+   optimizer, or source creation.
 2. Verify exact independently declared train and validation `RuntimeIdentity`
    values, including row counts and all data, views, feature, schema, mask,
    full-scan, cache, encoder, and full-capacity-artifact hashes.
@@ -121,6 +124,30 @@ and checkpoint. FLOPs are deterministic post-encoder forward FLOPs per
 example; embedding lookup and encoder numeric vector multiplication are
 outside this frozen capacity-comparison scope.
 
+The rank decision and inherited learning rate are deliberately separate
+artifacts. The immutable human receipt is
+`results/tuning/vk_lsvd_c_plus_p_dcnv2_full_rank_selection_v1.json` (SHA-256
+`869cbcb7a227b274700cda142f23c59040497bfdfe4da101888e2cc63f39d67a`).
+A clean committed materializer may later create, exactly once with
+`O_EXCL`, the compact authorization
+`artifacts/selection/vk_lsvd_c_plus_p_capacity_lr_binding_v1.json` and its
+strict sidecar. Publication walks held directory descriptors with
+`O_NOFOLLOW`; symlink ancestors, path escape, torn pairs, duplicate JSON keys,
+unknown fields, and non-finite numbers fail closed. The materializer rejects a
+tracked diff and every untracked executable/importable file below `src/` or
+`scripts/`. Its recorded commit is immutable creation provenance; each later
+run independently binds its current clean code identity in the registry.
+
+The verifier does not trust receipt booleans. It reopens both candidate
+configs, results, registries, and histories, recomputes scientific eligibility
+and the strict untied minimum, checks exact best-checkpoint lineage, and
+reopens the selected checkpoint. It independently verifies the metric-free
+rank-12 capacity decision and invokes
+`require_phase("capacity_control_training", ...)` with
+`SELECTED_DCNV2_LEARNING_RATE=0.0003`. Capacity rank 13, LR 0.001, or any
+mismatch among config, receipt, compact authorization, capacity artifact, and
+premetric protocol is rejected before optimizer construction.
+
 ## Examples, cadence, and deterministic resume
 
 The declared hard maximum remains 40,000,000 examples and is never rounded
@@ -182,10 +209,12 @@ bridge tuning and final phases. The selected model digest is seed-invariant and
 covers the exact interaction and head configs. Candidate ID and learning rate
 are independently frozen for the ordinary tuned/fixed models, while seed
 remains exact in the training config, joint model contract, checkpoint, and
-eventual claim. Capacity-control training remains separately blocked until a
-durable selected ordinary-DCNv2 learning-rate artifact is bound; the metric-free
-capacity artifact already fixes the lower-rank architecture but does not select
-that inherited learning rate.
+eventual claim. For capacity control, the seed-invariant selected-model digest additionally
+covers candidate `capacity_rank_lower`, LR 0.0003, the capacity artifact SHA,
+the ordinary selection-receipt SHA, the compact authorization SHA, and the
+premetric Protocol SHA. The code path is fail-closed until the compact
+artifact is materialized and audited; this implementation change does not
+itself create that production artifact or authorize a launch.
 
 Actual test execution is deliberately unavailable in this harness and CLI.
 Loss-only test evaluation and test latency fail before reserving a claim or
@@ -216,11 +245,14 @@ timed-forward exception. Test latency is forbidden. The receipt field is
 ## CLI and worker durability
 
 `scripts/train_model.py` accepts the final VK C+P source/encoder factories but
-requires an actual active premetric Protocol v3 file and state. Its resolved
-schema version is 3 and requires exactly one of
-`execution_kind: implementation_smoke|scientific_tuning`; it has no test
-source/path option. A typical single-process command is stored verbatim in the
-checkpoint and result, without credentials:
+requires an actual active premetric Protocol v3 file and state. Resolved schema
+v3 is preserved byte-for-byte for non-capacity runs and requires exactly one
+of `execution_kind: implementation_smoke|scientific_tuning`. Schema v3 rejects
+capacity, while schema v4 is capacity-only and requires the top-level
+`capacity_lr_binding_path` plus `ordinary_dcnv2_selection_sha256` and
+`capacity_lr_binding_sha256` in `training`. No schema has a test source/path
+option. A typical single-process command is stored verbatim in the checkpoint
+and result, without credentials:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python scripts/train_model.py run \
@@ -232,9 +264,14 @@ GPU. The worker verifies the registry record, resolved-config sidecar, active
 protocol/data/features digests, and code identity before spawn. Code identity
 is exact `git rev-parse --verify HEAD` plus SHA-256 of
 `git diff --binary HEAD --`; any untracked executable/importable source under
-`src/` or `scripts/` is rejected. The same code identity is rechecked before a
-successful terminal transition. This convention requires the harness code to
-be committed cleanly before a paid smoke.
+`src/` or `scripts/` is rejected. The same code identity is rechecked before a successful terminal transition.
+For capacity, the worker also reopens the compact binding and a fresh registry
+record before and after terminal publication. It safely loads retained
+`last.pt` and best checkpoints on CPU with `weights_only=True` and requires
+exact training SHA fields plus `capacity_training_binding` in checkpoint
+metadata; a checkpoint modified and re-signed with a new sidecar still fails.
+This convention requires the harness code to be committed cleanly before a
+paid smoke.
 
 SIGINT/SIGTERM handlers are installed before child spawn. The supervisor owns
 the child process group in an enclosing `finally`: spawn-transition failures,
@@ -311,10 +348,13 @@ resolved config, result pair, last checkpoint pair, and selected immutable best
 generation. It checks run/protocol/resolved-config provenance, examples and
 effective-batch equality, declared/realized budgets, finite timing and metric
 fields, OOM limit, source-free test fields, capacity/composite hashes, disabled
-telemetry, local final guards, and the complete drained numerical summary. The
-immutable registry record, resolved config, and receipt must carry the same
-`execution_kind`; the immutable result receipt is exact-key schema v3 as well.
-A terminal record also carries the worker-verified boolean
+telemetry, local final guards, and the complete drained numerical summary. Capacity records additionally require
+exact model key, candidate, LR, rank, capacity SHA, ordinary-selection SHA, and
+compact-authorization SHA. The immutable registry record, resolved config, and
+receipt must carry the same `execution_kind`; result schema v3 remains exact
+for non-capacity and result schema v4 adds the exact
+`capacity_training_binding` only for capacity. A terminal record also carries
+the worker-verified boolean
 `scientific_result_eligible`; nonterminal records keep it null, and an
 implementation smoke can transition to completed only with `false` and an
 explicit `NON-SCIENTIFIC implementation smoke` reason.

@@ -49,6 +49,8 @@ class HeadConfig:
 
     def __post_init__(self) -> None:
         require_dims("hidden_dims", self.hidden_dims, allow_empty=True)
+        if type(self.dropout) is not float:
+            raise TypeError("dropout must be an exact float")
         require_probability("dropout", self.dropout)
         require_positive_int("output_dim", self.output_dim)
 

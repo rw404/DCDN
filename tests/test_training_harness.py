@@ -50,6 +50,7 @@ from dcdn.raw import (
 )
 from dcdn.sampler import StatefulPermutationSampler
 from dcdn.search_space import SearchSpaceLock
+from dcdn.selection_artifact import ORDINARY_SELECTION_SHA256
 from dcdn.training import (
     SafetyAttestation,
     SecondOOMError,
@@ -627,11 +628,20 @@ def test_all_runtime_architectures_bind_exactly_to_frozen_search_and_capacity(
         ),
     ]
     for model_key, candidate_id, learning_rate, expected, mutated in cases:
+        binding_fields = (
+            {
+                "ordinary_dcnv2_selection_sha256": ORDINARY_SELECTION_SHA256,
+                "capacity_lr_binding_sha256": "a" * 64,
+            }
+            if model_key == "dcnv2_capacity_matched_core"
+            else {}
+        )
         config = replace(
             frozen.config,
             model_key=model_key,
             candidate_id=candidate_id,
             learning_rate=learning_rate,
+            **binding_fields,
         )
         assert (
             training_module._expected_frozen_interaction_config(
@@ -655,13 +665,14 @@ def test_all_runtime_architectures_bind_exactly_to_frozen_search_and_capacity(
                 capacity_artifact=artifact,
             )
 
-    capacity_upper = replace(
-        frozen.config,
-        model_key="dcnv2_capacity_matched_core",
-        candidate_id="capacity_rank_upper",
-    )
-    with pytest.raises(TrainingContractError, match="metric-free decision"):
-        training_module._validated_capacity_candidate(capacity_upper, artifact)
+    with pytest.raises(ValueError, match="authorized candidate"):
+        replace(
+            frozen.config,
+            model_key="dcnv2_capacity_matched_core",
+            candidate_id="capacity_rank_upper",
+            ordinary_dcnv2_selection_sha256=ORDINARY_SELECTION_SHA256,
+            capacity_lr_binding_sha256="a" * 64,
+        )
 
 
 def test_raw_contract_preserves_duplicate_nonmonotone_order_and_optimized_no_sync(
@@ -1660,6 +1671,15 @@ def _worker_receipt_fixture(
         )
     elif mutation == "eligibility":
         receipt["scientific_result_eligible"] = smoke
+    elif mutation == "schema_float":
+        receipt["schema_version"] = 3.0
+    elif mutation == "examples_float":
+        receipt["training"]["examples_seen"] = 4_001_792.0
+    elif mutation == "elapsed_int":
+        receipt["training"]["elapsed_seconds"] = 1
+    elif mutation == "metric_int":
+        receipt["training"]["best_validation_metric"] = 0
+        receipt["selected_validation_metric"] = 0
     elif mutation == "smoke_validation":
         if not smoke or best_digest is None:
             raise AssertionError("smoke_validation requires implementation_smoke")
@@ -1700,6 +1720,10 @@ def _worker_receipt_fixture(
         ("scientific_tuning", "no_hooks", "hook evidence"),
         ("scientific_tuning", "execution_kind", "execution_kind mismatch"),
         ("scientific_tuning", "eligibility", "eligibility is inconsistent"),
+        ("scientific_tuning", "schema_float", "identity mismatch"),
+        ("scientific_tuning", "examples_float", "examples/effective-batch"),
+        ("scientific_tuning", "elapsed_int", "elapsed_seconds"),
+        ("scientific_tuning", "metric_int", "best generation"),
         ("implementation_smoke", "execution_kind", "execution_kind mismatch"),
         ("implementation_smoke", "eligibility", "explicitly non-scientific"),
         ("implementation_smoke", "smoke_validation", "contains validation"),
@@ -2332,3 +2356,264 @@ def test_registry_helper_command_binds_expected_parent() -> None:
         "-m",
         "dcdn.registry_helper",
     ]
+
+
+def test_training_config_capacity_bindings_are_exact_and_legacy_payload_is_stable(
+    tmp_path: Path,
+) -> None:
+    frozen = _fixture(tmp_path)
+    legacy = training_module.training_config_payload(frozen.config)
+    assert "ordinary_dcnv2_selection_sha256" not in legacy
+    assert "capacity_lr_binding_sha256" not in legacy
+
+    capacity = replace(
+        frozen.config,
+        model_key="dcnv2_capacity_matched_core",
+        candidate_id="capacity_rank_lower",
+        learning_rate=0.0003,
+        ordinary_dcnv2_selection_sha256=ORDINARY_SELECTION_SHA256,
+        capacity_lr_binding_sha256="a" * 64,
+    )
+    serialized = training_module.training_config_payload(capacity)
+    assert serialized["ordinary_dcnv2_selection_sha256"] == (ORDINARY_SELECTION_SHA256)
+    assert serialized["capacity_lr_binding_sha256"] == "a" * 64
+
+    with pytest.raises(ValueError, match="capacity-only"):
+        replace(
+            frozen.config,
+            ordinary_dcnv2_selection_sha256=ORDINARY_SELECTION_SHA256,
+            capacity_lr_binding_sha256="a" * 64,
+        )
+    with pytest.raises(ValueError, match="authorized candidate"):
+        replace(
+            capacity,
+            candidate_id="capacity_rank_upper",
+        )
+    with pytest.raises(ValueError, match="authorized candidate"):
+        replace(capacity, learning_rate=0.001)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("learning_rate", 1),
+        ("gradient_clip_l2", True),
+        ("adam_betas", (0.9, True)),
+    ],
+)
+def test_training_config_rejects_type_equivalent_scalars(
+    tmp_path: Path, field: str, value: object
+) -> None:
+    frozen = _fixture(tmp_path)
+    with pytest.raises(TypeError, match="exact float"):
+        replace(frozen.config, **{field: value})
+
+
+def test_head_config_rejects_boolean_dropout() -> None:
+    with pytest.raises(TypeError, match="exact float"):
+        HeadConfig(hidden_dims=(), dropout=False, output_dim=1)
+
+
+def test_capacity_binding_failure_precedes_optimizer_creation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    frozen = _fixture(tmp_path)
+    capacity_config = replace(
+        frozen.config,
+        model_key="dcnv2_capacity_matched_core",
+        candidate_id="capacity_rank_lower",
+        learning_rate=0.0003,
+        ordinary_dcnv2_selection_sha256=ORDINARY_SELECTION_SHA256,
+        capacity_lr_binding_sha256="a" * 64,
+    )
+    model = build_trainable_encoded_model(
+        encoder_contract=frozen.encoder,
+        dataset_id=DATASET_ID,
+        source_identity=frozen.train_identity,
+        interaction_config=DCNv2CapacityCoreConfig(
+            num_layers=2,
+            low_rank=12,
+            num_experts=4,
+            product_init_scale=0.1,
+        ),
+        head_config=HeadConfig(hidden_dims=(), dropout=0.0, output_dim=1),
+        run_seed=42,
+        runtime_value_checks=True,
+    )
+    optimizer_called = False
+
+    def forbidden_optimizer(*_args: Any, **_kwargs: Any) -> Any:
+        nonlocal optimizer_called
+        optimizer_called = True
+        raise AssertionError("optimizer must not be created")
+
+    def reject_binding(*_args: Any, **_kwargs: Any) -> Any:
+        raise RuntimeError("synthetic missing authorization")
+
+    monkeypatch.setattr(training_module, "load_capacity_lr_binding", reject_binding)
+    monkeypatch.setattr(torch.optim, "AdamW", forbidden_optimizer)
+    with pytest.raises(TrainingContractError, match="before optimizer"):
+        TrainingHarness(
+            model=model,
+            config=capacity_config,
+            safety=frozen.safety,
+            search_lock=frozen.search,
+            capacity_resolution=None,
+            operand_feature_order=frozen.train_identity.ordered_operand_fields,
+            run_directory=tmp_path / "blocked-capacity",
+            device="cpu",
+            capacity_artifact_path=CAPACITY_PATH,
+            capacity_lr_binding_path=tmp_path / "missing-auth.json",
+            repository_root=REPOSITORY_ROOT,
+        )
+    assert optimizer_called is False
+
+
+@pytest.mark.parametrize("schema_version", [3.0, True])
+def test_trainer_schema_requires_exact_integer(
+    tmp_path: Path, schema_version: object
+) -> None:
+    train_model = _load_script("train_model")
+    resolved = tmp_path / "typed-schema.yaml"
+    _write_hashed_yaml(
+        resolved,
+        {
+            "schema_version": schema_version,
+            "training": {"model_key": "dcnv2_full_rank"},
+        },
+    )
+    with pytest.raises(TrainingContractError, match="exact integer"):
+        train_model._run(resolved)
+
+
+def test_worker_schema_v3_noncapacity_and_v4_capacity_are_disjoint() -> None:
+    worker = _load_script("run_worker")
+    base = {
+        "schema_version": 3,
+        "execution_kind": "scientific_tuning",
+        "training": {
+            "model_key": "dcnv2_full_rank",
+            "runtime_value_checks": False,
+        },
+        "runtime": {},
+    }
+    assert worker._validate_resolved_execution_contract(base) == "scientific_tuning"
+
+    for invalid_schema in (3.0, True):
+        invalid = copy.deepcopy(base)
+        invalid["schema_version"] = invalid_schema
+        with pytest.raises(worker.WorkerError, match="v3 non-capacity or v4 capacity"):
+            worker._validate_resolved_execution_contract(invalid)
+
+    v3_capacity = copy.deepcopy(base)
+    v3_capacity["training"]["model_key"] = "dcnv2_capacity_matched_core"
+    with pytest.raises(worker.WorkerError, match="v3 non-capacity or v4 capacity"):
+        worker._validate_resolved_execution_contract(v3_capacity)
+
+    v4_noncapacity = copy.deepcopy(base)
+    v4_noncapacity["schema_version"] = 4
+    with pytest.raises(worker.WorkerError, match="v3 non-capacity or v4 capacity"):
+        worker._validate_resolved_execution_contract(v4_noncapacity)
+
+    v4_capacity = copy.deepcopy(v3_capacity)
+    v4_capacity["schema_version"] = 4
+    assert (
+        worker._validate_resolved_execution_contract(v4_capacity) == "scientific_tuning"
+    )
+
+
+def test_worker_capacity_checkpoint_inspector_rejects_rehashed_binding_tamper(
+    tmp_path: Path,
+) -> None:
+    from dcdn.checkpoint import (
+        CHECKPOINT_FORMAT,
+        CHECKPOINT_VERSION,
+        CheckpointMetadata,
+    )
+    from dcdn.selection_artifact import (
+        CAPACITY_RESOLUTION_SHA256,
+        PREMETRIC_PROTOCOL_SHA256,
+        capacity_training_binding_payload,
+    )
+
+    worker = _load_script("run_worker")
+    joint_digest = "f" * 64
+    training = {
+        "model_key": "dcnv2_capacity_matched_core",
+        "candidate_id": "capacity_rank_lower",
+        "learning_rate": 0.0003,
+        "capacity_resolution_sha256": CAPACITY_RESOLUTION_SHA256,
+        "ordinary_dcnv2_selection_sha256": ORDINARY_SELECTION_SHA256,
+        "capacity_lr_binding_sha256": "a" * 64,
+        "resolved_model_config_sha256": "b" * 64,
+    }
+    binding = capacity_training_binding_payload(
+        capacity_resolution_sha256=CAPACITY_RESOLUTION_SHA256,
+        ordinary_dcnv2_selection_sha256=ORDINARY_SELECTION_SHA256,
+        capacity_lr_binding_sha256="a" * 64,
+    )
+
+    def write_checkpoint(path: Path, *, include_binding: bool) -> str:
+        resolved_checkpoint = {
+            "training": dict(training),
+            "capacity_resolution_sha256": CAPACITY_RESOLUTION_SHA256,
+            "checkpoint_protocol_sha256": PREMETRIC_PROTOCOL_SHA256,
+            "joint_model_contract_sha256": joint_digest,
+        }
+        if include_binding:
+            resolved_checkpoint["capacity_training_binding"] = binding
+        metadata = CheckpointMetadata(
+            resolved_config=resolved_checkpoint,
+            data_hash="c" * 64,
+            feature_hash="d" * 64,
+            protocol_hash=PREMETRIC_PROTOCOL_SHA256,
+            feature_order=("operand",),
+            denominator_mask=(True,),
+            div_eps=0.01,
+            depth=2,
+            precision="fp32_parameters_bf16_autocast",
+        )
+        payload = {
+            "format": CHECKPOINT_FORMAT,
+            "version": CHECKPOINT_VERSION,
+            "metadata": metadata.to_dict(),
+            "progress": {},
+            "components": {},
+            "rng_state": {},
+            "extra_state": {
+                "checkpoint_role": "last",
+                "selected_best_checkpoint_sha256": None,
+                "selected_best_checkpoint_filename": None,
+            },
+        }
+        torch.save(payload, path)
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        path.with_name(f"{path.name}.sha256").write_text(
+            f"{digest}  {path.name}\n", encoding="ascii"
+        )
+        return digest
+
+    checkpoint = tmp_path / "last.pt"
+    digest = write_checkpoint(checkpoint, include_binding=True)
+    worker._verify_capacity_checkpoint_binding(
+        checkpoint,
+        expected_digest=digest,
+        expected_role="last",
+        resolved_training=training,
+        expected_joint_model_contract_sha256=joint_digest,
+        expected_best_sha256=None,
+        expected_best_filename=None,
+    )
+
+    tampered_digest = write_checkpoint(checkpoint, include_binding=False)
+    with pytest.raises(worker.WorkerError, match="training binding is invalid"):
+        worker._verify_capacity_checkpoint_binding(
+            checkpoint,
+            expected_digest=tampered_digest,
+            expected_role="last",
+            resolved_training=training,
+            expected_joint_model_contract_sha256=joint_digest,
+            expected_best_sha256=None,
+            expected_best_filename=None,
+        )

@@ -52,6 +52,24 @@ TRANSIENT_IO_ERRNOS = frozenset(
     if (value := getattr(errno, name, None)) is not None
 )
 INCIDENT_ID_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{2,127}$")
+_CAPACITY_BINDING_FIELDS = frozenset(
+    {
+        "model_key",
+        "candidate_id",
+        "learning_rate",
+        "capacity_low_rank",
+        "capacity_resolution_sha256",
+        "ordinary_dcnv2_selection_sha256",
+        "capacity_lr_binding_sha256",
+    }
+)
+_CAPACITY_RESOLUTION_SHA256 = (
+    "d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565"
+)
+_ORDINARY_SELECTION_SHA256 = (
+    "869cbcb7a227b274700cda142f23c59040497bfdfe4da101888e2cc63f39d67a"
+)
+_EMPTY_DIFF_SHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 
 
 class RegistryError(RuntimeError):
@@ -141,7 +159,7 @@ def validate_run_record(record: Mapping[str, Any]) -> None:
         raise RegistryError(
             "scientific_result_eligible must remain null before completion"
         )
-    if not isinstance(record.get("seed"), int):
+    if type(record.get("seed")) is not int:
         raise RegistryError("seed must be an integer")
     if (
         not isinstance(record.get("code_commit"), str)
@@ -163,6 +181,34 @@ def validate_run_record(record: Mapping[str, Any]) -> None:
         "log_path",
     ):
         _validate_relative_path(record.get(name), name)
+
+    present_capacity_fields = set(record) & _CAPACITY_BINDING_FIELDS
+    if present_capacity_fields:
+        missing = _CAPACITY_BINDING_FIELDS - set(record)
+        if missing:
+            raise RegistryError(
+                f"capacity registry binding is incomplete: {sorted(missing)}"
+            )
+        if (
+            record["model_key"] != "dcnv2_capacity_matched_core"
+            or record["candidate_id"] != "capacity_rank_lower"
+            or record["learning_rate"] != 0.0003
+            or record["capacity_low_rank"] != 12
+            or record["capacity_resolution_sha256"] != _CAPACITY_RESOLUTION_SHA256
+            or record["ordinary_dcnv2_selection_sha256"] != _ORDINARY_SELECTION_SHA256
+            or record["code_diff_sha256"] != _EMPTY_DIFF_SHA256
+        ):
+            raise RegistryError("capacity registry binding values are invalid")
+        if type(record["capacity_low_rank"]) is not int:
+            raise RegistryError("capacity_low_rank must be an exact integer")
+        if type(record["learning_rate"]) is not float:
+            raise RegistryError("capacity learning_rate must be an exact float")
+        for name in (
+            "capacity_resolution_sha256",
+            "ordinary_dcnv2_selection_sha256",
+            "capacity_lr_binding_sha256",
+        ):
+            _validate_digest(record.get(name), name)
 
     if record["status"] == "running":
         if not isinstance(record.get("pid"), int) or record["pid"] <= 0:

@@ -31,21 +31,24 @@ def require_nonnegative_int(name: str, value: int) -> int:
 
 
 def require_probability(name: str, value: float) -> float:
-    value = float(value)
+    if type(value) is not float:
+        raise TypeError(f"{name} must be an exact float")
     if not math.isfinite(value) or not 0.0 <= value < 1.0:
         raise ValueError(f"{name} must be finite and in [0, 1)")
     return value
 
 
 def require_finite_positive(name: str, value: float) -> float:
-    value = float(value)
+    if type(value) is not float:
+        raise TypeError(f"{name} must be an exact float")
     if not math.isfinite(value) or value <= 0.0:
         raise ValueError(f"{name} must be finite and positive")
     return value
 
 
 def require_finite_nonnegative(name: str, value: float) -> float:
-    value = float(value)
+    if type(value) is not float:
+        raise TypeError(f"{name} must be an exact float")
     if not math.isfinite(value) or value < 0.0:
         raise ValueError(f"{name} must be finite and non-negative")
     return value

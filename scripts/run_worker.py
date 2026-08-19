@@ -27,12 +27,31 @@ from typing import Any
 from cost_guard import evaluate_cost
 from storage_guard import inspect_storage
 
+from dcdn.checkpoint import (
+    CHECKPOINT_FORMAT,
+    CHECKPOINT_VERSION,
+    CheckpointMetadata,
+    _load_verified_payload,
+    canonical_json_bytes,
+)
 from dcdn.protocol import (
-    load_verified_yaml,
+    load_verified_yaml_artifact,
     read_verified_artifact,
     verify_sha256_sidecar,
 )
 from dcdn.registry import RunRegistry
+from dcdn.selection_artifact import (
+    CAPACITY_CANDIDATE_ID,
+    CAPACITY_LOW_RANK,
+    CAPACITY_RESOLUTION_SHA256,
+    EMPTY_DIFF_SHA256,
+    ORDINARY_SELECTION_SHA256,
+    PREMETRIC_PROTOCOL_SHA256,
+    SELECTED_LEARNING_RATE,
+    CapacityBindingEvidence,
+    load_capacity_lr_binding,
+    validate_capacity_training_binding_payload,
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 _TRAIN_SCRIPT = PROJECT_ROOT / "scripts" / "train_model.py"
@@ -87,15 +106,21 @@ def _inside(path: Path, root: Path, field: str) -> Path:
 def _validate_resolved_execution_contract(
     resolved: Mapping[str, Any],
 ) -> str:
-    if resolved.get("schema_version") != 3:
-        raise WorkerError("resolved schema_version must equal three")
+    training = _mapping(resolved.get("training"), "resolved.training")
+    is_capacity = training.get("model_key") == "dcnv2_capacity_matched_core"
+    schema_version = resolved.get("schema_version")
+    if type(schema_version) is not int or (
+        (schema_version == 3 and is_capacity)
+        or (schema_version == 4 and not is_capacity)
+        or schema_version not in {3, 4}
+    ):
+        raise WorkerError("resolved schema must be v3 non-capacity or v4 capacity")
     execution_kind = resolved.get("execution_kind")
     if type(execution_kind) is not str or execution_kind not in {
         "implementation_smoke",
         "scientific_tuning",
     }:
         raise WorkerError("resolved execution_kind is invalid")
-    training = _mapping(resolved.get("training"), "resolved.training")
     runtime = _mapping(resolved.get("runtime"), "resolved.runtime")
     runtime_value_checks = training.get("runtime_value_checks")
     if type(runtime_value_checks) is not bool:
@@ -132,6 +157,214 @@ def _validate_resolved_execution_contract(
     return execution_kind
 
 
+def _verify_capacity_binding(
+    resolved: Mapping[str, Any],
+    project_root: Path,
+    *,
+    record: Mapping[str, Any] | None = None,
+) -> CapacityBindingEvidence | None:
+    """Re-open and compare every capacity authorization boundary."""
+
+    training = _mapping(resolved.get("training"), "resolved.training")
+    binding_fields = {
+        "ordinary_dcnv2_selection_sha256",
+        "capacity_lr_binding_sha256",
+    }
+    is_capacity = training.get("model_key") == "dcnv2_capacity_matched_core"
+    schema_version = resolved.get("schema_version")
+    if not is_capacity:
+        if (
+            type(schema_version) is not int
+            or schema_version != 3
+            or "capacity_lr_binding_path" in resolved
+            or set(training) & binding_fields
+        ):
+            raise WorkerError("non-capacity resolved config contains capacity binding")
+        return None
+    if type(schema_version) is not int or schema_version != 4:
+        raise WorkerError("capacity resolved config requires schema v4")
+    if record is not None and record.get("code_diff_sha256") != EMPTY_DIFF_SHA256:
+        raise WorkerError("capacity registry requires an empty tracked code diff")
+    binding_path = _inside(
+        _resolved_path(
+            resolved.get("capacity_lr_binding_path"),
+            root=project_root,
+            field="resolved.capacity_lr_binding_path",
+        ),
+        project_root,
+        "resolved.capacity_lr_binding_path",
+    )
+    try:
+        evidence = load_capacity_lr_binding(binding_path, project_root)
+    except Exception as exc:
+        raise WorkerError(f"capacity LR binding verification failed: {exc}") from exc
+    protocol_path = _inside(
+        _resolved_path(
+            resolved.get("protocol_path"),
+            root=project_root,
+            field="resolved.protocol_path",
+        ),
+        project_root,
+        "resolved.protocol_path",
+    )
+    capacity_path = _inside(
+        _resolved_path(
+            resolved.get("capacity_artifact_path"),
+            root=project_root,
+            field="resolved.capacity_artifact_path",
+        ),
+        project_root,
+        "resolved.capacity_artifact_path",
+    )
+    model = _mapping(resolved.get("model"), "resolved.model")
+    interaction = _mapping(
+        model.get("interaction_config"),
+        "resolved.model.interaction_config",
+    )
+    head = _mapping(model.get("head_config"), "resolved.model.head_config")
+    expected_head = {"hidden_dims": [], "dropout": 0.0, "output_dim": 1}
+    expected_interaction = {
+        "model_key": "dcnv2_capacity_matched_core",
+        "num_layers": 2,
+        "low_rank": CAPACITY_LOW_RANK,
+        "num_experts": 4,
+        "product_init_scale": 0.1,
+    }
+    if (
+        type(head.get("hidden_dims")) is not list
+        or head.get("hidden_dims") != []
+        or type(head.get("dropout")) is not float
+        or type(head.get("output_dim")) is not int
+        or dict(head) != expected_head
+        or type(interaction.get("num_layers")) is not int
+        or type(interaction.get("low_rank")) is not int
+        or type(interaction.get("num_experts")) is not int
+        or type(interaction.get("product_init_scale")) is not float
+        or dict(interaction) != expected_interaction
+        or training.get("candidate_id") != CAPACITY_CANDIDATE_ID
+        or type(training.get("learning_rate")) is not float
+        or training.get("learning_rate") != SELECTED_LEARNING_RATE
+        or training.get("capacity_resolution_sha256") != CAPACITY_RESOLUTION_SHA256
+        or training.get("ordinary_dcnv2_selection_sha256") != ORDINARY_SELECTION_SHA256
+        or training.get("capacity_lr_binding_sha256") != evidence.sha256
+        or evidence.ordinary.learning_rate != SELECTED_LEARNING_RATE
+        or verify_sha256_sidecar(protocol_path) != PREMETRIC_PROTOCOL_SHA256
+        or verify_sha256_sidecar(capacity_path) != CAPACITY_RESOLUTION_SHA256
+    ):
+        raise WorkerError("capacity resolved binding values drifted")
+    if record is not None:
+        if (
+            type(record.get("learning_rate")) is not float
+            or type(record.get("capacity_low_rank")) is not int
+        ):
+            raise WorkerError("registry capacity binding scalar types mismatch")
+        expected_registry = {
+            "model_key": "dcnv2_capacity_matched_core",
+            "candidate_id": CAPACITY_CANDIDATE_ID,
+            "learning_rate": SELECTED_LEARNING_RATE,
+            "capacity_low_rank": CAPACITY_LOW_RANK,
+            "capacity_resolution_sha256": CAPACITY_RESOLUTION_SHA256,
+            "ordinary_dcnv2_selection_sha256": ORDINARY_SELECTION_SHA256,
+            "capacity_lr_binding_sha256": evidence.sha256,
+        }
+        for name, expected in expected_registry.items():
+            if record.get(name) != expected:
+                raise WorkerError(f"registry capacity binding mismatch: {name}")
+    return evidence
+
+
+def _verify_capacity_checkpoint_binding(
+    path: Path,
+    *,
+    expected_digest: str,
+    expected_role: str,
+    resolved_training: Mapping[str, Any],
+    expected_joint_model_contract_sha256: str,
+    expected_best_sha256: str | None,
+    expected_best_filename: str | None,
+) -> None:
+    """Safely inspect capacity checkpoint metadata without restoring state."""
+
+    try:
+        payload, digest = _load_verified_payload(path, map_location="cpu")
+    except Exception as exc:
+        raise WorkerError(
+            f"capacity checkpoint safe inspection failed: {path.name}: {exc}"
+        ) from exc
+    if digest != expected_digest:
+        raise WorkerError("capacity checkpoint digest differs from result")
+    expected_root = {
+        "format",
+        "version",
+        "metadata",
+        "progress",
+        "components",
+        "rng_state",
+        "extra_state",
+    }
+    if set(payload) != expected_root:
+        raise WorkerError("capacity checkpoint payload keys mismatch")
+    if (
+        payload.get("format") != CHECKPOINT_FORMAT
+        or type(payload.get("version")) is not int
+        or payload.get("version") != CHECKPOINT_VERSION
+    ):
+        raise WorkerError("capacity checkpoint format/version mismatch")
+    try:
+        metadata = CheckpointMetadata.from_dict(payload["metadata"])
+    except Exception as exc:
+        raise WorkerError(f"capacity checkpoint metadata is invalid: {exc}") from exc
+    checkpoint_config = _mapping(
+        metadata.resolved_config,
+        "checkpoint.metadata.resolved_config",
+    )
+    checkpoint_training = _mapping(
+        checkpoint_config.get("training"),
+        "checkpoint.metadata.resolved_config.training",
+    )
+    try:
+        validate_capacity_training_binding_payload(
+            checkpoint_config.get("capacity_training_binding"),
+            capacity_resolution_sha256=resolved_training["capacity_resolution_sha256"],
+            ordinary_dcnv2_selection_sha256=resolved_training[
+                "ordinary_dcnv2_selection_sha256"
+            ],
+            capacity_lr_binding_sha256=resolved_training["capacity_lr_binding_sha256"],
+        )
+    except Exception as exc:
+        raise WorkerError("capacity checkpoint training binding is invalid") from exc
+    if (
+        canonical_json_bytes(checkpoint_training)
+        != canonical_json_bytes(resolved_training)
+        or checkpoint_config.get("capacity_resolution_sha256")
+        != CAPACITY_RESOLUTION_SHA256
+        or checkpoint_config.get("checkpoint_protocol_sha256")
+        != PREMETRIC_PROTOCOL_SHA256
+        or metadata.protocol_hash != PREMETRIC_PROTOCOL_SHA256
+        or checkpoint_config.get("joint_model_contract_sha256")
+        != expected_joint_model_contract_sha256
+    ):
+        raise WorkerError("capacity checkpoint metadata binding mismatch")
+    extra_state = _mapping(payload.get("extra_state"), "checkpoint.extra_state")
+    if extra_state.get("checkpoint_role") != expected_role:
+        raise WorkerError("capacity checkpoint role mismatch")
+    if expected_role == "last":
+        if (
+            extra_state.get("selected_best_checkpoint_sha256") != expected_best_sha256
+            or extra_state.get("selected_best_checkpoint_filename")
+            != expected_best_filename
+        ):
+            raise WorkerError("last checkpoint best-generation lineage mismatch")
+    elif expected_role == "best":
+        if (
+            extra_state.get("selected_best_checkpoint_sha256") is not None
+            or extra_state.get("selected_best_checkpoint_filename") is not None
+        ):
+            raise WorkerError("best checkpoint recursively binds a generation")
+    else:
+        raise WorkerError("capacity checkpoint expected role is invalid")
+
+
 def _require_registry_execution_kind(
     record: Mapping[str, Any],
     expected: str,
@@ -166,12 +399,15 @@ def _verify_completed_result(
 ) -> tuple[str, bool]:
     """Re-open exact config/result bytes before publishing completed state."""
 
-    if verify_sha256_sidecar(resolved_config) != expected_resolved_digest:
+    resolved_artifact = load_verified_yaml_artifact(resolved_config)
+    if resolved_artifact.digest != expected_resolved_digest:
         raise WorkerError("resolved config digest drifted while worker was running")
-    reloaded = load_verified_yaml(resolved_config)
+    reloaded = resolved_artifact.payload
     if reloaded != expected_resolved:
         raise WorkerError("resolved config payload drifted while worker was running")
     execution_kind = _validate_resolved_execution_contract(reloaded)
+    capacity_evidence = _verify_capacity_binding(reloaded, project_root)
+    is_capacity = capacity_evidence is not None
     result_path = _inside(
         _resolved_path(
             reloaded.get("result_path"),
@@ -186,9 +422,19 @@ def _verify_completed_result(
     def reject_constant(value: str) -> None:
         raise ValueError(f"non-finite JSON constant {value!r}")
 
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if not isinstance(key, str) or key in result:
+                raise ValueError(f"duplicate or invalid JSON key: {key!r}")
+            result[key] = value
+        return result
+
     try:
         receipt = json.loads(
-            artifact.data.decode("ascii"), parse_constant=reject_constant
+            artifact.data.decode("ascii"),
+            object_pairs_hook=unique_object,
+            parse_constant=reject_constant,
         )
     except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
         raise WorkerError("result receipt is not strict finite ASCII JSON") from exc
@@ -209,9 +455,15 @@ def _verify_completed_result(
         "final_storage_snapshot",
         "telemetry",
     }
+    if is_capacity:
+        expected_keys.add("capacity_training_binding")
     if not isinstance(receipt, Mapping) or set(receipt) != expected_keys:
         raise WorkerError("result receipt keys mismatch")
-    if receipt["schema_version"] != 3 or receipt["run_id"] != run_id:
+    if (
+        type(receipt["schema_version"]) is not int
+        or receipt["schema_version"] != reloaded["schema_version"]
+        or receipt["run_id"] != run_id
+    ):
         raise WorkerError("result receipt identity mismatch")
     if receipt["execution_kind"] != execution_kind:
         raise WorkerError("result receipt execution_kind mismatch")
@@ -278,7 +530,9 @@ def _verify_completed_result(
     ):
         raise WorkerError("result examples/effective-batch equality is invalid")
     if (
-        training["declared_maximum_train_examples"] != declared_maximum
+        type(training["declared_maximum_train_examples"]) is not int
+        or type(training["realized_maximum_train_examples"]) is not int
+        or training["declared_maximum_train_examples"] != declared_maximum
         or training["realized_maximum_train_examples"] != realized_maximum
     ):
         raise WorkerError("result declared/realized example budget mismatch")
@@ -293,12 +547,7 @@ def _verify_completed_result(
         "throughput_examples_per_second",
     ):
         value = training[name]
-        if (
-            isinstance(value, bool)
-            or not isinstance(value, int | float)
-            or not math.isfinite(float(value))
-            or float(value) <= 0.0
-        ):
+        if type(value) is not float or not math.isfinite(value) or value <= 0.0:
             raise WorkerError(f"result {name} must be finite and positive")
     if (
         not isinstance(training["stopped_reason"], str)
@@ -372,9 +621,8 @@ def _verify_completed_result(
         if best_digest is not None or best_filename is not None:
             raise WorkerError("result has a best generation without a metric")
     elif (
-        isinstance(best_metric, bool)
-        or not isinstance(best_metric, int | float)
-        or not math.isfinite(float(best_metric))
+        type(best_metric) is not float
+        or not math.isfinite(best_metric)
         or training["validation_checks"] <= 0
         or not isinstance(best_digest, str)
         or _SHA256_RE.fullmatch(best_digest) is None
@@ -383,7 +631,36 @@ def _verify_completed_result(
         or verify_sha256_sidecar(run_directory / best_filename) != best_digest
     ):
         raise WorkerError("result best generation is missing, stale, or corrupt")
-    if receipt["selected_validation_metric"] != best_metric:
+    if is_capacity:
+        _verify_capacity_checkpoint_binding(
+            run_directory / "last.pt",
+            expected_digest=last_digest,
+            expected_role="last",
+            resolved_training=resolved_training,
+            expected_joint_model_contract_sha256=receipt["joint_model_contract_sha256"],
+            expected_best_sha256=best_digest,
+            expected_best_filename=best_filename,
+        )
+        if best_metric is not None:
+            assert isinstance(best_filename, str)
+            assert isinstance(best_digest, str)
+            _verify_capacity_checkpoint_binding(
+                run_directory / best_filename,
+                expected_digest=best_digest,
+                expected_role="best",
+                resolved_training=resolved_training,
+                expected_joint_model_contract_sha256=receipt[
+                    "joint_model_contract_sha256"
+                ],
+                expected_best_sha256=None,
+                expected_best_filename=None,
+            )
+    selected_metric = receipt["selected_validation_metric"]
+    if (
+        (best_metric is None and selected_metric is not None)
+        or (best_metric is not None and type(selected_metric) is not float)
+        or selected_metric != best_metric
+    ):
         raise WorkerError("selected validation metric differs from training result")
     if receipt["test_metrics"] is not None:
         raise WorkerError("premetric worker result must not contain test metrics")
@@ -411,14 +688,9 @@ def _verify_completed_result(
         percentiles: list[float] = []
         for name in ("p50_ms", "p95_ms", "p99_ms"):
             value = latency[name]
-            if (
-                isinstance(value, bool)
-                or not isinstance(value, int | float)
-                or not math.isfinite(float(value))
-                or float(value) < 0.0
-            ):
+            if type(value) is not float or not math.isfinite(value) or value < 0.0:
                 raise WorkerError(f"validation latency {name} is invalid")
-            percentiles.append(float(value))
+            percentiles.append(value)
         if percentiles != sorted(percentiles):
             raise WorkerError("validation latency percentiles are not ordered")
         if latency["scope"] != "end_to_end_raw_to_logit_model":
@@ -455,6 +727,23 @@ def _verify_completed_result(
         "capacity_resolution_sha256"
     ):
         raise WorkerError("result capacity artifact digest mismatch")
+    if is_capacity:
+        assert capacity_evidence is not None
+        try:
+            validate_capacity_training_binding_payload(
+                receipt.get("capacity_training_binding"),
+                capacity_resolution_sha256=resolved_training[
+                    "capacity_resolution_sha256"
+                ],
+                ordinary_dcnv2_selection_sha256=resolved_training[
+                    "ordinary_dcnv2_selection_sha256"
+                ],
+                capacity_lr_binding_sha256=resolved_training[
+                    "capacity_lr_binding_sha256"
+                ],
+            )
+        except Exception as exc:
+            raise WorkerError("result capacity training binding mismatch") from exc
     if (
         not isinstance(receipt["joint_model_contract_sha256"], str)
         or _SHA256_RE.fullmatch(receipt["joint_model_contract_sha256"]) is None
@@ -1240,8 +1529,9 @@ def run_worker(
         raise WorkerError("poll_seconds must be positive")
     registry_root = _inside(registry_root, project_root, "registry_root")
     resolved_config = _inside(resolved_config, project_root, "resolved_config")
-    resolved_config_digest = verify_sha256_sidecar(resolved_config)
-    resolved = load_verified_yaml(resolved_config)
+    resolved_artifact = load_verified_yaml_artifact(resolved_config)
+    resolved_config_digest = resolved_artifact.digest
+    resolved = resolved_artifact.payload
     if resolved.get("run_id") != run_id:
         raise WorkerError("resolved run_id does not match worker run_id")
     if (
@@ -1281,8 +1571,9 @@ def run_worker(
         project_root,
         "resolved.protocol_path",
     )
-    protocol_digest = verify_sha256_sidecar(protocol_path)
-    protocol_payload = load_verified_yaml(protocol_path)
+    protocol_artifact = load_verified_yaml_artifact(protocol_path)
+    protocol_digest = protocol_artifact.digest
+    protocol_payload = protocol_artifact.payload
     protocol_hashes = _mapping(protocol_payload.get("hashes"), "protocol.hashes")
     if record["protocol_sha256"] != protocol_digest:
         raise WorkerError("registry protocol_sha256 mismatch")
@@ -1301,6 +1592,7 @@ def run_worker(
     )
     if recorded_resolved != resolved_config:
         raise WorkerError("registry resolved_config_path mismatch")
+    _verify_capacity_binding(resolved, project_root, record=record)
     log_path = _inside(
         _resolved_path(record["log_path"], root=project_root, field="record.log_path"),
         project_root,
@@ -1442,7 +1734,27 @@ def run_worker(
             return_code = process.wait()
             if failure_reason is None and return_code == 0:
                 try:
-                    _require_code_identity(project_root, record)
+                    post_run_record = registry.read(run_id)
+                    if post_run_record.get("status") != "running":
+                        raise WorkerError(
+                            "registry status drifted before terminal verification"
+                        )
+                    for identity_field in (
+                        "resolved_config_sha256",
+                        "protocol_sha256",
+                        "code_commit",
+                        "code_diff_sha256",
+                    ):
+                        if post_run_record.get(identity_field) != record.get(
+                            identity_field
+                        ):
+                            raise WorkerError(
+                                f"registry identity drifted: {identity_field}"
+                            )
+                    _require_code_identity(project_root, post_run_record)
+                    _verify_capacity_binding(
+                        resolved, project_root, record=post_run_record
+                    )
                     (
                         result_digest,
                         scientific_result_eligible,
@@ -1488,6 +1800,27 @@ def run_worker(
                         raise WorkerError(
                             "terminal helper did not reconcile completed state"
                         )
+                    completed_record = registry.read(run_id)
+                    if completed_record.get("status") != "completed":
+                        raise WorkerError("fresh registry record is not completed")
+                    for identity_field in (
+                        "resolved_config_sha256",
+                        "protocol_sha256",
+                        "code_commit",
+                        "code_diff_sha256",
+                    ):
+                        if completed_record.get(identity_field) != record.get(
+                            identity_field
+                        ):
+                            raise WorkerError(
+                                f"completed registry identity drifted: {identity_field}"
+                            )
+                    _require_code_identity(project_root, completed_record)
+                    _verify_capacity_binding(
+                        resolved,
+                        project_root,
+                        record=completed_record,
+                    )
                     terminal_published = True
                     return 0
             reason = failure_reason or f"trainer exited with return code {return_code}"

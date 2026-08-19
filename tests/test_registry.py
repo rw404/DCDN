@@ -85,6 +85,15 @@ def test_unsafe_run_id_is_rejected(tmp_path: Path, run_id: str) -> None:
         registry.create_pending(**pending_fields(run_id))
 
 
+@pytest.mark.parametrize("seed", [42.0, True])
+def test_seed_requires_an_exact_integer(tmp_path: Path, seed: object) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    fields = pending_fields("bad-seed")
+    fields["seed"] = seed
+    with pytest.raises(RegistryError, match="seed"):
+        registry.create_pending(**fields)
+
+
 def test_paths_credentials_and_hashes_fail_closed(tmp_path: Path) -> None:
     registry = RunRegistry(tmp_path / "registry")
     fields = pending_fields()
@@ -431,3 +440,70 @@ def test_registry_helper_executes_idempotent_requests(
             "scientific_result_eligible": None,
         }
     ) == {"status": "failed"}
+
+
+def capacity_fields() -> dict:
+    return {
+        "model_key": "dcnv2_capacity_matched_core",
+        "candidate_id": "capacity_rank_lower",
+        "code_diff_sha256": hashlib.sha256(b"").hexdigest(),
+        "learning_rate": 0.0003,
+        "capacity_low_rank": 12,
+        "capacity_resolution_sha256": (
+            "d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565"
+        ),
+        "ordinary_dcnv2_selection_sha256": (
+            "869cbcb7a227b274700cda142f23c59040497bfdfe4da101888e2cc63f39d67a"
+        ),
+        "capacity_lr_binding_sha256": "c" * 64,
+    }
+
+
+def test_capacity_registry_binding_is_exact_and_legacy_is_unchanged(
+    tmp_path: Path,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    fields = pending_fields("capacity-binding-happy")
+    fields.update(capacity_fields())
+    created = registry.create_pending(**fields)
+    for name, expected in capacity_fields().items():
+        assert created[name] == expected
+
+    legacy = registry.create_pending(**pending_fields("legacy-still-valid"))
+    assert "model_key" not in legacy
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("model_key", "dcnv2_full_rank"),
+        ("candidate_id", "capacity_rank_upper"),
+        ("learning_rate", 0.001),
+        ("learning_rate", 3),
+        ("capacity_low_rank", 13),
+        ("capacity_low_rank", 12.0),
+        ("capacity_low_rank", True),
+        ("capacity_resolution_sha256", "d" * 64),
+        ("ordinary_dcnv2_selection_sha256", "e" * 64),
+        ("capacity_lr_binding_sha256", "invalid"),
+    ],
+)
+def test_capacity_registry_binding_rejects_tamper_and_wrong_types(
+    tmp_path: Path,
+    field: str,
+    value: object,
+) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    fields = pending_fields(f"capacity-bad-{field.replace('_', '-')}")
+    fields.update(capacity_fields())
+    fields[field] = value
+    with pytest.raises(RegistryError, match="capacity"):
+        registry.create_pending(**fields)
+
+
+def test_partial_capacity_registry_binding_is_rejected(tmp_path: Path) -> None:
+    registry = RunRegistry(tmp_path / "registry")
+    fields = pending_fields("capacity-binding-partial")
+    fields["model_key"] = "dcnv2_capacity_matched_core"
+    with pytest.raises(RegistryError, match="incomplete"):
+        registry.create_pending(**fields)

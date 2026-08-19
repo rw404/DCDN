@@ -22,9 +22,15 @@ import torch
 from cost_guard import evaluate_cost
 from storage_guard import inspect_storage
 
-from dcdn.capacity_artifact import sha256_file as capacity_sha256_file
+from dcdn.capacity_artifact import (
+    load_verified_capacity_artifact,
+)
+from dcdn.capacity_artifact import (
+    sha256_file as capacity_sha256_file,
+)
 from dcdn.data.vk_lsvd_runtime import C_PLUS_P, build_vk_lsvd_raw_source
 from dcdn.encoder import EncoderContractLock, build_trainable_encoded_model
+from dcdn.models import DCNv2CapacityCoreConfig
 from dcdn.protocol import (
     ProtocolGate,
     load_verified_yaml,
@@ -33,6 +39,20 @@ from dcdn.protocol import (
 )
 from dcdn.raw import RawSourceIdentity
 from dcdn.search_space import SearchSpaceLock
+from dcdn.selection_artifact import (
+    CAPACITY_CANDIDATE_ID,
+    CAPACITY_LOW_RANK,
+    CAPACITY_RESOLUTION_SHA256,
+    ORDINARY_SELECTION_SHA256,
+    PREMETRIC_PROTOCOL_SHA256,
+    SELECTED_LEARNING_RATE,
+    CapacityBindingEvidence,
+    capacity_phase_resolutions,
+    capacity_resolved_model_config_sha256,
+    capacity_selection_binding_payload,
+    capacity_training_binding_payload,
+    load_capacity_lr_binding,
+)
 from dcdn.training import (
     CompactEventLog,
     SafetyAttestation,
@@ -383,7 +403,7 @@ def _load_exact_views_manifest(
 
 def _run(resolved_path: Path) -> int:
     payload = load_verified_yaml(resolved_path)
-    keys = {
+    base_keys = {
         "schema_version",
         "execution_kind",
         "run_id",
@@ -405,9 +425,24 @@ def _run(resolved_path: Path) -> int:
         "result_path",
         "runtime",
     }
+    training_payload = _mapping(payload.get("training"), "training")
+    is_capacity = training_payload.get("model_key") == "dcnv2_capacity_matched_core"
+    schema_version = payload.get("schema_version")
+    if type(schema_version) is not int:
+        raise TrainingContractError("resolved schema_version must be an exact integer")
+    if schema_version == 3:
+        if is_capacity:
+            raise TrainingContractError(
+                "schema v3 capacity runs are forbidden; use binding-aware v4"
+            )
+        keys = base_keys
+    elif schema_version == 4:
+        if not is_capacity:
+            raise TrainingContractError("schema v4 is capacity-control only")
+        keys = base_keys | {"capacity_lr_binding_path"}
+    else:
+        raise TrainingContractError("resolved schema_version must be three or four")
     _exact_keys(payload, keys, "resolved config")
-    if payload["schema_version"] != 3:
-        raise TrainingContractError("resolved schema_version must equal three")
     root = _path(payload["project_root"], root=PROJECT_ROOT, field="root", inside=True)
     if root != PROJECT_ROOT:
         raise TrainingContractError("project_root does not match this checkout")
@@ -415,6 +450,29 @@ def _run(resolved_path: Path) -> int:
 
     def local(name: str) -> Path:
         return _path(payload[name], root=root, field=name, inside=True)
+
+    training = _training_config(training_payload)
+    capacity_binding: CapacityBindingEvidence | None = None
+    capacity_binding_path: Path | None = None
+    if is_capacity:
+        capacity_binding_path = local("capacity_lr_binding_path")
+        try:
+            capacity_binding = load_capacity_lr_binding(capacity_binding_path, root)
+        except Exception as exc:
+            raise TrainingContractError(
+                f"capacity LR binding failed before model/source creation: {exc}"
+            ) from exc
+        if (
+            training.candidate_id != CAPACITY_CANDIDATE_ID
+            or training.learning_rate != SELECTED_LEARNING_RATE
+            or training.capacity_resolution_sha256 != CAPACITY_RESOLUTION_SHA256
+            or training.ordinary_dcnv2_selection_sha256 != ORDINARY_SELECTION_SHA256
+            or training.capacity_lr_binding_sha256 != capacity_binding.sha256
+            or capacity_binding.ordinary.learning_rate != SELECTED_LEARNING_RATE
+        ):
+            raise TrainingContractError(
+                "capacity resolved config differs from the compact authorization"
+            )
 
     run_directory = local("run_directory")
     result_path = local("result_path")
@@ -437,7 +495,34 @@ def _run(resolved_path: Path) -> int:
     capacity_digest = capacity_sha256_file(capacity_path)
     verify_sha256_sidecar(capacity_path)
 
-    training = _training_config(_mapping(payload["training"], "training"))
+    capacity_payload: Mapping[str, Any] | None = None
+    if is_capacity:
+        assert capacity_binding is not None
+        if gate.digest != PREMETRIC_PROTOCOL_SHA256:
+            raise TrainingContractError(
+                "capacity control requires the frozen premetric protocol"
+            )
+        try:
+            capacity_payload = load_verified_capacity_artifact(capacity_path)
+            resolved_capacity_phase = search.require_phase(
+                "capacity_control_training",
+                resolutions=capacity_phase_resolutions(
+                    capacity_payload,
+                    selected_learning_rate=capacity_binding.ordinary.learning_rate,
+                ),
+            )
+        except Exception as exc:
+            raise TrainingContractError(
+                f"capacity search-phase gate failed before model creation: {exc}"
+            ) from exc
+        phase_lr = resolved_capacity_phase["models"]["dcnv2_low_rank_mix_capacity"][
+            "base_config"
+        ]["optimizer"]["learning_rate"]
+        if phase_lr != SELECTED_LEARNING_RATE:
+            raise TrainingContractError(
+                "capacity search phase did not inherit the selected LR"
+            )
+
     if (
         training.dataset_id != _DATASET_ID
         or training.feature_regime != C_PLUS_P
@@ -470,6 +555,24 @@ def _run(resolved_path: Path) -> int:
     device = _device(runtime["device"])
 
     model_payload = _mapping(payload["model"], "model")
+    _exact_keys(
+        model_payload,
+        {"interaction_config", "head_config", "init_seed"},
+        "model",
+    )
+    head_payload = _mapping(model_payload["head_config"], "model.head_config")
+    _exact_keys(
+        head_payload, {"hidden_dims", "dropout", "output_dim"}, "model.head_config"
+    )
+    if (
+        type(head_payload["hidden_dims"]) is not list
+        or head_payload["hidden_dims"] != []
+        or type(head_payload["dropout"]) is not float
+        or head_payload["dropout"] != 0.0
+        or type(head_payload["output_dim"]) is not int
+        or head_payload["output_dim"] != 1
+    ):
+        raise TrainingContractError("model does not use the exact frozen common head")
     # selected_configs.lock has one cell per model, not per final seed.  Its
     # digest therefore covers only seed-invariant architecture/head choices;
     # init_seed remains exact in TrainingConfig and the joint checkpoint.
@@ -477,17 +580,46 @@ def _run(resolved_path: Path) -> int:
         "interaction_config": model_payload["interaction_config"],
         "head_config": model_payload["head_config"],
     }
-    model_digest = hashlib.sha256(
-        json.dumps(
-            selected_model_payload,
-            sort_keys=True,
-            separators=(",", ":"),
-            allow_nan=False,
-        ).encode("ascii")
-    ).hexdigest()
+    if is_capacity:
+        assert capacity_binding is not None
+        selection_binding = capacity_selection_binding_payload(
+            capacity_candidate_id=training.candidate_id,
+            learning_rate=training.learning_rate,
+            capacity_resolution_sha256=training.capacity_resolution_sha256,
+            ordinary_dcnv2_selection_sha256=(training.ordinary_dcnv2_selection_sha256),
+            capacity_lr_binding_sha256=training.capacity_lr_binding_sha256,
+            premetric_protocol_sha256=gate.digest,
+        )
+        model_digest = capacity_resolved_model_config_sha256(
+            interaction_config=_mapping(
+                selected_model_payload["interaction_config"],
+                "model.interaction_config",
+            ),
+            head_config=_mapping(
+                selected_model_payload["head_config"], "model.head_config"
+            ),
+            capacity_selection_binding=selection_binding,
+        )
+    else:
+        model_digest = hashlib.sha256(
+            json.dumps(
+                selected_model_payload,
+                sort_keys=True,
+                separators=(",", ":"),
+                allow_nan=False,
+            ).encode("ascii")
+        ).hexdigest()
     if model_digest != training.resolved_model_config_sha256:
         raise TrainingContractError("resolved model digest mismatch")
     interaction, head, init_seed = resolved_model_components(model_payload)
+    if is_capacity and (
+        not isinstance(interaction, DCNv2CapacityCoreConfig)
+        or interaction.low_rank != CAPACITY_LOW_RANK
+        or interaction.num_layers != 2
+        or interaction.num_experts != 4
+        or interaction.product_init_scale != 0.1
+    ):
+        raise TrainingContractError("capacity model geometry is not authorized")
     if init_seed != training.seed:
         raise TrainingContractError("model init_seed differs from run seed")
     if training.encoder_contract_sha256 != encoder_lock.sha256:
@@ -592,6 +724,7 @@ def _run(resolved_path: Path) -> int:
         search_lock=search,
         capacity_resolution=None,
         capacity_artifact_path=capacity_path,
+        capacity_lr_binding_path=capacity_binding_path,
         repository_root=root,
         operand_feature_order=train_id.ordered_operand_fields,
         run_directory=run_directory,
@@ -639,7 +772,7 @@ def _run(resolved_path: Path) -> int:
             )
         guard.check(force=True)
         receipt = {
-            "schema_version": 3,
+            "schema_version": schema_version,
             "execution_kind": execution_kind,
             "scientific_result_eligible": scientific_result_eligible,
             "run_id": payload["run_id"],
@@ -655,6 +788,14 @@ def _run(resolved_path: Path) -> int:
             "final_storage_snapshot": guard.storage,
             "telemetry": "disabled",
         }
+        if is_capacity:
+            receipt["capacity_training_binding"] = capacity_training_binding_payload(
+                capacity_resolution_sha256=training.capacity_resolution_sha256,
+                ordinary_dcnv2_selection_sha256=(
+                    training.ordinary_dcnv2_selection_sha256
+                ),
+                capacity_lr_binding_sha256=(training.capacity_lr_binding_sha256),
+            )
         digest = _write_immutable_json(result_path, receipt)
         log.emit(
             "result_written",

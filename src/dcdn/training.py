@@ -82,6 +82,18 @@ from dcdn.raw import (
 from dcdn.reproducibility import seed_everything
 from dcdn.sampler import StatefulPermutationSampler
 from dcdn.search_space import SearchSpaceLock, validate_capacity_resolution
+from dcdn.selection_artifact import (
+    CAPACITY_CANDIDATE_ID,
+    CAPACITY_LOW_RANK,
+    CAPACITY_RESOLUTION_SHA256,
+    ORDINARY_SELECTION_SHA256,
+    PREMETRIC_PROTOCOL_SHA256,
+    SELECTED_LEARNING_RATE,
+    CapacityBindingEvidence,
+    capacity_phase_resolutions,
+    capacity_training_binding_payload,
+    load_capacity_lr_binding,
+)
 
 Split = Literal["train", "validation", "test"]
 RunPhase = Literal["tuning", "final"]
@@ -189,6 +201,8 @@ class TrainingConfig:
     numerical_nonfinite_limit: int = 1
     runtime_value_checks: bool = True
     reproduction_command: str = ""
+    ordinary_dcnv2_selection_sha256: str | None = None
+    capacity_lr_binding_sha256: str | None = None
 
     def __post_init__(self) -> None:
         for name in (
@@ -236,15 +250,21 @@ class TrainingConfig:
             "adam_epsilon",
             "gradient_clip_l2",
         ):
-            value = float(getattr(self, name))
+            value = getattr(self, name)
+            if type(value) is not float:
+                raise TypeError(f"{name} must be an exact float")
             if not math.isfinite(value) or value <= 0:
                 raise ValueError(f"{name} must be finite and positive")
         if (
-            not isinstance(self.adam_betas, tuple)
+            type(self.adam_betas) is not tuple
             or len(self.adam_betas) != 2
-            or not all(0.0 < value < 1.0 for value in self.adam_betas)
+            or not all(type(value) is float for value in self.adam_betas)
         ):
-            raise ValueError("adam_betas must contain two values in (0, 1)")
+            raise TypeError("adam_betas must contain two exact floats")
+        if not all(
+            math.isfinite(value) and 0.0 < value < 1.0 for value in self.adam_betas
+        ):
+            raise ValueError("adam_betas must contain two finite values in (0, 1)")
         if self.loss not in {
             "binary_cross_entropy_with_logits",
             "normalized_mean_squared_error",
@@ -267,6 +287,37 @@ class TrainingConfig:
                 or SHA256_RE.fullmatch(getattr(self, name)) is None
             ):
                 raise ValueError(f"{name} must be a lowercase SHA-256 digest")
+        capacity_bindings = (
+            self.ordinary_dcnv2_selection_sha256,
+            self.capacity_lr_binding_sha256,
+        )
+        if self.model_key == "dcnv2_capacity_matched_core":
+            if (
+                self.candidate_id != CAPACITY_CANDIDATE_ID
+                or self.learning_rate != SELECTED_LEARNING_RATE
+                or self.capacity_resolution_sha256 != CAPACITY_RESOLUTION_SHA256
+                or self.ordinary_dcnv2_selection_sha256 != ORDINARY_SELECTION_SHA256
+            ):
+                raise ValueError(
+                    "capacity control requires the authorized candidate, LR, "
+                    "capacity artifact, and ordinary selection receipt"
+                )
+            for name, value in zip(
+                (
+                    "ordinary_dcnv2_selection_sha256",
+                    "capacity_lr_binding_sha256",
+                ),
+                capacity_bindings,
+                strict=True,
+            ):
+                if not isinstance(value, str) or SHA256_RE.fullmatch(value) is None:
+                    raise ValueError(
+                        f"capacity control requires {name} as a lowercase SHA-256"
+                    )
+        elif any(value is not None for value in capacity_bindings):
+            raise ValueError(
+                "ordinary/capacity LR selection bindings are capacity-only"
+            )
         if type(self.autocast_bfloat16) is not bool:
             raise TypeError("autocast_bfloat16 must be boolean")
         if type(self.allow_one_oom_microbatch_reduction) is not bool:
@@ -315,6 +366,19 @@ class TrainingConfig:
         return (
             (threshold + self.effective_batch_size - 1) // self.effective_batch_size
         ) * self.effective_batch_size
+
+
+def training_config_payload(config: TrainingConfig) -> dict[str, Any]:
+    """Serialize without adding null capacity fields to legacy checkpoints."""
+
+    payload = asdict(config)
+    for name in (
+        "ordinary_dcnv2_selection_sha256",
+        "capacity_lr_binding_sha256",
+    ):
+        if payload[name] is None:
+            del payload[name]
+    return payload
 
 
 def runtime_identity_from_raw(
@@ -1014,13 +1078,12 @@ def validate_frozen_training_contract(
         ):
             raise TrainingContractError("Wukong-small is a frozen no-tune candidate")
     elif config.model_key == "dcnv2_capacity_matched_core":
-        if config.candidate_id not in {"capacity_rank_lower", "capacity_rank_upper"}:
+        if (
+            config.candidate_id != CAPACITY_CANDIDATE_ID
+            or config.learning_rate != SELECTED_LEARNING_RATE
+        ):
             raise TrainingContractError(
-                "capacity candidate is not a frozen rank bracket"
-            )
-        if config.learning_rate not in {3e-4, 1e-3}:
-            raise TrainingContractError(
-                "capacity control must inherit selected DCNv2 LR"
+                "capacity control must use authorized lower rank and DCNv2 LR"
             )
     else:
         raise TrainingContractError("model is outside the frozen public suite")
@@ -1465,6 +1528,7 @@ class TrainingHarness:
         run_directory: str | Path,
         device: torch.device | str,
         capacity_artifact_path: str | Path | None = None,
+        capacity_lr_binding_path: str | Path | None = None,
         repository_root: str | Path | None = None,
         event_log: CompactEventLog | None = None,
         heartbeat: Callable[[], None] | None = None,
@@ -1487,6 +1551,71 @@ class TrainingHarness:
             raise TrainingContractError("DDP/distributed process groups are forbidden")
         if isinstance(model, nn.parallel.DistributedDataParallel):
             raise TrainingContractError("DDP-wrapped models are forbidden")
+
+        self.capacity_lr_binding: CapacityBindingEvidence | None = None
+        self.capacity_training_binding: Mapping[str, Any] | None = None
+        if controlled.model_key == "dcnv2_capacity_matched_core":
+            if (
+                capacity_lr_binding_path is None
+                or capacity_artifact_path is None
+                or repository_root is None
+            ):
+                raise TrainingContractError(
+                    "capacity control requires compact LR authorization, full "
+                    "capacity artifact, and repository root"
+                )
+            try:
+                binding = load_capacity_lr_binding(
+                    capacity_lr_binding_path, repository_root
+                )
+                phase_capacity = load_verified_capacity_artifact(
+                    Path(capacity_artifact_path)
+                )
+                resolved_phase = search_lock.require_phase(
+                    "capacity_control_training",
+                    resolutions=capacity_phase_resolutions(
+                        phase_capacity,
+                        selected_learning_rate=binding.ordinary.learning_rate,
+                    ),
+                )
+            except Exception as exc:
+                raise TrainingContractError(
+                    f"capacity LR authorization failed before optimizer: {exc}"
+                ) from exc
+            resolved_lr = resolved_phase["models"]["dcnv2_low_rank_mix_capacity"][
+                "base_config"
+            ]["optimizer"]["learning_rate"]
+            interaction = controlled.interaction.config
+            if (
+                config.candidate_id != CAPACITY_CANDIDATE_ID
+                or config.learning_rate != SELECTED_LEARNING_RATE
+                or binding.ordinary.learning_rate != SELECTED_LEARNING_RATE
+                or resolved_lr != SELECTED_LEARNING_RATE
+                or config.capacity_resolution_sha256 != CAPACITY_RESOLUTION_SHA256
+                or config.ordinary_dcnv2_selection_sha256 != ORDINARY_SELECTION_SHA256
+                or config.capacity_lr_binding_sha256 != binding.sha256
+                or safety.protocol_gate.digest != PREMETRIC_PROTOCOL_SHA256
+                or not isinstance(interaction, DCNv2CapacityCoreConfig)
+                or interaction.low_rank != CAPACITY_LOW_RANK
+                or interaction.num_layers != 2
+                or interaction.num_experts != 4
+                or interaction.product_init_scale != 0.1
+            ):
+                raise TrainingContractError(
+                    "capacity config, protocol, geometry, LR, or authorization drifted"
+                )
+            self.capacity_lr_binding = binding
+            self.capacity_training_binding = capacity_training_binding_payload(
+                capacity_resolution_sha256=config.capacity_resolution_sha256,
+                ordinary_dcnv2_selection_sha256=(
+                    config.ordinary_dcnv2_selection_sha256
+                ),
+                capacity_lr_binding_sha256=config.capacity_lr_binding_sha256,
+            )
+        elif capacity_lr_binding_path is not None:
+            raise TrainingContractError(
+                "compact capacity LR authorization is forbidden for non-capacity models"
+            )
 
         validate_frozen_training_contract(config, model=model, search_lock=search_lock)
         safety.validate_common(config)
@@ -1734,8 +1863,8 @@ class TrainingHarness:
         return parent
 
     def _resolved_checkpoint_config(self) -> dict[str, Any]:
-        return {
-            "training": asdict(self.config),
+        payload = {
+            "training": training_config_payload(self.config),
             "joint_model_contract_sha256": self.model.contract_sha256,
             "joint_model_contract": self.model.contract_state(),
             "controlled_model_contract_sha256": (self.controlled_model.contract_sha256),
@@ -1771,6 +1900,9 @@ class TrainingHarness:
                 "maximum_oom_events": 1,
             },
         }
+        if self.capacity_training_binding is not None:
+            payload["capacity_training_binding"] = dict(self.capacity_training_binding)
+        return payload
 
     def checkpoint_metadata(self) -> CheckpointMetadata:
         controlled = self.controlled_model
