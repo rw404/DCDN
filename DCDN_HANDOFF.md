@@ -1083,4 +1083,23 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   universal DCDN superiority, while the narrow DCDN-versus-Original-DCN
   validation result remains positive. The next frozen `C+P` model is
   Wukong-small; dataset-wide selected configs and final/test remain locked.
+- VK-LSVD `C+P` Wukong-small fixed validation result recorded 2026-08-19:
+  the only candidate was frozen as `fixed_no_tune` before metrics, using the
+  smallest fully enumerated public architecture (two layers, LCB/FMB widths
+  8, FMB rank 24, FMB hidden widths 2048x3) and LR=0.0003. Under clean commit
+  `f008665788983dd34b10d5b98787745a638582ee`, it stopped by the predeclared
+  patience rule after 24,002,560 examples, 5,860 steps, and six validation
+  checks. Its minimum normalized MSE is `0.02096245653858564` at check three.
+  Result eligibility is true, `test_metrics=null`, and OOM/non-finite counts
+  are zero. Canonical fixed-candidate receipt SHA-256 is
+  `4f671539bd70d4054e9573c6d85f1cd991046e1980204fa78352c2cbd660cb16`;
+  selected best-checkpoint SHA-256 is
+  `a28af04fb609cd698903562cb6c8b7b4c5b023e40b958d4afa4b776182051f18`.
+  All four checkpoint pairs passed strict sidecars, safe CPU `weights_only`,
+  metadata, and tensor-finiteness audit; one recovered registry-helper
+  incident is preserved and no checkpoint was deleted. Wukong-small is lower
+  than selected DCDN by about 0.070678% but higher than selected AutoInt+ by
+  `0.00008251113095933404`. The seed-42 `C+P` selection suite is complete;
+  next freeze the dataset-wide selected-config lock and audit the final runner.
+  Final/test remains locked.
 Update this decision log whenever a material choice changes.

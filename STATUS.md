@@ -590,6 +590,35 @@ does reject any current claim of universal DCDN superiority. README records
 both facts. The next frozen `C+P` model is Wukong-small; dataset-wide selected
 configs and final/test remain locked.
 
+## VK-LSVD C+P Wukong-small fixed validation-only result
+
+The single Wukong-small configuration was frozen as `fixed_no_tune` before
+metrics: two interaction layers, LCB/FMB widths 8, FMB rank 24, three
+2048-wide FMB hidden layers, and LR=0.0003. Under clean commit
+`f008665788983dd34b10d5b98787745a638582ee`, it stopped by the predeclared
+validation-patience rule after 24,002,560 examples, 5,860 optimizer steps,
+and six validation checks. Its minimum normalized MSE is
+`0.02096245653858564` at check three. The result is
+`scientific_result_eligible=true`, with zero OOM/non-finite observations and
+`test_metrics=null`.
+
+Canonical fixed-candidate receipt
+`results/tuning/vk_lsvd_c_plus_p_wukong_small_selection_v1.json` has SHA-256
+`4f671539bd70d4054e9573c6d85f1cd991046e1980204fa78352c2cbd660cb16`;
+selected best-checkpoint SHA-256 is
+`a28af04fb609cd698903562cb6c8b7b4c5b023e40b958d4afa4b776182051f18`.
+All four checkpoint pairs passed strict sidecars, CPU `weights_only`,
+metadata, and finite-tensor checks. One recovered registry-helper incident is
+preserved; no checkpoint was deleted. Registry is completed and scientifically
+eligible, both A100s are idle, and no task process remains.
+
+On matched validation, Wukong-small is lower than selected DCDN by
+`0.000014826256803716215` (about `0.070678%`) but higher than selected
+AutoInt+ by `0.00008251113095933404` (AutoInt+ is about `0.393614%` lower
+relative to Wukong). The seed-42 `C+P` per-model selection suite is now
+complete. The next frozen action is to build and audit the dataset-wide
+`selected_configs.lock` and final runner; final/test remains locked.
+
 The owner-approved multi-task extension is scheduled only after the mandatory frozen matrix: normalized watch time remains primary, while like/dislike/share/bookmark are auxiliary binary labels when raw schema validation permits them.
 Per target, report ROC-AUC and user-GAUC over users with both classes, plus eligible-user/event coverage and paired user-bootstrap 95% confidence intervals.
 This extension does not alter the current single-target RQ1 selections or expose test data.

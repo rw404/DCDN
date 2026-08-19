@@ -39,16 +39,17 @@ the epoch is currently unknown and must be recorded separately if discovered.
 | 2026-08-19T16:19:45.321659Z | 3.29 assumed | Unavailable and owner-waived | 127.34 current; 127.34 at 0 h ETA | 31.107589 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen VK-LSVD C+P DeepFM candidates completed scientifically eligible validation-only tuning with zero OOM/non-finite observations and `test_metrics=null`; strict minimization selected LR=0.0003 at normalized MSE `0.020845575060232564`; immutable selection receipt SHA-256 `a6ed26dcce171cf8c27cb00e2db57c90cfcead0481251ed8e4a3a830ff812aeb`; all eight checkpoint pairs passed strict sidecars and safe CPU finite-tensor reopen; two bounded registry-helper timeouts recovered without trainer interruption; storage measured 11,554,703,872 project bytes, 39.238843 GiB logical headroom, and 61.963726 GiB overlay available; both A100s idle and no task-owned trainer remained | DeepFM validation choice frozen; retain checkpoints until evidence commit/push/read-test, continue frozen C+P model order with DCN, and keep final/test locked; no provider action performed |
 | 2026-08-19T17:54:54.415622Z | 3.29 assumed | Unavailable and owner-waived | 132.56 current; 132.56 at 0 h ETA | 32.693449 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen VK-LSVD C+P Original DCN candidates completed scientifically eligible validation-only tuning with zero OOM/non-finite observations and `test_metrics=null`; strict minimization selected LR=0.0003 at normalized MSE `0.021035584402689534`; immutable selection receipt SHA-256 `f352c9d07a9690303d7d0fc5986147310d0f83d9185599b02fcdb58a86e50656`; all 11 checkpoint pairs passed strict sidecars and safe CPU finite-tensor reopen; three bounded registry-helper incidents recovered without trainer interruption; storage measured 12,217,759,232 project bytes, 38.621325 GiB logical headroom, and 61.952000 GiB overlay available; both A100s idle and no task-owned trainer remained | Original DCN validation choice frozen; DCDN is lower by about 0.277157% on matched seed-42 validation; retain checkpoints until evidence commit/push/read-test, continue with AutoInt+, and keep final/test locked; no provider action performed |
 | 2026-08-19T19:22:09.064147Z | 3.29 assumed | Unavailable and owner-waived | 137.35 current; 137.35 at 0 h ETA | 34.147518 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen VK-LSVD C+P AutoInt+ candidates completed scientifically eligible validation-only tuning with zero OOM/non-finite observations and `test_metrics=null`; strict minimization selected LR=0.0003 at normalized MSE `0.020879945407626305`; immutable selection receipt SHA-256 `45ab5878b7a7ad5b57be418e6d17b5583b7cc84130fbef3a856af275c82169bb`; all 12 checkpoint pairs passed strict sidecars and safe CPU finite-tensor reopen; storage measured 12,993,276,416 project bytes, 37.899068 GiB logical headroom, and 61.948238 GiB overlay available; both A100s idle and no task-owned trainer remained | AutoInt+ validation choice frozen; AutoInt+ is lower than DCDN by about 0.464013% on matched seed-42 validation, so universal DCDN superiority is not supported; retain checkpoints until evidence commit/push/read-test, continue with Wukong-small, and keep final/test locked; no provider action performed |
+| 2026-08-19T20:20:52.836314Z | 3.29 assumed | Unavailable and owner-waived | 140.57 current; 140.57 at 0 h ETA | 35.126343 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; the single pre-frozen VK-LSVD C+P Wukong-small fixed-no-tune candidate completed scientifically eligible validation-only training with zero OOM/non-finite observations and `test_metrics=null`; it stopped by patience after 24,002,560 examples and selected normalized MSE `0.02096245653858564`; immutable receipt SHA-256 `4f671539bd70d4054e9573c6d85f1cd991046e1980204fa78352c2cbd660cb16`; all four checkpoint pairs passed strict sidecars and safe CPU finite-tensor reopen; one bounded registry-helper incident recovered without trainer interruption; storage measured 14,255,196,672 project bytes, 36.723814 GiB logical headroom, and 61.942345 GiB overlay available; both A100s idle and no task-owned trainer remained | Wukong-small fixed validation cell frozen; seed-42 C+P per-model selection suite complete; next build/audit dataset selected-config lock and final runner while test remains locked; no provider action performed |
 
 Control-plane historical charges and balance are unavailable and are not
 invented. The owner explicitly waived provider-side expiry, credentialed
 inspection, and quota metadata as execution gates. Estimated warning headroom
-at the `2026-08-19T19:22:09.064147Z` checkpoint is USD 232.65 and estimated
-hard-cap headroom is USD 322.65. The USD 370 warning estimate is crossed at
+at the `2026-08-19T20:20:52.836314Z` checkpoint is USD 229.43 and estimated
+hard-cap headroom is USD 319.43. The USD 370 warning estimate is crossed at
 `2026-08-22T18:05:06Z`; the USD 460 cost estimate would be crossed at
 `2026-08-23T21:26:26Z`, so the earlier 120-hour stop remains binding.
 
-The DCDN, ordinary full-rank DCNv2, AFN+, DNN, DeepFM, Original DCN, and AutoInt+ candidate pairs are
+The DCDN, ordinary full-rank DCNv2, AFN+, DNN, DeepFM, Original DCN, AutoInt+, and fixed Wukong-small validation cells are
 scientifically eligible validation-only tuning, not final/test results. Their
 selected LRs and exact best-checkpoint lineages are durable, but these
 per-model artifacts are not the dataset-wide `selected_configs.lock`. The
@@ -68,7 +69,10 @@ lower than selected DCDN by about 0.6279%. Original DCN selects LR=0.0003
 at normalized MSE `0.021035584402689534`; selected DCDN is lower by about
 0.277157% on matched seed-42 validation. AutoInt+ selects LR=0.0003 at
 normalized MSE `0.020879945407626305`, lower than selected DCDN by about
-0.464013%; the next frozen C+P model is Wukong-small.
+0.464013%. Fixed Wukong-small reaches `0.02096245653858564`, about
+0.070678% lower than DCDN but higher than AutoInt+. The seed-42 C+P per-model
+selection suite is complete; next build and audit the dataset-wide lock and
+final runner.
 The separate C+P+E ordinary full-rank DCNv2 control now selects
 LR=0.001 at normalized MSE `0.020826933840839952`; this is a
 validation-only control selection and not an RQ1 verdict. Final/test remains

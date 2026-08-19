@@ -80,6 +80,12 @@ which is lower than selected DCDN by `0.00009733738776305026` (about
 and dataset-wide claims remain pending the complete frozen matrix, untouched
 test evaluation, paired uncertainty, and effect-size analysis.
 
+The single pre-frozen Wukong-small configuration reaches
+`0.02096245653858564`, lower than selected DCDN by
+`0.000014826256803716215` (about `0.070678%`) but higher than selected
+AutoInt+ by `0.00008251113095933404`. Its fixed-no-tune lineage is preserved
+in `results/tuning/vk_lsvd_c_plus_p_wukong_small_selection_v1.json`.
+
 ## Frozen source and model checkpoint
 
 The three approved public sources are byte-verified outside the repository.
