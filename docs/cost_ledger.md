@@ -81,3 +81,15 @@ paired technical-failure receipt SHA-256 is
 The failures do not complete a scientific cell; retry is allowed only after
 the scoped fix passes regression, is committed/pushed, and new run IDs are
 materialized under the new clean code identity.
+
+At `2026-08-19T11:08:25.444318Z`, estimated cumulative spend was USD 110.27.
+The first retry pair had also stopped before a training batch, validation, or
+test metric, this time at the remaining C+P-only parameter-count gate. Both
+A100s and all task processes were idle afterward. The paired technical-failure
+receipt SHA-256 is
+`91a5011e5bfb7955e838f3256fac320c13b6a7e2a212ff07063a52760e0ebe17`.
+Project-owned durable bytes were 9,520,076,800, logical headroom was
+41.133738 GiB, and overlay free space was 61.999126 GiB. These technical
+failures do not complete a scientific cell. The fresh full CPU regression
+passed 541/541; another retry requires a clean committed/pushed fix and fresh
+run IDs.

@@ -712,6 +712,14 @@ def test_c_plus_p_plus_e_does_not_recompute_c_plus_p_capacity_projection(
         search_lock=frozen.search,
     )
     assert resolver_calls == 0
+    assert (
+        training_module._expected_capacity_parameter_count_for_feature_regime(
+            cpe_config,
+            controlled_model_key="dcnv2_full_rank",
+            artifact=artifact,
+        )
+        is None
+    )
 
     training_module._validate_capacity_projection_for_feature_regime(
         frozen.config,
@@ -724,6 +732,11 @@ def test_c_plus_p_plus_e_does_not_recompute_c_plus_p_capacity_projection(
         search_lock=frozen.search,
     )
     assert resolver_calls == 1
+    assert training_module._expected_capacity_parameter_count_for_feature_regime(
+        frozen.config,
+        controlled_model_key="dcdn_core",
+        artifact=artifact,
+    ) == int(artifact["target"]["parameters"])
 
     with pytest.raises(TrainingContractError, match="restricted"):
         training_module._validate_capacity_projection_for_feature_regime(
@@ -736,6 +749,16 @@ def test_c_plus_p_plus_e_does_not_recompute_c_plus_p_capacity_projection(
             artifact=artifact,
             projection=projection,
             search_lock=frozen.search,
+        )
+    with pytest.raises(TrainingContractError, match="restricted"):
+        training_module._expected_capacity_parameter_count_for_feature_regime(
+            replace(
+                cpe_config,
+                model_key="dcdn_core",
+                candidate_id="dcdn_core_l2_lr_3e_4",
+            ),
+            controlled_model_key="dcdn_core",
+            artifact=artifact,
         )
 
 

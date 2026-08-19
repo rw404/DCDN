@@ -1064,6 +1064,33 @@ def _validate_capacity_projection_for_feature_regime(
         )
 
 
+def _expected_capacity_parameter_count_for_feature_regime(
+    config: TrainingConfig,
+    *,
+    controlled_model_key: str,
+    artifact: Mapping[str, Any],
+) -> int | None:
+    """Bind C+P capacity counts without treating C+P+E as that control."""
+
+    if config.feature_regime == "C+P+E":
+        if controlled_model_key != "dcnv2_full_rank":
+            raise TrainingContractError(
+                "C+P+E capacity provenance is restricted to dcnv2_full_rank"
+            )
+        return None
+    if config.feature_regime != "C+P":
+        raise TrainingContractError(
+            "unsupported feature regime for capacity provenance"
+        )
+    if controlled_model_key == "dcdn_core":
+        return int(artifact["target"]["parameters"])
+    if controlled_model_key == "dcnv2_full_rank":
+        return int(artifact["ordinary_dcnv2"]["parameters"])
+    if controlled_model_key == "dcnv2_capacity_matched_core":
+        return int(_validated_capacity_candidate(config, artifact)["parameters"])
+    return None
+
+
 def validate_frozen_training_contract(
     config: TrainingConfig,
     *,
@@ -1770,22 +1797,14 @@ class TrainingHarness:
                 raise TrainingContractError(
                     "frozen shared encoder has unexpected parameter ownership"
                 )
-            expected_capacity_count: int | None = None
-            if controlled.model_key == "dcdn_core":
-                expected_capacity_count = int(
-                    self.capacity_artifact["target"]["parameters"]  # type: ignore[index]
-                )
-            elif controlled.model_key == "dcnv2_full_rank":
-                expected_capacity_count = int(
-                    self.capacity_artifact["ordinary_dcnv2"]["parameters"]  # type: ignore[index]
-                )
-            elif controlled.model_key == "dcnv2_capacity_matched_core":
-                assert self.capacity_artifact is not None
-                selected_candidate = _validated_capacity_candidate(
+            assert self.capacity_artifact is not None
+            expected_capacity_count = (
+                _expected_capacity_parameter_count_for_feature_regime(
                     config,
-                    self.capacity_artifact,
+                    controlled_model_key=controlled.model_key,
+                    artifact=self.capacity_artifact,
                 )
-                expected_capacity_count = int(selected_candidate["parameters"])
+            )
             if (
                 expected_capacity_count is not None
                 and joint_count != expected_capacity_count

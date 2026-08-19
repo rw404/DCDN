@@ -418,3 +418,26 @@ passed 541/541 tests; Ruff check/format and targeted bytecode compilation also
 passed. The next action is the clean fix/evidence commit and push, then fresh
 candidate IDs with the exact same frozen learning rates and budgets. Test
 remains locked.
+
+### First retry: second technical pre-training failure
+
+The retry pair under clean commit
+`871b82fb8c817fd2f8739ec2ae38f00b2fbaf92a` passed the corrected projection
+gate but stopped before the first batch at a second C+P-only assumption:
+`composite non-embedding count differs from capacity artifact`. The wider
+C+P+E full-rank model was still being required to equal the C+P-only ordinary
+DCNv2 parameter count. Both histories again contain only `local_guard`; no
+checkpoint, result, validation, or test event exists. Both records are
+terminal `failed` with `scientific_result_eligible=null`. Immutable paired
+failure receipt SHA-256 is
+`91a5011e5bfb7955e838f3256fac320c13b6a7e2a212ff07063a52760e0ebe17`.
+
+The second narrow correction keeps exact parameter-count binding unchanged
+for every C+P model and returns no C+P capacity-count expectation only for the
+already isolated C+P+E full-rank DCNv2 path. Focused harness regression passed
+74/74; the fresh full CPU suite passed 541/541, with scoped Ruff, format, and
+bytecode compilation clean. At
+`2026-08-19T11:08:25.444318Z`, estimated cumulative spend was USD 110.27;
+storage remained healthy at 9,520,076,800 project bytes, both A100s were idle,
+and no task process remained. Before another retry: commit/push the fix and
+evidence, then materialize fresh IDs. Test remains locked.

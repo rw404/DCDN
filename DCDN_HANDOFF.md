@@ -947,4 +947,21 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   targeted bytecode compilation clean. Retry requires a clean
   committed/pushed fix and fresh run IDs; the failed IDs will never be
   overwritten. Test remains locked.
+
+- The first C+P+E retry pair under commit
+  `871b82fb8c817fd2f8739ec2ae38f00b2fbaf92a` also stopped before any training
+  batch on 2026-08-19. The first projection gate was correctly scoped, but a
+  later parameter-count gate still compared the wider C+P+E full-rank model
+  against the C+P-only capacity artifact. Both histories again contain only a
+  local guard; no checkpoint, result, validation, or test event exists. The
+  immutable paired failure receipt SHA-256 is
+  `91a5011e5bfb7955e838f3256fac320c13b6a7e2a212ff07063a52760e0ebe17`.
+  The second narrow correction preserves exact C+P capacity-count equality
+  for DCDN, ordinary DCNv2, and the mechanically selected capacity control,
+  while treating the C+P artifact as provenance only for the isolated wider
+  C+P+E full-rank DCNv2 model. Focused harness regression is 74/74 PASS, and
+  the fresh full CPU suite is 541/541 PASS with scoped Ruff and bytecode
+  compilation clean. Another attempt requires a new clean committed/pushed
+  code identity and fresh run IDs; neither failed pair will be overwritten.
+  Test remains locked.
 Update this decision log whenever a material choice changes.

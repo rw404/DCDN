@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "artifact_role": "paired_technical_pretraining_failure",
+  "created_utc": "2026-08-19T11:06:38Z",
+  "dataset_id": "vk_lsvd_up0.01_ir0.01",
+  "feature_regime": "C+P+E",
+  "model_key": "dcnv2_full_rank",
+  "code_commit": "871b82fb8c817fd2f8739ec2ae38f00b2fbaf92a",
+  "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "protocol_sha256": "6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739",
+  "prior_failure_receipt_sha256": "d60f40816564427f41cf0e9748fc4d76f3fd6e613aab73d781630d9c2d6c0bee",
+  "test_unlocked": false,
+  "test_path_available": false,
+  "failure_kind": "c_plus_p_capacity_count_misapplied_to_c_plus_p_plus_e_model",
+  "failure_message": "composite non-embedding count differs from capacity artifact",
+  "failure_classification": "implementation_preflight_failure_not_scientific_result",
+  "training_batch_started": false,
+  "validation_event_observed": false,
+  "test_event_observed": false,
+  "result_artifact_created": false,
+  "checkpoint_artifact_created": false,
+  "history_event_names": [
+    "local_guard"
+  ],
+  "candidates": [
+    {
+      "run_id": "vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v1",
+      "learning_rate": 0.0003,
+      "status": "failed",
+      "scientific_result_eligible": null,
+      "resolved_config": {
+        "path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v1.yaml",
+        "sha256": "49a7194cfc4ec69023e5d290681e3b07420e516e56f89572a1344d30ce649363"
+      },
+      "command": {
+        "path": "runs/commands/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v1.sh",
+        "sha256": "24d233793fd300a91111c35b5903b6013adbaedf17b678833fe0a7262de4ad2a"
+      },
+      "registry": {
+        "path": "runs/registry/records/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v1.json",
+        "bytes": 1390,
+        "sha256": "4bce03e2af027a9c13e4095945ae1f074207b5cefc7666c1c6ed39df16303012"
+      },
+      "history": {
+        "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v1/history.jsonl",
+        "bytes": 128,
+        "sha256": "f76ce1fca447a73ebfb1216e2eb3c6e850a0c7a28ebad7085022e766b8db1e53"
+      },
+      "worker_log": {
+        "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v1/worker.log",
+        "bytes": 796,
+        "sha256": "8f810a99c0a1f7cd237f7b81f1d2d1615810f0f0cc72a5bb649dc6603a67a844"
+      }
+    },
+    {
+      "run_id": "vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v1",
+      "learning_rate": 0.001,
+      "status": "failed",
+      "scientific_result_eligible": null,
+      "resolved_config": {
+        "path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v1.yaml",
+        "sha256": "b0ff70592837fb81a8955b31a5dc87d52ac8a8844a5774b0a814f83005711cf5"
+      },
+      "command": {
+        "path": "runs/commands/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v1.sh",
+        "sha256": "f3cde52b7acf07548861f8e4170c931b6f23ec9be6316b5fdcd1581e0b62e9bf"
+      },
+      "registry": {
+        "path": "runs/registry/records/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v1.json",
+        "bytes": 1390,
+        "sha256": "dbbb76890091187e8c53e8189b8329b343605210b6b8b0cdb353773544e04737"
+      },
+      "history": {
+        "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v1/history.jsonl",
+        "bytes": 128,
+        "sha256": "c2975dfdb5d570a540f055075ce335fc79519e862e9a9f2a77b5e1550fd3878b"
+      },
+      "worker_log": {
+        "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v1/worker.log",
+        "bytes": 796,
+        "sha256": "8f810a99c0a1f7cd237f7b81f1d2d1615810f0f0cc72a5bb649dc6603a67a844"
+      }
+    }
+  ],
+  "corrective_action": {
+    "scope": "capacity provenance validation only",
+    "c_plus_p_behavior": "unchanged mechanical projection and exact capacity parameter count",
+    "c_plus_p_plus_e_behavior": "verified C+P artifact retained as provenance without recomputing its projection or requiring its parameter count on the wider model",
+    "allowed_c_plus_p_plus_e_model_key": "dcnv2_full_rank",
+    "original_run_ids_reused": false,
+    "retry_requires_clean_committed_code_and_new_run_ids": true
+  }
+}
