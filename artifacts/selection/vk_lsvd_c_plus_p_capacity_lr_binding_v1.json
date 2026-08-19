@@ -1,0 +1,59 @@
+{
+  "artifact_role": "capacity_control_training_authorization",
+  "capacity_control": {
+    "candidate_id": "capacity_rank_lower",
+    "learning_rate": 0.0003,
+    "learning_rate_selection_source": "ordinary_dcnv2_validation_only_selection",
+    "low_rank": 12,
+    "num_experts": 4,
+    "num_layers": 2,
+    "rank_selection_source": "metric_free_capacity_artifact"
+  },
+  "frozen_bindings": {
+    "capacity_resolution_path": "configs/capacity/vk_lsvd_c_plus_p_v1.json",
+    "capacity_resolution_sha256": "d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565",
+    "encoder_contract_sha256": "16fa99db8e92ce4dd55c0bd5e7d7bfd8af8d3d59251cc769b41988e61d414449",
+    "experiment_matrix_sha256": "867118db089bbbffb4abf02ff7b3c01e2c9f43e804a188a27a3886f66db4e000",
+    "model_sources_sha256": "0844a838e5a68029299a52aaa31b5f74205fe57fd486b51544061b32c571a3f4",
+    "ordinary_selection_path": "results/tuning/vk_lsvd_c_plus_p_dcnv2_full_rank_selection_v1.json",
+    "ordinary_selection_sha256": "869cbcb7a227b274700cda142f23c59040497bfdfe4da101888e2cc63f39d67a",
+    "premetric_protocol_path": "configs/protocols/vk_lsvd_c_plus_p/protocol_frozen.yaml",
+    "premetric_protocol_sha256": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+    "search_space_path": "configs/search_space_v1.yaml",
+    "search_space_sha256": "b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344"
+  },
+  "identity": {
+    "capacity_model_key": "dcnv2_capacity_matched_core",
+    "dataset_id": "vk_lsvd_up0.01_ir0.01",
+    "feature_regime": "C+P",
+    "ordinary_model_key": "dcnv2_full_rank",
+    "primary_target": "normalized_watch_time",
+    "tuning_seed": 42
+  },
+  "materializer_code_identity": {
+    "code_commit": "bc584157a5845571e72acde7d5075dd5f5d3bcc2",
+    "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ordinary_dcnv2_selection": {
+    "candidate_id": "dcnv2_full_rank_lr_3e_4",
+    "completed_resolved_config_sha256": "1f1c3e7167394cc1726cdd0e1a9d00a1f5e01e27711684065ecee65a6adae454",
+    "completed_result_sha256": "0e6381d016a65a48d9f12f48b6c871ae242139b2e9a2341f1ecba3efd03cf58e",
+    "completion_code_commit": "d55d61b3a09c95045872f49893377c01f57c2d45",
+    "completion_code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "completion_run_id": "vk-cp-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-resume-v2",
+    "learning_rate": 0.0003,
+    "resolved_model_config_seed_invariant_sha256": "25a5e2b040fe5ff52981a8499d7d4f8dd453bdd91d24e0d5a2b40b49d7521dcc",
+    "selected_best_checkpoint_sha256": "f3a27d6522df474f1cea06abe302d289ff9fc331e9ae7135baa9589a3427618c",
+    "validation_metric": 0.020908477427111632
+  },
+  "schema_version": 1,
+  "status": "authorized_after_validation_only_selection",
+  "test_firewall": {
+    "selected_on_validation_only": true,
+    "test_data_accessed": false,
+    "test_metrics_consulted": false,
+    "test_path_available": false,
+    "test_unlocked": false,
+    "validation_metrics_used_for_capacity_rank": false
+  }
+}

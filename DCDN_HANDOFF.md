@@ -857,4 +857,16 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   the dataset-wide `selected_configs.lock` remains incomplete and
   `test_unlocked=false`.
 
+- Capacity-control LR authorization materialized 2026-08-19 from clean commit
+  `bc584157a5845571e72acde7d5075dd5f5d3bcc2`. The immutable compact artifact
+  `artifacts/selection/vk_lsvd_c_plus_p_capacity_lr_binding_v1.json` has
+  SHA-256
+  `d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2`
+  and a strict adjacent sidecar. Its production validator reopens the ordinary
+  selection receipt, both candidate evidence chains, the selected checkpoint,
+  the frozen search/protocol/capacity inputs, and binds
+  `capacity_rank_lower` (rank 12) to inherited LR 0.0003 without using a
+  validation metric for rank selection. The full local CPU suite passed
+  534 tests; test remains locked. This closes the compact-authorization gate
+  only; a clean schema-v4 run config/registry/prelaunch audit remains required.
 Update this decision log whenever a material choice changes.

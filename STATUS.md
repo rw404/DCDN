@@ -1,6 +1,6 @@
 # DCDN execution status
 
-Updated: `2026-08-19T01:22:10Z`
+Updated: `2026-08-19T05:35:14Z`
 
 ## Current checkpoint
 
@@ -150,11 +150,16 @@ Updated: `2026-08-19T01:22:10Z`
   and no unregistered tie-break was applied. The per-model selection artifact
   SHA-256 is
   `66458ce3d96d6e4f5d5382dab904a5c120134ba52385d8a5bcdbd9d3c2bccb49`.
-  The ordinary-DCNv2 choice is now frozen below. `DCNv2-capacity-matched` may
-  proceed only after its resolved configuration durably binds that receipt and
-  inherited learning rate. Final/test remains blocked because
-  `test_unlocked=false`, the dataset-wide selected-config lock is incomplete,
-  and the one-pass final/test runner is not yet implemented and audited.
+  The ordinary-DCNv2 choice is now frozen below. The compact capacity-LR
+  authorization now exists at
+  `artifacts/selection/vk_lsvd_c_plus_p_capacity_lr_binding_v1.json`, SHA-256
+  `d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2`.
+  It binds the metric-free rank-12 capacity control to inherited LR 0.0003 and
+  preserves the closed test firewall. Capacity tuning still requires a clean
+  schema-v4 resolved config, pending registry record, and immediate prelaunch
+  guards. Final/test remains blocked because `test_unlocked=false`, the
+  dataset-wide selected-config lock is incomplete, and the one-pass final/test
+  runner is not yet implemented and audited.
 - The current `DCNvsDDN.tex` remains the legacy Russian `DCN vs DDN` draft
   with stale naming and the known two-layer/`FCN` derivation issue. It was not
   changed by the smoke audit and remains a separate manuscript blocker.
@@ -184,12 +189,13 @@ task-owned training/worker processes remained.
 
 This historical checkpoint validated implementation paths only. The subsequent
 DCDN and ordinary-DCNv2 tuning selections described below are now complete.
-The exact next action is to bind the selected ordinary-DCNv2 receipt and LR
-into a collision-safe capacity-control configuration, then continue the
-remaining eligible seed-42 validation-only tuning units. Before any final/test
-access, freeze every selected configuration and exact best-checkpoint lineage,
-implement/audit the one-pass final runner, and activate a new protocol revision
-through the existing lifecycle gates. Test access remains locked.
+The compact authorization now durably binds the selected ordinary-DCNv2
+receipt and LR. The exact next action is to materialize and audit a clean
+schema-v4 capacity-control run, then continue the remaining eligible seed-42
+validation-only tuning units. Before any final/test access, freeze every
+selected configuration and exact best-checkpoint lineage, implement/audit the
+one-pass final runner, and activate a new protocol revision through the
+existing lifecycle gates. Test access remains locked.
 
 ## DCDN validation-only selection
 
@@ -283,6 +289,9 @@ terminal audit found zero task-owned training/worker PIDs, zero running
 registry records, and both A100s idle.
 
 This is still one per-model validation selection, not the final dataset
-`selected_configs.lock`. The capacity-control run requires a validator-owned
-binding of this exact receipt and LR. Final/test access remains forbidden:
-the active protocol has `test_unlocked=false` and no test path.
+`selected_configs.lock`. Its exact receipt and LR are now bound by compact
+authorization SHA-256
+`d0ef149274d0f2692acc1f166d72350e44bd8a99331b7ae7f4dbc7d9df1cf1b2`.
+Capacity-control configuration/prelaunch evidence is the remaining run gate.
+Final/test access remains forbidden: the active protocol has
+`test_unlocked=false` and no test path.
