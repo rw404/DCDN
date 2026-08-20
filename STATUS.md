@@ -898,10 +898,17 @@ reported as a Pareto trade-off.
 **Test access.** Unchanged and still sealed: `test_unlocked=false`, no test
 loader, no test metric. Nothing in this reset opened a test row.
 
-## 2026-08-20 Synthetic-MultiQuotient-3 complete (first mandatory cell)
+## 2026-08-20 Synthetic-MultiQuotient-3 diagnostic invalidated
 
-The first mandatory multi-target cell of the override is **complete**. Full
-report: `docs/synthetic_multiquotient_results.md`.
+**Superseding status: RQ1 is not complete.** Commit `8382d286` captured a
+useful diagnostic, but it did not execute the frozen M1–M7 matrix: DCDN-FULL
+and AFN+-FULL were absent, while an unregistered MLP arm was present. The
+committed result, selected-config, serving, and index JSON sidecars also fail
+strict exact-byte verification because the written trailing newline was not
+included in their digest. These outputs are `diagnostic_only`; their numbers
+below are retained solely for forensic context. Exact actual/recorded hashes
+and invalidation reasons are in
+`artifacts/legacy_audit/synthetic_multiquotient_invalid_v0.json`.
 
 Protocol executed in order: six slices materialized and hashed **before** any
 training step; capacity control resolved mechanically in (parameter, FLOP)

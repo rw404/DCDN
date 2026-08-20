@@ -13,6 +13,7 @@ import yaml
 import dcdn.protocol as protocol_module
 from dcdn.protocol import (
     BASE_HASH_KEYS,
+    FINAL_TEST_HASH_KEYS,
     RUNTIME_HASH_FIELDS,
     ActiveProtocolRegistry,
     ProtocolError,
@@ -64,6 +65,13 @@ def protocol_payload(
     if unlocked:
         hashes["selected_configs_sha256"] = selected_configs_sha256 or digest(
             "selected-configs"
+        )
+        hashes.update(
+            {
+                "test_views_manifest_sha256": digest("test-views"),
+                "test_full_materialized_scan_sha256": digest("test-scan"),
+                "test_cache_content_sha256": digest("test-cache"),
+            }
         )
     return {
         "schema_version": 3,
@@ -163,14 +171,22 @@ def runtime_identity(
         feature_regime=payload["feature_regime"],
         row_count=payload["split_row_counts"][split],
         data_manifest_sha256=hashes["data_manifest_sha256"],
-        views_manifest_sha256=hashes["views_manifest_sha256"],
+        views_manifest_sha256=hashes[
+            "test_views_manifest_sha256" if split == "test" else "views_manifest_sha256"
+        ],
         features_sha256=hashes["features_sha256"],
         physical_schema_sha256=hashes["physical_schema_sha256"],
         expanded_schema_sha256=hashes["expanded_schema_sha256"],
         operand_schema_sha256=hashes["operand_schema_sha256"],
         denominator_mask_sha256=hashes["denominator_mask_sha256"],
-        full_materialized_scan_sha256=hashes["full_materialized_scan_sha256"],
-        cache_content_sha256=hashes["cache_content_sha256"],
+        full_materialized_scan_sha256=hashes[
+            "test_full_materialized_scan_sha256"
+            if split == "test"
+            else "full_materialized_scan_sha256"
+        ],
+        cache_content_sha256=hashes[
+            "test_cache_content_sha256" if split == "test" else "cache_content_sha256"
+        ],
         encoder_contract_sha256=hashes["encoder_contract_sha256"],
         capacity_resolution_sha256=hashes["capacity_resolution_sha256"],
     )
@@ -459,7 +475,34 @@ def test_exact_v3_schema_and_hash_key_sets() -> None:
         selected_configs_sha256=digest("selected"),
     )
     validate_protocol(final)
-    assert set(final["hashes"]) == BASE_HASH_KEYS | {"selected_configs_sha256"}
+    assert set(final["hashes"]) == (
+        BASE_HASH_KEYS | FINAL_TEST_HASH_KEYS | {"selected_configs_sha256"}
+    )
+
+    for name in FINAL_TEST_HASH_KEYS:
+        missing = deepcopy(final)
+        missing["hashes"].pop(name)
+        with pytest.raises(ProtocolError, match="hashes keys must be exact"):
+            validate_protocol(missing)
+
+    final_gate_payload = deepcopy(final)
+    test_identity = runtime_identity(final_gate_payload, "test")
+    test_identity = replace(
+        test_identity,
+        cache_content_sha256=final_gate_payload["hashes"]["cache_content_sha256"],
+    )
+    gate = ProtocolGate(
+        path=Path("final-protocol.yaml"),
+        digest=digest("final-protocol"),
+        payload=final_gate_payload,
+        parent_premetric_path=Path("parent-protocol.yaml"),
+        active_registry_path=None,
+    )
+    gate.require_runtime_identity(
+        runtime_identity(final_gate_payload, "test"), requested_split="test"
+    )
+    with pytest.raises(ProtocolError, match="cache_content_sha256"):
+        gate.require_runtime_identity(test_identity, requested_split="test")
 
 
 @pytest.mark.parametrize(

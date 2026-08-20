@@ -125,9 +125,7 @@ def measure(
     model = model.to(device).eval()
     generator = torch.Generator(device="cpu").manual_seed(seed)
     width = model.spec.operand_dim
-    features = (
-        torch.rand(batch, width, generator=generator) * 9.0 + 1.0
-    ).to(device)
+    features = (torch.rand(batch, width, generator=generator) * 9.0 + 1.0).to(device)
     validity = torch.ones_like(features, dtype=torch.bool)
 
     for _ in range(WARMUPS):
@@ -172,12 +170,16 @@ def _arms(capacity: dict[str, int]) -> dict[str, tuple[Any, bool]]:
     return {
         "mlp": (MLPConfig(hidden_dims=(512, 256, 128), dropout=0.0), False),
         "dcnv2_core": (
-            DCNv2FullRankConfig(num_layers=2, product_init_scale=0.1), False
+            DCNv2FullRankConfig(num_layers=2, product_init_scale=0.1),
+            False,
         ),
         "dcdn_core_l1": (
             DCDNCoreConfig(
-                num_layers=1, div_eps=1e-2, product_init_scale=0.1,
-                div_init_scale=0.1, runtime_value_checks=False,
+                num_layers=1,
+                div_eps=1e-2,
+                product_init_scale=0.1,
+                div_init_scale=0.1,
+                runtime_value_checks=False,
             ),
             False,
         ),
@@ -192,9 +194,13 @@ def _arms(capacity: dict[str, int]) -> dict[str, tuple[Any, bool]]:
         ),
         "afn_plus": (
             AFNPlusConfig(
-                logarithmic_neurons=128, afn_hidden_dims=(512,),
-                dnn_hidden_dims=(512,), log_floor=1e-6, exp_clip=None,
-                dropout=0.0, batch_norm=True,
+                logarithmic_neurons=128,
+                afn_hidden_dims=(512,),
+                dnn_hidden_dims=(512,),
+                log_floor=1e-6,
+                exp_clip=None,
+                dropout=0.0,
+                batch_norm=True,
             ),
             True,
         ),
@@ -242,7 +248,7 @@ def _verdict(
             "may be described as runtime matched"
             if matched
             else "must be reported as a Pareto trade-off; the phrase 'at the "
-                 "same serving performance' is not permitted for this pair"
+            "same serving performance' is not permitted for this pair"
         ),
     }
 
@@ -254,11 +260,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--capacity-from",
         type=Path,
-        default=REPO_ROOT / "results" / "synthetic_multiquotient"
+        default=REPO_ROOT
+        / "results"
+        / "synthetic_multiquotient"
         / "selected_configs_v1.json",
     )
     parser.add_argument(
-        "--output-dir", type=Path,
+        "--output-dir",
+        type=Path,
         default=REPO_ROOT / "results" / "synthetic_multiquotient",
     )
     args = parser.parse_args(argv)
@@ -278,21 +287,30 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     start_load = _host_load()
-    print(f"device: {device}  batches={BATCHES}  warmups={WARMUPS}  "
-          f"forwards={FORWARDS}  rounds={ROUNDS}")
-    print(f"host load 1m/5m/15m: {start_load['load_average_1m']:.2f}/"
-          f"{start_load['load_average_5m']:.2f}/"
-          f"{start_load['load_average_15m']:.2f}  "
-          f"idle={start_load['host_idle']}")
+    print(
+        f"device: {device}  batches={BATCHES}  warmups={WARMUPS}  "
+        f"forwards={FORWARDS}  rounds={ROUNDS}"
+    )
+    print(
+        f"host load 1m/5m/15m: {start_load['load_average_1m']:.2f}/"
+        f"{start_load['load_average_5m']:.2f}/"
+        f"{start_load['load_average_15m']:.2f}  "
+        f"idle={start_load['host_idle']}"
+    )
     if not start_load["host_idle"]:
-        print("  WARNING: host is not idle; p95/p99 tails will be inflated and "
-              "the runtime-match verdict is recorded as PROVISIONAL")
+        print(
+            "  WARNING: host is not idle; p95/p99 tails will be inflated and "
+            "the runtime-match verdict is recorded as PROVISIONAL"
+        )
     measurements: dict[str, dict[int, dict[str, Any]]] = {}
     parameters: dict[str, dict[str, int]] = {}
     for arm_id, (config, afn) in _arms(capacity).items():
         model = MultiQuotientModel(
-            spec, config, num_targets=len(SPEC),
-            head_hidden_dims=HEAD_HIDDEN_DIMS, init_seed=args.seed,
+            spec,
+            config,
+            num_targets=len(SPEC),
+            head_hidden_dims=HEAD_HIDDEN_DIMS,
+            init_seed=args.seed,
             with_afn_view=afn,
         )
         parameters[arm_id] = model.parameter_counts()
@@ -300,12 +318,14 @@ def main(argv: list[str] | None = None) -> int:
             batch: measure(model, batch, device) for batch in BATCHES
         }
         row = measurements[arm_id]
-        print(f"  {arm_id:<16} "
-              + "  ".join(
-                  f"B={b}: p50={row[b]['batch_latency_ms_p50']:.4f} "
-                  f"p95={row[b]['batch_latency_ms_p95']:.4f}"
-                  for b in BATCHES
-              ))
+        print(
+            f"  {arm_id:<16} "
+            + "  ".join(
+                f"B={b}: p50={row[b]['batch_latency_ms_p50']:.4f} "
+                f"p95={row[b]['batch_latency_ms_p95']:.4f}"
+                for b in BATCHES
+            )
+        )
         del model
         if device.type == "cuda":
             torch.cuda.empty_cache()
@@ -318,9 +338,11 @@ def main(argv: list[str] | None = None) -> int:
         for comparator in ("dcnv2_core", "dcnv2_capacity", "afn_plus", "mlp")
     }
     for name, verdict in verdicts.items():
-        print(f"  {name:<32} runtime_matched={verdict['runtime_matched']}  "
-              f"p95_ratio={verdict['p95_batch1_ratio']:.3f}  "
-              f"throughput_ratio={verdict['throughput_ratio_at_shared_max_batch']:.3f}")
+        print(
+            f"  {name:<32} runtime_matched={verdict['runtime_matched']}  "
+            f"p95_ratio={verdict['p95_batch1_ratio']:.3f}  "
+            f"throughput_ratio={verdict['throughput_ratio_at_shared_max_batch']:.3f}"
+        )
 
     payload = {
         "schema_version": 1,
@@ -376,25 +398,27 @@ def main(argv: list[str] | None = None) -> int:
     for arm_id, rows in measurements.items():
         counts = analytic.get(arm_id) or {}
         for batch, row in rows.items():
-            efficiency_rows.append({
-                "arm_id": arm_id,
-                "batch": batch,
-                "batch_latency_ms_p50": row["batch_latency_ms_p50"],
-                "batch_latency_ms_p95": row["batch_latency_ms_p95"],
-                "batch_latency_ms_p99": row["batch_latency_ms_p99"],
-                "per_example_latency_ms_p50": row["per_example_latency_ms_p50"],
-                "per_example_latency_ms_p95": row["per_example_latency_ms_p95"],
-                "per_example_latency_ms_p99": row["per_example_latency_ms_p99"],
-                "throughput_examples_per_second": (
-                    row["throughput_examples_per_second"]
-                ),
-                "round_to_round_p50_spread_ms": row["round_to_round_p50_spread_ms"],
-                "peak_vram_bytes": row["peak_vram_bytes"],
-                "parameters_total": parameters[arm_id]["total"],
-                "parameters_matched": parameters[arm_id]["matched"],
-                "parameters_interaction": parameters[arm_id]["interaction"],
-                "flops_per_example": counts.get("flops", ""),
-            })
+            efficiency_rows.append(
+                {
+                    "arm_id": arm_id,
+                    "batch": batch,
+                    "batch_latency_ms_p50": row["batch_latency_ms_p50"],
+                    "batch_latency_ms_p95": row["batch_latency_ms_p95"],
+                    "batch_latency_ms_p99": row["batch_latency_ms_p99"],
+                    "per_example_latency_ms_p50": row["per_example_latency_ms_p50"],
+                    "per_example_latency_ms_p95": row["per_example_latency_ms_p95"],
+                    "per_example_latency_ms_p99": row["per_example_latency_ms_p99"],
+                    "throughput_examples_per_second": (
+                        row["throughput_examples_per_second"]
+                    ),
+                    "round_to_round_p50_spread_ms": row["round_to_round_p50_spread_ms"],
+                    "peak_vram_bytes": row["peak_vram_bytes"],
+                    "parameters_total": parameters[arm_id]["total"],
+                    "parameters_matched": parameters[arm_id]["matched"],
+                    "parameters_interaction": parameters[arm_id]["interaction"],
+                    "flops_per_example": counts.get("flops", ""),
+                }
+            )
     _write_csv(args.output_dir / "efficiency.csv", efficiency_rows)
     print(f"\nwrote {args.output_dir / 'serving_performance_v1.json'}")
     print(f"wrote {args.output_dir / 'efficiency.csv'}")

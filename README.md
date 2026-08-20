@@ -22,9 +22,13 @@ stabilized production hybrid is generally piecewise rational in raw space.
 
 ## Frozen public scope
 
-- Core datasets: KuaiRand-Pure and VK-LSVD `up0.01_ir0.01`.
-- Mechanistic ablation: KuaiRec big matrix.
-- Optional only after mandatory completion: Yambda-50M.
+- Mandatory datasets: VK-LSVD `up0.01_ir0.01`, Yambda-50M,
+  KuaiRand-Pure, and KuaiRec big matrix.
+- The headline study is multi-target. Single-target training is a separate
+  follow-up and cannot select headline targets, features, losses, or models.
+- The reduced view removes only manual divisions of historical counters and
+  sums. Cosine, dot, norm, and iALS features remain shared and are never
+  reciprocal denominators.
 - Test evaluation is locked until dataset features, metrics, search spaces,
   selected configurations, and `protocol_frozen.yaml` are frozen and hashed.
 
@@ -50,10 +54,22 @@ The exact public experiment matrix is
 valid until their unresolved hashes are replaced, sidecars are written, and
 the fail-closed gate accepts them.
 
-## RQ1 validation checkpoint: seeds 42, 43, and 44
+## Current headline RQ1
 
-The frozen VK-LSVD `C+P` validation-only comparison now covers all three
-predeclared seeds. Lower normalized MSE is better:
+The multi-target `Synthetic-MultiQuotient-3` RQ1 is **pending**. A committed
+eight-arm diagnostic is quarantined because it does not equal the frozen M1–M7
+matrix and its JSON sidecars fail exact-byte verification. It is not a paper
+result. The corrected nine-arm runner and invalidation evidence are documented
+in `docs/reproduction_commands.md` and
+`artifacts/legacy_audit/synthetic_multiquotient_invalid_v0.json`. A verified
+result and verdict will be added here immediately after the clean replacement
+run completes.
+
+## Legacy single-target validation checkpoint: seeds 42, 43, and 44
+
+This pre-override VK-LSVD `C+P` validation-only comparison covers all three
+predeclared seeds. It is retained as legacy context only. Lower normalized MSE
+is better:
 
 | Model | Seed 42 | Seed 43 | Seed 44 | Mean |
 | --- | ---: | ---: | ---: | ---: |
@@ -67,8 +83,8 @@ predeclared seeds. Lower normalized MSE is better:
 | `DCNv2-capacity-matched` | `0.021004646` | `0.021007386` | `0.021065178` | `0.021025737` |
 | Original DCN | `0.021035584` | `0.021028514` | `0.021051430` | `0.021038509` |
 
-The narrow RQ1 hypothesis is supported on validation: DCDN is lower than
-Original DCN on every seed. Its paired mean improvement is
+The legacy matched-comparison hypothesis is supported on validation: DCDN is
+lower than Original DCN on every seed. Its paired mean improvement is
 `0.000041601361759013`, or `0.197739%` relative to the DCN mean. DCDN also
 beats the rank-12 capacity-matched control on every seed, with a paired mean
 improvement of `0.000028828551562561` (`0.137111%`). These comparisons isolate
@@ -78,7 +94,7 @@ claim based only on parameter count.
 The broader claim that DCDN is the best architecture is not supported by this
 validation table. Full-rank DCNv2 is lower than DCDN on all three seeds, and
 AFN+, DeepFM, Wukong-small, AutoInt+, and DNN also have lower three-seed means.
-The intended paper claim is therefore the narrower matched comparison:
+The pre-override interpretation was the narrower matched comparison:
 DCDN recovers useful product-and-ratio interactions beyond Original DCN and
 its capacity-matched control, not universal superiority over every baseline.
 

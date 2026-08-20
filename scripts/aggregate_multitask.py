@@ -166,9 +166,7 @@ def efficiency_rows(dataset: str, serving: dict[str, Any]) -> list[dict[str, Any
                     "throughput_examples_per_second": row[
                         "throughput_examples_per_second"
                     ],
-                    "round_to_round_p50_spread_ms": row[
-                        "round_to_round_p50_spread_ms"
-                    ],
+                    "round_to_round_p50_spread_ms": row["round_to_round_p50_spread_ms"],
                     "peak_vram_bytes": row["peak_vram_bytes"],
                     "parameters_total": serving["parameters"][arm_id]["total"],
                     "parameters_matched": serving["parameters"][arm_id]["matched"],
@@ -344,9 +342,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
         "efficiency.csv": write_csv(args.output_dir / "efficiency.csv", efficiency),
         "pareto.csv": write_csv(args.output_dir / "pareto.csv", pareto),
-        "run_registry.csv": write_csv(
-            args.output_dir / "run_registry.csv", registry
-        ),
+        "run_registry.csv": write_csv(args.output_dir / "run_registry.csv", registry),
     }
 
     index = {

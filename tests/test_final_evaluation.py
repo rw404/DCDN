@@ -67,6 +67,9 @@ def _protocol(
     if unlocked:
         assert selected is not None
         bound_hashes["selected_configs_sha256"] = selected
+        bound_hashes["test_views_manifest_sha256"] = _digest("test-views")
+        bound_hashes["test_full_materialized_scan_sha256"] = _digest("test-scan")
+        bound_hashes["test_cache_content_sha256"] = _digest("test-cache")
     return {
         "schema_version": 3,
         "dataset_id": "synthetic-final",
@@ -186,14 +189,14 @@ def _prepare(root: Path) -> Prepared:
         feature_regime=gate.feature_regime,
         row_count=ROWS,
         data_manifest_sha256=hashes["data_manifest_sha256"],
-        views_manifest_sha256=hashes["views_manifest_sha256"],
+        views_manifest_sha256=_digest("test-views"),
         features_sha256=hashes["features_sha256"],
         physical_schema_sha256=hashes["physical_schema_sha256"],
         expanded_schema_sha256=hashes["expanded_schema_sha256"],
         operand_schema_sha256=hashes["operand_schema_sha256"],
         denominator_mask_sha256=hashes["denominator_mask_sha256"],
-        full_materialized_scan_sha256=hashes["full_materialized_scan_sha256"],
-        cache_content_sha256=hashes["cache_content_sha256"],
+        full_materialized_scan_sha256=_digest("test-scan"),
+        cache_content_sha256=_digest("test-cache"),
         encoder_contract_sha256=hashes["encoder_contract_sha256"],
         capacity_resolution_sha256=hashes["capacity_resolution_sha256"],
     )

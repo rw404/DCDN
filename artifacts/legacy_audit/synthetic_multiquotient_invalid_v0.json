@@ -1,0 +1,67 @@
+{
+  "artifact_role": "synthetic_multiquotient_3_invalidation_receipt",
+  "created_utc": "2026-08-20T17:27:14Z",
+  "disposition": "diagnostic_only_not_scientific_evidence",
+  "invalidated_commit": "8382d28639660b767199d2ab7c79e4ea250caf81",
+  "invalidated_outputs": [
+    {
+      "actual_sha256": "9132a24d289a908f056612f71c1bf90a97716df2368c65a0d03db0bfccbe449f",
+      "path": "results/synthetic_multiquotient/results_v1.json",
+      "recorded_sidecar_sha256": "180c4dc799d2fc932215b83e6b8f1d0245b9847ed2d4696aed73ae083d4d76ee"
+    },
+    {
+      "actual_sha256": "98ce8db0b64b94147dc6dd6d0ee164af1ed111c62fcddf4ca19e0d44002a71c3",
+      "path": "results/synthetic_multiquotient/selected_configs_v1.json",
+      "recorded_sidecar_sha256": "63555e1f3b1405643372e4600366067df48bdabb6fabbc58cf406501936e5653"
+    },
+    {
+      "actual_sha256": "b10c76cfc7d31325b9d3ee6a3f02fdc5fef15da620d43a299e911515ce6b5d65",
+      "path": "results/synthetic_multiquotient/serving_performance_v1.json",
+      "recorded_sidecar_sha256": "8f66336c059b10f66f80a22772c3858ded9a586c70e6378ab51904b07b410877"
+    },
+    {
+      "actual_sha256": "c0edc91398949f11f8055a15b47f1ffd83a382c2a7aa0e0e9add0f1313d90b34",
+      "path": "results/multitask/multitask_index.json",
+      "recorded_sidecar_sha256": "6b7c3456e3e2e00d66046255d26280c46f8f8fec5ff10c505fe3ba026f9ffe64"
+    }
+  ],
+  "observed_arm_ids": [
+    "afn_plus",
+    "dcdn_core_l1",
+    "dcnv2_capacity",
+    "dcnv2_core",
+    "dcnv2_ratio_pc",
+    "linear",
+    "mlp",
+    "oracle"
+  ],
+  "reasons": [
+    "The executed eight-arm diagnostic does not equal the frozen M1-M7 matrix.",
+    "It omits M6 DCDN-Core-FULL-MTL and M7 AFN+-FULL-MTL.",
+    "It includes an MLP arm that is absent from the frozen matrix.",
+    "All four committed JSON sidecars hash bytes without the published trailing newline and therefore fail strict exact-byte verification.",
+    "The runner did not publish an immutable pretraining manifest before the first optimizer step.",
+    "The result and CSV writers were overwriteable and non-atomic.",
+    "The serving run was explicitly recorded while the host was not idle."
+  ],
+  "replacement_requirements": {
+    "arm_order": [
+      "linear",
+      "dcnv2_reduced",
+      "dcdn_reduced",
+      "afn_reduced",
+      "dcnv2_capacity_reduced",
+      "dcnv2_full",
+      "dcdn_full",
+      "afn_full",
+      "oracle"
+    ],
+    "clean_code_identity_required": true,
+    "fresh_output_directory_required": true,
+    "immutable_pretraining_receipt_required": true,
+    "strict_exact_byte_sidecars_required": true
+  },
+  "schema_version": 1,
+  "test_data_accessed": false,
+  "test_metrics_accessed": false
+}

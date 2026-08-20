@@ -42,36 +42,28 @@ Outputs: `artifacts/legacy_audit/legacy_results_inventory_v1.{json,json.sha256,c
 
 ## 2. Synthetic-MultiQuotient-3 (RQ1)
 
-Materializes and hashes every slice before training, resolves the capacity
-control mechanically, tunes on seed 42 with validation only, freezes and hashes
-the selected configuration, then evaluates seeds 42/43/44.
+Status: **pending a clean replacement run**. The eight-arm output committed in
+`8382d286` is quarantined diagnostic history, not RQ1 evidence; see
+`artifacts/legacy_audit/synthetic_multiquotient_invalid_v0.json`.
+
+The corrected runner executes the frozen M1–M7 matrix plus the linear reference
+and analytical oracle (nine arms total). It requires a clean tracked commit,
+rejects untracked code under `src/` or `scripts/`, verifies all four frozen
+config sidecars, publishes an immutable pretraining manifest before the first
+optimizer step, tunes only on seed-42 validation, freezes selected configs, and
+then evaluates seeds 42/43/44 on the synthetic evaluation slices.
 
 ```bash
-"$PY" scripts/run_synthetic_multiquotient_v1.py --device cuda:0
+"$PY" scripts/run_synthetic_multiquotient.py \
+  --device cuda:0 \
+  --output-dir results/synthetic_multiquotient/rq1_v1
 ```
 
-Runtime: about 15 minutes on one A100-SXM4-80GB.
-
-**Runner naming.** `scripts/run_synthetic_multiquotient_v1.py` is the runner
-that produced the committed results; its arm set is the one the override lists
-for this benchmark (linear, MLP, DCNv2-Core, DCNv2-capacity-matched,
-DCDN-Core-L1, AFN+, DCNv2 + explicit ratios, oracle). A concurrent session has
-since written a different `scripts/run_synthetic_multiquotient.py` that drives
-the seven-row recommendation matrix `M1..M7` on the same benchmark. The two
-answer different questions and are both kept; only the `_v1` runner reproduces
-the hashes below.
-
-Outputs under `results/synthetic_multiquotient/`:
-`results_v1.json`, `selected_configs_v1.json`, `multitask_summary.csv`,
-`multitask_per_target.csv`, each with a SHA-256 sidecar where applicable.
-
-Expected identities (any drift means the benchmark changed):
-
-| artifact | SHA-256 |
-|---|---|
-| benchmark manifest | `659d29f565bd51338e8c311a5c1c94335a499fbb2f62017d26581e785d8e72fd` |
-| task constants | `5f40d98442140c776faa35b9558ed94b78540593010047eb704b2bbd3b1987c6` |
-| selected configs | `63555e1f3b1405643372e4600366067df48bdabb6fabbc58cf406501936e5653` |
+The output directory must not already exist. It contains
+`pretraining_manifest_v1.json`, `selected_configs_v1.json`,
+`multitask_summary.csv`, `multitask_per_target.csv`, and
+`results_v1.json`; every artifact has a strict adjacent SHA-256 sidecar over
+the exact written bytes. Record the runtime only after the valid run completes.
 
 ## 3. Matched serving-performance benchmark
 

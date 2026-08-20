@@ -91,7 +91,9 @@ def _git(repo: Path, *args: str) -> str:
     try:
         return subprocess.run(
             ["git", "-C", str(repo), *args],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
         ).stdout.strip()
     except (subprocess.CalledProcessError, FileNotFoundError):
         return ""
@@ -188,45 +190,49 @@ def build_inventory(repo: Path) -> dict[str, Any]:
             status=str(record.get("status", "")),
         )
 
-        rows.append({
-            "run_id": run_id,
-            "status": record.get("status", ""),
-            "execution_kind": record.get("execution_kind", ""),
-            "scientific_result_eligible": bool(
-                record.get("scientific_result_eligible")
-            ),
-            "dataset_id": config.get("training.dataset_id", ""),
-            "feature_regime": config.get("training.feature_regime", ""),
-            "model_key": config.get("training.model_key", ""),
-            "num_heads": n_heads or "1",
-            "target_mode": "multi_target" if is_multi_target else "single_target",
-            "loss": target,
-            "selection_metric": selection_metric,
-            "seed": record.get("seed"),
-            "phase": config.get("training.phase", ""),
-            "learning_rate": config.get("training.learning_rate", ""),
-            "code_commit": record.get("code_commit", ""),
-            "code_diff_sha256": record.get("code_diff_sha256", ""),
-            "resolved_config_path": record.get("resolved_config_path", ""),
-            "resolved_config_sha256": record.get("resolved_config_sha256", ""),
-            "protocol_sha256": record.get("protocol_sha256", ""),
-            "data_manifest_sha256": record.get("data_manifest_sha256", ""),
-            "features_sha256": record.get("features_sha256", ""),
-            "denominator_mask_sha256": config.get(
-                "training.denominator_mask_sha256", ""
-            ),
-            "operand_schema_sha256": config.get("training.operand_schema_sha256", ""),
-            "result_path": result_path_str,
-            "validation_metric": (result or {}).get("selected_validation_metric"),
-            "test_metrics_present": test_metrics is not None,
-            "checkpoint_count": len(checkpoints),
-            "log_present": log_path.exists(),
-            "started_at_utc": record.get("started_at_utc", ""),
-            "finished_at_utc": record.get("finished_at_utc", ""),
-            **{f"criterion_{k}": criteria[k] for k in REQUIRED_CRITERIA},
-            "classification": classification,
-            "rationale": rationale,
-        })
+        rows.append(
+            {
+                "run_id": run_id,
+                "status": record.get("status", ""),
+                "execution_kind": record.get("execution_kind", ""),
+                "scientific_result_eligible": bool(
+                    record.get("scientific_result_eligible")
+                ),
+                "dataset_id": config.get("training.dataset_id", ""),
+                "feature_regime": config.get("training.feature_regime", ""),
+                "model_key": config.get("training.model_key", ""),
+                "num_heads": n_heads or "1",
+                "target_mode": "multi_target" if is_multi_target else "single_target",
+                "loss": target,
+                "selection_metric": selection_metric,
+                "seed": record.get("seed"),
+                "phase": config.get("training.phase", ""),
+                "learning_rate": config.get("training.learning_rate", ""),
+                "code_commit": record.get("code_commit", ""),
+                "code_diff_sha256": record.get("code_diff_sha256", ""),
+                "resolved_config_path": record.get("resolved_config_path", ""),
+                "resolved_config_sha256": record.get("resolved_config_sha256", ""),
+                "protocol_sha256": record.get("protocol_sha256", ""),
+                "data_manifest_sha256": record.get("data_manifest_sha256", ""),
+                "features_sha256": record.get("features_sha256", ""),
+                "denominator_mask_sha256": config.get(
+                    "training.denominator_mask_sha256", ""
+                ),
+                "operand_schema_sha256": config.get(
+                    "training.operand_schema_sha256", ""
+                ),
+                "result_path": result_path_str,
+                "validation_metric": (result or {}).get("selected_validation_metric"),
+                "test_metrics_present": test_metrics is not None,
+                "checkpoint_count": len(checkpoints),
+                "log_present": log_path.exists(),
+                "started_at_utc": record.get("started_at_utc", ""),
+                "finished_at_utc": record.get("finished_at_utc", ""),
+                **{f"criterion_{k}": criteria[k] for k in REQUIRED_CRITERIA},
+                "classification": classification,
+                "rationale": rationale,
+            }
+        )
 
     head = _git(repo, "rev-parse", "HEAD")
     dirty = _git(repo, "status", "--porcelain")
@@ -251,8 +257,12 @@ def build_inventory(repo: Path) -> dict[str, Any]:
             "with_test_metrics": sum(1 for r in rows if r["test_metrics_present"]),
             **{
                 cls: sum(1 for r in rows if r["classification"] == cls)
-                for cls in ("legacy_exact_reuse", "legacy_reproduced",
-                            "legacy_context_only", "unverifiable")
+                for cls in (
+                    "legacy_exact_reuse",
+                    "legacy_reproduced",
+                    "legacy_context_only",
+                    "unverifiable",
+                )
             },
         },
         "runs": rows,
@@ -263,10 +273,16 @@ def build_inventory(repo: Path) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path.cwd())
-    parser.add_argument("--json-out", type=Path,
-                        default=Path("artifacts/legacy_audit/legacy_results_inventory_v1.json"))
-    parser.add_argument("--csv-out", type=Path,
-                        default=Path("artifacts/legacy_audit/legacy_results_inventory_v1.csv"))
+    parser.add_argument(
+        "--json-out",
+        type=Path,
+        default=Path("artifacts/legacy_audit/legacy_results_inventory_v1.json"),
+    )
+    parser.add_argument(
+        "--csv-out",
+        type=Path,
+        default=Path("artifacts/legacy_audit/legacy_results_inventory_v1.csv"),
+    )
     args = parser.parse_args()
 
     payload = build_inventory(args.repo)

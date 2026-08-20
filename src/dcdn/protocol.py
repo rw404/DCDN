@@ -53,6 +53,13 @@ BASE_HASH_KEYS = frozenset(
     }
 )
 SELECTED_CONFIGS_HASH_KEY = "selected_configs_sha256"
+FINAL_TEST_HASH_KEYS = frozenset(
+    {
+        "test_views_manifest_sha256",
+        "test_full_materialized_scan_sha256",
+        "test_cache_content_sha256",
+    }
+)
 COMMON_ROOT_KEYS = frozenset(
     {
         "schema_version",
@@ -706,7 +713,7 @@ def validate_protocol(payload: Mapping[str, Any]) -> None:
     if not isinstance(hashes, Mapping):
         raise ProtocolError("hashes must be a mapping")
     expected_hash_keys = BASE_HASH_KEYS | (
-        {SELECTED_CONFIGS_HASH_KEY} if unlocked else set()
+        ({SELECTED_CONFIGS_HASH_KEY} | FINAL_TEST_HASH_KEYS) if unlocked else set()
     )
     _require_exact_keys(hashes, frozenset(expected_hash_keys), "hashes")
     for name in sorted(expected_hash_keys):
@@ -2079,7 +2086,14 @@ class ProtocolGate:
             if getattr(identity, name) != value:
                 raise ProtocolError(f"runtime identity mismatch: {name}")
         for name in RUNTIME_HASH_FIELDS:
-            if getattr(identity, name) != self.payload["hashes"][name]:
+            hash_key = name
+            if split == "test" and name == "views_manifest_sha256":
+                hash_key = "test_views_manifest_sha256"
+            elif split == "test" and name == "full_materialized_scan_sha256":
+                hash_key = "test_full_materialized_scan_sha256"
+            elif split == "test" and name == "cache_content_sha256":
+                hash_key = "test_cache_content_sha256"
+            if getattr(identity, name) != self.payload["hashes"][hash_key]:
                 raise ProtocolError(f"runtime identity mismatch: {name}")
 
     def activate(

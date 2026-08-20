@@ -1260,4 +1260,18 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   MovieLens-1M) was added and executed. MovieLens-1M is didactic only and is
   never a result cell.
 
+- **Synthetic RQ1 invalidation recorded 2026-08-20.** Commit `8382d286`
+  published an eight-arm diagnostic that does not equal the frozen M1–M7
+  matrix: it omitted M6 DCDN-FULL and M7 AFN+-FULL and included an unregistered
+  MLP arm. Its four JSON sidecars also exclude the written trailing newline and
+  fail strict exact-byte verification. The output is
+  `diagnostic_only_not_scientific_evidence`; it does not complete RQ1 and no
+  number from it may enter the paper or README result claim. The immutable
+  forward invalidation receipt is
+  `artifacts/legacy_audit/synthetic_multiquotient_invalid_v0.json`. The
+  replacement runner must execute nine arms (linear, M1–M7, oracle), bind a
+  clean code identity and all frozen config hashes, publish an immutable
+  pretraining receipt before optimization, and use exact-byte sidecars in a
+  fresh output directory. Test remained locked.
+
 Update this decision log whenever a material choice changes.

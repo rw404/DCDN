@@ -428,9 +428,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     manifest = benchmark.manifest()
     print(f"benchmark manifest sha256 : {benchmark.manifest_sha256}")
     for name, entry in sorted(manifest["slices"].items()):
-        print(
-            f"  {name:<18} rows={entry['rows']:>7}  sha256={entry['sha256'][:16]}..."
-        )
+        print(f"  {name:<18} rows={entry['rows']:>7}  sha256={entry['sha256'][:16]}...")
 
     train_slice = benchmark["train"]
     constants = compute_task_constants(SPEC, train_slice.targets, train_slice.masks)

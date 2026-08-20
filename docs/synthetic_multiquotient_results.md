@@ -1,8 +1,15 @@
-# Synthetic-MultiQuotient-3 — RQ1 result
+# Synthetic-MultiQuotient-3 — quarantined diagnostic
 
-Artifact role: `synthetic_multiquotient_3_report`.
-Status: **complete**. This is the first mandatory multi-target cell executed
-under the 2026-08-20 owner override.
+Artifact role: `invalid_diagnostic_report_v0`.
+Status: **invalid; RQ1 is not complete**.
+
+> **Superseding correction, 2026-08-20.** The committed run used eight arms
+> that do not equal the frozen M1–M7 matrix: it omitted DCDN-FULL and AFN+-FULL
+> and included an unregistered MLP arm. Its JSON sidecars also fail strict
+> exact-byte verification because they exclude the written trailing newline.
+> Every number below is retained only as diagnostic history and must not be
+> cited as RQ1 evidence. The machine-readable invalidation receipt is
+> `artifacts/legacy_audit/synthetic_multiquotient_invalid_v0.json`.
 
 Scope discipline, stated before the numbers: this benchmark is **evidence
 about the implementation's ability to learn quotients**. It is not evidence of
@@ -84,7 +91,7 @@ The aggregate is never published without it.
 
 ## 4. What the numbers support
 
-**RQ1 — quotient capability: yes, with a bounded scope.**
+**Diagnostic observation only; this is not an RQ1 answer.**
 
 1. `DCDN-Core-L1` beats `DCNv2-Core` in-distribution by **3.6×** at *identical*
    interaction parameter count and near-identical FLOPs. Since the two differ
@@ -191,24 +198,21 @@ benchmark; §3's full slice table is.
 
 ## 6. Reproduction
 
-The runner that produced these numbers is
-`scripts/run_synthetic_multiquotient_v1.py`. A concurrent session has since
-written a different `scripts/run_synthetic_multiquotient.py` driving the
-seven-row recommendation matrix `M1..M7`; only the `_v1` runner reproduces the
-hashes in §1.
+The tracked `scripts/run_synthetic_multiquotient_v1.py` reproduces only the
+quarantined invalid diagnostic and must not be used for a paper result. The
+valid replacement is `scripts/run_synthetic_multiquotient.py`, after that file
+and its tests are committed under a clean code identity:
 
 ```bash
 cd deep_division_network
 source scripts/env.sh
-"$UV_PROJECT_ENVIRONMENT/bin/python" scripts/run_synthetic_multiquotient_v1.py --device cuda:0
-"$UV_PROJECT_ENVIRONMENT/bin/python" scripts/benchmark_serving.py --device cuda:1
-"$UV_PROJECT_ENVIRONMENT/bin/python" scripts/aggregate_multitask.py
+"$UV_PROJECT_ENVIRONMENT/bin/python" scripts/run_synthetic_multiquotient.py \
+  --device cuda:0 \
+  --output-dir results/synthetic_multiquotient/rq1_v1
 ```
 
-Outputs: `results/synthetic_multiquotient/{results_v1.json,
-selected_configs_v1.json, serving_performance_v1.json, multitask_summary.csv,
-multitask_per_target.csv, efficiency.csv}` with SHA-256 sidecars, consolidated
-into `results/multitask/` by the aggregator.
+The fresh output directory will contain the pretraining, selected-config,
+summary, per-target, and result artifacts with strict exact-byte sidecars.
 
 ## 7. Standing relative to the legacy division tests
 
