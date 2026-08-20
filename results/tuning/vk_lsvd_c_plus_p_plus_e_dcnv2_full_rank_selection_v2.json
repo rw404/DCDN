@@ -1,0 +1,334 @@
+{
+  "artifact_role": "per_model_validation_only_selection_evidence",
+  "candidates": [
+    {
+      "candidate_id": "dcnv2_full_rank_lr_3e_4",
+      "checkpoint_lineage": {
+        "best": {
+          "all_tensors_cpu": true,
+          "all_tensors_finite": true,
+          "examples_seen": 32002048,
+          "optimizer_steps": 7813,
+          "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2/best-step-000000007813-generation-0000.pt",
+          "role": "best",
+          "safe_cpu_weights_only_reopen": true,
+          "sha256": "5b8205ca01bc1a192569f5e14028316169c87ce8d74fefccb3c8841a669d286d",
+          "sidecar_path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2/best-step-000000007813-generation-0000.pt.sha256",
+          "sidecar_strictly_verified": true,
+          "size_bytes": 61004652,
+          "tensor_count": 61,
+          "tensor_elements": 7738873,
+          "validation_checks": 8,
+          "validation_metric": 0.020849287259723712
+        },
+        "checkpoint_metadata": {
+          "config_hash": "cddcd9a5fba4301ca569a2c693868bbd1fc2de3220df45c005502713cd8030f6",
+          "data_hash": "5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac",
+          "feature_hash": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+          "precision": "fp32_parameters_bf16_autocast",
+          "protocol_hash": "6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739"
+        },
+        "last": {
+          "accumulation_boundary": true,
+          "all_tensors_cpu": true,
+          "all_tensors_finite": true,
+          "examples_seen": 39997440,
+          "linked_best_checkpoint_sha256": "5b8205ca01bc1a192569f5e14028316169c87ce8d74fefccb3c8841a669d286d",
+          "optimizer_steps": 9765,
+          "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2/last.pt",
+          "role": "last",
+          "safe_cpu_weights_only_reopen": true,
+          "sha256": "cab5275dfa37b1ba32af032f0e195f6430f1c4fa129f433e8e0ce21719eb2f28",
+          "sidecar_path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2/last.pt.sha256",
+          "sidecar_strictly_verified": true,
+          "size_bytes": 61004780,
+          "tensor_count": 61,
+          "tensor_elements": 7738873,
+          "validation_checks": 9
+        }
+      },
+      "code_commit": "c8d82f8f9edfcbbed5d78fea18bc797484cdad8a",
+      "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": {
+        "command": {
+          "path": "runs/commands/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2.sh",
+          "sha256": "faa577d56ef021382f0c9dbefc65eb06536eb32281d06d3138ac535582c36bf3",
+          "sidecar_strictly_verified": true,
+          "size_bytes": 439
+        },
+        "history": {
+          "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2/history.jsonl",
+          "sha256": "b9df889548dbc27722e7dca789ecf39216869c09669593998d5cbf3124bd1aca",
+          "size_bytes": 25725,
+          "test_events": 0
+        },
+        "registry": {
+          "path": "runs/registry/records/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2.json",
+          "scientific_result_eligible": true,
+          "sha256": "5d011a57f266bb3d1183778c7d19a9134dfcfb024861496183ec486b43d072f6",
+          "size_bytes": 1519,
+          "status": "completed"
+        },
+        "resolved_config": {
+          "path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2.yaml",
+          "sha256": "e6376d67c7a928fe850650007db4f6d74ddd9f492524d92f649333e931fac496",
+          "sidecar_strictly_verified": true,
+          "size_bytes": 3062
+        },
+        "result": {
+          "path": "results/tuning/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2.json",
+          "sha256": "b46d2129618be37c7c318ecd6aa99e0507b1d02c6ebe00c05fd3f388499b1232",
+          "sidecar_strictly_verified": true,
+          "size_bytes": 3760
+        },
+        "worker_log": {
+          "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2/worker.log",
+          "sha256": "8ff76b9041123bb081f454480f19c9e0e4c711dee9d70f17e62d1affdd16ef07",
+          "size_bytes": 226
+        }
+      },
+      "execution_kind": "scientific_tuning",
+      "learning_rate": 0.0003,
+      "resolved_model_config_seed_invariant_sha256": "25a5e2b040fe5ff52981a8499d7d4f8dd453bdd91d24e0d5a2b40b49d7521dcc",
+      "run_id": "vk-cpe-tune-dcnv2-full-rank-l2-s42-lr3e4-v1-retry-v2",
+      "scientific_result_eligible": true,
+      "selected": false,
+      "test_metrics": null,
+      "training_summary": {
+        "best_validation_metric": 0.020849287259723712,
+        "examples_seen": 39997440,
+        "nonfinite_total": 0,
+        "oom_count": 0,
+        "optimizer_steps": 9765,
+        "stopped_reason": "realized_floor_below_declared_hard_maximum",
+        "validation_checks": 9
+      }
+    },
+    {
+      "candidate_id": "dcnv2_full_rank_lr_1e_3",
+      "checkpoint_lineage": {
+        "best": {
+          "all_tensors_cpu": true,
+          "all_tensors_finite": true,
+          "examples_seen": 32002048,
+          "optimizer_steps": 7813,
+          "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/best-step-000000007813-generation-0000.pt",
+          "retention_state": "retain_selected_best_required_for_final_seed_42_reuse",
+          "role": "best",
+          "safe_cpu_weights_only_reopen": true,
+          "sha256": "858fec98f915cdec9dea8dac0aebd1156f06d36eabd966c9aa4fc522c015d23f",
+          "sidecar_path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/best-step-000000007813-generation-0000.pt.sha256",
+          "sidecar_strictly_verified": true,
+          "size_bytes": 61004716,
+          "tensor_count": 61,
+          "tensor_elements": 7738873,
+          "validation_checks": 8,
+          "validation_metric": 0.020826933840839952
+        },
+        "checkpoint_metadata": {
+          "config_hash": "5dcbb2d4928dc4f7a95838830f2914a0fa2ceb77069a8706ba19fca91ad8251d",
+          "data_hash": "5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac",
+          "feature_hash": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+          "precision": "fp32_parameters_bf16_autocast",
+          "protocol_hash": "6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739"
+        },
+        "last": {
+          "accumulation_boundary": true,
+          "all_tensors_cpu": true,
+          "all_tensors_finite": true,
+          "examples_seen": 39997440,
+          "linked_best_checkpoint_sha256": "858fec98f915cdec9dea8dac0aebd1156f06d36eabd966c9aa4fc522c015d23f",
+          "optimizer_steps": 9765,
+          "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/last.pt",
+          "role": "last",
+          "safe_cpu_weights_only_reopen": true,
+          "sha256": "0bc5ffeef5b9aaefb84583901093135c5d86dd27e8923c8c0ae0b3b17a6dd52b",
+          "sidecar_path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/last.pt.sha256",
+          "sidecar_strictly_verified": true,
+          "size_bytes": 61004780,
+          "tensor_count": 61,
+          "tensor_elements": 7738873,
+          "validation_checks": 9
+        }
+      },
+      "code_commit": "c8d82f8f9edfcbbed5d78fea18bc797484cdad8a",
+      "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "continuation_lineage": {
+        "attempted_validation_check_4_metric_not_selection_eligible": 0.020892833222676325,
+        "attempted_validation_check_4_recomputed_exactly_after_resume": true,
+        "failure_snapshot_path": "results/failures/vk-cpe-dcnv2-lr1e3-retry-v2-checkpoint-fsync-eio-v1.json",
+        "failure_snapshot_sha256": "be53192dcff1e57a0b5f5a0808c9aa3a40cd6b109454e3d7349c43340d1e26fc",
+        "failure_snapshot_size_bytes": 4328,
+        "failure_type": "checkpoint_fsync_eio_execution_failure_not_scientific_result",
+        "parent_command_path": "runs/commands/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2.sh",
+        "parent_command_sha256": "4239c387533657b95cadb3376d4233d76e97e185da8585da41ff00a1f99fb1cf",
+        "parent_registry_path": "runs/registry/records/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2.json",
+        "parent_registry_sha256": "3e04497f3bdae0a7cfafbf6406823204b56fd58bc63d20b6fd1e23c943945a03",
+        "parent_registry_status": "failed",
+        "parent_resolved_config_path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2.yaml",
+        "parent_resolved_config_sha256": "e5e73645b161bdcd39550e4fed1b86787d6ddbdfe634a100bbcd0b9533b279d5",
+        "resume_checkpoint_examples_seen": 12001280,
+        "resume_checkpoint_optimizer_steps": 2930,
+        "resume_checkpoint_sha256": "9a84b1732fbc312ae19167b0bb84a349c5be2a45e659e523ab0937cc9bdaee12",
+        "resume_command_path": "runs/commands/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1.sh",
+        "resume_command_sha256": "6229f57bbdc8795e2e6581db99ded27ae126a58f466ad9c74901747cb2eaf45d",
+        "resume_resolved_config_path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1.yaml",
+        "resume_resolved_config_sha256": "182536dd407e68141fe0cab92e8db66b4216cc46d005ab08617976836e494aeb",
+        "resume_run_id": "vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1"
+      },
+      "evidence": {
+        "history": {
+          "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/history.jsonl",
+          "sha256": "89c477c5ffac7bc4861137bd61fdef380e033588e08660a63994a1ea92dfa5d2",
+          "size_bytes": 27695,
+          "test_events": 0
+        },
+        "registry": {
+          "path": "runs/registry/records/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1.json",
+          "scientific_result_eligible": true,
+          "sha256": "0104beb335f44f61c96323a194a71ab65be754a276baee03cd328df9134571c0",
+          "size_bytes": 2942,
+          "status": "completed"
+        },
+        "result": {
+          "path": "results/tuning/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1.json",
+          "sha256": "7ec7c16b5bb5f6c345dc7bd35953e43ce4ea2a072b7acf8544228171600ce3ef",
+          "sidecar_strictly_verified": true,
+          "size_bytes": 3771
+        },
+        "worker_logs": [
+          {
+            "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/worker.log",
+            "sha256": "e9b41df7bc0ae11a77515a4c1371025bcd0f7c59b50cf9cac48bf09c60910ce1",
+            "size_bytes": 1958
+          },
+          {
+            "path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/worker-resume-v1.log",
+            "sha256": "8d84f494e95a285d23ce11653906a1ad1e28ae395c22ad3dea74874d0ebb2b2c",
+            "size_bytes": 236
+          }
+        ]
+      },
+      "execution_kind": "scientific_tuning",
+      "learning_rate": 0.001,
+      "resolved_model_config_seed_invariant_sha256": "25a5e2b040fe5ff52981a8499d7d4f8dd453bdd91d24e0d5a2b40b49d7521dcc",
+      "run_id": "vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1",
+      "scientific_result_eligible": true,
+      "selected": true,
+      "test_metrics": null,
+      "training_summary": {
+        "best_validation_metric": 0.020826933840839952,
+        "examples_seen": 39997440,
+        "nonfinite_total": 0,
+        "oom_count": 0,
+        "optimizer_steps": 9765,
+        "stopped_reason": "realized_floor_below_declared_hard_maximum",
+        "validation_checks": 9
+      }
+    }
+  ],
+  "created_utc": "2026-08-19T13:10:29Z",
+  "dataset_id": "vk_lsvd_up0.01_ir0.01",
+  "feature_regime": "C+P+E",
+  "frozen_identities": {
+    "capacity_resolution_sha256": "d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565",
+    "code_commit": "c8d82f8f9edfcbbed5d78fea18bc797484cdad8a",
+    "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "data_manifest_sha256": "5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac",
+    "denominator_mask_sha256": "8bca04940fe8b7e6cf0d2f8e100db0787cc32e066c6c9eadd0ba711652b37715",
+    "encoder_contract_sha256": "16fa99db8e92ce4dd55c0bd5e7d7bfd8af8d3d59251cc769b41988e61d414449",
+    "experiment_matrix_sha256": "867118db089bbbffb4abf02ff7b3c01e2c9f43e804a188a27a3886f66db4e000",
+    "features_sha256": "380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b",
+    "full_schema_sha256": "381beb02c21c8a56a4111b2dde50eb7c870518e9289a806f6e4ddb8a2c9dda59",
+    "joint_model_contract_sha256": "1d2b50c8b7940b049be1e69e09b35b4b2d648d75f4b86d409196c877a6144d28",
+    "operand_schema_sha256": "3b34b22f0779dd059e89016b388952862da074c5bfa2534cc7ba251569ba54e3",
+    "protocol_sha256": "6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739",
+    "resolved_model_config_seed_invariant_sha256": "25a5e2b040fe5ff52981a8499d7d4f8dd453bdd91d24e0d5a2b40b49d7521dcc",
+    "search_space_sha256": "b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344"
+  },
+  "integrity_audit": {
+    "all_14_checkpoint_sidecars_strictly_verified": true,
+    "all_terminal_result_sidecars_strictly_verified": true,
+    "candidate_best_and_last_cpu_weights_only_reopened": true,
+    "candidate_best_and_last_tensors_all_finite": true,
+    "candidate_best_and_last_tensors_all_on_cpu": true,
+    "candidate_registry_records_completed": true,
+    "candidate_results_scientific_result_eligible": true,
+    "checkpoint_tensor_count_each": 61,
+    "checkpoint_tensor_elements_each": 7738873,
+    "failure_attempt_excluded_from_selection": true,
+    "test_events_observed": 0
+  },
+  "migration_lineage": {
+    "candidate_payloads_unchanged": true,
+    "created_utc": "2026-08-20T14:16:15.777891Z",
+    "migration": "firewall_schema_normalization_only_v1",
+    "selected_payload_unchanged": true,
+    "source_path": "results/tuning/vk_lsvd_c_plus_p_plus_e_dcnv2_full_rank_selection_v1.json",
+    "source_sha256": "85ab7ccbb8d74652f3aa3416a9ada872b36ed2de24c7b8341b56b9b8633f5c41",
+    "test_data_accessed": false
+  },
+  "remaining_gates": [
+    "freeze and hash the complete selected-config bundle for every model in this feature regime",
+    "complete all remaining validation-only RQ1 model selections",
+    "keep test locked until every required per-dataset selection and final seed configuration is frozen",
+    "evaluate untouched test only for frozen seeds 42, 43, and 44",
+    "write the RQ1 README verdict only after paired test metrics, uncertainty, and effect-size evidence exist"
+  ],
+  "retention_inventory": {
+    "checkpoint_bytes_current": 854065576,
+    "checkpoint_pairs_current": 14,
+    "deletion_performed": false,
+    "proposed_redundant_checkpoint_bytes": 793060860,
+    "proposed_redundant_checkpoint_pairs": 13,
+    "selected_checkpoint_bytes": 61004716,
+    "selected_checkpoint_path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/best-step-000000007813-generation-0000.pt",
+    "selected_checkpoint_sha256": "858fec98f915cdec9dea8dac0aebd1156f06d36eabd966c9aa4fc522c015d23f",
+    "selected_sidecar_path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/best-step-000000007813-generation-0000.pt.sha256",
+    "status": "no_cleanup_until_selection_evidence_is_committed_pushed_and_read_tested"
+  },
+  "schema_version": 2,
+  "selected": {
+    "best_checkpoint_path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/best-step-000000007813-generation-0000.pt",
+    "best_checkpoint_sha256": "858fec98f915cdec9dea8dac0aebd1156f06d36eabd966c9aa4fc522c015d23f",
+    "candidate_id": "dcnv2_full_rank_lr_1e_3",
+    "learning_rate": 0.001,
+    "resolved_config_path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1.yaml",
+    "resolved_config_sha256": "182536dd407e68141fe0cab92e8db66b4216cc46d005ab08617976836e494aeb",
+    "run_id": "vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1",
+    "validation_metric": 0.020826933840839952
+  },
+  "selection_comparison": {
+    "absolute_improvement_over_nonselected": 2.2353418883760273e-05,
+    "nonselected_metric": 0.020849287259723712,
+    "relative_improvement_percent": 0.1072143071621552,
+    "selected_metric": 0.020826933840839952,
+    "selected_minus_nonselected": -2.2353418883760273e-05,
+    "tie": false
+  },
+  "selection_rule": {
+    "candidate_ids": [
+      "dcnv2_full_rank_lr_3e_4",
+      "dcnv2_full_rank_lr_1e_3"
+    ],
+    "direction": "minimize",
+    "metric": "normalized_mse",
+    "seed": 42,
+    "split": "validation",
+    "tie_break_used": false
+  },
+  "selection_scope": "ordinary_full_rank_dcnv2_c_plus_p_plus_e_seed42_validation_only",
+  "status": "selection_frozen",
+  "test_firewall": {
+    "combined_history_test_event_count": 0,
+    "legacy_test_metrics": null,
+    "legacy_test_opened": false,
+    "protocol_test_path_available": false,
+    "protocol_test_unlocked": false,
+    "selected_on_validation_only": true,
+    "test_data_accessed": false,
+    "test_metrics_consulted": false,
+    "test_metrics_in_candidate_results": null
+  },
+  "tuning_unit": "vk_lsvd_c_plus_p_plus_e_dcnv2_full_rank"
+}

@@ -169,3 +169,15 @@ projection was USD 202.11. Storage passed at 23,639,831,040 bytes (22.016308
 GiB), with 27.983692 GiB logical headroom and 60.701672 GiB overlay available.
 No GPU job, test access, or provider action was performed. Final/test remains
 locked pending the controlled week-26 view and audited final-child activation.
+
+At `2026-08-20T15:57:09Z`, the VK-LSVD `C+P+E` full-rank DCNv2
+validation-only seed-43/44 pair had completed scientifically eligible under
+clean commit `9fbc43d717577cf0be772b5bc52b7fb8e28ae636`. Both results have zero
+OOM/non-finite observations and `test_metrics=null`; all four selected/last
+checkpoints passed strict sidecars and CPU finite-tensor reopen. The
+credential-free estimate was USD 204.84 including the fixed USD 25 storage
+reserve. Durable project storage passed at 22.698 GiB of the 40 GiB cap, with
+27.302 GiB logical headroom and 60.378 GiB overlay available. Both A100s were
+idle and no task process remained. No test data, provider action, or external
+mutation occurred; final/test remains locked pending C+P+E selected lineage
+and controlled activation.

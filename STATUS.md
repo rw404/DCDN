@@ -743,3 +743,23 @@ This checkpoint contains no test result. VK week 26 remains unavailable and
 the active protocol remains `test_unlocked=false` /
 `test_path_available=false`. Remaining gates are the controlled test-view
 transition and audited final-child protocol activation.
+
+## 2026-08-20 VK-LSVD C+P+E three-seed validation lineage
+
+The selected seed-42 full-rank DCNv2 control remains LR=0.001 at normalized
+MSE `0.020826933840839952`. Under clean commit
+`9fbc43d717577cf0be772b5bc52b7fb8e28ae636`, seed 43 completed at
+`0.020804612845465798` and seed 44 completed at `0.02083825837621076`.
+Both terminal results are scientifically eligible, have zero OOM/non-finite
+observations, and contain `test_metrics=null`. Their result SHA-256 values are
+`79a0c2add20f4f881bdff68636b5cf1ed94bc16b060f2002d61ac718bda14d43`
+and `61b0c5ff6766dd2c1ea2cd650ad3237c6cf4105f083f823213af54d25c7038b1`.
+All result/config/command and best/last sidecars passed; four checkpoints
+reopened on CPU with finite tensors and exact Protocol lineage.
+
+At `2026-08-20T15:57:09Z`, estimated cumulative spend was USD 204.84.
+Storage passed at 22.698 GiB of the 40 GiB cap with 27.302 GiB logical
+headroom and 60.378 GiB overlay available. Both A100s were idle, registry
+`running=[]`, and no task process remained. Test remains sealed. Next create
+and independently audit the immutable C+P+E seed-42/43/44 selected-config
+lock before controlled test-view and final-child activation.

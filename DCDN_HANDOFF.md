@@ -1177,4 +1177,35 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   file or metric was opened. Remaining gates are the controlled VK week-26
   source/view transition and audited final-child protocol activation;
   `test_unlocked=false`.
+- VK-LSVD `C+P+E` three-seed full-rank DCNv2 validation lineage completed
+  2026-08-20. The original seed-42 validation-only selection remains
+  `dcnv2_full_rank_lr_1e_3` at normalized MSE
+  `0.020826933840839952`; no test evidence informed that choice. The
+  immutable schema-v3 migration receipt
+  `results/tuning/vk_lsvd_c_plus_p_plus_e_dcnv2_full_rank_selection_v3.json`
+  has SHA-256
+  `b395112304482fafac02120ebe74484886a164579fa50081d9101df763439be0`
+  and adds the exact selected-result binding plus explicit test firewall
+  without changing the selected candidate.
+  Under clean commit `9fbc43d717577cf0be772b5bc52b7fb8e28ae636`,
+  seed 43 completed 39,997,440 examples, 9,765 optimizer steps, and nine
+  validation checks at selected normalized MSE
+  `0.020804612845465798`; result SHA-256 is
+  `79a0c2add20f4f881bdff68636b5cf1ed94bc16b060f2002d61ac718bda14d43`
+  and selected-best checkpoint SHA-256 is
+  `809da81e0ccc2ffe77fe185168c2d0398def130e1cb8049021f22a1c543775c8`.
+  Seed 44 stopped by the frozen patience rule after 28,000,256 examples,
+  6,836 steps, and seven checks at selected normalized MSE
+  `0.02083825837621076`; result SHA-256 is
+  `61b0c5ff6766dd2c1ea2cd650ad3237c6cf4105f083f823213af54d25c7038b1`
+  and selected-best checkpoint SHA-256 is
+  `9dc4e8a8cc6cae988495889ff9f0a5b60610353fbd0121cfef3e895eb204f165`.
+  Both results are scientifically eligible, have zero OOM and non-finite
+  observations, and contain `test_metrics=null`. Result/config/command and
+  best/last sidecars passed; all four checkpoints reopened on CPU with 61
+  finite tensors each and exact protocol lineage. Both A100s were idle and no
+  task process remained after terminal audit. This is validation-only
+  evidence and does not authorize or report a test result. The next gate is
+  the immutable `C+P+E` selected-config lock for seeds 42/43/44, followed
+  by the controlled test-view/final-child activation; test remains sealed.
 Update this decision log whenever a material choice changes.
