@@ -663,3 +663,24 @@ supervised process remained. Test stays sealed:
 `test_unlocked=false`, `test_path_available=false`, and no test metric was
 accessed. Next freeze the dataset-wide selected-config lineage and audit the
 one-pass evaluation bundle before any test activation.
+
+## 2026-08-20 VK-LSVD C+P dataset-wide selected-config freeze
+
+The immutable validation-only
+`configs/protocols/vk_lsvd_c_plus_p/selected_configs.lock` now binds every
+frozen model and all seed-42/43/44 resolved run configs, validation results,
+selected metrics, selection receipts, and exact best-checkpoint SHA-256 values.
+Its SHA-256 is
+`165a82204a039592c140e6be44a3245d1b62ce084946e1a45ac698229d270cfd`;
+the strict adjacent sidecar was reopened, and an independent re-derivation from
+all 27 validation lineages reproduced the same payload. The full CPU regression
+passed 547/547; Ruff, formatting, bytecode compilation, and diff checks pass.
+
+At `2026-08-20T12:58:08Z`, estimated cumulative spend was USD 195.25.
+Project storage was 23,633,846,765 bytes (22.0107 GiB), leaving 27.9893 GiB of
+logical headroom and 60.6978 GiB on the overlay. Both A100s were idle and no
+task-owned process remained. This freeze does not activate final evaluation:
+the parent protocol and active state still record `test_unlocked=false` and
+`test_path_available=false`. The next gate is the audited one-pass
+metric/uncertainty runner and controlled test-view transition; no test file,
+label, or metric was opened here.

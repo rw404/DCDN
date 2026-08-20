@@ -1004,6 +1004,14 @@ def _validate_selected_configs(payload: Mapping[str, Any]) -> None:
         )
 
 
+def validate_selected_configs_payload(payload: Mapping[str, Any]) -> None:
+    """Validate an in-memory selected-config lock without authorizing test access."""
+
+    if not isinstance(payload, Mapping):
+        raise ProtocolError("selected_configs.lock root must be a mapping")
+    _validate_selected_configs(payload)
+
+
 @dataclass(frozen=True)
 class SelectedConfigsLock:
     """Strict parsed selected-configuration lock bound to a final protocol."""

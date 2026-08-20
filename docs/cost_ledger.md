@@ -137,3 +137,13 @@ Project-owned durable bytes were 9,520,076,800, logical headroom was
 failures do not complete a scientific cell. The fresh full CPU regression
 passed 541/541; another retry requires a clean committed/pushed fix and fresh
 run IDs.
+
+At `2026-08-20T12:58:08Z`, the dataset-wide VK-LSVD C+P
+`selected_configs.lock` was materialized with SHA-256
+`165a82204a039592c140e6be44a3245d1b62ce084946e1a45ac698229d270cfd`.
+All 27 validation lineages and selected checkpoint sidecars were reverified;
+the full CPU suite passed 547/547. The credential-free estimate was USD 195.25
+for 51.747222 elapsed Pod-hours including the fixed USD 25 storage reserve.
+Storage was 23,633,846,765 project bytes (22.010735 GiB), with 27.989265 GiB
+logical headroom and 60.697773 GiB overlay available. No GPU job or provider
+action was performed; final/test remains locked pending the one-pass runner.

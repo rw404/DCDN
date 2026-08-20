@@ -1137,4 +1137,15 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   reports the honest validation result. Test remains locked and unavailable;
   next freeze the dataset-wide selected-config lineage and audit the one-pass
   evaluation bundle before test activation.
+- VK-LSVD `C+P` dataset-wide selected-config freeze recorded 2026-08-20:
+  immutable `configs/protocols/vk_lsvd_c_plus_p/selected_configs.lock` has
+  SHA-256 `165a82204a039592c140e6be44a3245d1b62ce084946e1a45ac698229d270cfd`.
+  It binds all nine frozen models and exact seed-42/43/44 run-config,
+  validation-result, selected-metric, per-model receipt, and best-checkpoint
+  lineage. The strict sidecar and all 27 source lineages were reopened, an
+  independent derivation reproduced the payload, and the full CPU regression
+  passed 547 tests. This does not activate test: the parent and active
+  protocol remain `test_unlocked=false` and `test_path_available=false`.
+  Next implement and audit the one-pass metric/uncertainty bundle plus the
+  controlled test-view transition before any test file is opened.
 Update this decision log whenever a material choice changes.
