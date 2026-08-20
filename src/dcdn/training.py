@@ -44,6 +44,7 @@ from dcdn.checkpoint import (
     load_checkpoint,
     load_model_checkpoint_for_evaluation,
     save_checkpoint,
+    verify_checkpoint_sidecar,
 )
 from dcdn.encoder import TrainableEncodedModel
 from dcdn.models import (
@@ -71,7 +72,6 @@ from dcdn.protocol import (
     SelectedConfigsLock,
     TestEvaluationClaim,
     split_sha256_from_views_payload,
-    verify_sha256_sidecar,
 )
 from dcdn.raw import (
     RawBatchSource,
@@ -2105,7 +2105,7 @@ class TrainingHarness:
                 "validation-selected best checkpoint path is unavailable"
             )
         try:
-            return verify_sha256_sidecar(self.best_checkpoint_path)
+            return verify_checkpoint_sidecar(self.best_checkpoint_path)
         except Exception as exc:
             raise TrainingContractError(
                 "validation-selected best checkpoint is missing or corrupt"
@@ -2411,7 +2411,7 @@ class TrainingHarness:
                 )
             selected_best_path = self._best_path_from_filename(selected_best_filename)
             try:
-                actual_best_sha256 = verify_sha256_sidecar(selected_best_path)
+                actual_best_sha256 = verify_checkpoint_sidecar(selected_best_path)
             except Exception as exc:
                 raise TrainingContractError(
                     "selected best checkpoint is missing or corrupt"

@@ -1189,6 +1189,46 @@ def test_checkpoint_loaders_always_request_cpu_map_location(
         reader.close()
 
 
+def test_resume_selected_best_uses_streaming_checkpoint_verifier(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    frozen = _fixture(tmp_path)
+    run_directory = tmp_path / "run"
+    writer = _build_harness(frozen, run_directory)
+    try:
+        writer.sampler = StatefulPermutationSampler(TRAIN_ROWS, seed=42, shuffle=True)
+        selected_path, selected_sha = _save_selected_best(writer, metric=0.25)
+        writer.last_checkpoint_record = writer._save(
+            writer.last_checkpoint_path,
+            checkpoint_role="last",
+        )
+    finally:
+        writer.close()
+
+    original_checkpoint_verifier = training_module.verify_checkpoint_sidecar
+    verified_paths: list[Path] = []
+
+    def recording_checkpoint_verifier(path: Path) -> str:
+        verified_paths.append(Path(path))
+        return original_checkpoint_verifier(path)
+
+    monkeypatch.setattr(
+        training_module,
+        "verify_checkpoint_sidecar",
+        recording_checkpoint_verifier,
+    )
+    reader = _build_harness(frozen, run_directory)
+    source = TinyRawSource(frozen.train_identity, runtime_value_checks=False)
+    try:
+        reader.resume(source)
+        assert verified_paths == [selected_path]
+        assert reader.selected_best_checkpoint_sha256 == selected_sha
+    finally:
+        source.close()
+        reader.close()
+
+
 def test_latency_reinstalls_wrapper_hooks_and_closes_source_on_failure(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
