@@ -1208,4 +1208,16 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   evidence and does not authorize or report a test result. The next gate is
   the immutable `C+P+E` selected-config lock for seeds 42/43/44, followed
   by the controlled test-view/final-child activation; test remains sealed.
+- VK-LSVD `C+P+E` dataset-wide selected-config freeze recorded 2026-08-20:
+  immutable `configs/protocols/vk_lsvd_c_plus_p_plus_e/selected_configs.lock`
+  has SHA-256
+  `b038eee038f925524eb21cc89e495835fb12e347a2bc5afa8c2b5851748cc250`.
+  It binds the validation-only selected full-rank DCNv2 candidate and exact
+  seed-42/43/44 run-config, result, metric, receipt, and best-checkpoint
+  lineage under parent premetric Protocol
+  `6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739`.
+  The strict sidecar reopened and an independent derivation reproduced the
+  payload from source evidence. The full CPU suite passed 564 tests. This
+  does not activate or expose test; controlled test-view and final-child
+  protocol activation remain pending and `test_unlocked=false`.
 Update this decision log whenever a material choice changes.

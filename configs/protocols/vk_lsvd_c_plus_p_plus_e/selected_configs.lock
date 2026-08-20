@@ -1,0 +1,54 @@
+{
+  "schema_version": 2,
+  "artifact_role": "final_selected_configs_lock",
+  "dataset_id": "vk_lsvd_up0.01_ir0.01",
+  "feature_regime": "C+P+E",
+  "parent_premetric_protocol_sha256": "6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739",
+  "search_space_sha256": "b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344",
+  "experiment_matrix_sha256": "867118db089bbbffb4abf02ff7b3c01e2c9f43e804a188a27a3886f66db4e000",
+  "encoder_contract_sha256": "16fa99db8e92ce4dd55c0bd5e7d7bfd8af8d3d59251cc769b41988e61d414449",
+  "capacity_resolution_sha256": "d3e65d90fe0184ec48cf15abbe7358f8fd57b4944b5a95f3201b2b4e3fe81565",
+  "required_model_keys": [
+    "dcnv2_full_rank"
+  ],
+  "selected_models": {
+    "dcnv2_full_rank": {
+      "candidate_id": "dcnv2_full_rank_lr_1e_3",
+      "resolved_config_sha256": "25a5e2b040fe5ff52981a8499d7d4f8dd453bdd91d24e0d5a2b40b49d7521dcc",
+      "selection_receipt_path": "results/tuning/vk_lsvd_c_plus_p_plus_e_dcnv2_full_rank_selection_v3.json",
+      "selection_receipt_sha256": "b395112304482fafac02120ebe74484886a164579fa50081d9101df763439be0",
+      "final_seed_lineage": {
+        "42": {
+          "resolved_run_config_path": "configs/runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1.yaml",
+          "resolved_run_config_sha256": "182536dd407e68141fe0cab92e8db66b4216cc46d005ab08617976836e494aeb",
+          "validation_result_path": "results/tuning/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2-resume-v1.json",
+          "validation_result_sha256": "7ec7c16b5bb5f6c345dc7bd35953e43ce4ea2a072b7acf8544228171600ce3ef",
+          "best_checkpoint_path": "runs/vk-cpe-tune-dcnv2-full-rank-l2-s42-lr1e3-v1-retry-v2/best-step-000000007813-generation-0000.pt",
+          "best_checkpoint_sha256": "858fec98f915cdec9dea8dac0aebd1156f06d36eabd966c9aa4fc522c015d23f",
+          "selected_validation_metric": 0.020826933840839952
+        },
+        "43": {
+          "resolved_run_config_path": "configs/runs/vk-cpe-final-dcnv2-full-rank-l2-s43-v1-receipt-v3.yaml",
+          "resolved_run_config_sha256": "e2661510c2be0df95f300213727ba6ac6cf9d7345034b6c13ae0541088eb92d8",
+          "validation_result_path": "results/final_validation/vk-cpe-final-dcnv2-full-rank-l2-s43-v1-receipt-v3.json",
+          "validation_result_sha256": "79a0c2add20f4f881bdff68636b5cf1ed94bc16b060f2002d61ac718bda14d43",
+          "best_checkpoint_path": "runs/vk-cpe-final-dcnv2-full-rank-l2-s43-v1-receipt-v3/best-step-000000007813-generation-0000.pt",
+          "best_checkpoint_sha256": "809da81e0ccc2ffe77fe185168c2d0398def130e1cb8049021f22a1c543775c8",
+          "selected_validation_metric": 0.020804612845465798
+        },
+        "44": {
+          "resolved_run_config_path": "configs/runs/vk-cpe-final-dcnv2-full-rank-l2-s44-v1-receipt-v3.yaml",
+          "resolved_run_config_sha256": "7cf10a62744f17ec290c02204141896d419e5ab397e4ccc9d27eb7ceb222b856",
+          "validation_result_path": "results/final_validation/vk-cpe-final-dcnv2-full-rank-l2-s44-v1-receipt-v3.json",
+          "validation_result_sha256": "61b0c5ff6766dd2c1ea2cd650ad3237c6cf4105f083f823213af54d25c7038b1",
+          "best_checkpoint_path": "runs/vk-cpe-final-dcnv2-full-rank-l2-s44-v1-receipt-v3/best-step-000000003907-generation-0000.pt",
+          "best_checkpoint_sha256": "9dc4e8a8cc6cae988495889ff9f0a5b60610353fbd0121cfef3e895eb204f165",
+          "selected_validation_metric": 0.02083825837621076
+        }
+      },
+      "selected_on_validation_only": true,
+      "test_data_accessed": false,
+      "test_metrics_consulted": false
+    }
+  }
+}

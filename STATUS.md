@@ -763,3 +763,15 @@ headroom and 60.378 GiB overlay available. Both A100s were idle, registry
 `running=[]`, and no task process remained. Test remains sealed. Next create
 and independently audit the immutable C+P+E seed-42/43/44 selected-config
 lock before controlled test-view and final-child activation.
+
+## 2026-08-20 VK-LSVD C+P+E selected-config freeze
+
+Immutable `configs/protocols/vk_lsvd_c_plus_p_plus_e/selected_configs.lock`
+was published with SHA-256
+`b038eee038f925524eb21cc89e495835fb12e347a2bc5afa8c2b5851748cc250`.
+It binds exactly one selected model (`dcnv2_full_rank_lr_1e_3`) and complete
+seed-42/43/44 validation/config/checkpoint lineage. Strict reopen and
+independent derivation match; the full CPU suite passes 564/564. At
+`2026-08-20T16:17:14Z`, estimated spend was USD 206.17 and storage was
+22.699 GiB with 27.301 GiB logical headroom. Test remains locked; the next
+gate is controlled test-view and final-child Protocol activation.

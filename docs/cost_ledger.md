@@ -181,3 +181,11 @@ reserve. Durable project storage passed at 22.698 GiB of the 40 GiB cap, with
 idle and no task process remained. No test data, provider action, or external
 mutation occurred; final/test remains locked pending C+P+E selected lineage
 and controlled activation.
+
+At `2026-08-20T16:17:14Z`, the immutable VK-LSVD `C+P+E`
+`selected_configs.lock` was independently re-derived and reopened at SHA-256
+`b038eee038f925524eb21cc89e495835fb12e347a2bc5afa8c2b5851748cc250`;
+the full CPU regression passed 564/564 without test access. Estimated
+cumulative spend was USD 206.17. Durable storage passed at 22.699 GiB, with
+27.301 GiB logical headroom and 60.343 GiB overlay available. No GPU job,
+provider action, test access, or external mutation occurred in publication.

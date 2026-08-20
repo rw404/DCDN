@@ -9,14 +9,19 @@ full-scan evidence, deterministic cache identity, encoder contract, capacity
 resolution, search space, and experiment matrix.
 
 The intentionally invalid repository template remains only a negative test
-fixture. The actual VK-LSVD C+P premetric protocol is now materialized at
-`configs/protocols/vk_lsvd_c_plus_p/protocol_frozen.yaml`, with SHA-256
-`1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`.
-It binds the verified full scan, cache, encoder, capacity, physical/expanded/
-operand schemas, and denominator mask, plus 7,505,820 train and 1,516,831
-validation rows. Its active registry remains at the premetric stage and
-`test_unlocked=false`; the per-model DCDN validation selection is not a final
-dataset `selected_configs.lock` and does not authorize test access.
+fixture. The actual VK-LSVD C+P premetric protocol is materialized at
+`configs/protocols/vk_lsvd_c_plus_p/protocol_frozen.yaml`, SHA-256
+`1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b`,
+and its selected-config lock is SHA-256
+`165a82204a039592c140e6be44a3245d1b62ce084946e1a45ac698229d270cfd`.
+The isolated C+P+E premetric protocol is SHA-256
+`6a6e33c908d666c4374ac5052a207c38a9fe012dac147a5e572cb819013a5739`,
+and its one-model selected-config lock is SHA-256
+`b038eee038f925524eb21cc89e495835fb12e347a2bc5afa8c2b5851748cc250`.
+Both locks bind exact seed-42/43/44 validation/config/checkpoint lineage.
+Both parent and active protocols remain at the premetric stage with
+`test_unlocked=false` and `test_path_available=false`; neither lock by itself
+authorizes test access.
 
 ## Verified artifacts and sidecars
 
