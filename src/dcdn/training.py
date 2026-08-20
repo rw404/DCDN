@@ -47,6 +47,10 @@ from dcdn.checkpoint import (
     verify_checkpoint_sidecar,
 )
 from dcdn.encoder import TrainableEncodedModel
+from dcdn.final_evaluation import (
+    FinalBundleRecord,
+    run_one_pass_test_bundle,
+)
 from dcdn.models import (
     AFNPlusConfig,
     AutoIntPlusConfig,
@@ -74,6 +78,7 @@ from dcdn.protocol import (
     split_sha256_from_views_payload,
 )
 from dcdn.raw import (
+    FinalRawBatchSource,
     RawBatchSource,
     RawContractError,
     RawFeatureBatch,
@@ -1648,6 +1653,15 @@ class TrainingHarness:
         self.safety = safety
         self.search_lock = search_lock
         self.device = torch.device(device)
+        self.repository_root: Path | None = None
+        if repository_root is not None:
+            try:
+                resolved_root = Path(repository_root).resolve(strict=True)
+            except OSError as exc:
+                raise TrainingContractError("repository root is unavailable") from exc
+            if not resolved_root.is_dir():
+                raise TrainingContractError("repository root must be a directory")
+            self.repository_root = resolved_root
         if self.device.type not in {"cpu", "cuda"}:
             raise TrainingContractError("training device must be CPU or one CUDA GPU")
         if self.device.type == "cuda" and not torch.cuda.is_available():
@@ -2600,6 +2614,31 @@ class TrainingHarness:
                 "parent checkpoint differs beyond the explicit phase/command bridge"
             )
 
+        def validate_best_extra(
+            extra: Mapping[str, Any], progress: CheckpointProgress
+        ) -> None:
+            self._validate_checkpoint_extra_state(
+                extra,
+                progress,
+                expected_role="best",
+                source_size=self.safety.train_source_identity.row_count,
+                expected_best_metric=float(expected_best_metric),
+            )
+
+        inspected = load_model_checkpoint_for_evaluation(
+            checkpoint_path,
+            model=self.model,
+            expected_metadata=parent_checkpoint_metadata,
+            expected_sha256=expected_checkpoint_sha256,
+            expected_mode="train",
+            map_location="cpu",
+            extra_state_validator=validate_best_extra,
+            restore_model=False,
+        )
+        if inspected.sha256 != expected_checkpoint_sha256:
+            raise TrainingContractError(
+                "parent best digest differs from the selected result receipt"
+            )
         state = load_model_checkpoint_for_evaluation(
             checkpoint_path,
             model=self.model,
@@ -2607,15 +2646,7 @@ class TrainingHarness:
             expected_sha256=expected_checkpoint_sha256,
             expected_mode="train",
             map_location="cpu",
-            extra_state_validator=lambda extra, progress: (
-                self._validate_checkpoint_extra_state(
-                    extra,
-                    progress,
-                    expected_role="best",
-                    source_size=self.safety.train_source_identity.row_count,
-                    expected_best_metric=float(expected_best_metric),
-                )
-            ),
+            extra_state_validator=validate_best_extra,
         )
         if state.sha256 != expected_checkpoint_sha256:
             raise TrainingContractError(
@@ -2631,6 +2662,105 @@ class TrainingHarness:
             resolved_model_config_sha256=(self.config.resolved_model_config_sha256),
         )
         return state
+
+    def evaluate_test_bundle(
+        self,
+        source_factory: Callable[[], FinalRawBatchSource],
+        *,
+        checkpoint_path: str | Path,
+        parent_checkpoint_metadata: CheckpointMetadata,
+        expected_checkpoint_sha256: str,
+        expected_best_metric: float,
+        resolved_run_config_sha256: str,
+        result_path: str | Path,
+        batch_size: int,
+        duration_constant_seconds: float = 157.0,
+    ) -> FinalBundleRecord:
+        """Run one exact final test cell and publish its immutable metric bundle."""
+
+        if not self.raw_execution or not isinstance(self.model, TrainableEncodedModel):
+            raise SplitAccessError("final test bundles require real raw execution")
+        if self.config.phase != "final" or not self.safety.protocol_gate.test_unlocked:
+            raise SplitAccessError(
+                "final test bundle requires an active final protocol"
+            )
+        if self.safety.selected_configs_path is None:
+            raise SplitAccessError("final test bundle lacks selected_configs.lock")
+        if self.repository_root is None:
+            raise TrainingContractError("final bundle lacks a verified repository root")
+        if self.config.loss != "normalized_mean_squared_error":
+            raise TrainingContractError(
+                "watch-time final bundle requires normalized mean squared error"
+            )
+
+        checkpoint = Path(checkpoint_path)
+
+        def inspect_checkpoint() -> str:
+            actual = verify_checkpoint_sidecar(checkpoint)
+            if actual != expected_checkpoint_sha256:
+                raise TrainingContractError(
+                    "final checkpoint sidecar differs from selected lineage"
+                )
+            return actual
+
+        def restore_checkpoint() -> str:
+            return self.restore_parent_best_for_final(
+                checkpoint,
+                parent_checkpoint_metadata=parent_checkpoint_metadata,
+                expected_checkpoint_sha256=expected_checkpoint_sha256,
+                expected_best_metric=expected_best_metric,
+            ).sha256
+
+        def verified_source_factory() -> FinalRawBatchSource:
+            source = source_factory()
+            try:
+                if not isinstance(source, FinalRawBatchSource):
+                    raise SplitAccessError(
+                        "final source lacks the atomic batch_with_audit interface"
+                    )
+                self._assert_raw_source(source, "test")
+                return source
+            except BaseException:
+                close = getattr(source, "close", None)
+                if callable(close):
+                    close()
+                raise
+
+        def predict_batch(raw_batch: RawFeatureBatch) -> torch.Tensor:
+            before_hooks = self.monitor.activation_hook_observations
+            with torch.no_grad(), self._autocast():
+                output = self.model(raw_batch)
+            self.monitor.assert_activation_hooks_observed(before_hooks)
+            self.monitor.submit("test.output", output.logits, kind="output")
+            self.monitor.assert_healthy()
+            return output.logits
+
+        self.model.eval()
+        try:
+            return run_one_pass_test_bundle(
+                gate=self.safety.protocol_gate,
+                selected_configs_path=self.safety.selected_configs_path,
+                runtime_identity=self.safety.expected_runtime_identity("test"),
+                model_key=self.config.model_key,
+                seed=self.config.seed,
+                candidate_id=self.config.candidate_id,
+                resolved_config_sha256=self.config.resolved_model_config_sha256,
+                resolved_run_config_sha256=resolved_run_config_sha256,
+                checkpoint_protocol_sha256=parent_checkpoint_metadata.protocol_hash,
+                checkpoint_sha256=expected_checkpoint_sha256,
+                inspect_checkpoint=inspect_checkpoint,
+                restore_checkpoint=restore_checkpoint,
+                source_factory=verified_source_factory,
+                predict_batch=predict_batch,
+                finalize_predictions=self.monitor.drain,
+                repository_root=self.repository_root,
+                result_path=result_path,
+                device=self.device,
+                batch_size=batch_size,
+                duration_constant_seconds=duration_constant_seconds,
+            )
+        finally:
+            self.model.train()
 
     def _autocast(self):  # type: ignore[no-untyped-def]
         return torch.autocast(

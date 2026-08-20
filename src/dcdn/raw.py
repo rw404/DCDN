@@ -213,6 +213,62 @@ class RawFeatureBatch:
                     )
 
 
+@dataclass(frozen=True)
+class RawAuditBatch:
+    """Audit-only identifiers aligned with one raw batch.
+
+    These values are intentionally separate from :class:`RawFeatureBatch` so
+    they cannot enter the encoder or model forward signature.  The final
+    evaluator uses them only for exact row-pairing and user-clustered
+    uncertainty.
+    """
+
+    user_ids: tuple[int, ...]
+    stable_row_ids: tuple[str, ...]
+    global_row_indices: torch.Tensor
+
+    def validate(
+        self,
+        identity: RawSourceIdentity,
+        requested_indices: Sequence[int],
+    ) -> None:
+        requested = tuple(requested_indices)
+        if not requested:
+            raise RawContractError("audit batch indices must be non-empty")
+        if len(self.user_ids) != len(requested):
+            raise RawContractError("audit user_ids length mismatch")
+        if any(
+            isinstance(value, bool) or not isinstance(value, int) or value < 0
+            for value in self.user_ids
+        ):
+            raise RawContractError("audit user_ids must be non-negative integers")
+        if len(self.stable_row_ids) != len(requested):
+            raise RawContractError("audit stable_row_ids length mismatch")
+        if any(
+            not isinstance(value, str) or not value.strip()
+            for value in self.stable_row_ids
+        ):
+            raise RawContractError("audit stable_row_ids must be non-empty strings")
+        if len(set(self.stable_row_ids)) != len(self.stable_row_ids):
+            raise RawContractError("audit stable_row_ids repeat within a batch")
+        if (
+            not isinstance(self.global_row_indices, torch.Tensor)
+            or self.global_row_indices.device.type != "cpu"
+            or self.global_row_indices.dtype != torch.int64
+            or self.global_row_indices.ndim != 1
+        ):
+            raise RawContractError(
+                "audit global_row_indices must be a one-dimensional CPU int64 tensor"
+            )
+        expected = torch.tensor(requested, dtype=torch.int64)
+        if not torch.equal(self.global_row_indices, expected):
+            raise RawContractError(
+                "audit global_row_indices do not preserve requested order"
+            )
+        if any(index < 0 or index >= identity.row_count for index in requested):
+            raise RawContractError("audit indices exceed raw source bounds")
+
+
 @runtime_checkable
 class RawBatchSource(Protocol):
     """Bounded-memory manifest/shard source with deterministic lifecycle."""
@@ -232,3 +288,15 @@ class RawBatchSource(Protocol):
     ) -> RawFeatureBatch: ...
 
     def close(self) -> None: ...
+
+
+@runtime_checkable
+class FinalRawBatchSource(RawBatchSource, Protocol):
+    """One-pass final source returning model and audit views together."""
+
+    def batch_with_audit(
+        self,
+        indices: Sequence[int],
+        *,
+        device: torch.device,
+    ) -> tuple[RawFeatureBatch, RawAuditBatch]: ...

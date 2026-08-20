@@ -147,3 +147,13 @@ for 51.747222 elapsed Pod-hours including the fixed USD 25 storage reserve.
 Storage was 23,633,846,765 project bytes (22.010735 GiB), with 27.989265 GiB
 logical headroom and 60.697773 GiB overlay available. No GPU job or provider
 action was performed; final/test remains locked pending the one-pass runner.
+At `2026-08-20T13:38:59.989945Z`, the dataset-independent one-pass final
+evaluator and published-bundle recovery passed the full 553-test CPU suite
+without opening test data. The credential-free estimate was USD 197.49 for
+52.428331 elapsed Pod-hours including the fixed USD 25 storage reserve; a
+one-hour mandatory compute projection was USD 200.78. Storage was
+23,639,561,216 project bytes (22.016057 GiB), with 27.983943 GiB logical
+headroom and 60.696690 GiB overlay available. Both A100s were idle, no registry
+record was running, and no task-owned process remained. No provider action was
+performed. Final/test remains locked pending the controlled week-26 view,
+paired clustered contrast/Holm aggregation, and audited final-child activation.

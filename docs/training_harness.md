@@ -226,15 +226,23 @@ match exactly. Null receipt fields are omitted from legacy tuning checkpoints.
 Model-only final restore accepts an expected checkpoint SHA and rejects a
 digest mismatch before `load_state_dict`, so wrong-weight lineage is non-mutating.
 
-Actual test execution is deliberately unavailable in this harness and CLI.
-Loss-only test evaluation and test latency fail before reserving a claim or
-calling a test factory. The central claim schema now binds the exact selection
-receipt, seed-specific run config and validation result, selected metric, and
-best-checkpoint SHA. The remaining blocker is the final one-pass
-metric/uncertainty bundle runner: it must reserve that exact claim, prevalidate
-checkpoint metadata and SHA, mark the claim opened immediately before source
-construction, read test exactly once, write the durable bundle, and mark the
-claim completed. Until that runner exists and passes audit, test stays locked.
+Loss-only test evaluation and test latency remain forbidden. The
+dataset-independent one-pass final runner now reserves the exact central claim,
+prevalidates checkpoint SHA and metadata before model mutation, marks the claim
+opened immediately before the only source-factory call, consumes model inputs,
+targets, stable row IDs, and user-cluster IDs in one ordered pass, drains the
+numerical monitor, publishes an immutable strict-sidecar metric bundle, and
+marks the claim completed. The bundle contains frozen watch-time metrics,
+row-alignment digests, and privacy-safe per-user sufficient statistics for the
+predeclared paired cluster bootstrap. A crash after bundle publication but
+before claim completion can only reconcile the already verified bundle; it
+cannot reopen the source. Synthetic lifecycle, symlink, checkpoint, crash, and
+rehashed-metric negatives pass.
+
+Actual test execution is still unavailable in the CLI because the controlled
+week-26 source transition and cross-model paired uncertainty/Holm aggregator
+are not yet implemented and audited. Until both exist, the final child protocol
+is not activated and test stays locked.
 
 ## Numerical monitoring and latency
 

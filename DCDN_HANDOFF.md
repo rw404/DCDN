@@ -1148,4 +1148,16 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   protocol remain `test_unlocked=false` and `test_path_available=false`.
   Next implement and audit the one-pass metric/uncertainty bundle plus the
   controlled test-view transition before any test file is opened.
+- One-pass final-evaluation core checkpoint recorded 2026-08-20: the
+  dataset-independent runner now binds an exact selected seed/checkpoint claim,
+  performs mutation-safe checkpoint inspection and restore before opening,
+  invokes the final source factory exactly once after the durable `opened`
+  transition, keeps audit identifiers outside the model, consumes rows once in
+  canonical order, drains numerical monitoring, and publishes an immutable
+  watch-time metric bundle with privacy-safe user-cluster sufficient
+  statistics. Published-bundle recovery completes an `opened` claim without
+  reopening test, and rehashed metric tampering is rejected. The full CPU suite
+  passed 553 tests. This does not unlock VK week 26: the controlled test-view
+  transition, paired clustered contrast/Holm aggregator, and final child
+  protocol activation remain pending and `test_unlocked=false`.
 Update this decision log whenever a material choice changes.

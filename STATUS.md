@@ -684,3 +684,29 @@ the parent protocol and active state still record `test_unlocked=false` and
 `test_path_available=false`. The next gate is the audited one-pass
 metric/uncertainty runner and controlled test-view transition; no test file,
 label, or metric was opened here.
+## 2026-08-20 one-pass final evaluation core checkpoint
+
+The dataset-independent one-pass final evaluator is now implemented without
+opening VK-LSVD week 26. It binds the exact selected seed/checkpoint claim,
+checks checkpoint bytes before the mutation-safe parent-best restore, moves the
+claim to `opened` immediately before the sole source factory call, keeps audit
+IDs outside the model signature, consumes every row once in order, drains the
+numerical monitor, and publishes an immutable canonical JSON/strict-sidecar
+bundle. The bundle contains normalized MSE, seconds-scale MAE/MSE, exact global
+concordance coverage, row-alignment digests, and privacy-safe user-cluster
+sufficient statistics. An `opened` crash window can only reconcile the already
+published verified bundle; it cannot reopen test. Rehashed metric tampering is
+rejected against the cluster sums.
+
+The full CPU suite passes 553/553; the focused final/protocol lifecycle passes
+77/77, and Ruff, formatting, bytecode compilation, and diff checks pass. At
+`2026-08-20T13:38:59.989945Z`, estimated spend was USD 197.49 (USD 200.78 with
+a one-hour compute ETA). Storage was 23,639,561,216 bytes (22.0161 GiB), with
+27.9839 GiB logical headroom and 60.6967 GiB overlay available. Both A100s were
+idle, registry `running=[]`, and no task-owned process remained.
+
+This checkpoint does not activate test. The active protocol still records
+`test_unlocked=false` and `test_path_available=false`; no week-26 file, label,
+or metric was opened. Remaining gates are the controlled week-26 source/view
+transition, the paired 2,000-replicate user-cluster contrast/Holm aggregator,
+and final-child protocol materialization/audit.

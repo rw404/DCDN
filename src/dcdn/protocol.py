@@ -1697,6 +1697,36 @@ class TestClaimRegistry:
         _validate_claim_registry(payload)
         _atomic_write_hashed_yaml(self.path, payload)
 
+    def load_claim(
+        self,
+        claim_id: str,
+        *,
+        gate: ProtocolGate,
+        selected_configs_path: str | Path,
+        runtime_identity: RuntimeIdentity,
+    ) -> TestEvaluationClaim:
+        """Reopen one existing claim without reserving or changing its state."""
+
+        _require_sha256(claim_id, "test claim_id")
+        active = gate.require_active()
+        if active.payload["test_claim_registry_path"] != str(self.path):
+            raise ProtocolError("test claim registry is not the active pinned registry")
+        with _exclusive_registry_lock(self.path):
+            payload = self._load_mutable_payload(gate)
+            self._require_registry_identity(payload, gate)
+            for record in payload["claims"]:
+                if record["claim_id"] != claim_id:
+                    continue
+                claim = self._to_claim(payload, record)
+                self._transition_context(
+                    claim,
+                    gate=gate,
+                    selected_configs_path=selected_configs_path,
+                    runtime_identity=runtime_identity,
+                )
+                return claim
+        raise ProtocolError("test claim_id is not present in the active registry")
+
     def claim(
         self,
         *,
