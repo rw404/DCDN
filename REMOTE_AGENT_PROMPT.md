@@ -6,7 +6,60 @@ Copy this file next to `DCDN_HANDOFF.md`, `AGENTS.md`, `DCDNBlock_provided.py`, 
 
 ## Prompt to paste
 
-/goal Build a reproducible DCDN research repository on this existing two-A100 RunPod and execute the frozen public offline experiment plan for the WSDM 2027 paper. Work autonomously through validated core results and the artifact audit, but never inspect test metrics before the protocol and selected configurations are frozen. Do not expand scope or tune after test access. Stop new compute at the earliest hard time or budget limit below.
+/goal Build a reproducible DCDN research repository on this existing two-A100 RunPod and execute the frozen public offline **multi-target** experiment plan for the WSDM 2027 paper, under the owner override in section 0. Work autonomously through validated core results and the artifact audit, but never inspect test metrics before the protocol and selected configurations are frozen. Do not expand scope or tune after test access. Stop new compute at the earliest hard time or budget limit below.
+
+### 0. Owner override recorded 2026-08-20 — read first, it supersedes conflicts below
+
+This override governs. Where any later section of this prompt disagrees with
+it, the override wins and the later text is retained only for provenance.
+
+1. **Multi-target is primary.** The public headline study trains and reports
+   multi-target models. Every row of the main table is multi-target.
+2. **Single-target is a separate follow-up.** It runs only after the main
+   multi-target table is complete, uses the same splits, feature manifests, and
+   structural configurations, and changes only the objective. It may **not**
+   enter the main table and may **not** inform the choice of targets, feature
+   families, loss weights, or models. Its protocol is frozen in advance in
+   `configs/single_target_followup_v1.yaml`, before the first test unlock, so
+   its headline targets cannot be picked after seeing multi-target results.
+3. **Yambda-50M is mandatory**, not optional. The mandatory datasets are
+   VK-LSVD, Yambda-50M, KuaiRand-Pure, and KuaiRec big matrix. Sections 7 and
+   11 below, which describe Yambda as optional, are superseded.
+4. **Only manual historical divisions are removed.** The reduced feature view
+   removes exactly the manually materialized divisions of historical counters
+   and sums. Cosine similarities, dot products, vector norms, and iALS scores
+   are present in **both** FULL and REDUCED, carry reciprocal mask `false`, are
+   never members of the denominator set `D`, and are never counted as removed
+   ratio features.
+5. **Public claim wording is restricted accordingly.** State removal and
+   substitution of *manually engineered divisions of historical counters and
+   sums*. Never state that all ratio-derived features were removed. The 40.1%
+   production reduction stays a separate industrial fact and is never compared
+   with the public-dataset counts.
+6. **The objective is Macro-NLoss**: per-target losses averaged over observed
+   labels only, each divided by a train-estimated frozen constant (`H_t` for
+   binary, `V_t` for regression), then averaged unweighted. Per-target label
+   masks are mandatory; missing labels are never zeros and an observed `0` is a
+   valid negative. Adaptive task weights, learned uncertainty weights,
+   GradNorm, and post-result reweighting are forbidden. Publish every target
+   separately in addition to the aggregate.
+7. **`Synthetic-MultiQuotient-3` replaces the MNIST-like division test** as the
+   RQ1 sanity benchmark. The legacy notebooks are follow-up material only.
+8. **Infrastructure gaps are not blockers.** Absence of RunPod provider-side
+   expiry, a live billing API, or credentialed inspection does not block work.
+   Do not use stored RunPod credentials; keep the local ledger per AGENTS.md.
+
+Frozen artifacts: `configs/targets_multitask_v1.yaml`,
+`configs/features_manual_hist_divisions_only_v1.yaml`,
+`configs/matrix_multitask_v1.yaml`, `configs/single_target_followup_v1.yaml`.
+Legacy disposition: `docs/LEGACY_RESULTS_AUDIT.md`. No pre-override result is
+admissible into the multi-target table.
+
+The seven-row matrix, run identically on every dataset, is
+`M1 DCNv2-REDUCED`, `M2 DCDN-Core-REDUCED`, `M3 AFN+-REDUCED`,
+`M4 DCNv2-capacity-matched-REDUCED`, `M5 DCNv2-FULL`, `M6 DCDN-Core-FULL`,
+`M7 AFN+-FULL`, with all seven declared contrasts published regardless of
+direction. Do not assume in advance that DCDN wins or loses; measure first.
 
 ### 1. Read and reconcile before acting
 
@@ -179,7 +232,7 @@ Mandatory:
 2. VK-LSVD `up0.01_ir0.01` — scalable primary public benchmark.
 3. KuaiRec big matrix — mechanistic base-operand versus explicit-rate ablation.
 
-Optional only after mandatory work: Yambda-50M completion re-ranking.
+Superseded by the override: Yambda-50M is mandatory, not optional-after-mandatory-work.
 
 Do not add KuaiSAR, EB-NeRD, Criteo, Avazu, Tenrec, MicroLens, or another dataset without explicit approval. HEGM supports only VK-LSVD and KuaiRec; it is a preprocessing/split reference, not a ready DCDN feature-substitution dataset. Never upload industrial or private data/code to RunPod.
 
@@ -225,7 +278,7 @@ Build as-of features from `item_daily_features.csv`: an event on date `d` may us
 
 Freeze `C+P` and `E` formulas in the manifest. Use the released `meta.json` constant `c` (approximately 60 seconds, verify) derived from video-duration metadata and label `y=clip(current_play_duration,0,c)/c`. Train and select by normalized MSE. For reporting, use `t=clip(current_play_duration,0,c)` and `t_hat=c*clip(y_hat,0,1)`, then compute MAE/MSE in seconds/seconds² and the same global concordance definition as VK-LSVD. Run the five Tier-A rows and three seeds; do not run the architecture zoo here.
 
-### 11. Optional Yambda protocol
+### 11. Yambda protocol (MANDATORY under the 2026-08-20 override; the word "optional" below is superseded)
 
 Do not begin while a mandatory public cell or output is missing. If explicitly reached:
 

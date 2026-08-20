@@ -1,0 +1,97 @@
+arm_id,label,slice,target,normalized_loss_mean,normalized_loss_sd,seeds
+linear,Linear probe,id,y1,0.3064189652601878,8.713200841829218e-05,3
+linear,Linear probe,id,y2,0.31262098749478656,0.00013332755113135372,3
+linear,Linear probe,id,y3,0.31185536583264667,0.004248579019394895,3
+linear,Linear probe,ood_common_scale,y1,62.39925893147787,1.1395911474562048,3
+linear,Linear probe,ood_common_scale,y2,60.76152547200521,1.5946384636730822,3
+linear,Linear probe,ood_common_scale,y3,58.506788889567055,2.4823516647602744,3
+linear,Linear probe,ood_low_ratio,y1,67.59617106119792,0.6861951277215924,3
+linear,Linear probe,ood_low_ratio,y2,65.4407246907552,1.6066238936038457,3
+linear,Linear probe,ood_low_ratio,y3,69.02159627278645,6.22765541093377,3
+linear,Linear probe,ood_high_ratio,y1,124.10225677490234,0.24145716855751678,3
+linear,Linear probe,ood_high_ratio,y2,125.40102895100911,0.2320058956302472,3
+linear,Linear probe,ood_high_ratio,y3,141.1043497721354,1.2803413764753053,3
+mlp,MLP baseline,id,y1,0.0012246288436775405,0.00016872964829896565,3
+mlp,MLP baseline,id,y2,0.0012515970738604665,0.00038744060325084757,3
+mlp,MLP baseline,id,y3,0.0012961473160733779,0.00040618206779682696,3
+mlp,MLP baseline,ood_common_scale,y1,13.501853307088217,4.178235073424541,3
+mlp,MLP baseline,ood_common_scale,y2,16.127909024556477,3.142678207941401,3
+mlp,MLP baseline,ood_common_scale,y3,14.193068504333496,1.6810926792714425,3
+mlp,MLP baseline,ood_low_ratio,y1,1.0496939818064372,1.5002752441632887,3
+mlp,MLP baseline,ood_low_ratio,y2,0.7168144484361013,0.3951678904061952,3
+mlp,MLP baseline,ood_low_ratio,y3,0.6246519585450491,0.8240962731708797,3
+mlp,MLP baseline,ood_high_ratio,y1,51.278605143229164,2.5367634851274667,3
+mlp,MLP baseline,ood_high_ratio,y2,58.97091166178385,0.6628555970982949,3
+mlp,MLP baseline,ood_high_ratio,y3,60.55365244547526,7.403678638046037,3
+dcnv2_core,DCNv2-Core,id,y1,0.001343144530740877,0.0006411679610676482,3
+dcnv2_core,DCNv2-Core,id,y2,0.0010601987596601248,0.0003737710399588636,3
+dcnv2_core,DCNv2-Core,id,y3,0.0010037079143027465,0.0005697610974423395,3
+dcnv2_core,DCNv2-Core,ood_common_scale,y1,51756266.0,50448394.409453034,3
+dcnv2_core,DCNv2-Core,ood_common_scale,y2,91886136.66666667,121216519.54998389,3
+dcnv2_core,DCNv2-Core,ood_common_scale,y3,100760126.0,129954380.8193657,3
+dcnv2_core,DCNv2-Core,ood_low_ratio,y1,1989255.625,2951225.615632848,3
+dcnv2_core,DCNv2-Core,ood_low_ratio,y2,2560590.7708333335,2231730.668901618,3
+dcnv2_core,DCNv2-Core,ood_low_ratio,y3,3869893.0,1041241.7069517289,3
+dcnv2_core,DCNv2-Core,ood_high_ratio,y1,54.8846321105957,24.250142300779142,3
+dcnv2_core,DCNv2-Core,ood_high_ratio,y2,51.35653305053711,8.824685330221081,3
+dcnv2_core,DCNv2-Core,ood_high_ratio,y3,75.03995259602864,7.663330618086716,3
+dcdn_core_l1,DCDN-Core-L1,id,y1,0.000403730742012461,0.00017991661225233947,3
+dcdn_core_l1,DCDN-Core-L1,id,y2,0.0002737717538063104,3.675166176822574e-05,3
+dcdn_core_l1,DCDN-Core-L1,id,y3,0.0002575630108670642,0.0001268307999843556,3
+dcdn_core_l1,DCDN-Core-L1,ood_common_scale,y1,8308.765258789062,10886.320958546949,3
+dcdn_core_l1,DCDN-Core-L1,ood_common_scale,y2,6976.665547688802,8267.355747750209,3
+dcdn_core_l1,DCDN-Core-L1,ood_common_scale,y3,2639.516805013021,2035.2590801984377,3
+dcdn_core_l1,DCDN-Core-L1,ood_low_ratio,y1,3912.8082593282065,6646.861853818282,3
+dcdn_core_l1,DCDN-Core-L1,ood_low_ratio,y2,3491.605926513672,5949.5726916755775,3
+dcdn_core_l1,DCDN-Core-L1,ood_low_ratio,y3,1566.896464029948,1441.4063333948886,3
+dcdn_core_l1,DCDN-Core-L1,ood_high_ratio,y1,13.273338635762533,1.7631645942279721,3
+dcdn_core_l1,DCDN-Core-L1,ood_high_ratio,y2,13.971173604329428,1.7947127927150792,3
+dcdn_core_l1,DCDN-Core-L1,ood_high_ratio,y3,8.03529946009318,5.099759626566871,3
+dcnv2_capacity,DCNv2-capacity-matched,id,y1,0.0002972562991393109,5.226312665644e-05,3
+dcnv2_capacity,DCNv2-capacity-matched,id,y2,0.00026392899356627214,8.789832419863357e-05,3
+dcnv2_capacity,DCNv2-capacity-matched,id,y3,0.00023899673639486232,5.4093625163880304e-05,3
+dcnv2_capacity,DCNv2-capacity-matched,ood_common_scale,y1,9.82930819193522,1.6494945683420588,3
+dcnv2_capacity,DCNv2-capacity-matched,ood_common_scale,y2,10.848761240641275,2.8135821811519537,3
+dcnv2_capacity,DCNv2-capacity-matched,ood_common_scale,y3,11.265312194824219,0.7824955634339594,3
+dcnv2_capacity,DCNv2-capacity-matched,ood_low_ratio,y1,0.7980575362841288,0.30361025481893417,3
+dcnv2_capacity,DCNv2-capacity-matched,ood_low_ratio,y2,0.6769855817159017,0.5148264127707094,3
+dcnv2_capacity,DCNv2-capacity-matched,ood_low_ratio,y3,1.10495059688886,0.8517054441359401,3
+dcnv2_capacity,DCNv2-capacity-matched,ood_high_ratio,y1,48.33774185180664,4.9139567116520455,3
+dcnv2_capacity,DCNv2-capacity-matched,ood_high_ratio,y2,48.7378184000651,2.877466410745835,3
+dcnv2_capacity,DCNv2-capacity-matched,ood_high_ratio,y3,55.19393793741862,3.3848083761321037,3
+afn_plus,AFN+,id,y1,0.047160460303227104,0.0013909348108148492,3
+afn_plus,AFN+,id,y2,0.0600296842555205,0.005865904041179614,3
+afn_plus,AFN+,id,y3,0.021089186271031696,0.0029031079415373848,3
+afn_plus,AFN+,ood_common_scale,y1,3.83919095993042,2.7183488868625036,3
+afn_plus,AFN+,ood_common_scale,y2,69.16702334086101,36.86117779374193,3
+afn_plus,AFN+,ood_common_scale,y3,16.603946050008137,5.216372035994826,3
+afn_plus,AFN+,ood_low_ratio,y1,0.19662269235899052,0.1707952980315452,3
+afn_plus,AFN+,ood_low_ratio,y2,0.7844635546207428,0.34151009861835174,3
+afn_plus,AFN+,ood_low_ratio,y3,1.1596464117368062,0.5211012150106746,3
+afn_plus,AFN+,ood_high_ratio,y1,203.33692932128906,148.1653292982431,3
+afn_plus,AFN+,ood_high_ratio,y2,112.33712768554688,14.64773500103484,3
+afn_plus,AFN+,ood_high_ratio,y3,37.911152839660645,26.29803236166333,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),id,y1,0.00016943621691704416,6.154700542236784e-05,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),id,y2,0.00010865110137577479,6.094252087783713e-05,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),id,y3,5.149783464730717e-05,1.058177482402387e-05,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),ood_common_scale,y1,8082259.8125,11706468.149865499,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),ood_common_scale,y2,1014961.0,886632.093825313,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),ood_common_scale,y3,124403.19466145833,100683.7287456906,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),ood_low_ratio,y1,2019.1271565755208,1689.5534313788407,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),ood_low_ratio,y2,580.2776692708334,333.68862947563105,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),ood_low_ratio,y3,187.53411197662354,151.9121341076045,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),ood_high_ratio,y1,117.48969841003418,180.7552936359296,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),ood_high_ratio,y2,70.07686058680217,116.98304393425244,3
+dcnv2_ratio_pc,DCNv2 + explicit ratios (positive control),ood_high_ratio,y3,21.84938367207845,19.387605980427207,3
+oracle,Analytical identity oracle,id,y1,0.0,0.0,3
+oracle,Analytical identity oracle,id,y2,0.0,0.0,3
+oracle,Analytical identity oracle,id,y3,0.0,0.0,3
+oracle,Analytical identity oracle,ood_common_scale,y1,5.658442667872375e-15,0.0,3
+oracle,Analytical identity oracle,ood_common_scale,y2,5.892587561965408e-15,0.0,3
+oracle,Analytical identity oracle,ood_common_scale,y3,1.0003446401579078e-14,0.0,3
+oracle,Analytical identity oracle,ood_low_ratio,y1,0.0,0.0,3
+oracle,Analytical identity oracle,ood_low_ratio,y2,0.0,0.0,3
+oracle,Analytical identity oracle,ood_low_ratio,y3,0.0,0.0,3
+oracle,Analytical identity oracle,ood_high_ratio,y1,0.0,0.0,3
+oracle,Analytical identity oracle,ood_high_ratio,y2,0.0,0.0,3
+oracle,Analytical identity oracle,ood_high_ratio,y3,0.0,0.0,3

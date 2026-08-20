@@ -1,0 +1,65 @@
+{
+  "aggregate_never_published_without_per_target": true,
+  "artifact_role": "multitask_publication_index",
+  "coverage": {
+    "kuairand_pure": {
+      "executed": false,
+      "mandatory": true,
+      "reason": "no results_v1.json under results/kuairand_multitask"
+    },
+    "kuairec_big_matrix": {
+      "executed": false,
+      "mandatory": true,
+      "reason": "no results_v1.json under results/kuairec_multitask"
+    },
+    "synthetic_multiquotient_3": {
+      "arms": [
+        "afn_plus",
+        "dcdn_core_l1",
+        "dcnv2_capacity",
+        "dcnv2_core",
+        "dcnv2_ratio_pc",
+        "linear",
+        "mlp",
+        "oracle"
+      ],
+      "benchmark_manifest_sha256": "659d29f565bd51338e8c311a5c1c94335a499fbb2f62017d26581e785d8e72fd",
+      "executed": true,
+      "mandatory": true,
+      "records": 24,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "selected_configs_sha256": "63555e1f3b1405643372e4600366067df48bdabb6fabbc58cf406501936e5653",
+      "serving_benchmark_present": true
+    },
+    "vk_lsvd_up0.01_ir0.01": {
+      "executed": false,
+      "mandatory": true,
+      "reason": "no results_v1.json under results/vk_lsvd_multitask"
+    },
+    "yambda_50m": {
+      "executed": false,
+      "mandatory": true,
+      "reason": "no results_v1.json under results/yambda_multitask"
+    }
+  },
+  "mandatory_datasets": [
+    "synthetic_multiquotient_3",
+    "vk_lsvd_up0.01_ir0.01",
+    "yambda_50m",
+    "kuairand_pure",
+    "kuairec_big_matrix"
+  ],
+  "schema_version": 1,
+  "table_row_counts": {
+    "efficiency.csv": 15,
+    "multitask_per_target.csv": 96,
+    "multitask_summary.csv": 32,
+    "pareto.csv": 5,
+    "run_registry.csv": 24
+  },
+  "unexecuted_cells_are_listed_not_omitted": true
+}

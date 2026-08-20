@@ -1,0 +1,6 @@
+dataset,arm_id,label,quality_slice,macro_nloss_mean,p95_batch1_latency_ms,throughput_at_max_batch,parameters_matched,flops_per_example,runtime_matched_vs_dcdn,runtime_match_note,on_pareto_frontier
+synthetic_multiquotient_3,dcnv2_capacity,DCNv2-capacity-matched,id,0.00026672735596851754,0.9961013682186604,1023011.8264089641,17495,34673,True,may be described as runtime matched,True
+synthetic_multiquotient_3,dcdn_core_l1,DCDN-Core-L1,id,0.0003116885103130092,1.0384549386799335,993601.6415950956,17491,34664,,,False
+synthetic_multiquotient_3,dcnv2_core,DCNv2-Core,id,0.001135683754303803,0.7317486219108105,1398163.5583248665,17491,34656,False,must be reported as a Pareto trade-off; the phrase 'at the same serving performance' is not permitted for this pair,True
+synthetic_multiquotient_3,mlp,MLP baseline,id,0.0012574578092123072,0.8261041715741159,1248287.5285825871,193859,,False,must be reported as a Pareto trade-off; the phrase 'at the same serving performance' is not permitted for this pair,False
+synthetic_multiquotient_3,afn_plus,AFN+,id,0.042759777357180916,1.2586038559675217,836396.381340989,577365,,True,may be described as runtime matched,False

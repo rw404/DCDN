@@ -1,0 +1,534 @@
+{
+  "analytic_counts": {
+    "dcdn_core_l1": {
+      "adapter_flops": 1024,
+      "adapter_parameters": 576,
+      "architecture": "DCDN-Core-L1",
+      "flops": 34664,
+      "head_flops": 33344,
+      "head_parameters": 16771,
+      "interaction_flops": 296,
+      "interaction_flops_per_layer": 288,
+      "interaction_parameters": 144,
+      "interaction_parameters_per_layer": 144,
+      "num_layers": 1,
+      "parameters": 17491,
+      "reciprocal_flops": 8
+    },
+    "dcnv2_capacity": {
+      "adapter_flops": 1024,
+      "adapter_parameters": 576,
+      "expert_flops": 287,
+      "expert_parameters": 132,
+      "flops": 34673,
+      "head_flops": 33344,
+      "head_parameters": 16771,
+      "interaction_flops": 305,
+      "interaction_flops_per_layer": 305,
+      "interaction_parameters": 148,
+      "interaction_parameters_per_layer": 148,
+      "low_rank": 6,
+      "num_experts": 1,
+      "num_layers": 1,
+      "parameters": 17495
+    },
+    "dcnv2_core": {
+      "adapter_flops": 1024,
+      "adapter_parameters": 576,
+      "architecture": "DCNv2-full-rank-L2",
+      "flops": 34656,
+      "head_flops": 33344,
+      "head_parameters": 16771,
+      "interaction_flops": 288,
+      "interaction_flops_per_layer": 144,
+      "interaction_parameters": 144,
+      "interaction_parameters_per_layer": 72,
+      "num_layers": 2,
+      "parameters": 17491
+    }
+  },
+  "artifact_role": "matched_serving_performance_report",
+  "host_load_at_end": {
+    "host_idle": false,
+    "idle_ceiling": 2.0,
+    "load_average_15m": 18.12548828125,
+    "load_average_1m": 5.279296875,
+    "load_average_5m": 12.67578125
+  },
+  "host_load_at_start": {
+    "host_idle": false,
+    "idle_ceiling": 2.0,
+    "load_average_15m": 19.31298828125,
+    "load_average_1m": 6.93896484375,
+    "load_average_5m": 15.05712890625
+  },
+  "measurements": {
+    "afn_plus": {
+      "1": {
+        "batch": 1,
+        "batch_latency_ms_p50": 1.2193964794278145,
+        "batch_latency_ms_p95": 1.2586038559675217,
+        "batch_latency_ms_p99": 1.3115173764526846,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 36929024,
+        "per_example_latency_ms_p50": 1.2193964794278145,
+        "per_example_latency_ms_p95": 1.2586038559675217,
+        "per_example_latency_ms_p99": 1.3115173764526846,
+        "per_round_p50_ms": [
+          1.2231292203068733,
+          1.2176455929875374,
+          1.2190286070108414,
+          1.2171072885394096,
+          1.2206947430968285
+        ],
+        "round_to_round_p50_spread_ms": 0.006021931767463684,
+        "rounds": 5,
+        "throughput_examples_per_second": 820.0778146163228,
+        "warmups": 200
+      },
+      "1024": {
+        "batch": 1024,
+        "batch_latency_ms_p50": 1.224299892783165,
+        "batch_latency_ms_p95": 1.2472179718315601,
+        "batch_latency_ms_p99": 1.2895658239722252,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 53739008,
+        "per_example_latency_ms_p50": 0.0011956053640460595,
+        "per_example_latency_ms_p95": 0.001217986300616758,
+        "per_example_latency_ms_p99": 0.0012593416249728762,
+        "per_round_p50_ms": [
+          1.2272531166672707,
+          1.2267911806702614,
+          1.2208642438054085,
+          1.2236405164003372,
+          1.2225182726979256
+        ],
+        "round_to_round_p50_spread_ms": 0.006388872861862183,
+        "rounds": 5,
+        "throughput_examples_per_second": 836396.381340989,
+        "warmups": 200
+      },
+      "64": {
+        "batch": 64,
+        "batch_latency_ms_p50": 1.22793298214674,
+        "batch_latency_ms_p95": 1.2640263885259628,
+        "batch_latency_ms_p99": 1.2990560941398144,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 37349376,
+        "per_example_latency_ms_p50": 0.019186452846042812,
+        "per_example_latency_ms_p95": 0.01975041232071817,
+        "per_example_latency_ms_p99": 0.0202977514709346,
+        "per_round_p50_ms": [
+          1.2275027111172676,
+          1.2277476489543915,
+          1.2279078364372253,
+          1.2275166809558868,
+          1.2288093566894531
+        ],
+        "round_to_round_p50_spread_ms": 0.0013066455721855164,
+        "rounds": 5,
+        "throughput_examples_per_second": 52120.10828808563,
+        "warmups": 200
+      }
+    },
+    "dcdn_core_l1": {
+      "1": {
+        "batch": 1,
+        "batch_latency_ms_p50": 1.0121800005435944,
+        "batch_latency_ms_p95": 1.0384549386799335,
+        "batch_latency_ms_p99": 1.0663123801350594,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 34680832,
+        "per_example_latency_ms_p50": 1.0121800005435944,
+        "per_example_latency_ms_p95": 1.0384549386799335,
+        "per_example_latency_ms_p99": 1.0663123801350594,
+        "per_round_p50_ms": [
+          1.0112570598721504,
+          1.0124845430254936,
+          1.0121287778019905,
+          1.012609340250492,
+          1.0123541578650475
+        ],
+        "round_to_round_p50_spread_ms": 0.0013522803783416748,
+        "rounds": 5,
+        "throughput_examples_per_second": 987.9665666807751,
+        "warmups": 200
+      },
+      "1024": {
+        "batch": 1024,
+        "batch_latency_ms_p50": 1.0305941104888916,
+        "batch_latency_ms_p95": 1.0399204678833485,
+        "batch_latency_ms_p99": 1.061089299619198,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 36061696,
+        "per_example_latency_ms_p50": 0.0010064395610243082,
+        "per_example_latency_ms_p95": 0.0010155473319173325,
+        "per_example_latency_ms_p99": 0.0010362200191593731,
+        "per_round_p50_ms": [
+          1.0308800265192986,
+          1.0307040065526962,
+          1.030460000038147,
+          1.0306285694241524,
+          1.0303175076842308
+        ],
+        "round_to_round_p50_spread_ms": 0.000562518835067749,
+        "rounds": 5,
+        "throughput_examples_per_second": 993601.6415950956,
+        "warmups": 200
+      },
+      "64": {
+        "batch": 64,
+        "batch_latency_ms_p50": 1.0222885757684708,
+        "batch_latency_ms_p95": 1.052540633827448,
+        "batch_latency_ms_p99": 1.0751712694764137,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 34763776,
+        "per_example_latency_ms_p50": 0.015973258996382356,
+        "per_example_latency_ms_p95": 0.016445947403553873,
+        "per_example_latency_ms_p99": 0.016799551085568964,
+        "per_round_p50_ms": [
+          1.0214569047093391,
+          1.02259311825037,
+          1.0228333994746208,
+          1.0199043899774551,
+          1.0239211842417717
+        ],
+        "round_to_round_p50_spread_ms": 0.004016794264316559,
+        "rounds": 5,
+        "throughput_examples_per_second": 62604.631918037594,
+        "warmups": 200
+      }
+    },
+    "dcnv2_capacity": {
+      "1": {
+        "batch": 1,
+        "batch_latency_ms_p50": 0.9816968813538551,
+        "batch_latency_ms_p95": 0.9961013682186604,
+        "batch_latency_ms_p99": 1.0126637481153014,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 34680832,
+        "per_example_latency_ms_p50": 0.9816968813538551,
+        "per_example_latency_ms_p95": 0.9961013682186604,
+        "per_example_latency_ms_p99": 1.0126637481153014,
+        "per_round_p50_ms": [
+          0.9906347841024399,
+          0.9816009551286697,
+          0.9802943095564842,
+          0.9795064106583595,
+          0.979231670498848
+        ],
+        "round_to_round_p50_spread_ms": 0.011403113603591919,
+        "rounds": 5,
+        "throughput_examples_per_second": 1018.6443687392621,
+        "warmups": 200
+      },
+      "1024": {
+        "batch": 1024,
+        "batch_latency_ms_p50": 1.0009659454226494,
+        "batch_latency_ms_p95": 1.0134527459740639,
+        "batch_latency_ms_p99": 1.0291189141571522,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 36061696,
+        "per_example_latency_ms_p50": 0.000977505806076806,
+        "per_example_latency_ms_p95": 0.0009896999472402968,
+        "per_example_latency_ms_p99": 0.001004998939606594,
+        "per_round_p50_ms": [
+          1.0019345209002495,
+          0.9992700070142746,
+          1.0068053379654884,
+          0.9980276226997375,
+          0.9963084012269974
+        ],
+        "round_to_round_p50_spread_ms": 0.010496936738491058,
+        "rounds": 5,
+        "throughput_examples_per_second": 1023011.8264089641,
+        "warmups": 200
+      },
+      "64": {
+        "batch": 64,
+        "batch_latency_ms_p50": 0.989164225757122,
+        "batch_latency_ms_p95": 1.0224093683063984,
+        "batch_latency_ms_p99": 1.0417926311492922,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 34763776,
+        "per_example_latency_ms_p50": 0.015455691027455032,
+        "per_example_latency_ms_p95": 0.015975146379787475,
+        "per_example_latency_ms_p99": 0.01627800986170769,
+        "per_round_p50_ms": [
+          0.9893244132399559,
+          0.9885001927614212,
+          0.9885411709547043,
+          0.9894715622067451,
+          0.9899856522679329
+        ],
+        "round_to_round_p50_spread_ms": 0.0014854595065116882,
+        "rounds": 5,
+        "throughput_examples_per_second": 64701.0863651214,
+        "warmups": 200
+      }
+    },
+    "dcnv2_core": {
+      "1": {
+        "batch": 1,
+        "batch_latency_ms_p50": 0.7191821932792664,
+        "batch_latency_ms_p95": 0.7317486219108105,
+        "batch_latency_ms_p99": 0.760246030986309,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 34680320,
+        "per_example_latency_ms_p50": 0.7191821932792664,
+        "per_example_latency_ms_p95": 0.7317486219108105,
+        "per_example_latency_ms_p99": 0.760246030986309,
+        "per_round_p50_ms": [
+          0.7200594991445541,
+          0.7192585617303848,
+          0.7145488634705544,
+          0.7191663607954979,
+          0.7233405485749245
+        ],
+        "round_to_round_p50_spread_ms": 0.008791685104370117,
+        "rounds": 5,
+        "throughput_examples_per_second": 1390.4682420462668,
+        "warmups": 200
+      },
+      "1024": {
+        "batch": 1024,
+        "batch_latency_ms_p50": 0.7323892787098885,
+        "batch_latency_ms_p95": 0.7423573173582554,
+        "batch_latency_ms_p99": 0.7716474495828153,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 36061184,
+        "per_example_latency_ms_p50": 0.0007152239049901254,
+        "per_example_latency_ms_p95": 0.0007249583177326713,
+        "per_example_latency_ms_p99": 0.000753561962483218,
+        "per_round_p50_ms": [
+          0.7302351295948029,
+          0.7300451397895813,
+          0.7346896454691887,
+          0.7343916222453117,
+          0.7320092990994453
+        ],
+        "round_to_round_p50_spread_ms": 0.004644505679607391,
+        "rounds": 5,
+        "throughput_examples_per_second": 1398163.5583248665,
+        "warmups": 200
+      },
+      "64": {
+        "batch": 64,
+        "batch_latency_ms_p50": 0.7270136848092079,
+        "batch_latency_ms_p95": 0.736517459154129,
+        "batch_latency_ms_p99": 0.7641237601637841,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 34763264,
+        "per_example_latency_ms_p50": 0.011359588825143874,
+        "per_example_latency_ms_p95": 0.011508085299283266,
+        "per_example_latency_ms_p99": 0.011939433752559127,
+        "per_round_p50_ms": [
+          0.7273135706782341,
+          0.7264977321028709,
+          0.7268749177455902,
+          0.7269131019711494,
+          0.7276544347405434
+        ],
+        "round_to_round_p50_spread_ms": 0.0011567026376724243,
+        "rounds": 5,
+        "throughput_examples_per_second": 88031.35530632506,
+        "warmups": 200
+      }
+    },
+    "mlp": {
+      "1": {
+        "batch": 1,
+        "batch_latency_ms_p50": 0.8104406297206879,
+        "batch_latency_ms_p95": 0.8261041715741159,
+        "batch_latency_ms_p99": 0.94371872022748,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 35385856,
+        "per_example_latency_ms_p50": 0.8104406297206879,
+        "per_example_latency_ms_p95": 0.8261041715741159,
+        "per_example_latency_ms_p99": 0.94371872022748,
+        "per_round_p50_ms": [
+          0.8105030283331871,
+          0.8110273629426956,
+          0.8085072040557861,
+          0.8091041818261147,
+          0.8154548704624176
+        ],
+        "round_to_round_p50_spread_ms": 0.00694766640663147,
+        "rounds": 5,
+        "throughput_examples_per_second": 1233.8966771010016,
+        "warmups": 200
+      },
+      "1024": {
+        "batch": 1024,
+        "batch_latency_ms_p50": 0.8203238248825073,
+        "batch_latency_ms_p95": 0.8301045745611191,
+        "batch_latency_ms_p99": 0.8481597527861595,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 38862336,
+        "per_example_latency_ms_p50": 0.0008010974852368236,
+        "per_example_latency_ms_p95": 0.0008106489985948429,
+        "per_example_latency_ms_p99": 0.0008282810085802339,
+        "per_round_p50_ms": [
+          0.819639302790165,
+          0.8206469938158989,
+          0.8196746930480003,
+          0.8209617808461189,
+          0.8206209167838097
+        ],
+        "round_to_round_p50_spread_ms": 0.0013224780559539795,
+        "rounds": 5,
+        "throughput_examples_per_second": 1248287.5285825871,
+        "warmups": 200
+      },
+      "64": {
+        "batch": 64,
+        "batch_latency_ms_p50": 0.8277576416730881,
+        "batch_latency_ms_p95": 0.8374583907425404,
+        "batch_latency_ms_p99": 0.8544009551405907,
+        "forwards_per_round": 1000,
+        "peak_vram_bytes": 35598336,
+        "per_example_latency_ms_p50": 0.012933713151142001,
+        "per_example_latency_ms_p95": 0.013085287355352193,
+        "per_example_latency_ms_p99": 0.01335001492407173,
+        "per_round_p50_ms": [
+          0.8299341425299644,
+          0.8308598771691322,
+          0.8227350190281868,
+          0.8271131664514542,
+          0.8262665942311287
+        ],
+        "round_to_round_p50_spread_ms": 0.008124858140945435,
+        "rounds": 5,
+        "throughput_examples_per_second": 77317.31702366567,
+        "warmups": 200
+      }
+    }
+  },
+  "parameters": {
+    "afn_plus": {
+      "adapter": 192,
+      "encoder_shared": 256,
+      "head": 16771,
+      "interaction": 560402,
+      "matched": 577365,
+      "total": 577621
+    },
+    "dcdn_core_l1": {
+      "adapter": 576,
+      "encoder_shared": 128,
+      "head": 16771,
+      "interaction": 144,
+      "matched": 17491,
+      "total": 17619
+    },
+    "dcnv2_capacity": {
+      "adapter": 576,
+      "encoder_shared": 128,
+      "head": 16771,
+      "interaction": 148,
+      "matched": 17495,
+      "total": 17623
+    },
+    "dcnv2_core": {
+      "adapter": 576,
+      "encoder_shared": 128,
+      "head": 16771,
+      "interaction": 144,
+      "matched": 17491,
+      "total": 17619
+    },
+    "mlp": {
+      "adapter": 8256,
+      "encoder_shared": 128,
+      "head": 16771,
+      "interaction": 168832,
+      "matched": 193859,
+      "total": 193987
+    }
+  },
+  "protocol": {
+    "batches": [
+      1,
+      64,
+      1024
+    ],
+    "device": "cuda:1",
+    "device_name": "NVIDIA A100-SXM4-80GB",
+    "excluded": [
+      "preprocessing",
+      "dataloader",
+      "host_to_device_transfer"
+    ],
+    "forward_scope": "full_multi_target_forward_with_every_head",
+    "independent_rounds": 5,
+    "inputs": "device_resident",
+    "mode": "eval_and_inference_mode",
+    "precision_policy": "float32_parameters_no_autocast_identical_across_rows",
+    "runtime_match_latency_factor": 1.1,
+    "runtime_match_throughput_factor": 0.9,
+    "synchronized_forwards": 1000,
+    "warmups": 200
+  },
+  "protocol_compliant_idle_host": false,
+  "runtime_match_verdicts": {
+    "dcdn_core_l1_vs_afn_plus": {
+      "p50_and_p95_disagree": false,
+      "p50_batch1_ratio": 0.8300663628441394,
+      "p50_batch1_would_pass": true,
+      "p95_batch1_passes": true,
+      "p95_batch1_ratio": 0.8250848221672149,
+      "p95_batch1_threshold": 1.1,
+      "reporting_requirement": "may be described as runtime matched",
+      "runtime_matched": true,
+      "shared_max_batch": 1024,
+      "throughput_passes": true,
+      "throughput_ratio_at_shared_max_batch": 1.1879554524160667,
+      "throughput_threshold": 0.9
+    },
+    "dcdn_core_l1_vs_dcnv2_capacity": {
+      "p50_and_p95_disagree": false,
+      "p50_batch1_ratio": 1.0310514577042356,
+      "p50_batch1_would_pass": true,
+      "p95_batch1_passes": true,
+      "p95_batch1_ratio": 1.0425193377025619,
+      "p95_batch1_threshold": 1.1,
+      "reporting_requirement": "may be described as runtime matched",
+      "runtime_matched": true,
+      "shared_max_batch": 1024,
+      "throughput_passes": true,
+      "throughput_ratio_at_shared_max_batch": 0.9712513735866517,
+      "throughput_threshold": 0.9
+    },
+    "dcdn_core_l1_vs_dcnv2_core": {
+      "p50_and_p95_disagree": false,
+      "p50_batch1_ratio": 1.407404145990241,
+      "p50_batch1_would_pass": false,
+      "p95_batch1_passes": false,
+      "p95_batch1_ratio": 1.4191416390620906,
+      "p95_batch1_threshold": 1.1,
+      "reporting_requirement": "must be reported as a Pareto trade-off; the phrase 'at the same serving performance' is not permitted for this pair",
+      "runtime_matched": false,
+      "shared_max_batch": 1024,
+      "throughput_passes": false,
+      "throughput_ratio_at_shared_max_batch": 0.7106476461062433,
+      "throughput_threshold": 0.9
+    },
+    "dcdn_core_l1_vs_mlp": {
+      "p50_and_p95_disagree": false,
+      "p50_batch1_ratio": 1.248925539298831,
+      "p50_batch1_would_pass": false,
+      "p95_batch1_passes": false,
+      "p95_batch1_ratio": 1.2570508350069094,
+      "p95_batch1_threshold": 1.1,
+      "reporting_requirement": "must be reported as a Pareto trade-off; the phrase 'at the same serving performance' is not permitted for this pair",
+      "runtime_matched": false,
+      "shared_max_batch": 1024,
+      "throughput_passes": false,
+      "throughput_ratio_at_shared_max_batch": 0.7959717764090107,
+      "throughput_threshold": 0.9
+    }
+  },
+  "schema_version": 1,
+  "seed": 42,
+  "verdict_status": "provisional_host_not_idle_p95_tail_is_contaminated"
+}

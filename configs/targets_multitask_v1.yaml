@@ -1,0 +1,240 @@
+schema_version: 1
+artifact_role: frozen_multi_target_specification
+status: frozen_before_metrics
+basis: owner_override_2026_08_20_multi_target_primary
+test_unlocked: false
+
+# ---------------------------------------------------------------------------
+# Objective
+# ---------------------------------------------------------------------------
+# Every dataset uses the SAME aggregate.  Per-target losses are averaged only
+# over observed labels for that target, then divided by a train-derived,
+# frozen task constant, then averaged unweighted across targets.
+#
+#   Macro-NLoss = mean_t( L_t / K_t )
+#
+#   binary     : L_t = LogLoss_t                    K_t = H_t  (train entropy)
+#   regression : L_t = MSE_t                        K_t = V_t  (train variance)
+#
+# A value of 1.0 for a target means "no better than the frozen constant
+# predictor for that target".
+objective:
+  name: macro_nloss
+  aggregation: unweighted_mean_over_targets
+  per_target_reduction: mean_over_observed_labels_only
+  binary_loss: binary_cross_entropy_with_logits
+  regression_loss: mean_squared_error
+  binary_constant: train_label_entropy_H_t
+  regression_constant: train_label_variance_V_t
+  constants_estimated_on: train_split_only
+  constants_frozen_before_training: true
+  used_for:
+    - training_objective
+    - validation_checkpoint_selection
+    - early_stopping
+    - primary_aggregate_reporting
+  forbidden:
+    - adaptive_task_weights
+    - learned_uncertainty_weights
+    - gradnorm
+    - post_result_reweighting
+    - any_task_weight_other_than_one
+  per_target_reporting_mandatory: true
+
+# ---------------------------------------------------------------------------
+# Missing-label policy
+# ---------------------------------------------------------------------------
+# A per-target boolean mask is mandatory.  An observed event indicator of 0 is
+# a VALID NEGATIVE label, not a missing value, and must never be masked out.
+# Missing labels are never replaced by zeros.
+label_mask_policy:
+  per_target_mask_required: true
+  missing_label_substitution: forbidden
+  observed_zero_is_valid_negative: true
+  mask_name_template: "label_mask_{target}"
+  target_with_zero_observed_labels_in_a_batch: contributes_zero_and_is_excluded_from_mean
+
+# ---------------------------------------------------------------------------
+# Datasets
+# ---------------------------------------------------------------------------
+# `source_columns` MUST be resolved against the actual released schema and the
+# domains/support verified before the feature manifest is hashed and frozen.
+# `resolved: false` means the column name is a candidate pending that check.
+# No label may be invented; a target whose source column does not exist blocks
+# the dataset instead of being replaced.
+datasets:
+
+  vk_lsvd_up0.01_ir0.01:
+    primary_confirmatory_target: watch_time
+    temporal_protocol: official_vk_lsvd_weekly_protocol_preserved
+    history_weeks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+    train_weeks: [20, 21, 22, 23, 24]
+    validation_week: 25
+    test_week: 26
+    current_row_outcome_use: label_only_never_input_or_history_for_same_row
+    ials_similarity_features: shared_across_full_and_reduced
+    targets:
+      - name: watch_time
+        kind: regression
+        source_columns: [interaction.timespent]
+        resolved: true
+        unit: seconds
+        transform: "clip(timespent, 0, c) / c"
+        c_seconds: 157.0
+        c_provenance: full_items_metadata_duration_q0.99_polars_nearest
+        c_source_sha256: 607ffd09d3fb6627f7eec07ed53583d45c47263a2e6538e4deee66cd8a22e51e
+        reporting_units: seconds
+        always_observed: true
+      - name: like
+        kind: binary
+        source_columns: [interaction.like]
+        resolved: true
+        always_observed: true
+      - name: share
+        kind: binary
+        source_columns: [interaction.share]
+        resolved: true
+        always_observed: true
+      - name: dislike
+        kind: binary
+        source_columns: [interaction.dislike]
+        resolved: true
+        always_observed: true
+
+  kuairand_pure:
+    primary_confirmatory_target: long_view
+    headline_test: late_randomized_exposure_rows_per_frozen_protocol
+    is_rand_is_a_feature: false
+    is_rand_use: test_partition_definition_only
+    excluded_sources:
+      - video_features_statistic.csv
+    targets:
+      - name: long_view
+        kind: binary
+        source_columns: [log.long_view]
+        resolved: false
+        always_observed: true
+      - name: like
+        kind: binary
+        source_columns: [log.is_like]
+        resolved: false
+        always_observed: true
+      - name: forward
+        kind: binary
+        source_columns: [log.is_forward]
+        resolved: false
+        always_observed: true
+      - name: hate
+        kind: binary
+        source_columns: [log.is_hate]
+        resolved: false
+        always_observed: true
+    excluded_targets:
+      - name: is_click
+        reason: >
+          UI semantics of a click differ across surfaces in KuaiRand; the
+          override excludes it from the mandatory objective.  It may be
+          reported descriptively but never enters Macro-NLoss.
+
+  kuairec_big_matrix:
+    primary_confirmatory_target: watch_time
+    daily_aggregate_lag: strictly_earlier_than_target_date
+    current_row_outcome_use: label_only_never_input_or_history_for_same_row
+    targets:
+      - name: watch_time
+        kind: regression
+        source_columns: [big_matrix.play_duration, big_matrix.video_duration]
+        resolved: true
+        unit: seconds
+        transform: "clip(play_duration_seconds, 0, c) / c"
+        c_seconds: 131.684
+        c_provenance: train_only_duration_constant_frozen_in_kuairec_contract
+        millisecond_to_second_conversion: approved_and_frozen
+        always_observed: true
+      - name: completion
+        kind: binary
+        source_columns: [big_matrix.play_duration, big_matrix.video_duration]
+        resolved: true
+        definition: "current_play_duration >= video_duration"
+        always_observed: true
+    label_only_columns:
+      - play_duration
+      - watch_ratio
+
+  yambda_50m:
+    primary_confirmatory_target: listen50
+    interaction_scope: recommendation_driven_listens
+    completion_row_filter: forbidden
+    current_played_ratio_pct_use: label_only
+    event_stream_join_policy: >
+      like/dislike streams are NOT joined into the primary study; joining them
+      requires a pre-registered attribution rule frozen before any metric.
+    targets:
+      - name: listen50
+        kind: binary
+        source_columns: [listens.played_ratio_pct]
+        resolved: false
+        definition: "played_ratio_pct >= 50"
+        always_observed: true
+      - name: play_fraction
+        kind: regression
+        source_columns: [listens.played_ratio_pct]
+        resolved: false
+        transform: "clip(played_ratio_pct, 0, 100) / 100"
+        always_observed: true
+
+  synthetic_multiquotient_3:
+    primary_confirmatory_target: y1
+    role: implementation_capability_benchmark_not_recommendation_evidence
+    inputs: [n1, d1, n2, d2, d3, z1, z2, z3]
+    input_domain: strictly_positive
+    reciprocal_mask_active_on: [d1, d2, d3]
+    denominators_above_reciprocal_floor: true
+    targets:
+      - name: y1
+        kind: regression
+        definition: "n1 / d1"
+        resolved: true
+        always_observed: true
+      - name: y2
+        kind: regression
+        definition: "n2 / d2"
+        resolved: true
+        always_observed: true
+      - name: y3
+        kind: regression
+        definition: "(n1 + n2) / d3"
+        resolved: true
+        always_observed: true
+    evaluation_slices:
+      - id_test
+      - ood_common_scale
+      - ood_low_ratio
+      - ood_high_ratio
+    slices_hashed_before_training: true
+
+# ---------------------------------------------------------------------------
+# Reporting
+# ---------------------------------------------------------------------------
+reporting:
+  aggregate: macro_nloss_mean_and_sd_across_seeds
+  per_target_binary:
+    - logloss
+    - roc_auc
+    - auprc
+    - user_gauc
+    - user_gauc_coverage
+  per_target_regression:
+    - normalized_mse
+    - mae_in_natural_units
+  stability:
+    - nonfinite_count
+    - reciprocal_floor_incidence_per_field
+    - denominator_invalid_or_zero_frequency_per_field
+  efficiency:
+    - latency_p50_p95_p99
+    - throughput
+    - peak_vram
+    - parameters
+    - flops_per_example
+  publish_all_contrasts_regardless_of_sign: true

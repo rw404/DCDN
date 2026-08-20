@@ -1,6 +1,6 @@
 # DCDN project handoff
 
-Updated: 2026-08-18 (Europe/Moscow)
+Updated: 2026-08-20 (Europe/Moscow)
 
 This document is the durable source of truth for continuing the DCDN paper in another Codex task or Project. Read it before the manuscript, because the legacy generated draft still contains an abandoned provisional name and placeholder claims.
 
@@ -25,6 +25,7 @@ This document is the durable source of truth for continuing the DCDN paper in an
 - Central production result: DCDN replaced the DCNv2 block, removed the corresponding engineered features, and reduced the input feature inventory by 40.1%. The resulting DCDN ranker is deployed in the production short-video service.
 - Architecture split confirmed by the user on 2026-08-18: the production ranker uses **one** hybrid DCDN block with the auxiliary FC path and final projector shown in `DCDNBlock_provided.py`; public offline experiments use the simplified cross-division core without that FC path or projector.
 - Current submission risk is predominantly experimental reporting and causal controls, not lack of prose.
+- **Owner override recorded 2026-08-20 — this supersedes the single-target framing throughout this document.** The public headline study is **multi-target**. Single-target training is a **separate follow-up** that may not enter the main table and may not inform target, feature-family, loss-weight, or model selection. **VK-LSVD, Yambda-50M, KuaiRand-Pure, and KuaiRec big matrix are all mandatory**; Yambda-50M is no longer optional. The reduced feature view removes **only** manually materialized divisions of historical counters and sums — cosine similarities, dot products, vector norms, and iALS scores remain shared across both regimes, carry reciprocal mask `false`, and are never counted as removed ratio features. Frozen artifacts: `configs/targets_multitask_v1.yaml`, `configs/features_manual_hist_divisions_only_v1.yaml`, `configs/matrix_multitask_v1.yaml`, `configs/single_target_followup_v1.yaml`. Legacy disposition: `docs/LEGACY_RESULTS_AUDIT.md`. Didactic walkthrough: `notebooks/dcdn_explained.ipynb`.
 
 ## 2. Source-of-truth priority
 
@@ -292,6 +293,14 @@ Still required for publication:
 ## 8. Research questions
 
 Use these four RQs consistently:
+
+> **Superseded by the 2026-08-20 owner override.** The public RQ set is now:
+> **RQ1 — Quotient capability.** Can DCDN learn quotients directly from the operands, without a ready-made ratio feature? Measured by `Synthetic-MultiQuotient-3`, which replaces the legacy MNIST-like single-target division test.
+> **RQ2 — Quality under matched serving performance.** Does DCDN reach better **multi-target** quality than DCNv2 and AFN+ at comparable latency/throughput on the reduced feature view? Full-feature results for every method are published separately. No direction is assumed in advance.
+> **RQ3 — Architecture versus capacity.** Is any gain explained by the reciprocal architecture or only by more parameters/FLOPs?
+> **Follow-up — Multi-target versus single-target.** Does joint training produce positive transfer, negative transfer, or no detected effect? This runs only after the main multi-target table is complete.
+>
+> The four RQs below are retained for provenance and describe the pre-override single-target framing.
 
 - **RQ1 — Feature substitution.** Can DCDN recover the predictive value of manually engineered ratio features from retained numerator and denominator base operands?
 - **RQ2 — Ranking effectiveness.** Given the same base operands, context features, and training/serving budget, does DCDN outperform DCNv2 and representative feature-interaction models?
@@ -1220,4 +1229,35 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   payload from source evidence. The full CPU suite passed 564 tests. This
   does not activate or expose test; controlled test-view and final-child
   protocol activation remain pending and `test_unlocked=false`.
+- **Owner override and multi-target reset recorded 2026-08-20.** The owner
+  redirected the public study from single-target to multi-target, made
+  Yambda-50M mandatory, restricted the reduced-view removal to manually
+  materialized divisions of historical counters and sums, and required cosine,
+  dot, norm, and iALS features to stay in both regimes with reciprocal mask
+  `false`. Five concrete conflicts with the pre-override protocol were found
+  and resolved in favour of the override:
+  (1) `configs/experiment_matrix_v1.yaml` declared `primary_targets_only: true`;
+  (2) `src/dcdn/training.py` supports exactly one target, one loss, and no
+  label masks; (3) the three iALS cosines sat in the removable `E` set even
+  though their lineage is `dot/(norm*norm)`, not a counter/sum division;
+  (4) all six `p_ials_*_norm` fields sat in `denominator_contract.eligible_fields`;
+  (5) AGENTS.md froze Yambda-50M as optional.
+  A full legacy audit classified all 61 registry records: 40 completed runs are
+  `legacy_context_only`, 21 non-completed records are `unverifiable` execution
+  failures, and **zero** are admissible into the new main table. No run is
+  multi-target and no test metric has ever been produced or viewed. Evidence:
+  `docs/LEGACY_RESULTS_AUDIT.md` and
+  `artifacts/legacy_audit/legacy_results_inventory_v1.json`.
+  New implementation: `src/dcdn/multitask.py` (frozen Macro-NLoss, per-target
+  masks, frozen train-estimated task constants, per-target linear heads) and
+  `src/dcdn/synthetic_multiquotient.py` (`Synthetic-MultiQuotient-3` with
+  pre-hashed ID/common-scale/low-ratio/high-ratio slices, an analytical
+  identity oracle, and an explicit-ratio positive-control view). The
+  multi-target objective is implemented as a standalone module rather than a
+  rewrite of the frozen single-target `training.py`, so that harness can adopt
+  it without disturbing work in flight.
+  Didactic walkthrough `notebooks/dcdn_explained.ipynb` (synthetic +
+  MovieLens-1M) was added and executed. MovieLens-1M is didactic only and is
+  never a result cell.
+
 Update this decision log whenever a material choice changes.

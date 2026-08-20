@@ -1,0 +1,246 @@
+schema_version: 1
+artifact_role: frozen_multi_target_model_matrix
+status: frozen_before_metrics
+basis: owner_override_2026_08_20_multi_target_primary
+test_unlocked: false
+
+# ---------------------------------------------------------------------------
+# Mandatory datasets
+# ---------------------------------------------------------------------------
+# Yambda-50M is MANDATORY under the override.  The pre-override AGENTS.md text
+# that made it optional is superseded.
+datasets:
+  - id: vk_lsvd_up0.01_ir0.01
+    mandatory: true
+  - id: yambda_50m
+    mandatory: true
+  - id: kuairand_pure
+    mandatory: true
+  - id: kuairec_big_matrix
+    mandatory: true
+
+sanity_benchmark:
+  id: synthetic_multiquotient_3
+  mandatory: true
+  role: implementation_capability_evidence_not_recommendation_superiority
+
+# ---------------------------------------------------------------------------
+# The seven-row comparison matrix, identical on every dataset
+# ---------------------------------------------------------------------------
+rows:
+  - id: M1
+    label: DCNv2-REDUCED-MTL
+    model_key: dcnv2_full_rank
+    feature_regime: REDUCED
+  - id: M2
+    label: DCDN-Core-REDUCED-MTL
+    model_key: dcdn_core
+    feature_regime: REDUCED
+  - id: M3
+    label: AFN+-REDUCED-MTL
+    model_key: afn_plus
+    feature_regime: REDUCED
+  - id: M4
+    label: DCNv2-capacity-matched-core-REDUCED-MTL
+    reporting_label: DCNv2-capacity-matched
+    model_key: dcnv2_capacity_matched_core
+    feature_regime: REDUCED
+    capacity_matched_to: M2
+  - id: M5
+    label: DCNv2-FULL-MTL
+    model_key: dcnv2_full_rank
+    feature_regime: FULL
+  - id: M6
+    label: DCDN-Core-FULL-MTL
+    model_key: dcdn_core
+    feature_regime: FULL
+  - id: M7
+    label: AFN+-FULL-MTL
+    model_key: afn_plus
+    feature_regime: FULL
+
+tables:
+  reduced_feature_table: [M1, M2, M3, M4]
+  full_feature_table: [M5, M6, M7]
+
+# ---------------------------------------------------------------------------
+# Contrasts — ALL are published regardless of sign
+# ---------------------------------------------------------------------------
+contrasts:
+  - id: C1
+    expression: "M2 - M1"
+    question: DCDN versus DCNv2 on identical reduced inputs
+    confirmatory: true
+  - id: C2
+    expression: "M2 - M3"
+    question: DCDN versus AFN+ on identical reduced inputs
+    confirmatory: true
+  - id: C3
+    expression: "M2 - M4"
+    question: reciprocal structure versus matched capacity
+    confirmatory: true
+  - id: C4
+    expression: "M5 - M1"
+    question: predictive value of the removed manual divisions
+    confirmatory: true
+  - id: C5
+    expression: "M2 - M5"
+    question: can reduced DCDN replace full DCNv2
+    confirmatory: true
+  - id: C6
+    expression: "M6 - M5"
+    question: honest full-feature comparison of DCDN and DCNv2
+    confirmatory: false
+  - id: C7
+    expression: "M7 - M5"
+    question: honest full-feature comparison of AFN+ and DCNv2
+    confirmatory: false
+
+contrast_reporting:
+  publish_all_regardless_of_direction: true
+  forbidden_framing:
+    - >
+      presenting "what we lose" as an assumption before measurement; direction
+      is measured first and reported as found
+  multiplicity_correction: holm_bonferroni
+  multiplicity_scope: confirmatory_contrasts_on_the_primary_target_per_dataset
+  multiplicity_chosen_before_test_unlock: true
+
+# ---------------------------------------------------------------------------
+# Common architecture — identical across every row
+# ---------------------------------------------------------------------------
+common_architecture:
+  context_encoder: identical
+  representation_width: identical
+  shared_prediction_tower: identical
+  per_target_head: one_identical_linear_head_per_target
+  examples: identical
+  labels: identical
+  per_target_masks: identical
+  optimizer_family: identical
+  effective_batch: identical
+  maximum_steps: identical
+  validation_cadence: identical
+  patience: identical
+  tuning_trials: identical
+  seeds: identical
+
+dcdn_public_configuration:
+  architecture: DCDN-Core-L{L}
+  operands: raw_base_operands_only
+  fixed_x0: true
+  denominator_mask: semantic
+  local_fc: false
+  batchnorm: false
+  dropout_inside_core: false
+  concatenation_inside_core: false
+  projector_inside_core: false
+  categorical_embeddings_in_reciprocal_branch: false
+  id_embeddings_in_reciprocal_branch: false
+  similarity_embeddings_in_reciprocal_branch: false
+  production_variant_is_separate: DCDN-Hybrid-Prod-L1-PLE8
+
+dcdn_full_regime_rule:
+  r_div_may_enter_common_product_and_deep_path: true
+  r_div_becomes_reciprocal_denominator_automatically: false
+  rationale: >
+    In M6 the R_div fields are ordinary inputs.  They must not be silently
+    promoted into the denominator mask, or the FULL comparison would change
+    the architecture as well as the feature view.
+
+# ---------------------------------------------------------------------------
+# Capacity matching
+# ---------------------------------------------------------------------------
+capacity_matching:
+  freeze_dcdn_depth_and_rank_before_any_quality_metric: true
+  target_row: M2
+  matched_row: M4
+  tolerance_fraction: 0.05
+  matched_quantities_simultaneously:
+    - trainable_non_embedding_parameters_including_common_tower_and_heads
+    - flops_per_example
+  selection_rule: mechanical_distance_in_parameter_and_flop_space
+  selection_may_use_validation_quality: false
+  if_no_exact_match: report_two_bracketing_controls
+  parameter_matching_and_runtime_matching_are_distinct: true
+  both_must_be_reported: true
+
+# ---------------------------------------------------------------------------
+# Serving-performance protocol
+# ---------------------------------------------------------------------------
+serving_benchmark:
+  forward_scope: full_multi_target_forward_with_every_head
+  hardware: single_idle_a100
+  mode: eval_and_inference_mode
+  precision_policy: identical_across_rows
+  inputs: device_resident
+  excluded_from_timing:
+    - preprocessing
+    - dataloader
+    - host_to_device_transfer
+  batches: [1, 64, 1024]
+  warmups: 200
+  synchronized_forwards: 1000
+  independent_timing_rounds: 5
+  report:
+    - latency_p50_batch
+    - latency_p95_batch
+    - latency_p99_batch
+    - latency_p50_per_example
+    - latency_p95_per_example
+    - latency_p99_per_example
+    - throughput
+    - peak_vram
+    - parameters
+    - flops
+  runtime_matched_claim_requires_both:
+    - "dcdn_p95_batch1 <= 1.10 * comparator_p95_batch1"
+    - "dcdn_throughput_at_shared_max_batch >= 0.90 * comparator_throughput"
+  otherwise: report_pareto_tradeoff_without_same_performance_claim
+
+# ---------------------------------------------------------------------------
+# Evaluation and test lock
+# ---------------------------------------------------------------------------
+evaluation:
+  tuning_seed: 42
+  tuning_splits: [train, validation]
+  final_seeds: [42, 43, 44]
+  seed_42_permitted_for: validation_tuning_only
+  test_loader_disabled_until_freeze: true
+  test_metrics_disabled_until_freeze: true
+  freeze_and_hash_before_test_unlock:
+    - targets_and_masks
+    - task_loss_constants
+    - feature_manifests
+    - model_matrix
+    - configs
+    - seeds
+    - metrics
+    - contrasts
+    - multiplicity_procedure
+    - single_target_followup_protocol
+  after_test_unlock:
+    changes_motivated_by_test_results: forbidden
+    additional_tuning: forbidden
+
+# ---------------------------------------------------------------------------
+# Priority order under a constrained compute envelope
+# ---------------------------------------------------------------------------
+# The full matrix is 4 datasets x 7 rows x (tuning + 3 seeds).  When the time
+# or cost envelope cannot cover it, cells are executed in this order and every
+# unexecuted cell is reported as execution-blocked with its reason.  Silent
+# scope reduction is forbidden.
+execution_priority:
+  - synthetic_multiquotient_3_all_rows
+  - vk_lsvd_reduced_table
+  - vk_lsvd_full_table
+  - kuairand_pure_reduced_table
+  - kuairand_pure_full_table
+  - kuairec_big_matrix_reduced_table
+  - kuairec_big_matrix_full_table
+  - yambda_50m_reduced_table
+  - yambda_50m_full_table
+incomplete_cell_policy:
+  must_be_reported: true
+  must_state_reason: true
+  execution_failure_is_not_a_scientific_result: true

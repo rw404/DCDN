@@ -1,0 +1,300 @@
+schema_version: 1
+artifact_role: frozen_feature_role_policy
+status: frozen_before_metrics
+basis: owner_override_2026_08_20_reduced_view_removes_manual_historical_divisions_only
+test_unlocked: false
+
+# ---------------------------------------------------------------------------
+# Roles
+# ---------------------------------------------------------------------------
+roles:
+  C:
+    description: categorical, static, and context inputs
+    present_in: [FULL, REDUCED]
+    eligible_as_denominator: false
+  P_shared:
+    description: every feature identical in FULL and REDUCED
+    present_in: [FULL, REDUCED]
+    eligible_as_denominator: only_the_D_subset
+  D:
+    description: >
+      strictly positive historical denominator operands permitted by the DCDN
+      reciprocal mask; a subset of P_shared
+    subset_of: P_shared
+    present_in: [FULL, REDUCED]
+    eligible_as_denominator: true
+  R_div:
+    description: manually materialized divisions of historical counters/sums
+    present_in: [FULL]
+    eligible_as_denominator: false
+
+regimes:
+  FULL: "C + P_shared + R_div"
+  REDUCED: "C + P_shared"
+
+# ---------------------------------------------------------------------------
+# What P_shared MUST contain
+# ---------------------------------------------------------------------------
+p_shared_must_include:
+  - raw_historical_counters
+  - safely_shifted_historical_counters
+  - raw_historical_sums
+  - safely_shifted_historical_sums
+  - numerator_operands
+  - denominator_operands
+  - support_indicators
+  - validity_indicators
+  - static_numerical_features
+  - cosine_similarities
+  - dot_products
+  - vector_norms
+  - ials_scores
+  - embedding_or_similarity_derived_signals
+  - any_feature_that_is_not_a_direct_manual_division_of_historical_counters_or_sums
+
+# ---------------------------------------------------------------------------
+# R_div admission gate
+# ---------------------------------------------------------------------------
+# A field may be placed in R_div ONLY if EVERY condition holds.  If lineage is
+# ambiguous on any point, the field STAYS in P_shared.  The default is
+# retention, not removal.
+r_div_admission_gate:
+  lineage_must_be_exactly: "safe_div(N, D)"
+  numerator_N_must_be: historical_counter_or_accumulated_sum
+  denominator_D_must_be: historical_counter_or_accumulated_sum
+  both_smoothed_or_shifted_operands_retained_in_p_shared: true
+  smoothing_known: true
+  cutoff_known: true
+  missing_policy_known: true
+  support_threshold_known: true
+  value_reproducible_from_retained_operands: true
+  ambiguous_lineage_action: keep_in_p_shared
+
+# ---------------------------------------------------------------------------
+# Similarity features are ALWAYS shared and are NEVER denominators
+# ---------------------------------------------------------------------------
+similarity_feature_policy:
+  applies_to:
+    - cosine_similarity
+    - dot_product
+    - vector_norm
+    - ials_score
+    - any_embedding_derived_similarity
+  present_in_full: true
+  present_in_reduced: true
+  reciprocal_mask: false
+  counted_as_removed_ratio_feature: false
+  rationale: >
+    A cosine is dot/(norm*norm) — a division of vector norms, not of historical
+    counters or sums.  It is therefore outside the public removal claim and
+    must remain in both regimes.  Norms are excluded from D so that the
+    reciprocal branch operates only on semantically valid historical
+    denominators.
+
+# ---------------------------------------------------------------------------
+# Public claim discipline
+# ---------------------------------------------------------------------------
+public_claim:
+  allowed: >
+    removal and substitution of manually engineered divisions of historical
+    counters and sums
+  forbidden:
+    - "all ratio-derived features were removed"
+    - "every engineered feature was removed"
+    - "DCDN reconstructs the removed feature values"
+  permitted_effect_claim: recovers_the_predictive_value_of_removed_features
+  production_reduction_40_1_percent: separate_industrial_fact_not_a_public_dataset_result
+
+# ---------------------------------------------------------------------------
+# Mandatory pre-training verification
+# ---------------------------------------------------------------------------
+# All checks must pass before any model consumes the views.  A failure is a
+# hard stop, not a warning.
+pre_training_checks:
+  - id: identical_row_ids
+    assertion: FULL and REDUCED contain the same row IDs in the same order
+  - id: identical_labels
+    assertion: FULL and REDUCED carry bitwise-identical labels and label masks
+  - id: shared_block_bitwise_identical
+    assertion: the ordered C + P_shared block is bitwise identical across regimes
+  - id: exact_set_difference
+    assertion: "FULL \\ REDUCED == R_div"
+  - id: r_div_reproducible
+    assertion: >
+      every R_div field is reproduced from its two retained P_shared operands
+      under the declared smoothing/missing policy
+  - id: no_current_row_outcome_in_features
+    assertion: no current-row outcome appears in any feature of that row
+  - id: similarity_present_in_both
+    assertion: cosine, dot, and norm features are present in FULL and REDUCED
+  - id: similarity_not_in_D
+    assertion: no cosine, dot, norm, or iALS field appears in the denominator mask
+  - id: denominators_positive_or_gated
+    assertion: >
+      every active denominator coordinate is finite and strictly positive, or
+      is gated to zero by its validity indicator
+
+# ---------------------------------------------------------------------------
+# Per-dataset assignment
+# ---------------------------------------------------------------------------
+# VK-LSVD is fully resolved below because its physical schema is already frozen.
+# The other datasets carry the policy but their concrete column assignment is
+# produced by the dataset feature contract and must be resolved against the
+# actual released schema before hashing.
+datasets:
+
+  vk_lsvd_up0.01_ir0.01:
+    resolved: true
+    supersedes: configs/data/vk_lsvd/features_v1.yaml
+    change_summary:
+      - >
+        The three iALS cosines move from the removable engineered set into
+        P_shared.  Their lineage is dot/(norm*norm), not a division of
+        historical counters or sums, so they are not R_div.
+      - >
+        The six iALS norms are removed from denominator_contract.eligible_fields.
+        Cosine, dot, and norm must carry reciprocal mask false.
+      - >
+        R_div is therefore exactly the seventeen manual counter/sum divisions.
+    p_shared_additions:
+      - e_ials_viewtime_cosine
+      - e_ials_feedback_cosine
+      - e_ials_survival_cosine
+    denominator_mask_removals:
+      - p_ials_viewtime_user_norm
+      - p_ials_viewtime_item_norm
+      - p_ials_feedback_user_norm
+      - p_ials_feedback_item_norm
+      - p_ials_survival_user_norm
+      - p_ials_survival_item_norm
+    D:
+      - p_duration_seconds
+      - p_user_show_count
+      - p_user_show_count_plus_beta
+      - p_item_show_count
+      - p_item_show_count_plus_beta
+    R_div:
+      e_user_avg_timespent_seconds:
+        numerator: p_user_timespent_sum_seconds
+        denominator: p_user_show_count
+        missing_policy: zero_when_not_v_user_history_present
+        support_threshold: v_user_history_present
+      e_user_like_rate:
+        numerator: p_user_like_count_plus_alpha
+        denominator: p_user_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_user_share_rate:
+        numerator: p_user_share_count_plus_alpha
+        denominator: p_user_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_user_bookmark_rate:
+        numerator: p_user_bookmark_count_plus_alpha
+        denominator: p_user_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_user_comments_rate:
+        numerator: p_user_comments_count_plus_alpha
+        denominator: p_user_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_user_dislike_rate:
+        numerator: p_user_dislike_count_plus_alpha
+        denominator: p_user_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_user_heartbeat15_rate:
+        numerator: p_user_heartbeat15_count_plus_alpha
+        denominator: p_user_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_user_heartbeat30_rate:
+        numerator: p_user_heartbeat30_count_plus_alpha
+        denominator: p_user_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_item_avg_timespent_seconds:
+        numerator: p_item_timespent_sum_seconds
+        denominator: p_item_show_count
+        missing_policy: zero_when_not_v_item_history_present
+        support_threshold: v_item_history_present
+      e_item_like_rate:
+        numerator: p_item_like_count_plus_alpha
+        denominator: p_item_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_item_share_rate:
+        numerator: p_item_share_count_plus_alpha
+        denominator: p_item_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_item_bookmark_rate:
+        numerator: p_item_bookmark_count_plus_alpha
+        denominator: p_item_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_item_comments_rate:
+        numerator: p_item_comments_count_plus_alpha
+        denominator: p_item_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_item_dislike_rate:
+        numerator: p_item_dislike_count_plus_alpha
+        denominator: p_item_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_item_click_on_author_rate:
+        numerator: p_item_click_on_author_count_plus_alpha
+        denominator: p_item_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_item_heartbeat15_rate:
+        numerator: p_item_heartbeat15_count_plus_alpha
+        denominator: p_item_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+      e_item_heartbeat30_rate:
+        numerator: p_item_heartbeat30_count_plus_alpha
+        denominator: p_item_show_count_plus_beta
+        missing_policy: always_defined_after_beta_shift
+        support_threshold: none
+    not_r_div_despite_being_divisions:
+      e_ials_viewtime_cosine: dot_over_norm_product_not_counter_division
+      e_ials_feedback_cosine: dot_over_norm_product_not_counter_division
+      e_ials_survival_cosine: dot_over_norm_product_not_counter_division
+    smoothing:
+      alpha: 5.0
+      beta: 100.0
+      constants_source: pinned_HEGM_preprocess_source
+      fitted_or_tuned: false
+
+  kuairand_pure:
+    resolved: false
+    pending: resolve_R_div_against_frozen_kuairand_feature_contract
+    D_policy: positive_historical_show_counters_only
+    similarity_policy: shared_and_never_denominator
+
+  kuairec_big_matrix:
+    resolved: false
+    pending: resolve_R_div_against_frozen_kuairec_feature_contract
+    daily_aggregate_lag: strictly_earlier_than_target_date
+    D_policy: positive_historical_show_counters_and_duration_only
+    similarity_policy: shared_and_never_denominator
+
+  yambda_50m:
+    resolved: false
+    pending: build_feature_contract_then_resolve
+    D_policy: positive_historical_listen_counters_only
+    similarity_policy: shared_and_never_denominator
+
+  synthetic_multiquotient_3:
+    resolved: true
+    C: []
+    P_shared: [n1, d1, n2, d2, d3, z1, z2, z3]
+    D: [d1, d2, d3]
+    R_div_for_positive_control: [r1, r2, r3]
+    r_div_note: >
+      The explicit target ratios r1=n1/d1, r2=n2/d2, r3=(n1+n2)/d3 exist only
+      as the positive-control input for the DCNv2 control arm.  They are not
+      part of the REDUCED or FULL synthetic view used by the other arms.

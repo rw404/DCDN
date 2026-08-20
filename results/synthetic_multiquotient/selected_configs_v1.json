@@ -1,0 +1,90 @@
+{
+  "benchmark_manifest_sha256": "659d29f565bd51338e8c311a5c1c94335a499fbb2f62017d26581e785d8e72fd",
+  "capacity_resolution": {
+    "candidates_considered": 96,
+    "flop_contract": "dcdn-forward-floating-arithmetic-flops-v1",
+    "lower_bracket": null,
+    "matched": true,
+    "selected": {
+      "adapter_flops": 1024,
+      "adapter_parameters": 576,
+      "expert_flops": 287,
+      "expert_parameters": 132,
+      "flops": 34673,
+      "head_flops": 33344,
+      "head_parameters": 16771,
+      "interaction_flops": 305,
+      "interaction_flops_per_layer": 305,
+      "interaction_parameters": 148,
+      "interaction_parameters_per_layer": 148,
+      "low_rank": 6,
+      "num_experts": 1,
+      "num_layers": 1,
+      "parameters": 17495
+    },
+    "selected_ratios": {
+      "distance": 0.00048826455186481917,
+      "flop_ratio": 1.0002596353565658,
+      "parameter_ratio": 1.0002286890400778,
+      "within_tolerance": true
+    },
+    "selection_rule": "minimum_log_distance_in_parameter_and_flop_space",
+    "selection_used_validation_quality": false,
+    "target": {
+      "adapter_flops": 1024,
+      "adapter_parameters": 576,
+      "architecture": "DCDN-Core-L1",
+      "flops": 34664,
+      "head_flops": 33344,
+      "head_parameters": 16771,
+      "interaction_flops": 296,
+      "interaction_flops_per_layer": 288,
+      "interaction_parameters": 144,
+      "interaction_parameters_per_layer": 144,
+      "num_layers": 1,
+      "parameters": 17491,
+      "reciprocal_flops": 8
+    },
+    "tolerance_fraction": 0.05,
+    "upper_bracket": null
+  },
+  "encoder": {
+    "embedding_dim": 8,
+    "head_hidden_dims": [
+      128,
+      64
+    ],
+    "operand_schema_sha256": "33678d4ecb036884f88f568a1e37aeca8f4a5e013943ac5ec46bc48fc03f10a0",
+    "representation_dim": 64
+  },
+  "final_seeds": [
+    42,
+    43,
+    44
+  ],
+  "objective_spec_sha256": "5169e5b5e21c967aff676ac8a8c9a1760d5919508ac9bd8dd883f35b1a5a8a37",
+  "optimization": {
+    "batch_size": 4096,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08,
+    "family": "AdamW",
+    "gradient_clip_l2": 1.0,
+    "maximum_steps": 4000,
+    "patience": 5,
+    "validate_every_steps": 200,
+    "weight_decay": 1e-06
+  },
+  "selected_learning_rates": {
+    "afn_plus": 0.001,
+    "dcdn_core_l1": 0.001,
+    "dcnv2_capacity": 0.001,
+    "dcnv2_core": 0.001,
+    "dcnv2_ratio_pc": 0.001,
+    "linear": 0.001,
+    "mlp": 0.001
+  },
+  "task_constants_sha256": "5f40d98442140c776faa35b9558ed94b78540593010047eb704b2bbd3b1987c6"
+}

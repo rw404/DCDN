@@ -1,0 +1,236 @@
+schema_version: 1
+dataset_id: vk_lsvd_up0.01_ir0.01
+artifact_role: pre_metric_multi_target_feature_contract
+status: frozen_before_metrics
+basis: owner_override_2026_08_20
+test_unlocked: false
+test_labels_opened: false
+week26_schema_inspected: false
+week26_view_materialized: false
+
+# ---------------------------------------------------------------------------
+# Relationship to the pre-override contract
+# ---------------------------------------------------------------------------
+# configs/data/vk_lsvd/features_v1.yaml stays byte-identical and keeps its
+# frozen hashes: a concurrent session is still executing single-target work
+# against it, and rewriting it would invalidate lineage already recorded in the
+# run registry.  This file is a NEW contract that supersedes it for every
+# multi-target cell.
+supersedes:
+  path: configs/data/vk_lsvd/features_v1.yaml
+  features_sha256: 380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b
+  left_unmodified: true
+  reason: >
+    pre-override single-target lineage in the run registry must remain
+    resolvable; the override is expressed as a new contract, not an edit
+
+inherits_unchanged_from_v1:
+  - source_manifest
+  - upstream_preprocessing_provenance
+  - split_contract
+  - raw_schemas
+  - feature_formulas.P0
+  - feature_formulas.V
+  - feature_formulas.E
+  - smoothing
+  - derived_history_signals
+  - ials
+  - normalization
+  - audit_only
+
+# ---------------------------------------------------------------------------
+# The two changes the override requires
+# ---------------------------------------------------------------------------
+changes:
+  - id: cosine_moves_to_shared
+    action: move
+    fields:
+      - e_ials_viewtime_cosine
+      - e_ials_feedback_cosine
+      - e_ials_survival_cosine
+    from: E
+    to: P0
+    rationale: >
+      Their lineage is dot/(user_norm * item_norm) — a division of vector
+      norms, not of historical counters or sums.  The override requires cosine,
+      dot, norm, and iALS features to be present in FULL and REDUCED alike and
+      forbids counting them as removed ratio features.  Their formulas,
+      fallbacks, and normalization are unchanged; only their role changes.
+  - id: ials_norms_leave_the_denominator_mask
+    action: remove_from_denominator_contract
+    fields:
+      - p_ials_viewtime_user_norm
+      - p_ials_viewtime_item_norm
+      - p_ials_feedback_user_norm
+      - p_ials_feedback_item_norm
+      - p_ials_survival_user_norm
+      - p_ials_survival_item_norm
+    rationale: >
+      The override requires reciprocal mask `false` for cosine, dot, and norm.
+      The DCDN reciprocal branch therefore operates only on semantically valid
+      positive historical denominators.
+    consequence: >
+      The six v_ials_*_norm_reciprocal_floor_active indicators become
+      permanently false.  They are RETAINED in V so that the ordered schema
+      stays comparable to the pre-override contract and so that an accidental
+      re-activation is detectable, and they are declared constant below.
+
+constant_after_change:
+  - v_ials_viewtime_user_norm_reciprocal_floor_active
+  - v_ials_viewtime_item_norm_reciprocal_floor_active
+  - v_ials_feedback_user_norm_reciprocal_floor_active
+  - v_ials_feedback_item_norm_reciprocal_floor_active
+  - v_ials_survival_user_norm_reciprocal_floor_active
+  - v_ials_survival_item_norm_reciprocal_floor_active
+constant_after_change_expected_value: false
+constant_after_change_must_be_asserted_before_training: true
+
+# ---------------------------------------------------------------------------
+# Roles
+# ---------------------------------------------------------------------------
+roles:
+  C: unchanged_from_v1
+  P_shared: "v1.P0 + the three iALS cosines + v1.V"
+  D: positive_historical_denominators_only
+  R_div: exactly_the_seventeen_manual_counter_or_sum_divisions
+
+D:
+  - p_duration_seconds
+  - p_user_show_count
+  - p_user_show_count_plus_beta
+  - p_item_show_count
+  - p_item_show_count_plus_beta
+
+R_div:
+  - e_user_avg_timespent_seconds
+  - e_user_like_rate
+  - e_user_share_rate
+  - e_user_bookmark_rate
+  - e_user_comments_rate
+  - e_user_dislike_rate
+  - e_user_heartbeat15_rate
+  - e_user_heartbeat30_rate
+  - e_item_avg_timespent_seconds
+  - e_item_like_rate
+  - e_item_share_rate
+  - e_item_bookmark_rate
+  - e_item_comments_rate
+  - e_item_dislike_rate
+  - e_item_click_on_author_rate
+  - e_item_heartbeat15_rate
+  - e_item_heartbeat30_rate
+
+regimes:
+  REDUCED: "C + P_shared"
+  FULL: "C + P_shared + R_div"
+
+# ---------------------------------------------------------------------------
+# Dimensions
+# ---------------------------------------------------------------------------
+# FULL is unchanged in width; only the partition between shared and removable
+# moves.  58 + 20 == 61 + 17 == 78.
+derived_dimensions:
+  C_fields: 6
+  P0_fields: 34                       # was 31, plus the three cosines
+  V_fields: 27
+  P_shared_fields: 61                 # was 58
+  R_div_fields: 17                    # was E = 20
+  encoded_C_bypass_width: 96
+  REDUCED_model_field_count: 67       # was C+P = 64
+  REDUCED_flat_width: 157             # was 154
+  FULL_model_field_count: 84          # unchanged
+  FULL_flat_width: 174                # unchanged
+  denominator_mask_width: 61          # equals P_shared_fields
+  denominator_eligible_count: 5       # was 11
+
+honest_field_count_reporting:
+  P0_plus_R_div_to_P0:
+    before: 51
+    after: 34
+    removed: 17
+    reduction_percent: 33.3
+  C_plus_P_shared_plus_R_div_to_C_plus_P_shared:
+    before: 84
+    after: 67
+    removed: 17
+    reduction_percent: 20.2
+  comparison_to_industrial_40.1_percent: forbidden
+  counts_selected_to_match_industrial_result: false
+  claim_wording: >
+    removal and substitution of manually engineered divisions of historical
+    counters and sums; NOT removal of all ratio-derived features
+
+# ---------------------------------------------------------------------------
+# Multi-target labels
+# ---------------------------------------------------------------------------
+# Current-row outcomes are labels only.  They never enter this row's features
+# and never enter the history aggregates for this row.
+targets:
+  spec: configs/targets_multitask_v1.yaml
+  primary_confirmatory_target: watch_time
+  heads:
+    - name: watch_time
+      kind: regression
+      source: current_row.timespent
+      transform: clip(timespent,0,c)/c
+      c_seconds: 157.0
+      c_source_sha256: 607ffd09d3fb6627f7eec07ed53583d45c47263a2e6538e4deee66cd8a22e51e
+      always_observed: true
+    - name: like
+      kind: binary
+      source: current_row.like
+      always_observed: true
+    - name: share
+      kind: binary
+      source: current_row.share
+      always_observed: true
+    - name: dislike
+      kind: binary
+      source: current_row.dislike
+      always_observed: true
+  label_masks:
+    materialized: true
+    all_true_for_vk_lsvd: true
+    rationale: >
+      Every VK-LSVD interaction row carries all four outcome columns, so every
+      mask is all-true.  The masks are materialized anyway: the objective
+      requires them structurally, and an all-true mask is the correct explicit
+      statement that a zero is an observed negative rather than a missing value.
+
+# ---------------------------------------------------------------------------
+# Hashes
+# ---------------------------------------------------------------------------
+# These cannot be filled before the views are re-materialized, and inventing
+# them would be worse than leaving them visibly open.
+schema_hashes:
+  status: pending_materialization
+  ordered_operand_schema_sha256: null
+  denominator_mask_sha256: null
+  REDUCED_full_ordered_schema_sha256: null
+  FULL_full_ordered_schema_sha256: null
+  views_manifest_sha256: null
+  cache_content_sha256: null
+  derivation_rule: >
+    identical to the v1 procedure; only the ordered field lists and the
+    denominator mask differ, so the same hashing code reproduces them
+
+# ---------------------------------------------------------------------------
+# Mandatory checks before any multi-target VK cell
+# ---------------------------------------------------------------------------
+pre_training_checks:
+  - identical row IDs, order, and labels in FULL and REDUCED
+  - bitwise-identical C + P_shared across regimes
+  - "FULL \\ REDUCED == R_div, exactly the seventeen fields listed above"
+  - each R_div field reproduced from its two retained P_shared operands
+  - no current-row outcome present in any feature of that row
+  - the three cosines present in both regimes
+  - no cosine, dot, norm, or iALS field present in the denominator mask
+  - the six constant_after_change indicators are uniformly false
+  - every active denominator finite and strictly positive, or validity-gated
+
+execution_status:
+  materialized: false
+  blocking: >
+    runtime views must be rebuilt from allowed raw history under this contract
+    before any multi-target VK-LSVD cell can run; the pre-override C+P and
+    C+P+E caches do not satisfy it

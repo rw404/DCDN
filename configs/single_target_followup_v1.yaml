@@ -1,0 +1,127 @@
+schema_version: 1
+artifact_role: frozen_single_target_followup_protocol
+status: frozen_before_first_test_unlock
+basis: owner_override_2026_08_20_single_target_is_a_separate_followup
+test_unlocked: false
+
+# ---------------------------------------------------------------------------
+# Standing
+# ---------------------------------------------------------------------------
+# This study is SUBORDINATE.  It exists to measure task transfer, not to
+# establish or rescue any conclusion of the main multi-target table.
+standing:
+  primary_study: multi_target
+  this_study: followup
+  may_override_main_conclusion: false
+  may_rescue_main_conclusion: false
+  may_inform_main_study_choices: false
+  results_appear_in_the_main_table: false
+
+# ---------------------------------------------------------------------------
+# Ordering constraint
+# ---------------------------------------------------------------------------
+# This file is frozen and hashed BEFORE the first test unlock, so the headline
+# targets cannot be chosen after seeing multi-target test results.  No
+# single-target training may start until the main multi-target table is
+# complete.
+ordering:
+  frozen_and_hashed_before_first_test_unlock: true
+  training_may_start_only_after: main_multi_target_table_complete
+  if_target_or_design_chosen_after_viewing_multi_target_test:
+    classification: exploratory
+    alternative: requires_a_new_untouched_holdout
+
+# ---------------------------------------------------------------------------
+# Headline targets — frozen here, before any test metric exists
+# ---------------------------------------------------------------------------
+headline_targets:
+  vk_lsvd_up0.01_ir0.01: watch_time
+  kuairand_pure: long_view
+  kuairec_big_matrix: watch_time
+  yambda_50m: listen50
+  synthetic_multiquotient_3: y1
+
+# ---------------------------------------------------------------------------
+# What is held identical to the multi-target study
+# ---------------------------------------------------------------------------
+held_identical:
+  splits: true
+  split_hashes: true
+  feature_manifests: true
+  feature_manifest_hashes: true
+  structural_model_configs: true
+  context_encoder: true
+  representation_width: true
+  shared_prediction_tower: true
+  optimizer_family: true
+  effective_batch: true
+  maximum_steps: true
+  validation_cadence: true
+  patience: true
+  tuning_budget: true
+  tuning_trials: true
+  seeds: [42, 43, 44]
+  tuning_seed: 42
+
+# ---------------------------------------------------------------------------
+# The single permitted difference
+# ---------------------------------------------------------------------------
+only_difference:
+  objective: >
+    the multi-target Macro-NLoss is replaced by the target-specific loss for
+    the single headline target
+  heads: single_head_for_the_headline_target_only
+  selection_metric: the_headline_target_normalized_loss
+  everything_else: unchanged
+
+retraining:
+  models_are_trained_from_scratch: true
+  reuse_of_multi_target_checkpoints: forbidden
+  reuse_of_pre_override_single_target_runs: forbidden
+  reuse_reason: >
+    the pre-override runs used a superseded feature manifest (iALS cosine was
+    removable and iALS norms were denominators), so they do not satisfy the
+    held-identical requirement above
+
+# ---------------------------------------------------------------------------
+# Comparison and transfer measurement
+# ---------------------------------------------------------------------------
+comparison:
+  unit: per_target
+  single_task_result_vs: the_corresponding_head_of_the_multi_task_model
+  same_test_rows: true
+  same_metric_implementation: true
+  paired: true
+  uncertainty: paired_95_percent_confidence_intervals_across_seeds
+
+transfer_classification:
+  positive_transfer: >
+    multi-task head is better than the single-task model on the headline
+    target, with a paired interval excluding zero
+  negative_transfer: >
+    single-task model is better than the multi-task head on the headline
+    target, with a paired interval excluding zero
+  no_detected_effect: >
+    the paired interval contains zero; reported as no detected effect, never
+    as proof of equality
+
+reporting:
+  publish_direction_as_measured: true
+  per_dataset: true
+  aggregate_across_datasets_permitted: false
+  nonsignificant_is_not_equality: true
+
+# ---------------------------------------------------------------------------
+# Legacy material
+# ---------------------------------------------------------------------------
+legacy_single_target_runs:
+  classification: legacy_context_only
+  inventory: artifacts/legacy_audit/legacy_results_inventory_v1.json
+  admissible_as_a_result_of_this_study: false
+  admissible_as_engineering_context: true
+  note: >
+    The forty completed pre-override VK-LSVD single-target runs and the legacy
+    MNIST-like division notebooks are retained as material.  They document that
+    the harness executes at scale and supply the wall-clock cost model, but
+    they are not results of this follow-up and never substitute for
+    Synthetic-MultiQuotient-3.

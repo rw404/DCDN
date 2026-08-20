@@ -1,0 +1,3307 @@
+{
+  "artifact_role": "synthetic_multiquotient_3_result",
+  "benchmark_manifest": {
+    "columns": [
+      "n1",
+      "d1",
+      "n2",
+      "d2",
+      "d3",
+      "z1",
+      "z2",
+      "z3"
+    ],
+    "contract": "dcdn-synthetic-multiquotient-3-v1",
+    "denominator_columns": [
+      "d1",
+      "d2",
+      "d3"
+    ],
+    "denominator_mask": [
+      false,
+      true,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    "evaluation_slices": [
+      "id",
+      "ood_common_scale",
+      "ood_low_ratio",
+      "ood_high_ratio"
+    ],
+    "minimum_denominator": 0.2,
+    "objective_spec_sha256": "5169e5b5e21c967aff676ac8a8c9a1760d5919508ac9bd8dd883f35b1a5a8a37",
+    "primary_confirmatory_target": "y1",
+    "slices": {
+      "id": {
+        "denominator_low": 1.0,
+        "denominator_span": 9.0,
+        "rows": 40000,
+        "scale": 1.0,
+        "seed": 20260822,
+        "sha256": "83a8d763b1133f72a4745c7f77570553c1e1b26a6824df9dca5008822bb8dc7e"
+      },
+      "ood_common_scale": {
+        "denominator_low": 1.0,
+        "denominator_span": 9.0,
+        "rows": 40000,
+        "scale": 10.0,
+        "seed": 20260822,
+        "sha256": "dd7f544a25989c8ceb334730dcb7a76f962359cd92da5ae2e6bd417024a8fee1"
+      },
+      "ood_high_ratio": {
+        "denominator_low": 0.2,
+        "denominator_span": 0.4,
+        "rows": 40000,
+        "scale": 1.0,
+        "seed": 20260825,
+        "sha256": "de0c0b15570a4e93103adefa36758a9e619d5925154e3156ff7603dc7cf5cb3a"
+      },
+      "ood_low_ratio": {
+        "denominator_low": 20.0,
+        "denominator_span": 40.0,
+        "rows": 40000,
+        "scale": 1.0,
+        "seed": 20260824,
+        "sha256": "7d1554b1e2c367f1897d5d46bf75c80fd905b4154c623d5060ef1252a983c9d8"
+      },
+      "train": {
+        "denominator_low": 1.0,
+        "denominator_span": 9.0,
+        "rows": 200000,
+        "scale": 1.0,
+        "seed": 20260820,
+        "sha256": "effa7d0894ab7f2507afc7e9e136806dc993945085c94421d37b299b46e43cc8"
+      },
+      "validation": {
+        "denominator_low": 1.0,
+        "denominator_span": 9.0,
+        "rows": 40000,
+        "scale": 1.0,
+        "seed": 20260821,
+        "sha256": "bc45137cb36411196ba049691c2aacd2f355a48aec66f010a719f28b86af612e"
+      }
+    },
+    "targets": [
+      {
+        "definition": "n1 / d1",
+        "kind": "regression",
+        "name": "y1"
+      },
+      {
+        "definition": "n2 / d2",
+        "kind": "regression",
+        "name": "y2"
+      },
+      {
+        "definition": "(n1 + n2) / d3",
+        "kind": "regression",
+        "name": "y3"
+      }
+    ]
+  },
+  "benchmark_manifest_sha256": "659d29f565bd51338e8c311a5c1c94335a499fbb2f62017d26581e785d8e72fd",
+  "records": [
+    {
+      "analytic_counts": null,
+      "arm_id": "linear",
+      "label": "Linear probe",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 0,
+        "encoder_shared": 0,
+        "head": 27,
+        "interaction": 0,
+        "matched": 27,
+        "total": 27
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 10.49721908569336,
+        "median_relative_deviation": 3.87546443939209,
+        "p95_relative_deviation": 110.12239074707031
+      },
+      "seed": 42,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.3090752959251404,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.30638012290000916,
+            "y2": 0.31276801228523254,
+            "y3": 0.30807775259017944
+          },
+          "per_target_raw": {
+            "y1": 0.5304835438728333,
+            "y2": 0.539522647857666,
+            "y3": 1.7047022581100464
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 59.55768966674805,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 62.20793533325195,
+            "y2": 59.03948211669922,
+            "y3": 57.42565155029297
+          },
+          "per_target_raw": {
+            "y1": 107.71027374267578,
+            "y2": 101.84269714355469,
+            "y3": 317.7562561035156
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 129.75692749023438,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 123.82579040527344,
+            "y2": 125.6610107421875,
+            "y3": 139.78395080566406
+          },
+          "per_target_raw": {
+            "y1": 214.3988494873047,
+            "y2": 216.76437377929688,
+            "y3": 773.4735717773438
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 68.9466781616211,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 67.6435546875,
+            "y2": 63.836830139160156,
+            "y3": 75.3596420288086
+          },
+          "per_target_raw": {
+            "y1": 117.12181091308594,
+            "y2": 110.11809539794922,
+            "y3": 416.9913024902344
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.391163716092706,
+        "validation_macro_nloss": 0.3062518537044525
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "linear",
+      "label": "Linear probe",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 0,
+        "encoder_shared": 0,
+        "head": 27,
+        "interaction": 0,
+        "matched": 27,
+        "total": 27
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 10.488764762878418,
+        "median_relative_deviation": 3.9966506958007812,
+        "p95_relative_deviation": 106.16619110107422
+      },
+      "seed": 43,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.3100464344024658,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.3065187633037567,
+            "y2": 0.31258702278137207,
+            "y3": 0.3110335171222687
+          },
+          "per_target_raw": {
+            "y1": 0.5307236313819885,
+            "y2": 0.5392104387283325,
+            "y3": 1.721057415008545
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 59.72457504272461,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 61.36743927001953,
+            "y2": 61.057926177978516,
+            "y3": 56.74835205078125
+          },
+          "per_target_raw": {
+            "y1": 106.25499725341797,
+            "y2": 105.32450103759766,
+            "y3": 314.0085144042969
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 130.26246643066406,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 124.27173614501953,
+            "y2": 125.32701873779297,
+            "y3": 141.18862915039062
+          },
+          "per_target_raw": {
+            "y1": 215.17098999023438,
+            "y2": 216.18824768066406,
+            "y3": 781.2461547851562
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 67.03913879394531,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 66.88751220703125,
+            "y2": 65.4352798461914,
+            "y3": 68.79460906982422
+          },
+          "per_target_raw": {
+            "y1": 115.81275939941406,
+            "y2": 112.87541198730469,
+            "y3": 380.6646728515625
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.461330307647586,
+        "validation_macro_nloss": 0.3073199987411499
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "linear",
+      "label": "Linear probe",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 0,
+        "encoder_shared": 0,
+        "head": 27,
+        "interaction": 0,
+        "matched": 27,
+        "total": 27
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 10.716510772705078,
+        "median_relative_deviation": 4.194737911224365,
+        "p95_relative_deviation": 103.2662124633789
+      },
+      "seed": 44,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.3117735981941223,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.3063580095767975,
+            "y2": 0.3125079274177551,
+            "y3": 0.31645482778549194
+          },
+          "per_target_raw": {
+            "y1": 0.5304452776908875,
+            "y2": 0.5390740036964417,
+            "y3": 1.7510554790496826
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 62.385311126708984,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 63.62240219116211,
+            "y2": 62.18716812133789,
+            "y3": 61.34636306762695
+          },
+          "per_target_raw": {
+            "y1": 110.15936279296875,
+            "y2": 107.2724380493164,
+            "y3": 339.450927734375
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 130.5882568359375,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 124.20924377441406,
+            "y2": 125.21505737304688,
+            "y3": 142.34046936035156
+          },
+          "per_target_raw": {
+            "y1": 215.0627899169922,
+            "y2": 215.9951171875,
+            "y3": 787.6196899414062
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 66.07268524169922,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 68.2574462890625,
+            "y2": 67.05006408691406,
+            "y3": 62.91053771972656
+          },
+          "per_target_raw": {
+            "y1": 118.18473815917969,
+            "y2": 115.66089630126953,
+            "y3": 348.1060485839844
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.532717855647206,
+        "validation_macro_nloss": 0.30911049246788025
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "mlp",
+      "label": "MLP baseline",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 8256,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 168832,
+        "matched": 193859,
+        "total": 193987
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 3.5525989532470703,
+        "median_relative_deviation": 1.558434009552002,
+        "p95_relative_deviation": 5.352359771728516
+      },
+      "seed": 42,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0010700155980885029,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0010547435376793146,
+            "y2": 0.0010288216872140765,
+            "y3": 0.0011264813365414739
+          },
+          "per_target_raw": {
+            "y1": 0.0018262414960190654,
+            "y2": 0.0017747102538123727,
+            "y3": 0.006233215797692537
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 12.705522537231445,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 9.850508689880371,
+            "y2": 14.321915626525879,
+            "y3": 13.944141387939453
+          },
+          "per_target_raw": {
+            "y1": 17.05571746826172,
+            "y2": 24.7052059173584,
+            "y3": 77.15782165527344
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 54.3955192565918,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 50.48622131347656,
+            "y2": 58.39891815185547,
+            "y3": 54.301414489746094
+          },
+          "per_target_raw": {
+            "y1": 87.4146499633789,
+            "y2": 100.73773193359375,
+            "y3": 300.46875
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.32210832834243774,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.18304406106472015,
+            "y2": 0.6995106339454651,
+            "y3": 0.08377020061016083
+          },
+          "per_target_raw": {
+            "y1": 0.31693264842033386,
+            "y2": 1.206650972366333,
+            "y3": 0.46352988481521606
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 21.462213231250644,
+        "validation_macro_nloss": 0.001065228832885623
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "mlp",
+      "label": "MLP baseline",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 8256,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 168832,
+        "matched": 193859,
+        "total": 193987
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 3.52713680267334,
+        "median_relative_deviation": 1.6114442348480225,
+        "p95_relative_deviation": 3.898265838623047
+      },
+      "seed": 43,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.001085422234609723,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0012269644066691399,
+            "y2": 0.0010269958293065429,
+            "y3": 0.0010023063514381647
+          },
+          "per_target_raw": {
+            "y1": 0.0021244343370199203,
+            "y2": 0.001771560637280345,
+            "y3": 0.0055461120791733265
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 13.183966636657715,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 12.596516609191895,
+            "y2": 14.305063247680664,
+            "y3": 12.65031909942627
+          },
+          "per_target_raw": {
+            "y1": 21.8103084564209,
+            "y2": 24.676136016845703,
+            "y3": 69.99864959716797
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 55.85344696044922,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 49.23261260986328,
+            "y2": 59.697357177734375,
+            "y3": 58.63035583496094
+          },
+          "per_target_raw": {
+            "y1": 85.24407958984375,
+            "y2": 102.97753143310547,
+            "y3": 324.42230224609375
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.24387483298778534,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.18397535383701324,
+            "y2": 0.33058270812034607,
+            "y3": 0.21706639230251312
+          },
+          "per_target_raw": {
+            "y1": 0.3185451626777649,
+            "y2": 0.5702528953552246,
+            "y3": 1.2011044025421143
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 20.781233618035913,
+        "validation_macro_nloss": 0.001096824067644775
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "mlp",
+      "label": "MLP baseline",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 8256,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 168832,
+        "matched": 193859,
+        "total": 193987
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 4.260375499725342,
+        "median_relative_deviation": 1.9742965698242188,
+        "p95_relative_deviation": 6.870401382446289
+      },
+      "seed": 44,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0016169355949386954,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0013921785866841674,
+            "y2": 0.00169897370506078,
+            "y3": 0.0017596542602404952
+          },
+          "per_target_raw": {
+            "y1": 0.0024104954209178686,
+            "y2": 0.002930718008428812,
+            "y3": 0.009736783802509308
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 17.9333438873291,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 18.058534622192383,
+            "y2": 19.75674819946289,
+            "y3": 15.984745025634766
+          },
+          "per_target_raw": {
+            "y1": 31.267549514770508,
+            "y2": 34.08025360107422,
+            "y3": 88.4491958618164
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 60.5542106628418,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 54.116981506347656,
+            "y2": 58.81645965576172,
+            "y3": 68.72918701171875
+          },
+          "per_target_raw": {
+            "y1": 93.7011489868164,
+            "y2": 101.4579849243164,
+            "y3": 380.30267333984375
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 1.8251771926879883,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 2.782062530517578,
+            "y2": 1.1203500032424927,
+            "y3": 1.5731192827224731
+          },
+          "per_target_raw": {
+            "y1": 4.817017555236816,
+            "y2": 1.9325960874557495,
+            "y3": 8.704620361328125
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 2800,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.6691681612283,
+        "validation_macro_nloss": 0.0016133894678205252
+      }
+    },
+    {
+      "analytic_counts": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "architecture": "DCNv2-full-rank-L2",
+        "flops": 34656,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 288,
+        "interaction_flops_per_layer": 144,
+        "interaction_parameters": 144,
+        "interaction_parameters_per_layer": 72,
+        "num_layers": 2,
+        "parameters": 17491
+      },
+      "arm_id": "dcnv2_core",
+      "label": "DCNv2-Core",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 576,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 144,
+        "matched": 17491,
+        "total": 17619
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 12252.83984375,
+        "median_relative_deviation": 4069.639404296875,
+        "p95_relative_deviation": 55283.74609375
+      },
+      "seed": 42,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0010270581115037203,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.001552568282932043,
+            "y2": 0.0008315129089169204,
+            "y3": 0.0006970931426621974
+          },
+          "per_target_raw": {
+            "y1": 0.0026882030069828033,
+            "y2": 0.0014343539951369166,
+            "y3": 0.0038572608027607203
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 97866880.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 24707138.0,
+            "y2": 18946038.0,
+            "y3": 249947456.0
+          },
+          "per_target_raw": {
+            "y1": 42779312.0,
+            "y2": 32681786.0,
+            "y3": 1383046912.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 54.829917907714844,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 45.342350006103516,
+            "y2": 45.804222106933594,
+            "y3": 73.34317016601562
+          },
+          "per_target_raw": {
+            "y1": 78.50826263427734,
+            "y2": 79.01197052001953,
+            "y3": 405.8334655761719
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 1833845.375,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 379782.65625,
+            "y2": 311278.8125,
+            "y3": 4810474.5
+          },
+          "per_target_raw": {
+            "y1": 657576.8125,
+            "y2": 536953.8125,
+            "y3": 26618042.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 3400,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.007697608321905,
+        "validation_macro_nloss": 0.0010330628138035536
+      }
+    },
+    {
+      "analytic_counts": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "architecture": "DCNv2-full-rank-L2",
+        "flops": 34656,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 288,
+        "interaction_flops_per_layer": 144,
+        "interaction_parameters": 144,
+        "interaction_parameters_per_layer": 72,
+        "num_layers": 2,
+        "parameters": 17491
+      },
+      "arm_id": "dcnv2_core",
+      "label": "DCNv2-Core",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 576,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 144,
+        "matched": 17491,
+        "total": 17619
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 9392.1259765625,
+        "median_relative_deviation": 4499.30859375,
+        "p95_relative_deviation": 67120.2578125
+      },
+      "seed": 43,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0007113059400580823,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0006234508473426104,
+            "y2": 0.0008575529209338129,
+            "y3": 0.0006529138772748411
+          },
+          "per_target_raw": {
+            "y1": 0.0010794774862006307,
+            "y2": 0.0014792728470638394,
+            "y3": 0.0036128011997789145
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 97520688.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 20600868.0,
+            "y2": 231812704.0,
+            "y3": 40148468.0
+          },
+          "per_target_raw": {
+            "y1": 35669488.0,
+            "y2": 399875328.0,
+            "y3": 222155552.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 55.585540771484375,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 36.85713195800781,
+            "y2": 61.53227996826172,
+            "y3": 68.36721801757812
+          },
+          "per_target_raw": {
+            "y1": 63.81648635864258,
+            "y2": 106.14276123046875,
+            "y3": 378.2997741699219
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 2572663.5,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 192659.71875,
+            "y2": 4774314.5,
+            "y3": 2751016.0
+          },
+          "per_target_raw": {
+            "y1": 333581.75,
+            "y2": 8235660.0,
+            "y3": 15222336.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.137575117871165,
+        "validation_macro_nloss": 0.0007203961140476167
+      }
+    },
+    {
+      "analytic_counts": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "architecture": "DCNv2-full-rank-L2",
+        "flops": 34656,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 288,
+        "interaction_flops_per_layer": 144,
+        "interaction_parameters": 144,
+        "interaction_parameters_per_layer": 72,
+        "num_layers": 2,
+        "parameters": 17491
+      },
+      "arm_id": "dcnv2_core",
+      "label": "DCNv2-Core",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 576,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 144,
+        "matched": 17491,
+        "total": 17619
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 5713.96142578125,
+        "median_relative_deviation": 1382.047119140625,
+        "p95_relative_deviation": 50143.4609375
+      },
+      "seed": 44,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0016686872113496065,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0018534144619479775,
+            "y2": 0.001491530449129641,
+            "y3": 0.001661116722971201
+          },
+          "per_target_raw": {
+            "y1": 0.003209104761481285,
+            "y2": 0.002572879660874605,
+            "y3": 0.009191541001200676
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 49014972.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 109960792.0,
+            "y2": 24899668.0,
+            "y3": 12184454.0
+          },
+          "per_target_raw": {
+            "y1": 190392224.0,
+            "y2": 42951756.0,
+            "y3": 67420856.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 70.86566162109375,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 82.45441436767578,
+            "y2": 46.733097076416016,
+            "y3": 83.40946960449219
+          },
+          "per_target_raw": {
+            "y1": 142.7661590576172,
+            "y2": 80.61427307128906,
+            "y3": 461.5338439941406
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 4013230.75,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 5395324.5,
+            "y2": 2596179.0,
+            "y3": 4048188.5
+          },
+          "per_target_raw": {
+            "y1": 9341765.0,
+            "y2": 4478391.0,
+            "y3": 22400046.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 3800,
+        "nonfinite_training_batches": 0,
+        "seconds": 18.975019017234445,
+        "validation_macro_nloss": 0.001630650251172483
+      }
+    },
+    {
+      "analytic_counts": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "architecture": "DCDN-Core-L1",
+        "flops": 34664,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 296,
+        "interaction_flops_per_layer": 288,
+        "interaction_parameters": 144,
+        "interaction_parameters_per_layer": 144,
+        "num_layers": 1,
+        "parameters": 17491,
+        "reciprocal_flops": 8
+      },
+      "arm_id": "dcdn_core_l1",
+      "label": "DCDN-Core-L1",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 576,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 144,
+        "matched": 17491,
+        "total": 17619
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 61.70786666870117,
+        "median_relative_deviation": 38.08843994140625,
+        "p95_relative_deviation": 256.22607421875
+      },
+      "seed": 42,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.00024414111976511776,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0002919235557783395,
+            "y2": 0.0002788978163152933,
+            "y3": 0.00016160195809789002
+          },
+          "per_target_raw": {
+            "y1": 0.0005054526845924556,
+            "y2": 0.000481096823932603,
+            "y3": 0.0008942002896219492
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 2431.701416015625,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 1961.9266357421875,
+            "y2": 3887.47216796875,
+            "y3": 1445.7052001953125
+          },
+          "per_target_raw": {
+            "y1": 3396.98876953125,
+            "y2": 6705.86279296875,
+            "y3": 7999.59326171875
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 10.010272979736328,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 13.064064979553223,
+            "y2": 12.266435623168945,
+            "y3": 4.7003173828125
+          },
+          "per_target_raw": {
+            "y1": 22.619848251342773,
+            "y2": 21.159517288208008,
+            "y3": 26.008502960205078
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 57.67168426513672,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 59.22114181518555,
+            "y2": 35.92115783691406,
+            "y3": 77.87274169921875
+          },
+          "per_target_raw": {
+            "y1": 102.53877258300781,
+            "y2": 61.963748931884766,
+            "y3": 430.8971862792969
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 20.233235400170088,
+        "validation_macro_nloss": 0.00024328130530193448
+      }
+    },
+    {
+      "analytic_counts": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "architecture": "DCDN-Core-L1",
+        "flops": 34664,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 296,
+        "interaction_flops_per_layer": 288,
+        "interaction_parameters": 144,
+        "interaction_parameters_per_layer": 144,
+        "num_layers": 1,
+        "parameters": 17491,
+        "reciprocal_flops": 8
+      },
+      "arm_id": "dcdn_core_l1",
+      "label": "DCDN-Core-L1",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 576,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 144,
+        "matched": 17491,
+        "total": 17619
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 100.71356201171875,
+        "median_relative_deviation": 57.67932891845703,
+        "p95_relative_deviation": 507.9534912109375
+      },
+      "seed": 43,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0004401062033139169,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0006112732226029038,
+            "y2": 0.0003076912835240364,
+            "y3": 0.00040135407471098006
+          },
+          "per_target_raw": {
+            "y1": 0.001058392459526658,
+            "y2": 0.0005307653336785734,
+            "y3": 0.0022208327427506447
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 7806.2265625,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 2085.365234375,
+            "y2": 16343.783203125,
+            "y3": 4989.53125
+          },
+          "per_target_raw": {
+            "y1": 3610.717041015625,
+            "y2": 28192.9140625,
+            "y3": 27608.82421875
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 11.478185653686523,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 15.131800651550293,
+            "y2": 13.803054809570312,
+            "y3": 5.49970006942749
+          },
+          "per_target_raw": {
+            "y1": 26.200040817260742,
+            "y2": 23.8101749420166,
+            "y3": 30.4317684173584
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 4469.416015625,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 91.2827377319336,
+            "y2": 10361.5390625,
+            "y3": 2955.42578125
+          },
+          "per_target_raw": {
+            "y1": 158.052001953125,
+            "y2": 17873.583984375,
+            "y3": 16353.4072265625
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 20.280478397384286,
+        "validation_macro_nloss": 0.0004442249774001539
+      }
+    },
+    {
+      "analytic_counts": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "architecture": "DCDN-Core-L1",
+        "flops": 34664,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 296,
+        "interaction_flops_per_layer": 288,
+        "interaction_parameters": 144,
+        "interaction_parameters_per_layer": 144,
+        "num_layers": 1,
+        "parameters": 17491,
+        "reciprocal_flops": 8
+      },
+      "arm_id": "dcdn_core_l1",
+      "label": "DCDN-Core-L1",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 576,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 144,
+        "matched": 17491,
+        "total": 17619
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 73.26561737060547,
+        "median_relative_deviation": 26.44297981262207,
+        "p95_relative_deviation": 633.8930053710938
+      },
+      "seed": 44,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.000250818207859993,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.00030799544765613973,
+            "y2": 0.00023472616157960147,
+            "y3": 0.00020973299979232252
+          },
+          "per_target_raw": {
+            "y1": 0.0005332804284989834,
+            "y2": 0.0004049010167364031,
+            "y3": 0.0011605261825025082
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 7687.0205078125,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 20879.00390625,
+            "y2": 698.7412719726562,
+            "y3": 1483.31396484375
+          },
+          "per_target_raw": {
+            "y1": 36151.06640625,
+            "y2": 1205.3238525390625,
+            "y3": 8207.6962890625
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 13.791354179382324,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 11.624150276184082,
+            "y2": 15.844030380249023,
+            "y3": 13.90588092803955
+          },
+          "per_target_raw": {
+            "y1": 20.126699447631836,
+            "y2": 27.330842971801758,
+            "y3": 76.94611358642578
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 4444.22314453125,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 11587.9208984375,
+            "y2": 77.35755920410156,
+            "y3": 1667.390869140625
+          },
+          "per_target_raw": {
+            "y1": 20063.970703125,
+            "y2": 133.44125366210938,
+            "y3": 9226.2578125
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 3800,
+        "nonfinite_training_batches": 0,
+        "seconds": 20.24283161573112,
+        "validation_macro_nloss": 0.00024879799457266927
+      }
+    },
+    {
+      "analytic_counts": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "expert_flops": 287,
+        "expert_parameters": 132,
+        "flops": 34673,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 305,
+        "interaction_flops_per_layer": 305,
+        "interaction_parameters": 148,
+        "interaction_parameters_per_layer": 148,
+        "low_rank": 6,
+        "num_experts": 1,
+        "num_layers": 1,
+        "parameters": 17495
+      },
+      "arm_id": "dcnv2_capacity",
+      "label": "DCNv2-capacity-matched",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 576,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 148,
+        "matched": 17495,
+        "total": 17623
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 3.5350608825683594,
+        "median_relative_deviation": 1.671403169631958,
+        "p95_relative_deviation": 8.621786117553711
+      },
+      "seed": 42,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0002353591116843745,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0003236062475480139,
+            "y2": 0.0002035902434727177,
+            "y3": 0.000178880785824731
+          },
+          "per_target_raw": {
+            "y1": 0.0005603098543360829,
+            "y2": 0.0003511917602736503,
+            "y3": 0.0009898100979626179
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 10.029733657836914,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 11.449763298034668,
+            "y2": 8.178160667419434,
+            "y3": 10.461274147033691
+          },
+          "per_target_raw": {
+            "y1": 19.824756622314453,
+            "y2": 14.107271194458008,
+            "y3": 57.88589859008789
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 54.046531677246094,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 53.79583740234375,
+            "y2": 51.796630859375,
+            "y3": 56.54712677001953
+          },
+          "per_target_raw": {
+            "y1": 93.14510345458984,
+            "y2": 89.34883117675781,
+            "y3": 312.89508056640625
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 1.4220165014266968,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.9603946208953857,
+            "y2": 1.2665560245513916,
+            "y3": 2.0390987396240234
+          },
+          "per_target_raw": {
+            "y1": 1.6628806591033936,
+            "y2": 2.184800386428833,
+            "y3": 11.283047676086426
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 22.277367236092687,
+        "validation_macro_nloss": 0.00023675493139307946
+      }
+    },
+    {
+      "analytic_counts": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "expert_flops": 287,
+        "expert_parameters": 132,
+        "flops": 34673,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 305,
+        "interaction_flops_per_layer": 305,
+        "interaction_parameters": 148,
+        "interaction_parameters_per_layer": 148,
+        "low_rank": 6,
+        "num_experts": 1,
+        "num_layers": 1,
+        "parameters": 17495
+      },
+      "arm_id": "dcnv2_capacity",
+      "label": "DCNv2-capacity-matched",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 576,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 148,
+        "matched": 17495,
+        "total": 17623
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 3.413327693939209,
+        "median_relative_deviation": 1.5574570894241333,
+        "p95_relative_deviation": 5.310121536254883
+      },
+      "seed": 43,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.00023828379926271737,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.00023706330102868378,
+            "y2": 0.00022341922158375382,
+            "y3": 0.00025436884607188404
+          },
+          "per_target_raw": {
+            "y1": 0.00041046456317417324,
+            "y2": 0.0003853966190945357,
+            "y3": 0.0014075119979679585
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 10.014800071716309,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 8.15223217010498,
+            "y2": 10.58182430267334,
+            "y3": 11.310341835021973
+          },
+          "per_target_raw": {
+            "y1": 14.115227699279785,
+            "y2": 18.25357437133789,
+            "y3": 62.58408737182617
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 47.97985076904297,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 44.2656135559082,
+            "y2": 48.33205032348633,
+            "y3": 51.34187698364258
+          },
+          "per_target_raw": {
+            "y1": 76.6439437866211,
+            "y2": 83.37245178222656,
+            "y3": 284.09259033203125
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.42250293493270874,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.44779014587402344,
+            "y2": 0.4481644034385681,
+            "y3": 0.3715541660785675
+          },
+          "per_target_raw": {
+            "y1": 0.7753287553787231,
+            "y2": 0.7730805277824402,
+            "y3": 2.0559394359588623
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 22.325543742626905,
+        "validation_macro_nloss": 0.00023677406716160476
+      }
+    },
+    {
+      "analytic_counts": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "expert_flops": 287,
+        "expert_parameters": 132,
+        "flops": 34673,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 305,
+        "interaction_flops_per_layer": 305,
+        "interaction_parameters": 148,
+        "interaction_parameters_per_layer": 148,
+        "low_rank": 6,
+        "num_experts": 1,
+        "num_layers": 1,
+        "parameters": 17495
+      },
+      "arm_id": "dcnv2_capacity",
+      "label": "DCNv2-capacity-matched",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 576,
+        "encoder_shared": 128,
+        "head": 16771,
+        "interaction": 148,
+        "matched": 17495,
+        "total": 17623
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 3.735762119293213,
+        "median_relative_deviation": 1.7746350765228271,
+        "p95_relative_deviation": 4.275322437286377
+      },
+      "seed": 44,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0003265391569584608,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.00033109934884123504,
+            "y2": 0.00036477751564234495,
+            "y3": 0.000283740577287972
+          },
+          "per_target_raw": {
+            "y1": 0.0005732838180847466,
+            "y2": 0.000629238726105541,
+            "y3": 0.0015700360527262092
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 11.898849487304688,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 9.885929107666016,
+            "y2": 13.786298751831055,
+            "y3": 12.024320602416992
+          },
+          "per_target_raw": {
+            "y1": 17.117046356201172,
+            "y2": 23.78127098083496,
+            "y3": 66.53478240966797
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 50.24311828613281,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 46.95177459716797,
+            "y2": 46.084774017333984,
+            "y3": 57.69281005859375
+          },
+          "per_target_raw": {
+            "y1": 81.29491424560547,
+            "y2": 79.49591827392578,
+            "y3": 319.2345275878906
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.7354743480682373,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.9859878420829773,
+            "y2": 0.31623631715774536,
+            "y3": 0.9041988849639893
+          },
+          "per_target_raw": {
+            "y1": 1.7071940898895264,
+            "y2": 0.5455054640769958,
+            "y3": 5.003249168395996
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 2800,
+        "nonfinite_training_batches": 0,
+        "seconds": 21.31278707832098,
+        "validation_macro_nloss": 0.00032613714574836195
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "afn_plus",
+      "label": "AFN+",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 192,
+        "encoder_shared": 256,
+        "head": 16771,
+        "interaction": 560402,
+        "matched": 577365,
+        "total": 577621
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 6.75769567489624,
+        "median_relative_deviation": 4.289226531982422,
+        "p95_relative_deviation": 13.402277946472168
+      },
+      "seed": 42,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.04652775451540947,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.04872190207242966,
+            "y2": 0.06676505506038666,
+            "y3": 0.024096312001347542
+          },
+          "per_target_raw": {
+            "y1": 0.08435980975627899,
+            "y2": 0.11516925692558289,
+            "y3": 0.13333334028720856
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 18.682538986206055,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 6.824466228485107,
+            "y2": 26.623605728149414,
+            "y3": 22.59954261779785
+          },
+          "per_target_raw": {
+            "y1": 11.81626033782959,
+            "y2": 45.925537109375,
+            "y3": 125.05119323730469
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 63.742515563964844,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 56.770751953125,
+            "y2": 126.88357543945312,
+            "y3": 7.573203086853027
+          },
+          "per_target_raw": {
+            "y1": 98.29603576660156,
+            "y2": 218.873291015625,
+            "y3": 41.90518569946289
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.6320979595184326,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.2291242778301239,
+            "y2": 1.0099157094955444,
+            "y3": 0.6572538018226624
+          },
+          "per_target_raw": {
+            "y1": 0.39671850204467773,
+            "y2": 1.7420976161956787,
+            "y3": 3.6368155479431152
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 28.25498420931399,
+        "validation_macro_nloss": 0.046324893832206726
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "afn_plus",
+      "label": "AFN+",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 192,
+        "encoder_shared": 256,
+        "head": 16771,
+        "interaction": 560402,
+        "matched": 577365,
+        "total": 577621
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 5.492117404937744,
+        "median_relative_deviation": 1.7529752254486084,
+        "p95_relative_deviation": 17.704545974731445
+      },
+      "seed": 43,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.04161883145570755,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.04670550674200058,
+            "y2": 0.05728241428732872,
+            "y3": 0.020868562161922455
+          },
+          "per_target_raw": {
+            "y1": 0.08086851239204407,
+            "y2": 0.09881176799535751,
+            "y3": 0.11547306925058365
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 35.729087829589844,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 1.506601333618164,
+            "y2": 91.57435607910156,
+            "y3": 14.106301307678223
+          },
+          "per_target_raw": {
+            "y1": 2.6086132526397705,
+            "y2": 157.9651336669922,
+            "y3": 78.05510711669922
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 121.55648040771484,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 200.1887969970703,
+            "y2": 112.53764343261719,
+            "y3": 51.94297790527344
+          },
+          "per_target_raw": {
+            "y1": 346.6180114746094,
+            "y2": 194.1266632080078,
+            "y3": 287.418701171875
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.8126695156097412,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.3488318920135498,
+            "y2": 0.3915453255176544,
+            "y3": 1.6976313591003418
+          },
+          "per_target_raw": {
+            "y1": 0.603986918926239,
+            "y2": 0.6754130125045776,
+            "y3": 9.39358901977539
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 3600,
+        "nonfinite_training_batches": 0,
+        "seconds": 28.167104149237275,
+        "validation_macro_nloss": 0.04113875329494476
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "afn_plus",
+      "label": "AFN+",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 192,
+        "encoder_shared": 256,
+        "head": 16771,
+        "interaction": 560402,
+        "matched": 577365,
+        "total": 577621
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 5.37034273147583,
+        "median_relative_deviation": 2.175778865814209,
+        "p95_relative_deviation": 15.67805004119873
+      },
+      "seed": 44,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.04013274610042572,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.04605397209525108,
+            "y2": 0.05604158341884613,
+            "y3": 0.018302684649825096
+          },
+          "per_target_raw": {
+            "y1": 0.07974040508270264,
+            "y2": 0.09667134284973145,
+            "y3": 0.10127516835927963
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 35.19853973388672,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 3.1865053176879883,
+            "y2": 89.30310821533203,
+            "y3": 13.10599422454834
+          },
+          "per_target_raw": {
+            "y1": 5.517292499542236,
+            "y2": 154.0472412109375,
+            "y3": 72.52005767822266
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 168.28623962402344,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 353.0512390136719,
+            "y2": 97.59016418457031,
+            "y3": 54.21727752685547
+          },
+          "per_target_raw": {
+            "y1": 611.2925415039062,
+            "y2": 168.3423614501953,
+            "y3": 300.0032043457031
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.6959652304649353,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.011911907233297825,
+            "y2": 0.9519296288490295,
+            "y3": 1.1240540742874146
+          },
+          "per_target_raw": {
+            "y1": 0.020624937489628792,
+            "y2": 1.642072081565857,
+            "y3": 6.219785213470459
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 3200,
+        "nonfinite_training_batches": 0,
+        "seconds": 60.69510863535106,
+        "validation_macro_nloss": 0.040595151484012604
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "dcnv2_ratio_pc",
+      "label": "DCNv2 + explicit ratios (positive control)",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 768,
+        "encoder_shared": 176,
+        "head": 16771,
+        "interaction": 264,
+        "matched": 17803,
+        "total": 17979
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 2528.499267578125,
+        "median_relative_deviation": 1125.5966796875,
+        "p95_relative_deviation": 12299.927734375
+      },
+      "seed": 42,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0001252156653208658,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.00016391644021496177,
+            "y2": 0.0001694890670478344,
+            "y3": 4.2241463233949617e-05
+          },
+          "per_target_raw": {
+            "y1": 0.00028381403535604477,
+            "y2": 0.00029236747650429606,
+            "y3": 0.0002337368205189705
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 7946110.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 21593920.0,
+            "y2": 2027625.625,
+            "y3": 216784.796875
+          },
+          "per_target_raw": {
+            "y1": 37388912.0,
+            "y2": 3497640.25,
+            "y3": 1199546.25
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 179.1470947265625,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 326.18450927734375,
+            "y2": 205.15696716308594,
+            "y3": 6.099806785583496
+          },
+          "per_target_raw": {
+            "y1": 564.7739868164062,
+            "y2": 353.89434814453125,
+            "y3": 33.75236892700195
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 745.5021362304688,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 1064.0185546875,
+            "y2": 917.2340698242188,
+            "y3": 255.2537078857422
+          },
+          "per_target_raw": {
+            "y1": 1842.30078125,
+            "y2": 1582.222412109375,
+            "y3": 1412.408203125
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 50.545981504023075,
+        "validation_macro_nloss": 0.00012621164205484092
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "dcnv2_ratio_pc",
+      "label": "DCNv2 + explicit ratios (positive control)",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 768,
+        "encoder_shared": 176,
+        "head": 16771,
+        "interaction": 264,
+        "matched": 17803,
+        "total": 17979
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 645.1485595703125,
+        "median_relative_deviation": 356.2727355957031,
+        "p95_relative_deviation": 2401.093994140625
+      },
+      "seed": 43,
+      "slices": {
+        "id": {
+          "macro_nloss": 7.382436888292432e-05,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.00011083501885877922,
+            "y2": 4.76045606774278e-05,
+            "y3": 6.303352711256593e-05
+          },
+          "per_target_raw": {
+            "y1": 0.0001919059141073376,
+            "y2": 8.211754175135866e-05,
+            "y3": 0.00034878659062087536
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 459574.75,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 983390.6875,
+            "y2": 378247.5625,
+            "y3": 17085.943359375
+          },
+          "per_target_raw": {
+            "y1": 1702697.25,
+            "y2": 652474.4375,
+            "y3": 94542.515625
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 20.55085563659668,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 15.850265502929688,
+            "y2": 2.299797534942627,
+            "y3": 43.50250244140625
+          },
+          "per_target_raw": {
+            "y1": 27.44403076171875,
+            "y2": 3.967134714126587,
+            "y3": 240.714599609375
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 536.8768310546875,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 1023.4481201171875,
+            "y2": 573.6431884765625,
+            "y3": 13.539240837097168
+          },
+          "per_target_raw": {
+            "y1": 1772.054931640625,
+            "y2": 989.5305786132812,
+            "y3": 74.91736602783203
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 4000,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.40022425353527,
+        "validation_macro_nloss": 7.263520092237741e-05
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "dcnv2_ratio_pc",
+      "label": "DCNv2 + explicit ratios (positive control)",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 768,
+        "encoder_shared": 176,
+        "head": 16771,
+        "interaction": 264,
+        "matched": 17803,
+        "total": 17979
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 975.8667602539062,
+        "median_relative_deviation": 570.235107421875,
+        "p95_relative_deviation": 3836.599853515625
+      },
+      "seed": 44,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.00013054512965027243,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.00023355719167739153,
+            "y2": 0.00010885967640206218,
+            "y3": 4.9218513595405966e-05
+          },
+          "per_target_raw": {
+            "y1": 0.000404393911594525,
+            "y2": 0.000187782192369923,
+            "y3": 0.0002723432844504714
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 815939.1875,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 1669468.75,
+            "y2": 639009.8125,
+            "y3": 139338.84375
+          },
+          "per_target_raw": {
+            "y1": 2890611.0,
+            "y2": 1102287.5,
+            "y3": 771010.625
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 9.717992782592773,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 10.434320449829102,
+            "y2": 2.7738170623779297,
+            "y3": 15.945841789245605
+          },
+          "per_target_raw": {
+            "y1": 18.06656265258789,
+            "y2": 4.784815311431885,
+            "y3": 88.23393249511719
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 1504.5599365234375,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 3969.914794921875,
+            "y2": 249.95574951171875,
+            "y3": 293.80938720703125
+          },
+          "per_target_raw": {
+            "y1": 6873.73095703125,
+            "y2": 431.17193603515625,
+            "y3": 1625.750244140625
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": 3600,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.439631132408977,
+        "validation_macro_nloss": 0.00013136098277755082
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "oracle",
+      "label": "Analytical identity oracle",
+      "learning_rate": null,
+      "parameters": {
+        "adapter": 0,
+        "encoder_shared": 0,
+        "head": 0,
+        "interaction": 0,
+        "matched": 0,
+        "total": 0
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 6.884696546194391e-08,
+        "median_relative_deviation": 0.0,
+        "p95_relative_deviation": 1.1044686942796034e-07
+      },
+      "seed": 42,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "per_target_raw": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 7.184826532010725e-15,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 5.658442667872375e-15,
+            "y2": 5.892587561965408e-15,
+            "y3": 1.0003446401579078e-14
+          },
+          "per_target_raw": {
+            "y1": 9.797342109688426e-15,
+            "y2": 1.0164673193858303e-14,
+            "y3": 5.5352576499136455e-14
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 0.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "per_target_raw": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "per_target_raw": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": null,
+        "nonfinite_training_batches": 0,
+        "seconds": 0.0,
+        "validation_macro_nloss": null
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "oracle",
+      "label": "Analytical identity oracle",
+      "learning_rate": null,
+      "parameters": {
+        "adapter": 0,
+        "encoder_shared": 0,
+        "head": 0,
+        "interaction": 0,
+        "matched": 0,
+        "total": 0
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 6.884696546194391e-08,
+        "median_relative_deviation": 0.0,
+        "p95_relative_deviation": 1.1044686942796034e-07
+      },
+      "seed": 43,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "per_target_raw": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 7.184826532010725e-15,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 5.658442667872375e-15,
+            "y2": 5.892587561965408e-15,
+            "y3": 1.0003446401579078e-14
+          },
+          "per_target_raw": {
+            "y1": 9.797342109688426e-15,
+            "y2": 1.0164673193858303e-14,
+            "y3": 5.5352576499136455e-14
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 0.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "per_target_raw": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "per_target_raw": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": null,
+        "nonfinite_training_batches": 0,
+        "seconds": 0.0,
+        "validation_macro_nloss": null
+      }
+    },
+    {
+      "analytic_counts": null,
+      "arm_id": "oracle",
+      "label": "Analytical identity oracle",
+      "learning_rate": null,
+      "parameters": {
+        "adapter": 0,
+        "encoder_shared": 0,
+        "head": 0,
+        "interaction": 0,
+        "matched": 0,
+        "total": 0
+      },
+      "scale_consistency": {
+        "mean_absolute_deviation": 6.884696546194391e-08,
+        "median_relative_deviation": 0.0,
+        "p95_relative_deviation": 1.1044686942796034e-07
+      },
+      "seed": 44,
+      "slices": {
+        "id": {
+          "macro_nloss": 0.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "per_target_raw": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_common_scale": {
+          "macro_nloss": 7.184826532010725e-15,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 5.658442667872375e-15,
+            "y2": 5.892587561965408e-15,
+            "y3": 1.0003446401579078e-14
+          },
+          "per_target_raw": {
+            "y1": 9.797342109688426e-15,
+            "y2": 1.0164673193858303e-14,
+            "y3": 5.5352576499136455e-14
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_high_ratio": {
+          "macro_nloss": 0.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "per_target_raw": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        },
+        "ood_low_ratio": {
+          "macro_nloss": 0.0,
+          "nonfinite_predictions": 0,
+          "observed_labels": {
+            "y1": 40000,
+            "y2": 40000,
+            "y3": 40000
+          },
+          "per_target_normalized": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "per_target_raw": {
+            "y1": 0.0,
+            "y2": 0.0,
+            "y3": 0.0
+          },
+          "reciprocal_floor_incidence": {
+            "d1": 0.0,
+            "d2": 0.0,
+            "d3": 0.0
+          }
+        }
+      },
+      "training": {
+        "best_step": null,
+        "nonfinite_training_batches": 0,
+        "seconds": 0.0,
+        "validation_macro_nloss": null
+      }
+    }
+  ],
+  "schema_version": 1,
+  "selected_configs": {
+    "benchmark_manifest_sha256": "659d29f565bd51338e8c311a5c1c94335a499fbb2f62017d26581e785d8e72fd",
+    "capacity_resolution": {
+      "candidates_considered": 96,
+      "flop_contract": "dcdn-forward-floating-arithmetic-flops-v1",
+      "lower_bracket": null,
+      "matched": true,
+      "selected": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "expert_flops": 287,
+        "expert_parameters": 132,
+        "flops": 34673,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 305,
+        "interaction_flops_per_layer": 305,
+        "interaction_parameters": 148,
+        "interaction_parameters_per_layer": 148,
+        "low_rank": 6,
+        "num_experts": 1,
+        "num_layers": 1,
+        "parameters": 17495
+      },
+      "selected_ratios": {
+        "distance": 0.00048826455186481917,
+        "flop_ratio": 1.0002596353565658,
+        "parameter_ratio": 1.0002286890400778,
+        "within_tolerance": true
+      },
+      "selection_rule": "minimum_log_distance_in_parameter_and_flop_space",
+      "selection_used_validation_quality": false,
+      "target": {
+        "adapter_flops": 1024,
+        "adapter_parameters": 576,
+        "architecture": "DCDN-Core-L1",
+        "flops": 34664,
+        "head_flops": 33344,
+        "head_parameters": 16771,
+        "interaction_flops": 296,
+        "interaction_flops_per_layer": 288,
+        "interaction_parameters": 144,
+        "interaction_parameters_per_layer": 144,
+        "num_layers": 1,
+        "parameters": 17491,
+        "reciprocal_flops": 8
+      },
+      "tolerance_fraction": 0.05,
+      "upper_bracket": null
+    },
+    "encoder": {
+      "embedding_dim": 8,
+      "head_hidden_dims": [
+        128,
+        64
+      ],
+      "operand_schema_sha256": "33678d4ecb036884f88f568a1e37aeca8f4a5e013943ac5ec46bc48fc03f10a0",
+      "representation_dim": 64
+    },
+    "final_seeds": [
+      42,
+      43,
+      44
+    ],
+    "objective_spec_sha256": "5169e5b5e21c967aff676ac8a8c9a1760d5919508ac9bd8dd883f35b1a5a8a37",
+    "optimization": {
+      "batch_size": 4096,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "epsilon": 1e-08,
+      "family": "AdamW",
+      "gradient_clip_l2": 1.0,
+      "maximum_steps": 4000,
+      "patience": 5,
+      "validate_every_steps": 200,
+      "weight_decay": 1e-06
+    },
+    "selected_learning_rates": {
+      "afn_plus": 0.001,
+      "dcdn_core_l1": 0.001,
+      "dcnv2_capacity": 0.001,
+      "dcnv2_core": 0.001,
+      "dcnv2_ratio_pc": 0.001,
+      "linear": 0.001,
+      "mlp": 0.001
+    },
+    "task_constants_sha256": "5f40d98442140c776faa35b9558ed94b78540593010047eb704b2bbd3b1987c6"
+  },
+  "selected_configs_sha256": "63555e1f3b1405643372e4600366067df48bdabb6fabbc58cf406501936e5653"
+}

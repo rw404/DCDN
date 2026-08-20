@@ -189,3 +189,27 @@ the full CPU regression passed 564/564 without test access. Estimated
 cumulative spend was USD 206.17. Durable storage passed at 22.699 GiB, with
 27.301 GiB logical headroom and 60.343 GiB overlay available. No GPU job,
 provider action, test access, or external mutation occurred in publication.
+
+At `2026-08-20T17:07:24Z`, the owner-override multi-target reset
+completed its first mandatory cell. `Synthetic-MultiQuotient-3` executed end to
+end on one A100: six slices materialized and hashed before training
+(manifest `659d29f565bd51338e8c311a5c1c94335a499fbb2f62017d26581e785d8e72fd`),
+the capacity control resolved mechanically at parameter ratio 1.00023 and FLOP
+ratio 1.00026, validation-only tuning at seed 42 over two learning rates per
+arm, selected configurations frozen and hashed
+(`63555e1f3b1405643372e4600366067df48bdabb6fabbc58cf406501936e5653`), and final
+evaluation across seeds 42/43/44 for eight arms on four slices. Zero non-finite
+predictions and zero reciprocal-floor incidence were observed. The matched
+serving-performance benchmark ran on the second A100; a first pass under peak
+host contention was discarded as corrupted (p99 74.8 ms against a p50 of
+0.73 ms) and the retained pass has p50/p95 ratio agreement within 1% for every
+pair, recorded as provisional because the host load average was 6.94.
+
+Compute used by this work was roughly 0.4 GPU-hours across both A100s. The
+credential-free estimate is USD 208.92 for 55.901791 elapsed Pod-hours
+including the fixed USD 25 storage reserve, leaving USD 161.08 of
+warning-threshold headroom and USD 251.08 of hard-cap headroom.
+Durable project storage was 16.324 GiB of the 40 GiB cap. No provider
+action, external mutation, or test access occurred; `test_unlocked=false`
+remains in force and the four remaining mandatory datasets are recorded as
+`executed: false` in `results/multitask/multitask_index.json`.
