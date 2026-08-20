@@ -1,0 +1,539 @@
+{
+  "artifact_role": "final_validation_seeds_43_44_materialization_prelaunch_audit",
+  "code_identity": {
+    "code_commit": "e9e56e9ed882a8c0548927e3f7ae1c12cbf9f1e8",
+    "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "remote_branch_commit": "e9e56e9ed882a8c0548927e3f7ae1c12cbf9f1e8",
+    "tracked_diff_empty": true
+  },
+  "created_utc": "2026-08-19T22:31:17.200429Z",
+  "execution": {
+    "parallel_jobs_per_wave": 2,
+    "phase": "final",
+    "seed_43_gpu": 0,
+    "seed_44_gpu": 1,
+    "test_access_allowed": false,
+    "validation_only": true,
+    "wave_count": 9
+  },
+  "frozen_protocol": {
+    "active_lock_stage": "premetric_locked",
+    "protocol_sha256": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+    "test_metrics_computed": false,
+    "test_path_available": false,
+    "test_unlocked": false
+  },
+  "guards": {
+    "active_registry_runs": 0,
+    "auto_stop_requirement": "owner_waived_no_provider_mutation",
+    "cost": {
+      "absolute_stop_utc": "2026-08-24T11:00:00Z",
+      "accounting_basis": "local_owner_approved_estimate",
+      "control_plane_billing": "unavailable_and_owner_waived",
+      "effective_stop_utc": "2026-08-23T09:13:18Z",
+      "elapsed_hours": "37.296224",
+      "elapsed_stop_utc": "2026-08-23T09:13:18Z",
+      "estimated_spend_usd": "147.70",
+      "eta_hours": "16",
+      "hard_cap_usd": "460",
+      "launch_allowed": true,
+      "ledger_epoch_utc": "2026-08-18T09:13:18Z",
+      "now_utc": "2026-08-19T22:31:04.406032Z",
+      "phase": "compute",
+      "pod_rate_usd_per_hour": "3.29",
+      "projected_end_utc": "2026-08-20T14:31:04.406032Z",
+      "projected_spend_usd": "200.34",
+      "provider_actions_performed": false,
+      "reasons": [],
+      "reserve_start_utc": "2026-08-23T01:13:18Z",
+      "status": "ok",
+      "storage_reserve_usd": "25",
+      "warning_usd": "370",
+      "work_class": "mandatory"
+    },
+    "gpu_compute_applications": 0,
+    "gpu_rows": [
+      "0, 4, 0",
+      "1, 4, 0"
+    ],
+    "preflight_checks": [
+      {
+        "detail": "3.12.3",
+        "name": "python",
+        "ok": true
+      },
+      {
+        "detail": "/tmp/dcdn-venv-py312",
+        "name": "ephemeral_path:UV_PROJECT_ENVIRONMENT",
+        "ok": true
+      },
+      {
+        "detail": "/home/codex/.cache/dcdn/uv",
+        "name": "ephemeral_path:UV_CACHE_DIR",
+        "ok": true
+      },
+      {
+        "detail": "/home/codex/.cache/dcdn/xdg",
+        "name": "ephemeral_path:XDG_CACHE_HOME",
+        "ok": true
+      },
+      {
+        "detail": "/home/codex/.cache/dcdn/torch",
+        "name": "ephemeral_path:TORCH_HOME",
+        "ok": true
+      },
+      {
+        "detail": "/home/codex/.cache/dcdn/huggingface",
+        "name": "ephemeral_path:HF_HOME",
+        "ok": true
+      },
+      {
+        "detail": "/home/codex/.cache/dcdn/huggingface/hub",
+        "name": "ephemeral_path:HUGGINGFACE_HUB_CACHE",
+        "ok": true
+      },
+      {
+        "detail": "/home/codex/.cache/dcdn-public",
+        "name": "ephemeral_path:DCDN_DATA_CACHE",
+        "ok": true
+      },
+      {
+        "detail": "/tmp/dcdn-venv-py312",
+        "name": "active_isolated_environment",
+        "ok": true
+      },
+      {
+        "detail": "set",
+        "name": "telemetry_disabled:DO_NOT_TRACK",
+        "ok": true
+      },
+      {
+        "detail": "set",
+        "name": "telemetry_disabled:HF_HUB_DISABLE_TELEMETRY",
+        "ok": true
+      },
+      {
+        "detail": "set",
+        "name": "telemetry_disabled:HF_DATASETS_DISABLE_TELEMETRY",
+        "ok": true
+      },
+      {
+        "detail": "set",
+        "name": "telemetry_disabled:HF_HUB_DISABLE_IMPLICIT_TOKEN",
+        "ok": true
+      },
+      {
+        "detail": "set",
+        "name": "telemetry_disabled:WANDB_DISABLED",
+        "ok": true
+      },
+      {
+        "detail": "set",
+        "name": "telemetry_disabled:WANDB_MODE",
+        "ok": true
+      },
+      {
+        "detail": "set",
+        "name": "telemetry_disabled:MLFLOW_ENABLE_SYSTEM_METRICS_LOGGING",
+        "ok": true
+      },
+      {
+        "detail": "set",
+        "name": "telemetry_disabled:UV_KEYRING_PROVIDER",
+        "ok": true
+      },
+      {
+        "detail": "set",
+        "name": "telemetry_disabled:UV_PYTHON_DOWNLOADS",
+        "ok": true
+      },
+      {
+        "detail": "installed=2.1.2; pinned=2.1.2",
+        "name": "distribution:numpy",
+        "ok": true
+      },
+      {
+        "detail": "installed=7.1.0; pinned=7.1.0",
+        "name": "distribution:psutil",
+        "ok": true
+      },
+      {
+        "detail": "installed=6.0.3; pinned=6.0.3",
+        "name": "distribution:PyYAML",
+        "ok": true
+      },
+      {
+        "detail": "installed=80.9.0; pinned=80.9.0",
+        "name": "distribution:setuptools",
+        "ok": true
+      },
+      {
+        "detail": "installed=2.8.0+cu128; pinned=2.8.0",
+        "name": "distribution:torch",
+        "ok": true
+      },
+      {
+        "detail": "installed=6.161.6; pinned=6.161.6",
+        "name": "distribution:hypothesis",
+        "ok": true
+      },
+      {
+        "detail": "installed=9.1.1; pinned=9.1.1",
+        "name": "distribution:pytest",
+        "ok": true
+      },
+      {
+        "detail": "installed=0.12.12; pinned=0.12.12",
+        "name": "distribution:ruff",
+        "ok": true
+      },
+      {
+        "detail": "installed=0.7.3; pinned=0.7.3",
+        "name": "distribution:implicit",
+        "ok": true
+      },
+      {
+        "detail": "installed=1.43.0; pinned=1.43.0",
+        "name": "distribution:polars",
+        "ok": true
+      },
+      {
+        "detail": "installed=25.0.0; pinned=25.0.0",
+        "name": "distribution:pyarrow",
+        "ok": true
+      },
+      {
+        "detail": "installed=1.9.0; pinned=1.9.0",
+        "name": "distribution:scikit-learn",
+        "ok": true
+      },
+      {
+        "detail": "installed=1.18.0; pinned=1.18.0",
+        "name": "distribution:scipy",
+        "ok": true
+      },
+      {
+        "detail": "/workspace/codex-home/dcdn/deep_division_network/uv.lock",
+        "name": "persistent_lock_present",
+        "ok": true
+      },
+      {
+        "detail": "Resolved 48 packages in 3ms",
+        "name": "uv_lock_current_offline",
+        "ok": true
+      },
+      {
+        "detail": "status=ok; reasons=[]",
+        "name": "cost_and_time_guard",
+        "ok": true
+      },
+      {
+        "detail": "violations=[]",
+        "name": "storage_guard",
+        "ok": true
+      },
+      {
+        "detail": "mount=/workspace; fs_type=fuse",
+        "name": "repository_on_persistent_mount",
+        "ok": true
+      },
+      {
+        "detail": "12.8",
+        "name": "torch_cuda_build",
+        "ok": true
+      },
+      {
+        "detail": "True",
+        "name": "cuda_available",
+        "ok": true
+      },
+      {
+        "detail": "count=2; names=['NVIDIA A100-SXM4-80GB', 'NVIDIA A100-SXM4-80GB']",
+        "name": "two_gpus",
+        "ok": true
+      },
+      {
+        "detail": "['NVIDIA A100-SXM4-80GB', 'NVIDIA A100-SXM4-80GB']",
+        "name": "a100_gpus",
+        "ok": true
+      },
+      {
+        "detail": "gpu_rows=['GPU0\\t X \\tNV12\\tPXB\\tPXB\\tNODE\\tNODE\\tSYS\\tSYS\\tSYS\\tSYS\\tSYS\\tSYS\\t0-63\\t0\\t\\tN/A', 'GPU1\\tNV12\\t X \\tNODE\\tNODE\\tPXB\\tPXB\\tSYS\\tSYS\\tSYS\\tSYS\\tSYS\\tSYS\\t0-63\\t0\\t\\tN/A']",
+        "name": "nvlink_visible",
+        "ok": true
+      }
+    ],
+    "storage": {
+      "capacity_basis": "frozen_50_gib_logical_envelope",
+      "logical_capacity_bytes": 53687091200,
+      "logical_capacity_gib": 50.0,
+      "logical_headroom_bytes": 39431301632,
+      "logical_headroom_gib": 36.72326135635376,
+      "ok": true,
+      "overlay_available_gib": 61.904300689697266,
+      "overlay_total_gib": 100.0,
+      "overlay_usage_fraction": 0.38095699310302733,
+      "persistent_df_enforcement": "informational_shared_backend",
+      "persistent_fs_type": "fuse",
+      "persistent_mount_point": "/workspace",
+      "persistent_observed_available_gib": 100702.16180419922,
+      "persistent_observed_total_gib": 413010.0569458008,
+      "persistent_source": "mfs#us-md-1.runpod.net:9421",
+      "project_bytes": 14255789568,
+      "project_cap_bytes": 42949672960,
+      "project_cap_gib": 40.0,
+      "project_gib": 13.27673864364624,
+      "required_headroom_bytes": 10737418240,
+      "required_headroom_gib": 10.0,
+      "shared_fuse_df_caveat": true,
+      "violations": []
+    },
+    "task_processes": 0
+  },
+  "launch_performed": false,
+  "materialization_audit": {
+    "aggregate_sha256": "09f765ea1d6d72d2b7ee0cc0dce28a340e7199b9b177a025d97c35789af781ac",
+    "lineage_checkpoint_and_model_digest_checks": true,
+    "models": 9,
+    "records_pending": 18,
+    "runs": 18,
+    "trainer_and_worker_pre_model_gates": true
+  },
+  "runs": [
+    {
+      "command_path": "runs/commands/vk-cp-final-afn-plus-s43-v1.sh",
+      "command_sha256": "192684f79621d84f8fb2996aeeef809635ddf26e28ce45931a29205687b0f06e",
+      "config_path": "configs/runs/vk-cp-final-afn-plus-s43-v1.yaml",
+      "config_sha256": "65bde103d10b2b3b969a270391ba3f3bb4e88344202255dd5e9f2e532e76d16a",
+      "registry_path": "runs/registry/records/vk-cp-final-afn-plus-s43-v1.json",
+      "registry_sha256": "bc1b8755601f8f958347e274de6f11f13917ef569683f68e2f516a2c7ee9bd20",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-afn-plus-s43-v1",
+      "seed": 43,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-afn-plus-s44-v1.sh",
+      "command_sha256": "5a97ca5703428a97ababe366b6eed460434f9174c7b7cddc79cd684ef24326af",
+      "config_path": "configs/runs/vk-cp-final-afn-plus-s44-v1.yaml",
+      "config_sha256": "5aa109aabe8af537137b13aecfa9f9f3cbec2ea9af67ef551cd9bd8535dc6080",
+      "registry_path": "runs/registry/records/vk-cp-final-afn-plus-s44-v1.json",
+      "registry_sha256": "a94037f5b6a567f752e89b6911fb879ce003efd25eadba6d97a0dc6bdea7a866",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-afn-plus-s44-v1",
+      "seed": 44,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-autoint-plus-s43-v1.sh",
+      "command_sha256": "da45dafa30576989ad50fe73ddd175aaeb92f1a890a5c42dcf8c057ae82d7922",
+      "config_path": "configs/runs/vk-cp-final-autoint-plus-s43-v1.yaml",
+      "config_sha256": "4e6711745f79e643092b423786b88f41b900c249754c1f5f766b7e34ee073a3c",
+      "registry_path": "runs/registry/records/vk-cp-final-autoint-plus-s43-v1.json",
+      "registry_sha256": "3d6a0e131370f5bdf4a892a1c52c5e364730011230090f4f1d2888f4549b4051",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-autoint-plus-s43-v1",
+      "seed": 43,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-autoint-plus-s44-v1.sh",
+      "command_sha256": "4f37f5b6fd4e21a51a98f5295485c6dddc4ed285de8ed99d9ab7700921b9d480",
+      "config_path": "configs/runs/vk-cp-final-autoint-plus-s44-v1.yaml",
+      "config_sha256": "588fa8dfe8ac7f195ba77b11a9ff0093c374a9685918daad70ae583c710bbf35",
+      "registry_path": "runs/registry/records/vk-cp-final-autoint-plus-s44-v1.json",
+      "registry_sha256": "986dd3f09d9ba046950d7095239a113c473d0743fe60107cc592ab974294674c",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-autoint-plus-s44-v1",
+      "seed": 44,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dcdn-core-l2-s43-v1.sh",
+      "command_sha256": "f87a97d433a59afc5002c7f83ddc11a048d2efa2fb28114c4b2421916b61dff9",
+      "config_path": "configs/runs/vk-cp-final-dcdn-core-l2-s43-v1.yaml",
+      "config_sha256": "cba94006555c5aae08fdefa16f79abe533f26019bcebb81f895d568d67021ff7",
+      "registry_path": "runs/registry/records/vk-cp-final-dcdn-core-l2-s43-v1.json",
+      "registry_sha256": "ea2a4ed4cc6cf2412b74fd446b30cd225ebd4c9707ea19ae09152eba23238a65",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dcdn-core-l2-s43-v1",
+      "seed": 43,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dcdn-core-l2-s44-v1.sh",
+      "command_sha256": "de736758ac33ae6837a126ba6a8d428a35a74a58c5b22abbf0af4b6f82d8b910",
+      "config_path": "configs/runs/vk-cp-final-dcdn-core-l2-s44-v1.yaml",
+      "config_sha256": "72a652ea90461e9365c6911af036796598c4887ed71b7b2b975ebec214e982ba",
+      "registry_path": "runs/registry/records/vk-cp-final-dcdn-core-l2-s44-v1.json",
+      "registry_sha256": "25449f8a34e30ec2f0786e18a010892a623fa62ae327eee9f509f524fa7b7263",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dcdn-core-l2-s44-v1",
+      "seed": 44,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dcn-s43-v1.sh",
+      "command_sha256": "5f0e0a47ef85b08371eee72a234862d3e8dc3a7de5bff6dfedd0b2ef6ae54b7a",
+      "config_path": "configs/runs/vk-cp-final-dcn-s43-v1.yaml",
+      "config_sha256": "b8f3961990c3151468d6db1b5a06e72928305eeaca5da44affe97cbd753ab7f1",
+      "registry_path": "runs/registry/records/vk-cp-final-dcn-s43-v1.json",
+      "registry_sha256": "bf0eaccc72f43da4ad8628ff8e2268f687f026b5f9bec2bf0292dd06e1fd423a",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dcn-s43-v1",
+      "seed": 43,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dcn-s44-v1.sh",
+      "command_sha256": "d7b238dd3fde993a01a0243822850b2d22e6ecad563865a58ea6a9bbd7d33349",
+      "config_path": "configs/runs/vk-cp-final-dcn-s44-v1.yaml",
+      "config_sha256": "5cdafaaeba50839e79eb6929dba741a401450b4564b2070b7d52902c71924560",
+      "registry_path": "runs/registry/records/vk-cp-final-dcn-s44-v1.json",
+      "registry_sha256": "41469915e92e73b2e12579a51d5123bb667b0f9188d4bdf0d4882f5b66ee12dd",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dcn-s44-v1",
+      "seed": 44,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dcnv2-capacity-matched-r12-l2-s43-v1.sh",
+      "command_sha256": "24e5e13fe6e533422c7e64b9dd1ac24e3175b794b300bc6129a9fa97cd7175a8",
+      "config_path": "configs/runs/vk-cp-final-dcnv2-capacity-matched-r12-l2-s43-v1.yaml",
+      "config_sha256": "39ce875ec44a92b6c397490bd5deeff1d73a95e3b35d56481570de4aa9574987",
+      "registry_path": "runs/registry/records/vk-cp-final-dcnv2-capacity-matched-r12-l2-s43-v1.json",
+      "registry_sha256": "7c9c47161f939c5a3929e8aa8f56f40b332656c85edf9266c682585056d9e363",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dcnv2-capacity-matched-r12-l2-s43-v1",
+      "seed": 43,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dcnv2-capacity-matched-r12-l2-s44-v1.sh",
+      "command_sha256": "5eabe21d864553da78ccade85d1bd0dfb93aa1fe6768526b1a43b74171ea01cc",
+      "config_path": "configs/runs/vk-cp-final-dcnv2-capacity-matched-r12-l2-s44-v1.yaml",
+      "config_sha256": "9f4d9556b35bc82c627597e91b439dd9050171284f2afd28f6913ab6c3859e35",
+      "registry_path": "runs/registry/records/vk-cp-final-dcnv2-capacity-matched-r12-l2-s44-v1.json",
+      "registry_sha256": "f31b7e2d847fdb372e1195695e676876e3015c5985d63fd559c646e282f2bd20",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dcnv2-capacity-matched-r12-l2-s44-v1",
+      "seed": 44,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dcnv2-full-rank-l2-s43-v1.sh",
+      "command_sha256": "da8de57b1681a8014943d432cb30b882bd37305a1ee583f6efef2b8c6f3b1d18",
+      "config_path": "configs/runs/vk-cp-final-dcnv2-full-rank-l2-s43-v1.yaml",
+      "config_sha256": "f93c07d2aea7e38169f8c8ac6e6f406709b7121f2e84d32890fe11aaedb70990",
+      "registry_path": "runs/registry/records/vk-cp-final-dcnv2-full-rank-l2-s43-v1.json",
+      "registry_sha256": "7475424a0de51b6c33a244e10ee158f66f4c16d310b403177cb69bb10f2c3378",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dcnv2-full-rank-l2-s43-v1",
+      "seed": 43,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dcnv2-full-rank-l2-s44-v1.sh",
+      "command_sha256": "62a1e209411217feece842cd7c163f7d8795a981b1d4e09f71a42a636c4e01b3",
+      "config_path": "configs/runs/vk-cp-final-dcnv2-full-rank-l2-s44-v1.yaml",
+      "config_sha256": "2b1cfde5e33b78a4eb58ff55726f114d019f8efb8208b23a31222309c096b0ee",
+      "registry_path": "runs/registry/records/vk-cp-final-dcnv2-full-rank-l2-s44-v1.json",
+      "registry_sha256": "d0020883fa157ebcf328262574c8993817dec3f4db144258f7eb40ba6de475d1",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dcnv2-full-rank-l2-s44-v1",
+      "seed": 44,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-deepfm-s43-v1.sh",
+      "command_sha256": "789d2d7f6fdcdcc3f9a204cb2d3879874bcd4c06cd7c14876afeeb3c43f2d97b",
+      "config_path": "configs/runs/vk-cp-final-deepfm-s43-v1.yaml",
+      "config_sha256": "85fe44b523deffcb399457c70df9d54b0b67bfd3c7bd94078322df335b876300",
+      "registry_path": "runs/registry/records/vk-cp-final-deepfm-s43-v1.json",
+      "registry_sha256": "689010fae42844937c6148f9a42b3545c9168ed3cc4122e5b7c3d8eeb81c066a",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-deepfm-s43-v1",
+      "seed": 43,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-deepfm-s44-v1.sh",
+      "command_sha256": "d3ebc8fc712f3078cf7e929b68de539880488e934d2d0a8caa05db7faba5daad",
+      "config_path": "configs/runs/vk-cp-final-deepfm-s44-v1.yaml",
+      "config_sha256": "3013fb2b1420941eb998ba015436281d349355fc500d03022467644fa003598b",
+      "registry_path": "runs/registry/records/vk-cp-final-deepfm-s44-v1.json",
+      "registry_sha256": "e81133ed78a6e4292529062abddf6cb5efb8f631b447381e2bc6af79a2315861",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-deepfm-s44-v1",
+      "seed": 44,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dnn-s43-v1.sh",
+      "command_sha256": "a34b399e9c33b5243eaa49fab1d6ada96c0ed80b6f751ad93e70d9478e170ec2",
+      "config_path": "configs/runs/vk-cp-final-dnn-s43-v1.yaml",
+      "config_sha256": "6af8092e2f9334feb2914421706877bb1b3f8ca82ed64ccdbec21cb03b2181bb",
+      "registry_path": "runs/registry/records/vk-cp-final-dnn-s43-v1.json",
+      "registry_sha256": "21019e217d278a63e80f9574ce57fa9c153d1e80acd514b402715770da9865bb",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dnn-s43-v1",
+      "seed": 43,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-dnn-s44-v1.sh",
+      "command_sha256": "fdc6a749eb1e94d1332ae2c4acb47ee9f570956023659297493609f8803a8c8d",
+      "config_path": "configs/runs/vk-cp-final-dnn-s44-v1.yaml",
+      "config_sha256": "56923dc7b550f09c14d0358fe35e9019399eee382e00ab811f7ff461639993eb",
+      "registry_path": "runs/registry/records/vk-cp-final-dnn-s44-v1.json",
+      "registry_sha256": "3c8fa9b6b9eea69b8549f6dcab6598bf163a738aaa082be91fe7f437db3b3657",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-dnn-s44-v1",
+      "seed": 44,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-wukong-small-s43-v1.sh",
+      "command_sha256": "826dc8e9f4ace85eeb2f7d9414821b15b8226c9c45a691e5ff3f05217c2f9031",
+      "config_path": "configs/runs/vk-cp-final-wukong-small-s43-v1.yaml",
+      "config_sha256": "823e4fd92308194b5bf5fa7b1f5f879db057bcdda8b6f229c4dd0769404ea2ff",
+      "registry_path": "runs/registry/records/vk-cp-final-wukong-small-s43-v1.json",
+      "registry_sha256": "f1a714d8ca2c892d60a24633cfe29941ceb3b02d77a6e1e648a1380c27e3733b",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-wukong-small-s43-v1",
+      "seed": 43,
+      "status": "pending"
+    },
+    {
+      "command_path": "runs/commands/vk-cp-final-wukong-small-s44-v1.sh",
+      "command_sha256": "f4492920fc7bb3ee25b0cda57063f90d87bf44a936d424c6106e9adf66071bc8",
+      "config_path": "configs/runs/vk-cp-final-wukong-small-s44-v1.yaml",
+      "config_sha256": "b393457c3104756635574a302200ebc83209893a645f08e91cf67473b4c971b1",
+      "registry_path": "runs/registry/records/vk-cp-final-wukong-small-s44-v1.json",
+      "registry_sha256": "c95b5d996e57b81de31e286f26acf86b7f2bc5f7dfeee2ecca964a1d1edf4930",
+      "result_absent": true,
+      "run_directory_absent": true,
+      "run_id": "vk-cp-final-wukong-small-s44-v1",
+      "seed": 44,
+      "status": "pending"
+    }
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,19 @@
+{
+  "artifact_role": "run_registry_io_incident",
+  "degraded_deadline_seconds": 180.0,
+  "detail": "registry helper exceeded 10.000s",
+  "errno": null,
+  "error_stage": "helper_timeout",
+  "error_type": "RegistryHelperTimeout",
+  "first_failure_monotonic": 15758806.250789355,
+  "first_failure_utc": "2026-08-20T06:29:26.328819Z",
+  "heartbeat_interval_seconds": 30.0,
+  "incident_id": "registry-io-1231319-1787207366328798904-1",
+  "operation": "heartbeat",
+  "operation_timeout_seconds": 10.0,
+  "receipt_scope": "supervisor_io_evidence_not_registry_state",
+  "run_id": "vk-cp-final-afn-plus-s43-v1-resume-v2",
+  "schema_version": 1,
+  "supervisor_pid": 1231120,
+  "trainer_pid": 1231319
+}

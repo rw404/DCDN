@@ -622,3 +622,44 @@ complete. The next frozen action is to build and audit the dataset-wide
 The owner-approved multi-task extension is scheduled only after the mandatory frozen matrix: normalized watch time remains primary, while like/dislike/share/bookmark are auxiliary binary labels when raw schema validation permits them.
 Per target, report ROC-AUC and user-GAUC over users with both classes, plus eligible-user/event coverage and paired user-bootstrap 95% confidence intervals.
 This extension does not alter the current single-target RQ1 selections or expose test data.
+
+## 2026-08-20 VK-LSVD C+P three-seed RQ1 validation checkpoint
+
+All nine frozen `C+P` model rows now have scientifically eligible
+validation-only results for seeds 42, 43, and 44. Canonical compact summary
+`results/final_validation/vk_lsvd_c_plus_p_rq1_validation_summary_v1.json`
+has SHA-256
+`b5c64f84e6562add812a1fa5d3db2cbbf1ed712ff6e2237c59217dd6047fc070`;
+its strict adjacent sidecar and all 27 referenced source-artifact hashes
+reopened successfully.
+
+The narrow RQ1 comparison is positive on validation. `DCDN-Core-L2` is lower
+than Original DCN on every seed: the paired improvements are
+`0.000058301607300179`, `0.000027781149600347`, and
+`0.000038721328376512`, with mean `0.000041601361759013` (about
+`0.197739%` relative to the DCN mean). DCDN is also lower than the rank-12
+`DCNv2-capacity-matched` control on every seed, with paired mean improvement
+`0.000028828551562561` (about `0.137111%`). The three-seed means are
+`0.020996908083702307` for DCDN, `0.021025736635264868` for the
+capacity-matched control, and `0.021038509445461321` for Original DCN.
+
+Universal DCDN superiority is not supported: full-rank DCNv2 and five other
+baselines have lower three-seed means. This is recorded as a valid,
+validation-only scientific limitation rather than hidden or reframed. The
+failed seed-43 capacity attempt ended in registry/FUSE infrastructure I/O
+before any validation metric; incident SHA-256 is
+`f26204b8a05cd5d80f0db0359a080b4c6aae7bf0e311c62b549f5ac0f1e53847`.
+Its fresh run `vk-cp-final-dcnv2-capacity-matched-r12-l2-s43-v1-rebind-v2`
+completed with result SHA-256
+`ac97f0a1d7fc090ce714d3dd0c0f9f236815604d8941e1308f9ee8dd29de0c9a`;
+seed 44 completed with result SHA-256
+`1c98d5c66625a5b6080a184296e53c3042eef88118bbc977a30aaf463eeddcf7`.
+
+At `2026-08-20T12:23:12.516334Z`, estimated cumulative spend was USD 193.33.
+Storage passed at 23,639,039,488 project bytes (22.0156 GiB), with 27.9844 GiB
+logical headroom and 60.7022 GiB overlay available. Both A100s were idle,
+registry `running=[]`, and no task-owned worker, trainer, registry helper, or
+supervised process remained. Test stays sealed:
+`test_unlocked=false`, `test_path_available=false`, and no test metric was
+accessed. Next freeze the dataset-wide selected-config lineage and audit the
+one-pass evaluation bundle before any test activation.

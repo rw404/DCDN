@@ -1,0 +1,79 @@
+{
+  "artifact_role": "failed-final-validation-pre-resume-snapshot",
+  "code_commit": "e9e56e9ed882a8c0548927e3f7ae1c12cbf9f1e8",
+  "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "created_utc": "2026-08-20T05:22:04.421939Z",
+  "failed_registry": {
+    "bytes_sha256": "1f008553f116f64b14eaacb79514afe77968d6844aabc8140a21cd19b36d8684",
+    "path": "runs/registry/records/vk-cp-final-afn-plus-s44-v1.json",
+    "raw_utf8": "{\n  \"code_commit\": \"e9e56e9ed882a8c0548927e3f7ae1c12cbf9f1e8\",\n  \"code_diff_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\n  \"completion_or_failure_reason\": \"registry heartbeat degraded deadline elapsed with an unreaped timed-out helper\",\n  \"created_at_utc\": \"2026-08-19T21:57:53Z\",\n  \"data_manifest_sha256\": \"5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac\",\n  \"execution_kind\": \"scientific_tuning\",\n  \"features_sha256\": \"380d105c847a73afb4927740e40401124688f895142792309b4fc8267a2a5f2b\",\n  \"finished_at_utc\": \"2026-08-20T05:19:34Z\",\n  \"gpu\": 1,\n  \"heartbeat_utc\": null,\n  \"history_path\": \"runs/vk-cp-final-afn-plus-s44-v1/history.jsonl\",\n  \"log_path\": \"runs/vk-cp-final-afn-plus-s44-v1/worker.log\",\n  \"pid\": 1196192,\n  \"protocol_sha256\": \"1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b\",\n  \"reproduction_command_path\": \"runs/commands/vk-cp-final-afn-plus-s44-v1.sh\",\n  \"resolved_config_path\": \"configs/runs/vk-cp-final-afn-plus-s44-v1.yaml\",\n  \"resolved_config_sha256\": \"5aa109aabe8af537137b13aecfa9f9f3cbec2ea9af67ef551cd9bd8535dc6080\",\n  \"run_id\": \"vk-cp-final-afn-plus-s44-v1\",\n  \"scientific_result_eligible\": null,\n  \"seed\": 44,\n  \"started_at_utc\": \"2026-08-20T04:32:53Z\",\n  \"status\": \"failed\",\n  \"updated_at_utc\": \"2026-08-20T05:19:34Z\"\n}\n"
+  },
+  "failure_class": "transient_persistent_registry_io_unreaped_helper",
+  "failure_reason": "registry heartbeat degraded deadline elapsed with an unreaped timed-out helper",
+  "incidents": [
+    {
+      "local_overlay_path": "/home/codex/.cache/dcdn-public/dcdn-supervisor-incidents/vk-cp-final-afn-plus-s44-v1-fb796b35d992d01fe3f1d0e7b2d05339366a6c532fbbebd5be89686df48a962b.json",
+      "persistent_bytes_equal": true,
+      "persistent_exists": true,
+      "persistent_path": "runs/registry/incidents/vk-cp-final-afn-plus-s44-v1-fb796b35d992d01fe3f1d0e7b2d05339366a6c532fbbebd5be89686df48a962b.json",
+      "sha256": "fb796b35d992d01fe3f1d0e7b2d05339366a6c532fbbebd5be89686df48a962b"
+    }
+  ],
+  "last_checkpoint": {
+    "accumulation_boundary": true,
+    "all_tensors_cpu": true,
+    "all_tensors_finite": true,
+    "best_metric": 0.020931156933324504,
+    "examples_seen": 4001792,
+    "optimizer_steps": 977,
+    "path": "runs/vk-cp-final-afn-plus-s44-v1/last.pt",
+    "role": "last",
+    "selected_best_checkpoint_filename": "best-step-000000000977-generation-0000.pt",
+    "selected_best_checkpoint_sha256": "05e6d62ce996e0dbed39e2cd0a3b1f65cac415000fb6207fbb3a3e0c3c4689ee",
+    "sha256": "de9d4bd2ec46f1bd2c78ecc24dbd1ea016f18288ae0a97434de7905dc65b30e2",
+    "size_bytes": 79225971,
+    "tensor_count": 134,
+    "tensor_elements": 12287942,
+    "validation_checks": 1
+  },
+  "pre_resume_history": {
+    "bytes_sha256": "110869f7091f4fd214ed51ccc2ce415687fd1c349ccd5d315f1074b3fae21968",
+    "line_count": 27,
+    "path": "runs/vk-cp-final-afn-plus-s44-v1/history.jsonl",
+    "raw_utf8": "{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15751837999492934,\"projected_spend_usd\":\"177.42\",\"storage_ok\":true}\n{\"event\":\"run_started\",\"execution_kind\":\"scientific_tuning\",\"joint_model_contract_sha256\":\"62a95a61da619b56ebf7e443bbaa9df50e3e96c2197fac1d8a28bb269c20e233\",\"monotonic_ns\":15751839289944904,\"protocol_sha256\":\"1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b\",\"reproduction_command\":\"bash runs/commands/vk-cp-final-afn-plus-s44-v1.sh\",\"resolved_config_sha256\":\"5aa109aabe8af537137b13aecfa9f9f3cbec2ea9af67ef551cd9bd8535dc6080\",\"run_id\":\"vk-cp-final-afn-plus-s44-v1\"}\n{\"checkpoint_role\":\"last\",\"event\":\"checkpoint\",\"examples_seen\":0,\"monotonic_ns\":15751843902293064,\"optimizer_steps\":0,\"path\":\"last.pt\",\"sha256\":\"5489653311d151453ad27621cad75dba9e2c2691f64c41a2ae5e672ff3816b0d\"}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15751869745716732,\"projected_spend_usd\":\"167.57\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15751900052035562,\"projected_spend_usd\":\"167.60\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15751931583486022,\"projected_spend_usd\":\"167.63\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15751961074860959,\"projected_spend_usd\":\"167.66\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15751990496161872,\"projected_spend_usd\":\"167.68\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752019346824371,\"projected_spend_usd\":\"167.71\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752049835739605,\"projected_spend_usd\":\"167.74\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752080145733453,\"projected_spend_usd\":\"167.77\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752110415617687,\"projected_spend_usd\":\"167.79\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752141535593030,\"projected_spend_usd\":\"167.82\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752171829630306,\"projected_spend_usd\":\"167.85\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752200845636750,\"projected_spend_usd\":\"167.88\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752230738921538,\"projected_spend_usd\":\"167.90\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752260844843516,\"projected_spend_usd\":\"167.93\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752291365878166,\"projected_spend_usd\":\"167.96\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752320657352621,\"projected_spend_usd\":\"167.99\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752351482559091,\"projected_spend_usd\":\"168.01\",\"storage_ok\":true}\n{\"event\":\"split_evaluated\",\"monotonic_ns\":15752421512412127,\"rows\":1516831,\"selection_metric\":\"normalized_mse\",\"split\":\"validation\",\"value\":0.020931156933324504}\n{\"checkpoint_role\":\"best\",\"event\":\"checkpoint\",\"examples_seen\":4001792,\"monotonic_ns\":15752423107758256,\"optimizer_steps\":977,\"path\":\"best-step-000000000977-generation-0000.pt\",\"sha256\":\"05e6d62ce996e0dbed39e2cd0a3b1f65cac415000fb6207fbb3a3e0c3c4689ee\"}\n{\"bad_checks\":0,\"check\":1,\"declared_threshold_examples\":4000000,\"event\":\"validation\",\"examples_seen\":4001792,\"improved\":true,\"metric\":0.020931156933324504,\"monotonic_ns\":15752423113225872,\"realized_examples\":4001792}\n{\"checkpoint_role\":\"last\",\"event\":\"checkpoint\",\"examples_seen\":4001792,\"monotonic_ns\":15752424616199832,\"optimizer_steps\":977,\"path\":\"last.pt\",\"sha256\":\"de9d4bd2ec46f1bd2c78ecc24dbd1ea016f18288ae0a97434de7905dc65b30e2\"}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752443826165389,\"projected_spend_usd\":\"168.09\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752469831419938,\"projected_spend_usd\":\"168.12\",\"storage_ok\":true}\n{\"event\":\"local_guard\",\"launch_allowed\":true,\"monotonic_ns\":15752500298404012,\"projected_spend_usd\":\"168.15\",\"storage_ok\":true}\n"
+  },
+  "protocol_sha256": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+  "reproduction_command": {
+    "path": "runs/commands/vk-cp-final-afn-plus-s44-v1.sh",
+    "sha256": "5a97ca5703428a97ababe366b6eed460434f9174c7b7cddc79cd684ef24326af"
+  },
+  "resolved_config": {
+    "path": "configs/runs/vk-cp-final-afn-plus-s44-v1.yaml",
+    "sha256": "5aa109aabe8af537137b13aecfa9f9f3cbec2ea9af67ef551cd9bd8535dc6080"
+  },
+  "result_path": "results/final_validation/vk-cp-final-afn-plus-s44-v1.json",
+  "result_path_exists": false,
+  "resume_policy": {
+    "eligible": true,
+    "fresh_guards_required": true,
+    "requires_new_run_id": true,
+    "runtime_resume": true,
+    "same_run_directory": true,
+    "training_contract_unchanged": true
+  },
+  "run_id": "vk-cp-final-afn-plus-s44-v1",
+  "schema_version": 1,
+  "scientific_result_eligible": false,
+  "seed": 44,
+  "test_lock": {
+    "test_path_available": false,
+    "test_unlocked": false
+  },
+  "test_metrics": null,
+  "worker_log": {
+    "bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "path": "runs/vk-cp-final-afn-plus-s44-v1/worker.log",
+    "raw_utf8": "",
+    "size_bytes": 0
+  }
+}

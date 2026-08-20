@@ -1,0 +1,119 @@
+{
+  "artifact_role": "final_validation_resume_large_checkpoint_verifier_failure_evidence",
+  "checkpoint_reverification": {
+    "accumulation_boundary": true,
+    "checkpoint_corruption_detected": false,
+    "safe_cpu_weights_only_reopen_passed": true,
+    "streaming_sidecar_verification_passed": true
+  },
+  "correction": {
+    "code_commit": "2dba89ac44c2e8f4c118303ae8bbb7f0856b225b",
+    "code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "github_push_completed": true,
+    "isolated_non_evidence_tests_passed": 517,
+    "persistent_evidence_tests_passed": 27,
+    "py_compile_passed": true,
+    "ruff_check_passed": true,
+    "ruff_format_check_passed": true,
+    "scope": "replace generic protocol-artifact verification with streaming checkpoint sidecar verification in resume lineage",
+    "targeted_harness_checkpoint_tests_passed": 99
+  },
+  "created_utc": "2026-08-20T06:02:16.648146Z",
+  "failed_attempt": {
+    "examples_seen": 20000768,
+    "history": {
+      "path": "runs/vk-cp-final-afn-plus-s43-v1/history.jsonl",
+      "sha256": "5d9360d8c92ac88206dc3f7db87285ac2cee8add005003694fe58bbc1ced89c2",
+      "size_bytes": 13493
+    },
+    "last_checkpoint": {
+      "path": "runs/vk-cp-final-afn-plus-s43-v1/last.pt",
+      "sha256": "5c1f2d50fffc9c0bec62db867541eb2772efaa7e65c3f3b9c5be10f90a418588",
+      "size_bytes": 79225971
+    },
+    "optimizer_steps": 4883,
+    "registry": {
+      "path": "runs/registry/records/vk-cp-final-afn-plus-s43-v1-resume-v1.json",
+      "sha256": "0c3977f8f88fe10fcf5dbb6a6fe52f96fb3e395943b723fe159e0294b37390e5",
+      "size_bytes": 2557
+    },
+    "reproduction_command": {
+      "path": "runs/commands/vk-cp-final-afn-plus-s43-v1-resume-v1.sh",
+      "sha256": "8054e6b01875ccb393e42b3186cee7c5571b28abb71134dde9cb4ed37b964a1d",
+      "size_bytes": 409
+    },
+    "resolved_config": {
+      "path": "configs/runs/vk-cp-final-afn-plus-s43-v1-resume-v1.yaml",
+      "sha256": "91ec487875afc0ede480029feee298fd291a01902fcc83111cad880b8094f3f4",
+      "size_bytes": 3248
+    },
+    "result_exists": false,
+    "result_path": "results/final_validation/vk-cp-final-afn-plus-s43-v1-resume-v1.json",
+    "run_id": "vk-cp-final-afn-plus-s43-v1-resume-v1",
+    "seed": 43,
+    "selected_best_checkpoint": {
+      "path": "runs/vk-cp-final-afn-plus-s43-v1/best-step-000000004883-generation-0000.pt",
+      "sha256": "7911e8ed138abdb81152fd4debfa08c47a8356762891fb05bbf67f990652164a",
+      "size_bytes": 79225843
+    },
+    "validation_checks": 5,
+    "worker_log": {
+      "path": "runs/vk-cp-final-afn-plus-s43-v1/worker-resume-v1.log",
+      "sha256": "24d75e49de1ee9962fa2a4d3eb02edf1350ef95e8cdce89c5ced41b2fbc57a67",
+      "size_bytes": 3069
+    }
+  },
+  "failure_class": "pre_restore_generic_artifact_size_limit_code_defect",
+  "failure_reason": "AFN selected best checkpoint exceeded the generic 67108864-byte protocol-artifact limit during resume prevalidation",
+  "protocol_sha256": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+  "resume_policy": {
+    "eligible": true,
+    "fresh_guards_required": true,
+    "requires_new_run_ids": true,
+    "runtime_resume": true,
+    "same_run_directory": true,
+    "training_contract_unchanged": true
+  },
+  "schema_version": 1,
+  "scientific_result_eligible": null,
+  "superseded_unlaunched_attempt": {
+    "examples_seen": 4001792,
+    "last_checkpoint": {
+      "path": "runs/vk-cp-final-afn-plus-s44-v1/last.pt",
+      "sha256": "de9d4bd2ec46f1bd2c78ecc24dbd1ea016f18288ae0a97434de7905dc65b30e2",
+      "size_bytes": 79225971
+    },
+    "optimizer_steps": 977,
+    "registry": {
+      "path": "runs/registry/records/vk-cp-final-afn-plus-s44-v1-resume-v1.json",
+      "sha256": "1dcca25c7789e3a4a90c344b918b358bfe85b7f988bf942e07dcde81f8e78193",
+      "size_bytes": 2585
+    },
+    "reproduction_command": {
+      "path": "runs/commands/vk-cp-final-afn-plus-s44-v1-resume-v1.sh",
+      "sha256": "58aafdd900544e195d8582696818a2436fd0b7d99aef270d1df9db9fbc31eb69",
+      "size_bytes": 409
+    },
+    "resolved_config": {
+      "path": "configs/runs/vk-cp-final-afn-plus-s44-v1-resume-v1.yaml",
+      "sha256": "ec41674d7c5c8a4f158158d135c8ede8c3a560285b3e22b182be80235a883bd6",
+      "size_bytes": 3248
+    },
+    "result_exists": false,
+    "result_path": "results/final_validation/vk-cp-final-afn-plus-s44-v1-resume-v1.json",
+    "run_id": "vk-cp-final-afn-plus-s44-v1-resume-v1",
+    "seed": 44,
+    "selected_best_checkpoint": {
+      "path": "runs/vk-cp-final-afn-plus-s44-v1/best-step-000000000977-generation-0000.pt",
+      "sha256": "05e6d62ce996e0dbed39e2cd0a3b1f65cac415000fb6207fbb3a3e0c3c4689ee",
+      "size_bytes": 79225843
+    },
+    "started": false,
+    "validation_checks": 1
+  },
+  "test_lock": {
+    "test_metrics": null,
+    "test_path_available": false,
+    "test_unlocked": false
+  }
+}

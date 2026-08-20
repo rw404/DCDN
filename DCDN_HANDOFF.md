@@ -1116,4 +1116,25 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   claim-lineage schema blocker but does not unlock test: the audited one-pass
   metric/uncertainty bundle runner is still absent, so test access remains
   forbidden.
+- VK-LSVD `C+P` three-seed validation checkpoint recorded 2026-08-20:
+  all nine frozen model rows completed scientifically eligible validation-only
+  evidence for seeds 42, 43, and 44. Canonical summary
+  `results/final_validation/vk_lsvd_c_plus_p_rq1_validation_summary_v1.json`
+  has SHA-256
+  `b5c64f84e6562add812a1fa5d3db2cbbf1ed712ff6e2237c59217dd6047fc070`,
+  with strict sidecar and all 27 source SHA references verified. DCDN is lower
+  than Original DCN on all three seeds by a paired mean
+  `0.000041601361759013` (about `0.197739%`) and lower than the rank-12
+  capacity-matched control on all three by `0.000028828551562561` (about
+  `0.137111%`). This supports the narrow reciprocal-carrier RQ1 validation
+  hypothesis. It does not support universal superiority: full-rank DCNv2 and
+  five other baselines have lower three-seed means. The first seed-43 capacity
+  attempt is preserved as infrastructure failure incident
+  `f26204b8a05cd5d80f0db0359a080b4c6aae7bf0e311c62b549f5ac0f1e53847`;
+  its fresh rerun and seed 44 completed normally. At the final local audit,
+  estimated spend was USD 193.33, project storage was 22.0156 GiB, both A100s
+  were idle, registry `running=[]`, and no task process remained. README now
+  reports the honest validation result. Test remains locked and unavailable;
+  next freeze the dataset-wide selected-config lineage and audit the one-pass
+  evaluation bundle before test activation.
 Update this decision log whenever a material choice changes.

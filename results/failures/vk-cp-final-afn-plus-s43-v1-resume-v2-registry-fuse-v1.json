@@ -1,0 +1,133 @@
+{
+  "artifact_role": "failed-final-validation-resume-snapshot",
+  "code_identity": {
+    "commit": "2dba89ac44c2e8f4c118303ae8bbb7f0856b225b",
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "created_utc": "2026-08-20T06:55:31.376801Z",
+  "failed_registry": {
+    "gpu": 0,
+    "path": "runs/registry/records/vk-cp-final-afn-plus-s43-v1-resume-v2.json",
+    "pid": 1231319,
+    "reason": "worker supervisor failure: registry heartbeat helper remained unreaped after persistent FUSE timeout; trainer stopped after durable step 7813 checkpoint",
+    "sha256": "600f93fbc9bf7d504ca0824fa7c9200c7d4b7f10959a775d77a4bfc79a3421eb",
+    "size_bytes": 2721,
+    "status": "failed"
+  },
+  "failure_class": "persistent_registry_io_unreaped_helper",
+  "failure_reason": "worker supervisor failure: registry heartbeat helper remained unreaped after persistent FUSE timeout; trainer stopped after durable step 7813 checkpoint",
+  "history": {
+    "line_count": 147,
+    "path": "runs/vk-cp-final-afn-plus-s43-v1/history.jsonl",
+    "sha256": "a315b4ce1eaf445fd554d1ed5dff1a2602c1e5a57cb82357c572cb31dd357562",
+    "size_bytes": 22439
+  },
+  "incidents": [
+    {
+      "local_path": "/home/codex/.cache/dcdn-public/dcdn-supervisor-incidents/vk-cp-final-afn-plus-s43-v1-resume-v2-465d59a37e4963ec1dec6b11bd6d12fb2f311253039d82a0af20952242950e53.json",
+      "persistent_bytes_equal": true,
+      "persistent_path": "runs/registry/incidents/vk-cp-final-afn-plus-s43-v1-resume-v2-465d59a37e4963ec1dec6b11bd6d12fb2f311253039d82a0af20952242950e53.json",
+      "sha256": "465d59a37e4963ec1dec6b11bd6d12fb2f311253039d82a0af20952242950e53"
+    },
+    {
+      "local_path": "/home/codex/.cache/dcdn-public/dcdn-supervisor-incidents/vk-cp-final-afn-plus-s43-v1-resume-v2-f7fea96418423b7d6498115e058acae294dc7f32d8cab013242559c52d9fac6c.json",
+      "persistent_bytes_equal": true,
+      "persistent_path": "runs/registry/incidents/vk-cp-final-afn-plus-s43-v1-resume-v2-f7fea96418423b7d6498115e058acae294dc7f32d8cab013242559c52d9fac6c.json",
+      "sha256": "f7fea96418423b7d6498115e058acae294dc7f32d8cab013242559c52d9fac6c"
+    }
+  ],
+  "last_checkpoint": {
+    "accumulation_boundary": true,
+    "all_tensors_cpu": true,
+    "all_tensors_finite": true,
+    "bad_validation_checks": 0,
+    "best_metric": 0.020784721147440267,
+    "examples_seen": 32002048,
+    "optimizer_steps": 7813,
+    "path": "runs/vk-cp-final-afn-plus-s43-v1/last.pt",
+    "role": "last",
+    "selected_best_checkpoint_filename": "best-step-000000007813-generation-0000.pt",
+    "selected_best_checkpoint_sha256": "70fbd8203b2e32160c06b53f33afdb764ad07e1445b9c11f8737a32a248281a9",
+    "sha256": "8975662a228ec833253ad7ee638a48b31a1cb3b043a63505ff579a20bb7cf7bd",
+    "sidecar": {
+      "path": "runs/vk-cp-final-afn-plus-s43-v1/last.pt.sha256",
+      "sha256": "f2c8b2126b7fe29b66bfe13e6397f100154458798754f5ff435cff2735e8cd0f",
+      "size_bytes": 74
+    },
+    "size_bytes": 79225971,
+    "tensor_count": 134,
+    "tensor_elements": 12287942,
+    "validation_checks": 8,
+    "weights_only_cpu_reopen": true
+  },
+  "process_guard": {
+    "all_absent": true,
+    "gpu0_idle_observed_utc": "2026-08-20T06:50:24Z",
+    "helper_pid": 1244264,
+    "trainer_pid": 1231319,
+    "worker_pid": 1231120
+  },
+  "protocol": {
+    "sha256": "1919ba14e9a1f881fdf9b45016e16c4d0b92fc71d45944d329822e28816a5a0b",
+    "test_path_available": false,
+    "test_unlocked": false
+  },
+  "reproduction_command": {
+    "path": "runs/commands/vk-cp-final-afn-plus-s43-v1-resume-v2.sh",
+    "sha256": "ff8558570e8134d5c076bc8aabec06da5358dbdb0829f56e48a784d94133bad8",
+    "size_bytes": 409
+  },
+  "resolved_config": {
+    "path": "configs/runs/vk-cp-final-afn-plus-s43-v1-resume-v2.yaml",
+    "sha256": "757834904b29b8fb3ec3e34fe7dd9cc394d9759fc90042781bb8533a47fa14c9",
+    "size_bytes": 3248
+  },
+  "result_path": "results/final_validation/vk-cp-final-afn-plus-s43-v1-resume-v2.json",
+  "result_path_exists": false,
+  "resume_policy": {
+    "eligible": true,
+    "fresh_guards_required": true,
+    "requires_new_run_id": true,
+    "runtime_resume": true,
+    "same_run_directory": true,
+    "training_contract_unchanged": true
+  },
+  "run_id": "vk-cp-final-afn-plus-s43-v1-resume-v2",
+  "schema_version": 1,
+  "scientific_result_eligible": false,
+  "seed": 43,
+  "selected_best_checkpoint": {
+    "all_tensors_cpu": true,
+    "all_tensors_finite": true,
+    "best_metric": 0.020784721147440267,
+    "examples_seen": 32002048,
+    "optimizer_steps": 7813,
+    "path": "runs/vk-cp-final-afn-plus-s43-v1/best-step-000000007813-generation-0000.pt",
+    "role": "best",
+    "sha256": "70fbd8203b2e32160c06b53f33afdb764ad07e1445b9c11f8737a32a248281a9",
+    "sidecar": {
+      "path": "runs/vk-cp-final-afn-plus-s43-v1/best-step-000000007813-generation-0000.pt.sha256",
+      "sha256": "828596e19f7976d34f8919c7606747fcb20e5345de4e7ebdc3b064282ee3a332",
+      "size_bytes": 108
+    },
+    "size_bytes": 79225843,
+    "tensor_count": 134,
+    "tensor_elements": 12287942,
+    "validation_checks": 8,
+    "weights_only_cpu_reopen": true
+  },
+  "stale_temporary": {
+    "owner_pid": 1244264,
+    "owner_pid_absent": true,
+    "path": "runs/registry/records/.vk-cp-final-afn-plus-s43-v1-resume-v2.json.1244264-3xl4plav.tmp",
+    "safe_to_remove_after_receipt": true,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size_bytes": 0
+  },
+  "test_metrics": null,
+  "worker_log": {
+    "path": "runs/vk-cp-final-afn-plus-s43-v1/worker-resume-v2.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size_bytes": 0
+  }
+}

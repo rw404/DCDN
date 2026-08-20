@@ -40,6 +40,7 @@ the epoch is currently unknown and must be recorded separately if discovered.
 | 2026-08-19T17:54:54.415622Z | 3.29 assumed | Unavailable and owner-waived | 132.56 current; 132.56 at 0 h ETA | 32.693449 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen VK-LSVD C+P Original DCN candidates completed scientifically eligible validation-only tuning with zero OOM/non-finite observations and `test_metrics=null`; strict minimization selected LR=0.0003 at normalized MSE `0.021035584402689534`; immutable selection receipt SHA-256 `f352c9d07a9690303d7d0fc5986147310d0f83d9185599b02fcdb58a86e50656`; all 11 checkpoint pairs passed strict sidecars and safe CPU finite-tensor reopen; three bounded registry-helper incidents recovered without trainer interruption; storage measured 12,217,759,232 project bytes, 38.621325 GiB logical headroom, and 61.952000 GiB overlay available; both A100s idle and no task-owned trainer remained | Original DCN validation choice frozen; DCDN is lower by about 0.277157% on matched seed-42 validation; retain checkpoints until evidence commit/push/read-test, continue with AutoInt+, and keep final/test locked; no provider action performed |
 | 2026-08-19T19:22:09.064147Z | 3.29 assumed | Unavailable and owner-waived | 137.35 current; 137.35 at 0 h ETA | 34.147518 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; both frozen VK-LSVD C+P AutoInt+ candidates completed scientifically eligible validation-only tuning with zero OOM/non-finite observations and `test_metrics=null`; strict minimization selected LR=0.0003 at normalized MSE `0.020879945407626305`; immutable selection receipt SHA-256 `45ab5878b7a7ad5b57be418e6d17b5583b7cc84130fbef3a856af275c82169bb`; all 12 checkpoint pairs passed strict sidecars and safe CPU finite-tensor reopen; storage measured 12,993,276,416 project bytes, 37.899068 GiB logical headroom, and 61.948238 GiB overlay available; both A100s idle and no task-owned trainer remained | AutoInt+ validation choice frozen; AutoInt+ is lower than DCDN by about 0.464013% on matched seed-42 validation, so universal DCDN superiority is not supported; retain checkpoints until evidence commit/push/read-test, continue with Wukong-small, and keep final/test locked; no provider action performed |
 | 2026-08-19T20:20:52.836314Z | 3.29 assumed | Unavailable and owner-waived | 140.57 current; 140.57 at 0 h ETA | 35.126343 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; the single pre-frozen VK-LSVD C+P Wukong-small fixed-no-tune candidate completed scientifically eligible validation-only training with zero OOM/non-finite observations and `test_metrics=null`; it stopped by patience after 24,002,560 examples and selected normalized MSE `0.02096245653858564`; immutable receipt SHA-256 `4f671539bd70d4054e9573c6d85f1cd991046e1980204fa78352c2cbd660cb16`; all four checkpoint pairs passed strict sidecars and safe CPU finite-tensor reopen; one bounded registry-helper incident recovered without trainer interruption; storage measured 14,255,196,672 project bytes, 36.723814 GiB logical headroom, and 61.942345 GiB overlay available; both A100s idle and no task-owned trainer remained | Wukong-small fixed validation cell frozen; seed-42 C+P per-model selection suite complete; next build/audit dataset selected-config lock and final runner while test remains locked; no provider action performed |
+| 2026-08-20T12:23:12.516334Z | 3.29 assumed | Unavailable and owner-waived | 193.33 current; 193.33 at 0 h ETA | 51.165143 elapsed hours x USD 3.29 + USD 25 fixed storage reserve; all nine frozen VK-LSVD C+P validation rows now have scientifically eligible seeds 42/43/44; summary SHA-256 b5c64f84e6562add812a1fa5d3db2cbbf1ed712ff6e2237c59217dd6047fc070 and all 27 source SHA references passed; project storage 23,639,039,488 bytes, 27.984429 GiB logical headroom, 60.702209 GiB overlay available; both A100s idle, registry running empty, no task process | Narrow DCDN-vs-DCN validation hypothesis supported on all three seeds; universal DCDN superiority not supported; freeze selected-config lineage and one-pass bundle before test; no provider action performed |
 
 Control-plane historical charges and balance are unavailable and are not
 invented. The owner explicitly waived provider-side expiry, credentialed
@@ -80,6 +81,29 @@ locked until every required model
 selection and checkpoint lineage is frozen, the one-pass final runner is
 implemented and audited, and the protocol lifecycle explicitly activates test
 access; `test_unlocked=false`.
+
+## 2026-08-20 three-seed RQ1 validation checkpoint
+
+All nine frozen VK-LSVD `C+P` rows now have scientifically eligible
+validation-only evidence for seeds 42, 43, and 44. The exact compact summary
+is `results/final_validation/vk_lsvd_c_plus_p_rq1_validation_summary_v1.json`,
+SHA-256
+`b5c64f84e6562add812a1fa5d3db2cbbf1ed712ff6e2237c59217dd6047fc070`.
+DCDN is lower than Original DCN on all three seeds by a paired mean
+`0.000041601361759013` (about 0.197739%) and lower than the rank-12
+capacity-matched control on all three by `0.000028828551562561` (about
+0.137111%). This supports the narrow RQ1 validation hypothesis, while
+full-rank DCNv2 and five other baselines have lower three-seed means and rule
+out a universal-superiority claim.
+
+These are validation results, not final test results. At
+`2026-08-20T12:23:12.516334Z`, estimated warning headroom was USD 176.67 and
+estimated hard-cap headroom was USD 266.67. Project storage was 22.0156 GiB
+with 27.9844 GiB logical headroom and 60.7022 GiB overlay available. Both
+A100s were idle, registry `running=[]`, and no task process remained.
+Final/test stays locked until the complete selected-config lineage and audited
+one-pass metric/uncertainty bundle are frozen and the protocol explicitly
+activates test access; `test_unlocked=false`.
 
 ## 2026-08-19 C+P+E premetric checkpoint
 
