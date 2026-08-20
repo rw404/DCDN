@@ -31,6 +31,23 @@ SUMMARY_PATH = PurePosixPath(
     "results/final_validation/vk_lsvd_c_plus_p_rq1_validation_summary_v1.json"
 )
 OUTPUT_PATH = PurePosixPath("configs/protocols/vk_lsvd_c_plus_p/selected_configs.lock")
+CPE_PROTOCOL_PATH = PurePosixPath(
+    "configs/protocols/vk_lsvd_c_plus_p_plus_e/protocol_frozen.yaml"
+)
+CPE_OUTPUT_PATH = PurePosixPath(
+    "configs/protocols/vk_lsvd_c_plus_p_plus_e/selected_configs.lock"
+)
+CPE_SELECTION_RECEIPT_PATH = PurePosixPath(
+    "results/tuning/vk_lsvd_c_plus_p_plus_e_dcnv2_full_rank_selection_v3.json"
+)
+CPE_FINAL_RESULT_PATHS = {
+    43: (
+        "results/final_validation/vk-cpe-final-dcnv2-full-rank-l2-s43-v1-receipt-v3.json"
+    ),
+    44: (
+        "results/final_validation/vk-cpe-final-dcnv2-full-rank-l2-s44-v1-receipt-v3.json"
+    ),
+}
 CAPACITY_MODEL_KEY = "dcnv2_capacity_matched_core"
 DISPLAY_BY_MODEL = {
     "dnn": "DNN",
@@ -262,6 +279,7 @@ def _validate_seed_lineage(
     model_key: str,
     seed: int,
     config_path: str,
+    feature_regime: str,
     result_path: str,
     expected_result_sha256: str | None,
     expected_checkpoint_path: str | None,
@@ -280,7 +298,7 @@ def _validate_seed_lineage(
     training = config.get("training")
     _expect(isinstance(training, Mapping), f"{model_key}/{seed} training malformed")
     _expect(training.get("dataset_id") == "vk_lsvd_up0.01_ir0.01", "dataset drift")
-    _expect(training.get("feature_regime") == "C+P", "feature regime drift")
+    _expect(training.get("feature_regime") == feature_regime, "feature regime drift")
     _expect(training.get("model_key") == model_key, f"{model_key}/{seed} model drift")
     _expect(
         type(training.get("seed")) is int and training["seed"] == seed, "seed drift"
@@ -457,6 +475,7 @@ def derive_vk_selected_configs_payload(repository_root: str | Path) -> dict[str,
                 model_key=model_key,
                 seed=seed,
                 config_path=config_path,
+                feature_regime="C+P",
                 result_path=result_path,
                 expected_result_sha256=result_sha,
                 expected_checkpoint_path=checkpoint_path,
@@ -498,6 +517,162 @@ def derive_vk_selected_configs_payload(repository_root: str | Path) -> dict[str,
         "capacity_resolution_sha256": hashes["capacity_resolution_sha256"],
         "required_model_keys": required,
         "selected_models": selected_models,
+    }
+    validate_selected_configs_payload(payload)
+    return payload
+
+
+def derive_vk_cpe_selected_configs_payload(
+    repository_root: str | Path,
+) -> dict[str, Any]:
+    """Rebuild the C+P+E lock from validation-only three-seed evidence."""
+
+    root = _repo_root(repository_root)
+    protocol_artifact = load_verified_yaml_artifact(root / CPE_PROTOCOL_PATH)
+    protocol = protocol_artifact.payload
+    _expect(
+        protocol.get("test_unlocked") is False,
+        "C+P+E premetric protocol must stay locked",
+    )
+    _expect(
+        protocol.get("test_path_available") is False,
+        "C+P+E premetric protocol must not expose a test path",
+    )
+    _expect(protocol.get("feature_regime") == "C+P+E", "feature regime drift")
+    required = protocol.get("required_model_keys")
+    _expect(
+        required == ["dcnv2_full_rank"],
+        "C+P+E protocol must require exactly full-rank DCNv2",
+    )
+    hashes = protocol.get("hashes")
+    _expect(isinstance(hashes, Mapping), "C+P+E protocol hashes malformed")
+
+    receipt_path = CPE_SELECTION_RECEIPT_PATH.as_posix()
+    receipt, receipt_sha = _load_json(root, receipt_path)
+    _expect(receipt.get("dataset_id") == protocol.get("dataset_id"), "dataset drift")
+    _expect(receipt.get("feature_regime") == "C+P+E", "receipt regime drift")
+    firewall = receipt.get("test_firewall")
+    _expect(isinstance(firewall, Mapping), "selection test firewall missing")
+    for field in (
+        "legacy_test_opened",
+        "protocol_test_path_available",
+        "protocol_test_unlocked",
+        "test_data_accessed",
+        "test_metrics_consulted",
+    ):
+        _expect(firewall.get(field) is False, f"unsafe selection firewall: {field}")
+    _expect(
+        firewall.get("selected_on_validation_only") is True,
+        "selection must be validation-only",
+    )
+    _expect(firewall.get("legacy_test_metrics") is None, "legacy test metric present")
+    _expect(
+        firewall.get("test_metrics_in_candidate_results") is None,
+        "candidate test metric present",
+    )
+    _expect(
+        firewall.get("combined_history_test_event_count") == 0,
+        "selection history contains a test event",
+    )
+
+    selected = receipt.get("selected")
+    _expect(isinstance(selected, Mapping), "selected C+P+E candidate missing")
+    candidate_id = selected.get("candidate_id")
+    _expect(isinstance(candidate_id, str) and candidate_id, "candidate_id missing")
+    seed42_config = _relative(
+        selected.get("resolved_config_path"),
+        "C+P+E seed-42 config path",
+        suffix=".yaml",
+    )
+    seed42_result = _relative(
+        selected.get("result_path"),
+        "C+P+E seed-42 result path",
+        suffix=".json",
+    )
+    seed42_result_sha = selected.get("result_sha256")
+    _expect(isinstance(seed42_result_sha, str), "seed-42 result SHA missing")
+    seed42_best = _relative(
+        selected.get("best_checkpoint_path"),
+        "C+P+E seed-42 checkpoint path",
+        suffix=".pt",
+    )
+    seed42_best_sha = selected.get("best_checkpoint_sha256")
+    _expect(isinstance(seed42_best_sha, str), "seed-42 checkpoint SHA missing")
+    seed42_metric = _finite_metric(
+        selected.get("validation_metric"),
+        "C+P+E seed-42 selected metric",
+    )
+
+    lineage: dict[str, Any] = {}
+    model_digest: str | None = None
+    for seed in FINAL_SEEDS:
+        if seed == 42:
+            config_path = seed42_config
+            result_path = seed42_result
+            result_sha = seed42_result_sha
+            checkpoint_path = seed42_best
+            checkpoint_sha = seed42_best_sha
+            expected_metric = seed42_metric
+        else:
+            result_path = CPE_FINAL_RESULT_PATHS[seed]
+            result_payload, result_sha = _load_json(root, result_path)
+            run_id = result_payload.get("run_id")
+            _expect(isinstance(run_id, str) and run_id, "final run_id missing")
+            config_path = f"configs/runs/{run_id}.yaml"
+            checkpoint_path = None
+            checkpoint_sha = None
+            expected_metric = _finite_metric(
+                result_payload.get("selected_validation_metric"),
+                f"C+P+E/{seed} selected metric",
+            )
+        seed_lineage, current_model_digest = _validate_seed_lineage(
+            root,
+            protocol_sha256=protocol_artifact.digest,
+            model_key="dcnv2_full_rank",
+            seed=seed,
+            feature_regime="C+P+E",
+            config_path=config_path,
+            result_path=result_path,
+            expected_result_sha256=result_sha,
+            expected_checkpoint_path=checkpoint_path,
+            expected_checkpoint_sha256=checkpoint_sha,
+            expected_candidate_id=candidate_id,
+            expected_metric=expected_metric,
+            selection_receipt_path=receipt_path,
+            selection_receipt_sha256=receipt_sha,
+        )
+        if model_digest is None:
+            model_digest = current_model_digest
+        _expect(
+            current_model_digest == model_digest,
+            "C+P+E seed-invariant model digest drift",
+        )
+        lineage[str(seed)] = seed_lineage
+
+    assert model_digest is not None
+    payload = {
+        "schema_version": 2,
+        "artifact_role": "final_selected_configs_lock",
+        "dataset_id": protocol["dataset_id"],
+        "feature_regime": protocol["feature_regime"],
+        "parent_premetric_protocol_sha256": protocol_artifact.digest,
+        "search_space_sha256": hashes["search_space_sha256"],
+        "experiment_matrix_sha256": hashes["experiment_matrix_sha256"],
+        "encoder_contract_sha256": hashes["encoder_contract_sha256"],
+        "capacity_resolution_sha256": hashes["capacity_resolution_sha256"],
+        "required_model_keys": required,
+        "selected_models": {
+            "dcnv2_full_rank": {
+                "candidate_id": candidate_id,
+                "resolved_config_sha256": model_digest,
+                "selection_receipt_path": receipt_path,
+                "selection_receipt_sha256": receipt_sha,
+                "final_seed_lineage": lineage,
+                "selected_on_validation_only": True,
+                "test_data_accessed": False,
+                "test_metrics_consulted": False,
+            }
+        },
     }
     validate_selected_configs_payload(payload)
     return payload
@@ -583,4 +758,17 @@ def materialize_vk_selected_configs_lock(
     digest = _publish_once(root, OUTPUT_PATH, payload)
     lock = SelectedConfigsLock.load(root / OUTPUT_PATH)
     _expect(lock.digest == digest, "published selected lock digest drift")
+    return lock
+
+
+def materialize_vk_cpe_selected_configs_lock(
+    repository_root: str | Path,
+) -> SelectedConfigsLock:
+    """Create and strictly reopen the immutable C+P+E selected lock."""
+
+    root = _repo_root(repository_root)
+    payload = derive_vk_cpe_selected_configs_payload(root)
+    digest = _publish_once(root, CPE_OUTPUT_PATH, payload)
+    lock = SelectedConfigsLock.load(root / CPE_OUTPUT_PATH)
+    _expect(lock.digest == digest, "published C+P+E selected lock digest drift")
     return lock
