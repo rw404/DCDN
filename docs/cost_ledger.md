@@ -229,3 +229,27 @@ spend was USD 213.21 including the fixed USD 25 storage reserve, below the USD
 A100s were idle at 0 MiB/0%, and no synthetic runner process remained.
 No provider lifecycle action, external telemetry, or public-dataset test
 access occurred; `test_unlocked=false` remains in force.
+
+At `2026-08-20T19:00:32Z`, the RQ2
+serving-performance and efficiency study completed on one A100. It trains
+nothing and reads no dataset row, label, or test metric: 14 arms per geometry
+across two geometries, batches {1, 64, 1024}, 200 warmups, 1,000 synchronized
+forwards, 5 independent rounds, with every forward timed twice by wall clock
+and by CUDA device events. Median wall/device p95 agreement was 1.012 and the
+worst 1.100 against a ceiling of 2.0, so the waived load-average gate is
+recorded as `final_load_gate_waived_by_device_time_agreement`. An immutable
+pre-measurement manifest (`5de33d29...`) was published before the first timed
+forward, and all four artifacts verify against strict exact-byte sidecars.
+
+A defect that would have joined ranker-geometry latency to quotient-geometry
+quality was caught before publication; the run was stopped at five minutes, the
+partial output directory removed, the join restricted by an explicit
+compatibility flag, and a regression test added.
+
+Compute for this study was roughly 0.35 GPU-hours on one A100; the second A100
+stayed idle. The credential-free estimate is USD 215.12 for 57.787351
+elapsed Pod-hours including the fixed USD 25 storage reserve, leaving
+USD 154.88 of warning-threshold headroom and USD 244.88 of
+hard-cap headroom. Durable project storage was 16.325 GiB of the 40 GiB cap.
+No provider action, external mutation, or test access occurred;
+`test_unlocked=false` remains in force.

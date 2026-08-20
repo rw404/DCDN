@@ -1,0 +1,549 @@
+{
+  "analytic_counts": {
+    "quotient": {
+      "full": {
+        "common": {
+          "adapter_flops": 1408,
+          "adapter_parameters": 768,
+          "head_flops": 33344,
+          "head_parameters": 16771,
+          "linear_head_flops": 384,
+          "linear_head_parameters": 195,
+          "num_targets": 3,
+          "tower_flops": 32960,
+          "tower_parameters": 16576
+        },
+        "dcdn_l1": {
+          "adapter_flops": 1408,
+          "adapter_parameters": 768,
+          "architecture": "DCDN-Core-L1",
+          "flops": 35291,
+          "head_flops": 33344,
+          "head_parameters": 16771,
+          "interaction_flops": 539,
+          "interaction_flops_per_layer": 528,
+          "interaction_parameters": 264,
+          "interaction_parameters_per_layer": 264,
+          "num_layers": 1,
+          "parameters": 17803,
+          "reciprocal_flops": 11
+        },
+        "dcdn_l2": {
+          "adapter_flops": 1408,
+          "adapter_parameters": 768,
+          "architecture": "DCDN-Core-L2",
+          "flops": 35819,
+          "head_flops": 33344,
+          "head_parameters": 16771,
+          "interaction_flops": 1067,
+          "interaction_flops_per_layer": 528,
+          "interaction_parameters": 528,
+          "interaction_parameters_per_layer": 264,
+          "num_layers": 2,
+          "parameters": 18067,
+          "reciprocal_flops": 11
+        },
+        "dcnv2_l2": {
+          "adapter_flops": 1408,
+          "adapter_parameters": 768,
+          "architecture": "DCNv2-full-rank-L2",
+          "flops": 35280,
+          "head_flops": 33344,
+          "head_parameters": 16771,
+          "interaction_flops": 528,
+          "interaction_flops_per_layer": 264,
+          "interaction_parameters": 264,
+          "interaction_parameters_per_layer": 132,
+          "num_layers": 2,
+          "parameters": 17803
+        },
+        "flat_width": 11,
+        "operand_width": 11
+      },
+      "reduced": {
+        "common": {
+          "adapter_flops": 1024,
+          "adapter_parameters": 576,
+          "head_flops": 33344,
+          "head_parameters": 16771,
+          "linear_head_flops": 384,
+          "linear_head_parameters": 195,
+          "num_targets": 3,
+          "tower_flops": 32960,
+          "tower_parameters": 16576
+        },
+        "dcdn_l1": {
+          "adapter_flops": 1024,
+          "adapter_parameters": 576,
+          "architecture": "DCDN-Core-L1",
+          "flops": 34664,
+          "head_flops": 33344,
+          "head_parameters": 16771,
+          "interaction_flops": 296,
+          "interaction_flops_per_layer": 288,
+          "interaction_parameters": 144,
+          "interaction_parameters_per_layer": 144,
+          "num_layers": 1,
+          "parameters": 17491,
+          "reciprocal_flops": 8
+        },
+        "dcdn_l2": {
+          "adapter_flops": 1024,
+          "adapter_parameters": 576,
+          "architecture": "DCDN-Core-L2",
+          "flops": 34952,
+          "head_flops": 33344,
+          "head_parameters": 16771,
+          "interaction_flops": 584,
+          "interaction_flops_per_layer": 288,
+          "interaction_parameters": 288,
+          "interaction_parameters_per_layer": 144,
+          "num_layers": 2,
+          "parameters": 17635,
+          "reciprocal_flops": 8
+        },
+        "dcnv2_l2": {
+          "adapter_flops": 1024,
+          "adapter_parameters": 576,
+          "architecture": "DCNv2-full-rank-L2",
+          "flops": 34656,
+          "head_flops": 33344,
+          "head_parameters": 16771,
+          "interaction_flops": 288,
+          "interaction_flops_per_layer": 144,
+          "interaction_parameters": 144,
+          "interaction_parameters_per_layer": 72,
+          "num_layers": 2,
+          "parameters": 17491
+        },
+        "flat_width": 8,
+        "operand_width": 8
+      }
+    },
+    "ranker": {
+      "full": {
+        "common": {
+          "adapter_flops": 22272,
+          "adapter_parameters": 11200,
+          "head_flops": 33472,
+          "head_parameters": 16836,
+          "linear_head_flops": 512,
+          "linear_head_parameters": 260,
+          "num_targets": 4,
+          "tower_flops": 32960,
+          "tower_parameters": 16576
+        },
+        "dcdn_l1": {
+          "adapter_flops": 22272,
+          "adapter_parameters": 11200,
+          "architecture": "DCDN-Core-L1",
+          "flops": 80470,
+          "head_flops": 33472,
+          "head_parameters": 16836,
+          "interaction_flops": 24726,
+          "interaction_flops_per_layer": 24648,
+          "interaction_parameters": 12324,
+          "interaction_parameters_per_layer": 12324,
+          "num_layers": 1,
+          "parameters": 40360,
+          "reciprocal_flops": 78
+        },
+        "dcdn_l2": {
+          "adapter_flops": 22272,
+          "adapter_parameters": 11200,
+          "architecture": "DCDN-Core-L2",
+          "flops": 105118,
+          "head_flops": 33472,
+          "head_parameters": 16836,
+          "interaction_flops": 49374,
+          "interaction_flops_per_layer": 24648,
+          "interaction_parameters": 24648,
+          "interaction_parameters_per_layer": 12324,
+          "num_layers": 2,
+          "parameters": 52684,
+          "reciprocal_flops": 78
+        },
+        "dcnv2_l2": {
+          "adapter_flops": 22272,
+          "adapter_parameters": 11200,
+          "architecture": "DCNv2-full-rank-L2",
+          "flops": 177544,
+          "head_flops": 33472,
+          "head_parameters": 16836,
+          "interaction_flops": 121800,
+          "interaction_flops_per_layer": 60900,
+          "interaction_parameters": 60900,
+          "interaction_parameters_per_layer": 30450,
+          "num_layers": 2,
+          "parameters": 88936
+        },
+        "flat_width": 174,
+        "operand_width": 78
+      },
+      "reduced": {
+        "common": {
+          "adapter_flops": 20096,
+          "adapter_parameters": 10112,
+          "head_flops": 33472,
+          "head_parameters": 16836,
+          "linear_head_flops": 512,
+          "linear_head_parameters": 260,
+          "num_targets": 4,
+          "tower_flops": 32960,
+          "tower_parameters": 16576
+        },
+        "dcdn_l1": {
+          "adapter_flops": 20096,
+          "adapter_parameters": 10112,
+          "architecture": "DCDN-Core-L1",
+          "flops": 68757,
+          "head_flops": 33472,
+          "head_parameters": 16836,
+          "interaction_flops": 15189,
+          "interaction_flops_per_layer": 15128,
+          "interaction_parameters": 7564,
+          "interaction_parameters_per_layer": 7564,
+          "num_layers": 1,
+          "parameters": 34512,
+          "reciprocal_flops": 61
+        },
+        "dcdn_l2": {
+          "adapter_flops": 20096,
+          "adapter_parameters": 10112,
+          "architecture": "DCDN-Core-L2",
+          "flops": 83885,
+          "head_flops": 33472,
+          "head_parameters": 16836,
+          "interaction_flops": 30317,
+          "interaction_flops_per_layer": 15128,
+          "interaction_parameters": 15128,
+          "interaction_parameters_per_layer": 7564,
+          "num_layers": 2,
+          "parameters": 42076,
+          "reciprocal_flops": 61
+        },
+        "dcnv2_l2": {
+          "adapter_flops": 20096,
+          "adapter_parameters": 10112,
+          "architecture": "DCNv2-full-rank-L2",
+          "flops": 152792,
+          "head_flops": 33472,
+          "head_parameters": 16836,
+          "interaction_flops": 99224,
+          "interaction_flops_per_layer": 49612,
+          "interaction_parameters": 49612,
+          "interaction_parameters_per_layer": 24806,
+          "num_layers": 2,
+          "parameters": 76560
+        },
+        "flat_width": 157,
+        "operand_width": 61
+      }
+    }
+  },
+  "artifact_role": "rq2_efficiency_pre_measurement_manifest",
+  "capacity_resolution": {
+    "quotient": {
+      "reduced": {
+        "flop_ratio": 1.0002596353565658,
+        "flops": 34673,
+        "interaction_parameters": 148,
+        "low_rank": 6,
+        "num_experts": 1,
+        "num_layers": 1,
+        "parameter_ratio": 1.0002286890400778,
+        "parameters": 17495
+      }
+    },
+    "ranker": {
+      "reduced": {
+        "flop_ratio": 1.0017889087656529,
+        "flops": 68880,
+        "interaction_parameters": 7594,
+        "low_rank": 25,
+        "num_experts": 1,
+        "num_layers": 2,
+        "parameter_ratio": 1.0008692628650904,
+        "parameters": 34542
+      }
+    }
+  },
+  "geometries": [
+    {
+      "bypass_dim": 0,
+      "categorical_cardinality": 1,
+      "categorical_fields": 0,
+      "denominator_count": 3,
+      "description": "exact widths of the Synthetic-MultiQuotient-3 benchmark; pairs one-to-one with the published rq1_v2 quality numbers",
+      "embedding_dim": 8,
+      "full_operands": 11,
+      "geometry_id": "quotient",
+      "num_targets": 3,
+      "reads_real_data": false,
+      "reduced_operands": 8
+    },
+    {
+      "bypass_dim": 96,
+      "categorical_cardinality": 100000,
+      "categorical_fields": 6,
+      "denominator_count": 5,
+      "description": "industrial-scale geometry stand-in matching the field and width counts derived by features_multitask_v1; random inputs only, no VK-LSVD row, label, or statistic is read",
+      "embedding_dim": 16,
+      "full_operands": 78,
+      "geometry_id": "ranker",
+      "num_targets": 4,
+      "reads_real_data": false,
+      "reduced_operands": 61
+    }
+  ],
+  "host_state_at_start": {
+    "cpu_count": 128,
+    "cuda_version": "12.8",
+    "device_multi_processor_count": 108,
+    "device_name": "NVIDIA A100-SXM4-80GB",
+    "device_total_memory_bytes": 85093777408,
+    "host_idle": false,
+    "idle_ceiling": 2.0,
+    "load_average_15m": 4.8671875,
+    "load_average_1m": 3.91796875,
+    "load_average_5m": 4.26708984375,
+    "platform": "Linux-6.8.0-100-generic-x86_64-with-glibc2.39",
+    "torch_version": "2.8.0+cu128"
+  },
+  "init_seed": 42,
+  "input_seed": 20260820,
+  "planned_arms": {
+    "quotient": [
+      {
+        "arm_id": "linear",
+        "label": "Linear probe",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "floor"
+      },
+      {
+        "arm_id": "dcnv2_reduced",
+        "label": "M1 DCNv2-REDUCED-MTL",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcdn_reduced",
+        "label": "M2 DCDN-Core-REDUCED-MTL",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "afn_reduced",
+        "label": "M3 AFN+-REDUCED-MTL",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcnv2_capacity_reduced",
+        "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+        "notes": {
+          "capacity_matched_to": "dcdn_reduced"
+        },
+        "regime": "reduced",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcnv2_full",
+        "label": "M5 DCNv2-FULL-MTL",
+        "notes": {},
+        "regime": "full",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcdn_full",
+        "label": "M6 DCDN-Core-FULL-MTL",
+        "notes": {},
+        "regime": "full",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "afn_full",
+        "label": "M7 AFN+-FULL-MTL",
+        "notes": {},
+        "regime": "full",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcdn_reduced_l2",
+        "label": "DCDN-Core-L2-REDUCED (depth control)",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "depth_control"
+      },
+      {
+        "arm_id": "dnn_reduced",
+        "label": "DNN",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      },
+      {
+        "arm_id": "deepfm_reduced",
+        "label": "DeepFM",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      },
+      {
+        "arm_id": "dcn_reduced",
+        "label": "DCN",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      },
+      {
+        "arm_id": "autoint_plus_reduced",
+        "label": "AutoInt+",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      },
+      {
+        "arm_id": "wukong_small_reduced",
+        "label": "Wukong-small",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      }
+    ],
+    "ranker": [
+      {
+        "arm_id": "linear",
+        "label": "Linear probe",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "floor"
+      },
+      {
+        "arm_id": "dcnv2_reduced",
+        "label": "M1 DCNv2-REDUCED-MTL",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcdn_reduced",
+        "label": "M2 DCDN-Core-REDUCED-MTL",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "afn_reduced",
+        "label": "M3 AFN+-REDUCED-MTL",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcnv2_capacity_reduced",
+        "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+        "notes": {
+          "capacity_matched_to": "dcdn_reduced"
+        },
+        "regime": "reduced",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcnv2_full",
+        "label": "M5 DCNv2-FULL-MTL",
+        "notes": {},
+        "regime": "full",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcdn_full",
+        "label": "M6 DCDN-Core-FULL-MTL",
+        "notes": {},
+        "regime": "full",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "afn_full",
+        "label": "M7 AFN+-FULL-MTL",
+        "notes": {},
+        "regime": "full",
+        "tier": "matrix"
+      },
+      {
+        "arm_id": "dcdn_reduced_l2",
+        "label": "DCDN-Core-L2-REDUCED (depth control)",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "depth_control"
+      },
+      {
+        "arm_id": "dnn_reduced",
+        "label": "DNN",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      },
+      {
+        "arm_id": "deepfm_reduced",
+        "label": "DeepFM",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      },
+      {
+        "arm_id": "dcn_reduced",
+        "label": "DCN",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      },
+      {
+        "arm_id": "autoint_plus_reduced",
+        "label": "AutoInt+",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      },
+      {
+        "arm_id": "wukong_small_reduced",
+        "label": "Wukong-small",
+        "notes": {},
+        "regime": "reduced",
+        "tier": "tier_b"
+      }
+    ]
+  },
+  "protocol": {
+    "batches": [
+      1,
+      64,
+      1024
+    ],
+    "excluded": [
+      "preprocessing",
+      "dataloader",
+      "host_to_device_transfer"
+    ],
+    "forward_scope": "full_multi_target_forward_with_every_head",
+    "independent_rounds": 5,
+    "inputs": "device_resident_random_tensors",
+    "mode": "eval_and_inference_mode",
+    "precision_policy": "float32_parameters_no_autocast_identical_across_rows",
+    "runtime_match_latency_factor": 1.1,
+    "runtime_match_throughput_factor": 0.9,
+    "synchronized_forwards": 1000,
+    "timing": "wall_clock_synchronized_and_cuda_event_device_time",
+    "wall_versus_device_p95_ceiling": 2.0,
+    "warmups": 200
+  },
+  "reads_dataset_rows": false,
+  "reads_labels": false,
+  "reads_test_metrics": false,
+  "schema_version": 1,
+  "trains_any_model": false
+}

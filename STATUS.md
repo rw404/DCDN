@@ -1031,3 +1031,96 @@ and are excluded from all claims.
 
 No public-dataset test row was opened. The frozen public test firewall and
 `test_unlocked=false` remain unchanged. Results are now reported in README.
+
+## 2026-08-20 RQ2 serving performance and efficiency complete
+
+The cost half of RQ2 is **complete**. Full report:
+`docs/rq2_serving_performance.md`. Artifacts:
+`results/efficiency/rq2_perf_v1/` — `pre_measurement_manifest_v1.json`
+(`5de33d29…`), `results_v1.json` (`5d69b484…`), `efficiency.csv` (84 rows,
+`766fdfd3…`), `pareto.csv` (32 rows, `57be62ab…`). All four verify against
+strict exact-byte sidecars. The manifest was published before the first timed
+forward.
+
+This study trains nothing and reads no dataset row, label, or test metric, so
+it did not touch any pipeline in flight. Arm ids match
+`results/synthetic_multiquotient/rq1_v2` exactly, so cost joins to the
+published quality table with no mapping layer.
+
+**Protocol.** Full multi-target forward with every head, `eval()` +
+`inference_mode()`, device-resident inputs, batches {1, 64, 1024}, 200 warmups,
+1,000 synchronized forwards, 5 independent rounds, on one A100-SXM4-80GB.
+14 arms per geometry: the frozen `M1..M7` matrix, a linear floor, a DCDN depth
+control, and the Tier-B zoo.
+
+**Two geometries.** `quotient` reproduces the RQ1 widths so cost and quality
+share axes. `ranker` is an industrial-scale geometry stand-in (6 categorical
+fields, 96 bypass, 61/78 operands, embedding 16, four heads) matching the
+counts `features_multitask_v1` derives; **no VK-LSVD row, label, or statistic
+is read**, only the shape. The two geometries disagree on a headline verdict,
+which is the justification for measuring both.
+
+**Validity.** The load gate was waived (a concurrent session held the load
+average at 3.9) and the waiver is recorded with its basis. Every forward was
+timed twice — wall clock and CUDA device events. Median wall/device p95 ratio
+**1.012**, worst **1.100**, ceiling 2.0, worst p99 anywhere 2.28 ms. Status:
+`final_load_gate_waived_by_device_time_agreement`. A load-average threshold is
+a proxy; device-time agreement is the measurement.
+
+**Runtime-match verdicts** (`p95(B=1) <= 1.10x` and `throughput >= 0.90x`):
+
+| geometry | pair | p95 ratio | throughput | matched |
+|---|---|---:|---:|---|
+| quotient | DCDN vs DCNv2 | 1.387 | 0.725 | no |
+| quotient | DCDN vs capacity-matched | 1.030 | 0.979 | yes |
+| quotient | DCDN vs AFN+ | 0.820 | 1.207 | yes, DCDN cheaper |
+| ranker | DCDN vs DCNv2 | 1.343 | 0.764 | no |
+| ranker | DCDN vs capacity-matched | 0.735 | 1.364 | yes, DCDN much cheaper |
+| ranker | DCDN vs AFN+ | 0.768 | 1.329 | yes, DCDN cheaper |
+
+Full-regime pairs (`M6` vs `M5`, `M6` vs `M7`) behave identically to their
+reduced counterparts.
+
+**Findings.**
+
+1. **DCDN is never runtime-matched to DCNv2** — both geometries, both feature
+   regimes, p95 ratio 1.33–1.39 and throughput 0.72–0.77. "At the same serving
+   performance" is not an available phrase for that pair; it is a Pareto
+   trade-off. Stable across a 7.6x change in operand width, so not a toy
+   artifact.
+2. **DCDN's cost is not FLOP-bound.** At ranker width it carries 6.6x fewer
+   interaction parameters (7,564 vs 49,612) and 2.2x fewer FLOPs (68,757 vs
+   152,792) than DCNv2 — because it crosses `P` only while DCNv2 crosses the
+   full flat width — and is still 1.34x slower. The masked reciprocal carrier
+   is elementwise and memory-bound work. Any efficiency claim resting on
+   DCDN's FLOP count would be contradicted by measurement.
+3. **Parameter/FLOP matching and runtime matching are different checks, now
+   measured rather than asserted.** `M4` was resolved mechanically to within
+   0.1% of `M2` on parameters *and* FLOPs at both widths, yet the runtime
+   verdict inverts: DCDN/M4 p95 is 1.030 at quotient width and 0.735 at ranker
+   width, with throughput 0.979 versus 1.364. The low-rank mixture's gating and
+   expert loop cost far more wall time than its FLOP count implies.
+4. **DCDN dominates AFN+** on latency, throughput, and VRAM (78 MB vs 161 MB at
+   ranker width).
+5. **Depth is not free**: DCDN-L2 costs +25% p95 at quotient width and +20% at
+   ranker width over L1, on top of being markedly less stable out of
+   distribution in RQ1.
+6. **Removing the manual divisions buys almost nothing at inference.**
+   DCNv2-FULL and DCNv2-REDUCED are within 0.2% on latency at ranker width;
+   DCDN-FULL and DCDN-REDUCED within 1%. The value of the removal claim is
+   feature-pipeline complexity, not serving cost, and the manuscript must not
+   imply an inference saving the measurement does not show.
+
+**Pareto.** `pareto.csv` covers the `quotient` geometry only — the geometry
+whose models the quality source actually trained. A defect that would have
+joined ranker latency to quotient quality was caught before publication, fixed
+with an explicit `quality_source_compatible` flag, and covered by a regression
+test. On the ID slice DCDN is dominated; on the high-ratio OOD slice it is the
+frontier point with the best quality of any arm. Which arm is Pareto-optimal
+depends on the operating regime, so both slices are published.
+
+`tests/test_benchmark_efficiency.py` adds 35 tests covering geometry
+arithmetic, the denominator mask, arm-id agreement with `rq1_v2`, encoder and
+head identity across arms, capacity tolerance, verdict thresholds, the
+device-agreement gate, and exact-byte publication including refusal to
+overwrite.
