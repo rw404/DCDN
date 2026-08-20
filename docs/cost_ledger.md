@@ -213,3 +213,19 @@ Durable project storage was 16.324 GiB of the 40 GiB cap. No provider
 action, external mutation, or test access occurred; `test_unlocked=false`
 remains in force and the four remaining mandatory datasets are recorded as
 `executed: false` in `results/multitask/multitask_index.json`.
+
+## 2026-08-20 corrected Synthetic-MultiQuotient-3 RQ1
+
+Corrected replacement `results/synthetic_multiquotient/rq1_v2/` was executed
+on GPU0 after cost, storage, clean-code, process, and GPU-idle gates passed.
+GPU1 remained unused. The run completed 9 arms x 3 seeds and published five
+successful immutable artifact/sidecar pairs; result SHA-256 is
+`292755a33e391729b266372f564e571aa54f734c89ec9723126271cf016f5677`.
+
+At the post-run aggregation check (`2026-08-20T18:25:41.779682Z`), estimated
+spend was USD 213.21 including the fixed USD 25 storage reserve, below the USD
+370 warning and USD 460 hard cap. Durable project usage was 22.701 GiB of the
+40 GiB cap with 27.299 GiB logical headroom and 60.357 GiB overlay free. Both
+A100s were idle at 0 MiB/0%, and no synthetic runner process remained.
+No provider lifecycle action, external telemetry, or public-dataset test
+access occurred; `test_unlocked=false` remains in force.

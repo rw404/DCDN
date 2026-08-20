@@ -996,3 +996,38 @@ a concurrent repository-wide formatter. Both were rewritten. The restore of
 manifest SHA-256 and all six slice hashes exactly, and the full 81-test suite
 for the new modules passes. A copy of every task-owned file is kept outside the
 FUSE mount for the remainder of the session.
+
+## 2026-08-20 corrected Synthetic-MultiQuotient-3 RQ1 completed
+
+The corrected replacement `results/synthetic_multiquotient/rq1_v2/` completed
+under clean commit `305534223faa6073f1077d2c298150263b1ca788`. It executed
+exactly the frozen nine-arm matrix and froze seed-42 validation selections
+before evaluating seeds 42, 43, and 44.
+
+| identity | SHA-256 |
+|---|---|
+| benchmark manifest | `659d29f565bd51338e8c311a5c1c94335a499fbb2f62017d26581e785d8e72fd` |
+| pretraining manifest | `3d257ef17b0b8ea402f380e4a6fd4e0de31245f83ab860e88dddc7173bc91549` |
+| selected configs | `1f4755903d11d4f8e4066376401179a2091fc0b180429be0f9e52da958cb3c54` |
+| result receipt | `292755a33e391729b266372f564e571aa54f734c89ec9723126271cf016f5677` |
+
+All five output pairs pass exact-byte sidecar verification. The result has 27
+records, nine unique arms, seeds 42/43/44, zero non-finite predictions, and
+zero non-finite training batches.
+
+Macro-NLoss means support RQ1 only in a bounded sense. Reduced DCDN versus
+ordinary reduced DCNv2 is `3.64x` better on ID (`3.117e-4` versus `1.136e-3`),
+and `5.14x` better on high-ratio (`11.76` versus `60.43`). The mechanically
+capacity-matched control is slightly better on ID (`2.667e-4` versus
+`3.117e-4`) and much better on common-scale and low-ratio, while reduced DCDN
+is `4.32x` better than that control on high-ratio (`11.76` versus `50.76`).
+Therefore the reciprocal carrier has demonstrable quotient-regime predictive
+value, but universal DCDN superiority and scale invariance are not supported.
+
+The first replacement directory `rq1_v1` is execution-invalid because its
+selected-config file SHA-256 is `538e791e...285f0`, while its sidecar records
+`9b20efce...bf72`; its otherwise valid outputs remain forensic evidence only
+and are excluded from all claims.
+
+No public-dataset test row was opened. The frozen public test firewall and
+`test_unlocked=false` remain unchanged. Results are now reported in README.

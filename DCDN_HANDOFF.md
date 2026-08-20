@@ -1274,4 +1274,26 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   pretraining receipt before optimization, and use exact-byte sidecars in a
   fresh output directory. Test remained locked.
 
+- **Corrected Synthetic-MultiQuotient-3 RQ1 completed 2026-08-20.** The fresh
+  `results/synthetic_multiquotient/rq1_v2/` replacement ran the exact frozen
+  nine-arm matrix under clean commit
+  `305534223faa6073f1077d2c298150263b1ca788`, froze validation-selected
+  configurations before evaluation, and evaluated seeds 42/43/44. The
+  pretraining-manifest, selected-config, and result SHA-256 values are
+  `3d257ef1...91549`, `1f475590...b3c54`, and `292755a3...f5677`.
+
+  The bounded RQ1 hypothesis is supported: on identical reduced operands and
+  matched interaction parameters, DCDN improves ID Macro-NLoss from
+  `1.136e-3` to `3.117e-4` (`3.64x`) and high-ratio from `60.43` to `11.76`
+  (`5.14x`) relative to ordinary DCNv2. The capacity-matched control is better
+  on ID/common-scale/low-ratio, while DCDN is `4.32x` better on high-ratio;
+  therefore reciprocal structure has regime-specific predictive value but is
+  not a universal architecture win and does not imply scale invariance.
+
+  The preceding `rq1_v1` attempt is excluded because its selected-config bytes
+  hash to `538e791e...285f0` while its sidecar records `9b20efce...bf72`; it is
+  forensic execution evidence only. All five `rq1_v2` output pairs pass, the
+  27 records contain zero non-finite predictions/training batches, and no
+  public-dataset test path or metric was opened. Test remains locked.
+
 Update this decision log whenever a material choice changes.

@@ -56,14 +56,38 @@ the fail-closed gate accepts them.
 
 ## Current headline RQ1
 
-The multi-target `Synthetic-MultiQuotient-3` RQ1 is **pending**. A committed
-eight-arm diagnostic is quarantined because it does not equal the frozen M1–M7
-matrix and its JSON sidecars fail exact-byte verification. It is not a paper
-result. The corrected nine-arm runner and invalidation evidence are documented
-in `docs/reproduction_commands.md` and
-`artifacts/legacy_audit/synthetic_multiquotient_invalid_v0.json`. A verified
-result and verdict will be added here immediately after the clean replacement
-run completes.
+The corrected multi-target `Synthetic-MultiQuotient-3` experiment is complete.
+It ran the frozen nine-arm matrix (linear, M1--M7, and analytical oracle), used
+seed 42 validation only to select between the two frozen learning rates, froze
+the selected configurations before evaluation, and then evaluated seeds 42,
+43, and 44. Lower Macro-NLoss is better; values are three-seed means.
+
+| arm | ID | OOD common-scale | OOD low-ratio | OOD high-ratio |
+| --- | ---: | ---: | ---: | ---: |
+| M1 DCNv2-REDUCED-MTL | `1.136e-3` | `8.147e7` | `2.807e6` | `60.43` |
+| M2 DCDN-Core-REDUCED-MTL | `3.117e-4` | `5.975e3` | `2.990e3` | **`11.76`** |
+| M3 AFN+-REDUCED-MTL | `4.276e-2` | `29.87` | **`0.714`** | `117.86` |
+| M4 DCNv2-capacity-matched | **`2.667e-4`** | **`10.65`** | `0.860` | `50.76` |
+| M5 DCNv2-FULL-MTL | **`1.099e-4`** | `3.074e6` | `928.98` | `69.81` |
+| M6 DCDN-Core-FULL-MTL | `1.225e-4` | `6.644e3` | `441.84` | `28.27` |
+| M7 AFN+-FULL-MTL | `3.626e-2` | **`0.946`** | **`0.161`** | `33.05` |
+
+**RQ1 is supported, with a bounded interpretation.** On identical reduced
+inputs and exactly matched interaction parameters, DCDN is `3.64x` better than
+ordinary DCNv2 on ID and `5.14x` better on the high-ratio shift. This supports
+the claim that the reciprocal carrier learns useful quotient structure from
+the operands. It does **not** establish universal superiority: the
+capacity-matched control is better on ID, common-scale, and low-ratio, while
+DCDN wins against it only on high-ratio (`4.32x`). DCDN also does not provide
+scale invariance, and the full-feature DCNv2 remains slightly better on ID.
+
+The exact evidence is in `results/synthetic_multiquotient/rq1_v2/`:
+pretraining manifest SHA-256 `3d257ef1...91549`, selected-config SHA-256
+`1f475590...b3c54`, and result SHA-256 `292755a3...f5677`. All five adjacent
+sidecars pass exact-byte verification; the result contains 27 records, all
+nine arms, all three seeds, and zero non-finite predictions or training
+batches. The earlier eight-arm diagnostic and the first failed replacement
+attempt remain quarantined and are not scientific evidence.
 
 ## Legacy single-target validation checkpoint: seeds 42, 43, and 44
 
