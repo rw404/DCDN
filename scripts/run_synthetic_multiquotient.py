@@ -785,6 +785,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "task_constants_sha256": constants.contract_sha256,
         "capacity_resolution": payload,
         "selected_learning_rates": selected_lr,
+        "validation_selection": tuning_log,
         "encoder": {
             "embedding_dim": EMBEDDING_DIM,
             "representation_dim": REPRESENTATION_DIM,
@@ -804,13 +805,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         },
         "final_seeds": list(FINAL_SEEDS),
     }
-    frozen_text = json.dumps(frozen, indent=2, sort_keys=True)
-    frozen_sha = hashlib.sha256(frozen_text.encode("utf-8")).hexdigest()
-    (args.output_dir / "selected_configs_v1.json").write_text(
-        frozen_text + "\n", encoding="utf-8"
-    )
-    (args.output_dir / "selected_configs_v1.json.sha256").write_text(
-        f"{frozen_sha}  selected_configs_v1.json\n", encoding="utf-8"
+    frozen_sha = _publish_bytes(
+        args.output_dir / "selected_configs_v1.json",
+        _canonical_json_bytes(frozen),
     )
     print(f"\nfrozen selected configs sha256: {frozen_sha}")
 

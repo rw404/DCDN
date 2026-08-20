@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import inspect
 import sys
 from pathlib import Path
 
@@ -135,3 +136,10 @@ def test_frozen_contract_sidecars_reopen_exactly(runner) -> None:
         "configs/single_target_followup_v1.yaml",
     }
     assert all(len(value) == 64 for value in hashes.values())
+
+
+def test_main_freeze_path_uses_only_immutable_publication(runner) -> None:
+    source = inspect.getsource(runner.main)
+    assert ".write_text(" not in source
+    assert source.count("_publish_bytes(") == 2
+    assert '"validation_selection": tuning_log' in source
