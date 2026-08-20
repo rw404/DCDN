@@ -710,3 +710,36 @@ This checkpoint does not activate test. The active protocol still records
 or metric was opened. Remaining gates are the controlled week-26 source/view
 transition, the paired 2,000-replicate user-cluster contrast/Holm aggregator,
 and final-child protocol materialization/audit.
+
+## 2026-08-20 frozen RQ1 paired aggregation checkpoint
+
+The final RQ1 aggregator is implemented and frozen before test access. It
+requires exactly 12 immutable one-pass bundles: DCDN(C+P), full-rank DCNv2(C+P),
+full-rank DCNv2(C+P+E), and DCNv2-capacity-matched(C+P), each for seeds 42, 43,
+and 44. It rejects mixed dataset/protocol/selected-config lineage, non-test
+bundles, digest drift, missing cells, or any mismatch in stable rows,
+normalized targets, user ordering, clusters, or per-cluster row counts.
+
+For each of the four predeclared normalized-MSE contrasts, the reported effect
+is treatment minus baseline (negative favors treatment because the metric is
+minimized). All three seeds remain together within every resampled user
+cluster. The report includes per-seed effects, seed mean and sample standard
+deviation, a 95% percentile interval from 2,000 user-cluster replicates with
+seed 20260818, and the pre-test two-sided plus-one empirical-tail p-value.
+Holm--Bonferroni adjustment is applied across the exact four-contrast family at
+family-wise alpha 0.05. Output publication is exclusive canonical JSON plus a
+strict SHA sidecar and binds every input bundle, protocol, selected-config
+lock, and checkpoint digest.
+
+Focused final/statistics tests pass 19/19 and the full CPU suite passes 562/562;
+Ruff, formatting, bytecode compilation, and diff checks pass. At
+`2026-08-20T14:03:15.587098Z`, estimated spend was USD 198.82 (USD 202.11
+with a one-hour mandatory-compute projection). Storage passed at
+23,639,831,040 bytes (22.0163 GiB), with 27.9837 GiB logical headroom and
+60.7017 GiB overlay available. No worker/trainer/helper process or GPU compute
+process was present.
+
+This checkpoint contains no test result. VK week 26 remains unavailable and
+the active protocol remains `test_unlocked=false` /
+`test_path_available=false`. Remaining gates are the controlled test-view
+transition and audited final-child protocol activation.

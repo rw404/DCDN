@@ -1160,4 +1160,21 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   passed 553 tests. This does not unlock VK week 26: the controlled test-view
   transition, paired clustered contrast/Holm aggregator, and final child
   protocol activation remain pending and `test_unlocked=false`.
+- Frozen RQ1 paired-aggregation checkpoint recorded 2026-08-20: the
+  pre-test statistical implementation now requires exactly twelve immutable
+  one-pass bundles (four declared cells by seeds 42/43/44), keeps C+P and C+P+E
+  protocol/selected-config lineages separate, and rejects any row, normalized
+  target, user, or user-cluster mismatch before computing a contrast. It pools
+  all three final seeds inside each resampled user cluster, reports seed means
+  and sample standard deviations separately, uses the frozen 2,000-replicate
+  percentile bootstrap with seed 20260818, and defines the two-sided bootstrap
+  p-value as twice the smaller plus-one empirical tail before Holm--Bonferroni
+  adjustment of the four frozen contrasts at family-wise alpha 0.05. The
+  aggregate is preflighted and published as immutable canonical JSON plus a
+  strict sidecar, with all twelve bundle/checkpoint/protocol bindings retained.
+  Privacy-safe sufficient statistics are used; raw user IDs are not published.
+  Focused tests passed 19/19 and the full CPU regression passed 562/562. No test
+  file or metric was opened. Remaining gates are the controlled VK week-26
+  source/view transition and audited final-child protocol activation;
+  `test_unlocked=false`.
 Update this decision log whenever a material choice changes.

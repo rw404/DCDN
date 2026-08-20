@@ -157,3 +157,15 @@ headroom and 60.696690 GiB overlay available. Both A100s were idle, no registry
 record was running, and no task-owned process remained. No provider action was
 performed. Final/test remains locked pending the controlled week-26 view,
 paired clustered contrast/Holm aggregation, and audited final-child activation.
+
+At `2026-08-20T14:03:15.587098Z`, the frozen paired RQ1 aggregator passed the
+full 562-test CPU suite without opening test data. It fixes twelve required
+one-pass bundles, all-three-seeds-within-user resampling, 2,000 percentile
+replicates at seed 20260818, the plus-one two-sided empirical-tail p-value, and
+Holm--Bonferroni correction across the four declared normalized-MSE contrasts.
+The credential-free estimate was USD 198.82 for 52.832663 elapsed Pod-hours
+including the fixed USD 25 storage reserve; a one-hour mandatory compute
+projection was USD 202.11. Storage passed at 23,639,831,040 bytes (22.016308
+GiB), with 27.983692 GiB logical headroom and 60.701672 GiB overlay available.
+No GPU job, test access, or provider action was performed. Final/test remains
+locked pending the controlled week-26 view and audited final-child activation.

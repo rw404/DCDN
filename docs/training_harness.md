@@ -240,9 +240,13 @@ cannot reopen the source. Synthetic lifecycle, symlink, checkpoint, crash, and
 rehashed-metric negatives pass.
 
 Actual test execution is still unavailable in the CLI because the controlled
-week-26 source transition and cross-model paired uncertainty/Holm aggregator
-are not yet implemented and audited. Until both exist, the final child protocol
-is not activated and test stays locked.
+week-26 source transition and final-child protocol activation are not yet
+implemented and audited. The cross-model RQ1 aggregator is now implemented
+before test access: it requires the exact twelve final bundles, revalidates
+bundle digests and same-row/target/user alignment across C+P and C+P+E, pools
+all three seeds within each resampled user, runs the frozen 2,000-replicate
+percentile bootstrap, and applies Holm--Bonferroni to the exact four primary
+contrasts. Until the remaining source/protocol gates pass, test stays locked.
 
 ## Numerical monitoring and latency
 
