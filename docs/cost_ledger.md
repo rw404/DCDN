@@ -327,3 +327,20 @@ one-hour projection is USD 262.19. Durable project usage is 22.702611 GiB of
 the 40 GiB cap and overlay free space is 51.439293 GiB. The reserve begins
 `2026-08-23T01:13:18Z`; no provider action, external mutation, test access, or
 Pod lifecycle action occurred.
+
+At `2026-08-21T08:27:28Z`, the HiFormer-style
+stack study completed on one A100. Four stacks x six batch sizes, cost only, no
+training and no quality number. With one attention layer after the cross the
+stack becomes compute-bound and the reduced feature view turns into a serving
+win: DCDN-REDUCED reaches 19% lower latency and 24% more throughput than
+DCNv2-FULL at B=16384, with a crossover between B=256 and B=1024. Two controls
+attribute the effect to token count rather than to the reciprocal branch. Worst
+wall-over-device agreement was 1.007.
+
+Compute was roughly 0.6 GPU-hours on one A100; the second stayed idle. The
+credential-free estimate is USD 259.37 for 71.236306 elapsed Pod-hours
+including the fixed USD 25 storage reserve, leaving USD 110.63 of
+warning-threshold headroom and USD 200.63 of hard-cap headroom. Durable
+project storage was 16.326 GiB of the 40 GiB cap. No provider
+action, external mutation, or test access occurred; `test_unlocked=false`
+remains in force.

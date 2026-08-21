@@ -1,0 +1,76 @@
+{
+  "artifact_role": "rq2_hiformer_stack_pre_measurement_manifest",
+  "batches": [
+    1,
+    64,
+    256,
+    1024,
+    4096,
+    16384
+  ],
+  "counts": {
+    "dcdn_full": {
+      "attention": 2944,
+      "attention_flops_per_example": 462400,
+      "interaction": 12324,
+      "non_embedding": 107928,
+      "tokens": 85,
+      "tower_and_output": 87364
+    },
+    "dcdn_reduced": {
+      "attention": 2944,
+      "attention_flops_per_example": 295936,
+      "interaction": 7564,
+      "non_embedding": 84944,
+      "tokens": 68,
+      "tower_and_output": 69956
+    },
+    "dcnv2_full": {
+      "attention": 2944,
+      "attention_flops_per_example": 462400,
+      "interaction": 60900,
+      "non_embedding": 156504,
+      "tokens": 85,
+      "tower_and_output": 87364
+    },
+    "dcnv2_reduced": {
+      "attention": 2944,
+      "attention_flops_per_example": 295936,
+      "interaction": 49612,
+      "non_embedding": 126992,
+      "tokens": 68,
+      "tower_and_output": 69956
+    }
+  },
+  "faithful_hiformer_reproduction": false,
+  "ffn_ratio": 2,
+  "geometry": "ranker",
+  "host_state_at_start": {
+    "cpu_count": 128,
+    "cuda_version": "12.8",
+    "device_multi_processor_count": 108,
+    "device_name": "NVIDIA A100-SXM4-80GB",
+    "device_total_memory_bytes": 85093777408,
+    "host_idle": false,
+    "idle_ceiling": 2.0,
+    "load_average_15m": 10.9873046875,
+    "load_average_1m": 4.4638671875,
+    "load_average_5m": 7.4892578125,
+    "platform": "Linux-6.8.0-100-generic-x86_64-with-glibc2.39",
+    "torch_version": "2.8.0+cu128"
+  },
+  "layer": "hiformer_style_heterogeneous_attention",
+  "num_heads": 4,
+  "part_of_frozen_model_suite": false,
+  "produces_quality_numbers": false,
+  "protocol": {
+    "independent_rounds": 3,
+    "synchronized_forwards": 300,
+    "warmups": 50
+  },
+  "purpose": "test whether a downstream component with O(F^2) cost turns the reduced feature view into a serving saving, which a cross-only stack cannot show",
+  "reads_dataset_rows": false,
+  "reads_test_metrics": false,
+  "schema_version": 1,
+  "trains_any_model": false
+}

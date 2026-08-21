@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="420" viewBox="0 0 800 420" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" role="img" aria-label="With attention downstream, fewer features become a throughput win">
+<rect width="800" height="420" fill="#fcfcfb"/>
+<text x="76" y="27" font-size="15" font-weight="600" fill="#0b0b0b">With attention downstream, fewer features become a throughput win</text>
+<text x="76" y="45" font-size="11.5" fill="#52514e">ranker geometry + one HiFormer-style attention layer, one A100; median of 3 rounds x 300 forwards</text>
+<line x1="76.0" y1="56" x2="76.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="76.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">1</text>
+<line x1="113.0" y1="56" x2="113.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="113.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">2</text>
+<line x1="150.0" y1="56" x2="150.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="150.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">4</text>
+<line x1="187.0" y1="56" x2="187.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="187.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">8</text>
+<line x1="224.0" y1="56" x2="224.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="224.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">16</text>
+<line x1="261.0" y1="56" x2="261.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="261.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">32</text>
+<line x1="298.0" y1="56" x2="298.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="298.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">64</text>
+<line x1="335.0" y1="56" x2="335.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="335.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">128</text>
+<line x1="372.0" y1="56" x2="372.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="372.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">256</text>
+<line x1="409.0" y1="56" x2="409.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="409.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">512</text>
+<line x1="446.0" y1="56" x2="446.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="446.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">1.024k</text>
+<line x1="483.0" y1="56" x2="483.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="483.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">2.048k</text>
+<line x1="520.0" y1="56" x2="520.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="520.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">4.096k</text>
+<line x1="557.0" y1="56" x2="557.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="557.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">8.192k</text>
+<line x1="594.0" y1="56" x2="594.0" y2="364" stroke="#e6e5e1" stroke-width="1"/>
+<text x="594.0" y="382" font-size="10.5" fill="#52514e" text-anchor="middle">16.384k</text>
+<line x1="76" y1="352.8" x2="594" y2="352.8" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="356.3" font-size="10.5" fill="#52514e" text-anchor="end">500</text>
+<line x1="76" y1="325.3" x2="594" y2="325.3" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="328.8" font-size="10.5" fill="#52514e" text-anchor="end">1k</text>
+<line x1="76" y1="297.8" x2="594" y2="297.8" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="301.3" font-size="10.5" fill="#52514e" text-anchor="end">2k</text>
+<line x1="76" y1="261.4" x2="594" y2="261.4" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="264.9" font-size="10.5" fill="#52514e" text-anchor="end">5k</text>
+<line x1="76" y1="233.9" x2="594" y2="233.9" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="237.4" font-size="10.5" fill="#52514e" text-anchor="end">10k</text>
+<line x1="76" y1="206.4" x2="594" y2="206.4" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="209.9" font-size="10.5" fill="#52514e" text-anchor="end">20k</text>
+<line x1="76" y1="170.0" x2="594" y2="170.0" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="173.5" font-size="10.5" fill="#52514e" text-anchor="end">50k</text>
+<line x1="76" y1="142.5" x2="594" y2="142.5" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="146.0" font-size="10.5" fill="#52514e" text-anchor="end">100k</text>
+<line x1="76" y1="115.0" x2="594" y2="115.0" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="118.5" font-size="10.5" fill="#52514e" text-anchor="end">200k</text>
+<line x1="76" y1="78.7" x2="594" y2="78.7" stroke="#e6e5e1" stroke-width="1"/>
+<text x="67" y="82.2" font-size="10.5" fill="#52514e" text-anchor="end">500k</text>
+<line x1="76" y1="364" x2="594" y2="364" stroke="#c9c8c3" stroke-width="1"/>
+<path d="M76.0,351.7 L298.0,190.1 L372.0,135.0 L446.0,90.9 L520.0,71.3 L594.0,67.9" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="76.0" cy="351.7" r="3.2" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="298.0" cy="190.1" r="3.2" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="372.0" cy="135.0" r="3.2" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="446.0" cy="90.9" r="3.2" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="520.0" cy="71.3" r="3.2" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="594.0" cy="67.9" r="3.2" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M76.0,352.6 L298.0,190.9 L372.0,135.9 L446.0,92.1 L520.0,71.5 L594.0,67.9" fill="none" stroke="#eb6834" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="76.0" cy="352.6" r="3.2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="298.0" cy="190.9" r="3.2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="372.0" cy="135.9" r="3.2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="446.0" cy="92.1" r="3.2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="520.0" cy="71.5" r="3.2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="594.0" cy="67.9" r="3.2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M76.0,351.6 L298.0,190.1 L372.0,135.3 L446.0,95.2 L520.0,79.0 L594.0,76.3" fill="none" stroke="#1baf7a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="76.0" cy="351.6" r="3.2" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="298.0" cy="190.1" r="3.2" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="372.0" cy="135.3" r="3.2" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="446.0" cy="95.2" r="3.2" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="520.0" cy="79.0" r="3.2" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<circle cx="594.0" cy="76.3" r="3.2" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<rect x="606.0" y="63.9" width="8" height="8" rx="2" fill="#eb6834"/>
+<text x="619.0" y="71.9" font-size="11.5" fill="#0b0b0b">DCDN fused, reduced</text>
+<path d="M598.0,67.9 L606.0,82.9" fill="none" stroke="#2a78d6" stroke-width="1" opacity="0.55"/>
+<rect x="606.0" y="78.9" width="8" height="8" rx="2" fill="#2a78d6"/>
+<text x="619.0" y="86.9" font-size="11.5" fill="#0b0b0b">DCNv2, reduced</text>
+<path d="M598.0,76.3 L606.0,97.9" fill="none" stroke="#1baf7a" stroke-width="1" opacity="0.55"/>
+<rect x="606.0" y="93.9" width="8" height="8" rx="2" fill="#1baf7a"/>
+<text x="619.0" y="101.9" font-size="11.5" fill="#0b0b0b">DCNv2, FULL features</text>
+<text x="76" y="406" font-size="11" fill="#52514e">batch size (log scale)</text>
+<text transform="translate(18,210.0) rotate(-90)" font-size="11" fill="#52514e" text-anchor="middle">examples / second</text>
+</svg>

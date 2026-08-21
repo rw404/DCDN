@@ -1366,3 +1366,69 @@ false, while only the seventeen frozen historical divisions are added to
 At `2026-08-21T08:18:59Z`, estimated spend was USD 258.90 and the one-hour
 projection USD 262.19. Durable project usage was 22.702611 GiB of 40 GiB;
 overlay free space was 51.439293 GiB. The next gate is a new immutable
+
+## 2026-08-21 RQ2 addendum: HiFormer-style layer after the cross
+
+Full report: `docs/rq2_hiformer_stack.md`. Artifacts:
+`results/efficiency/rq2_hiformer_v1/` — `results_v1.json` (`f91b3a2c…`),
+`hiformer_stack.csv` (24 rows, `2ba66c08…`), pre-measurement manifest
+(`7d9259c2…`). All verify against exact-byte sidecars. Figures:
+`docs/figures/hiformer-{latency,throughput,ratio}[-dark].svg`.
+
+**Scope.** Cost only. The HiFormer-style layer is outside the frozen nine-model
+suite, is not a faithful reproduction of the published architecture, trains
+nothing, and produces no quality number.
+
+**Why.** The three cross-only studies found DCDN/DCNv2 runtime parity and that
+the reduced feature view buys nothing at inference (0.2-1%). Both follow from a
+cross layer costing roughly linearly in width on a dispatch-bound stack. Once a
+component with `O(F^2)` cost sits downstream, the reduction stops being
+cosmetic: 68 field tokens on REDUCED against 85 on FULL is 295,936 against
+462,400 attention FLOPs per example, a factor of **1.562**.
+
+**Attention changes the regime.** Latency is no longer flat — it grows from
+~1.95 ms at `B=1` to 24.98 ms (reduced) and 30.89 ms (full) at `B=16384`, and
+throughput saturates near 656k/s and 530k/s instead of scaling to 16.8M/s.
+
+**Result — the crossover.** DCDN on reduced against DCNv2 on full:
+
+| B | latency ratio | throughput ratio |
+|---:|---:|---:|
+| 1 | 1.024 | 0.976 |
+| 256 | 1.017 | 0.984 |
+| 1024 | 0.926 | 1.080 |
+| 4096 | 0.829 | 1.207 |
+| 16384 | **0.809** | **1.237** |
+
+The crossover sits between `B=256` and `B=1024`. Below it DCDN is ~2% slower;
+above it DCDN-REDUCED reaches 19% lower latency and 24% more throughput than
+DCNv2-FULL. Peak VRAM at `B=16384` is 3,286 MB against 4,811 MB — 1.46x lower.
+
+**Two controls keep the reading honest.** At matched token count DCDN and DCNv2
+are indistinguishable once attention dominates (24.976 vs 24.983 ms at
+`B=16384`, ratio 1.000), so the win is **not** the reciprocal branch being
+faster. And DCDN-FULL pays the same 1.24x penalty as DCNv2-FULL. The effect is
+entirely token count, identical for both architectures: with attention
+downstream, what matters is how many features reach it, and the architecture
+matters only insofar as it lets you send fewer.
+
+**Claim boundary.** This is a cost win, not dominance. Quality under this stack
+is unmeasured. The nearest quality evidence is contrast M2-M5 on the cross-only
+stack, where **DCNv2-FULL was better in-distribution by 2.84x** with clean seed
+separation and DCDN-REDUCED won only under operand-scale shift. A cost win plus
+an in-distribution quality loss is a trade-off. Establishing the full claim
+needs both configurations trained under this stack and compared at matched
+cost — a training study on recommendation data, still the outstanding gap.
+
+The crossover position depends on the downstream component: a wider or deeper
+attention stack moves it left, and a stack with no superlinear component
+removes the effect entirely, which is what the cross-only studies found.
+
+Validity: worst wall-over-device p50 agreement across all 24 points was 1.007.
+
+**Also recorded this session:** a component decomposition of the cross-only
+ranker stack at `B=1` — encoder 33-38%, interaction block 21-30%, adapter +
+tower + heads 21-24%. The differing part is only 21-30% of the forward, which
+is why a 1.29x block-level gap becomes 1.03x end to end. The runtime-parity
+verdict is therefore partly a consequence of the shared parts dominating; a
+configuration where the block is a larger fraction could read differently.
