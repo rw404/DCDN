@@ -1149,3 +1149,32 @@ sidecar, and `git diff --check` pass. No raw-data row, GPU, validation metric,
 test path, or test metric was opened. Next gate: exact task-owned commit and
 clean-code preflight, then immutable train/validation-only materialization for
 VK weeks 20--25; week 26 remains sealed.
+
+## 2026-08-21 VK-LSVD seven-head train/validation views materialized
+
+The forward-only materializer ran under clean commit
+`83dfe21de90746000544402e17ac07453020b6fc` and published
+`data/manifests/vk_lsvd_multitask_views_v2.yaml`, SHA-256
+`e880130ae672e97257343e7c1e57c91c5087dd9e303231dd0b738fe6c3b88bf5`,
+with a strict adjacent sidecar. It contains 9,022,651 rows: 7,505,820 train
+rows from weeks 20--24 and 1,516,831 validation rows from week 25. Twelve
+FULL/REDUCED Parquet shards were independently streamed, rehashed, reopened,
+schema-checked, and row-counted. All seven label masks are observed, and every
+FULL shard projected onto the ordered REDUCED schema equals the REDUCED shard
+bitwise.
+
+The manifest binds target-v2 SHA-256 `d03704fb...6c6a6`, the frozen feature
+policy, experiment matrix, and legacy-view lineage. Its firewall records
+`test_unlocked=false`, `test_labels_opened=false`,
+`test_metrics_computed=false`, `test_view_materialized=false`, and
+`week26_file_open_attempted=false`. No model metric was computed during
+materialization.
+
+Post-materialization local guards at `2026-08-21T07:21:19.911701Z` pass:
+estimated spend is USD 255.74 (USD 259.03 at a conservative one-hour ETA),
+project storage is 22.701678 GiB of the 40 GiB cap with 27.298322 GiB logical
+headroom, overlay free space is 57.975319 GiB, both A100s are idle at 0 MiB,
+and the registry has no running task. The immutable ledger epoch remains
+`2026-08-18T09:13:18Z`; compute reserve starts
+`2026-08-23T01:13:18Z`. Next: integrate the seven-head runtime/training path
+and run deterministic train-only smokes. Week 26 remains sealed.

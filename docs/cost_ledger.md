@@ -253,3 +253,27 @@ USD 154.88 of warning-threshold headroom and USD 244.88 of
 hard-cap headroom. Durable project storage was 16.325 GiB of the 40 GiB cap.
 No provider action, external mutation, or test access occurred;
 `test_unlocked=false` remains in force.
+
+## 2026-08-21 VK-LSVD seven-head materialization guard
+
+The immutable train/validation-only materializer completed under commit
+`83dfe21de90746000544402e17ac07453020b6fc`. Its manifest SHA-256 is
+`e880130ae672e97257343e7c1e57c91c5087dd9e303231dd0b738fe6c3b88bf5`
+and covers 9,022,651 rows in twelve FULL/REDUCED shards. Independent streaming
+hash/schema/row/alignment checks passed. Week 26 was not opened or
+materialized, and no model metric was computed.
+
+At `2026-08-21T07:21:19.911701Z`, the unchanged ledger epoch
+`2026-08-18T09:13:18Z` yielded 70.133864 elapsed hours and an owner-approved
+credential-free estimate of USD 255.74, including the fixed USD 25 storage
+reserve. A conservative one-hour mandatory-compute projection is USD 259.03,
+below the USD 370 warning and USD 460 hard cap; launch guard status is `ok`.
+The compute reserve begins `2026-08-23T01:13:18Z` and the effective stop is
+`2026-08-23T09:13:18Z`.
+
+Persistent project usage is 24,375,740,928 bytes (22.701678 GiB) of the 40 GiB
+cap, leaving 27.298322 GiB logical headroom. The temporary overlay has
+57.975319 GiB free. Both A100s were idle at 0 MiB/0%, the run registry had no
+running record, and no task trainer/worker/helper process remained. No
+provider credential, external mutation, test access, or Pod lifecycle action
+occurred.

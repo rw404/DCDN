@@ -1,0 +1,527 @@
+algorithm_source_sha256: d6aeed92574ad7c00a82ae12df1f21c52064e3e00c2059c0386a96dfa60d279b
+algorithm_version: vk-lsvd-multitask-view-transform-v2
+artifact_role: multi_target_train_validation_feature_views
+code_identity:
+  code_commit: 83dfe21de90746000544402e17ac07453020b6fc
+  code_diff_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+contract:
+  allowed_weeks:
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  dataset_id: vk_lsvd_up0.01_ir0.01
+  ordered_C:
+  - age
+  - gender
+  - geo
+  - place
+  - platform
+  - agent
+  ordered_D:
+  - p_duration_seconds
+  - p_user_show_count
+  - p_user_show_count_plus_beta
+  - p_item_show_count
+  - p_item_show_count_plus_beta
+  ordered_P_shared:
+  - p_duration_seconds
+  - p_user_show_count
+  - p_user_show_count_plus_beta
+  - p_user_timespent_sum_seconds
+  - p_user_like_count_plus_alpha
+  - p_user_share_count_plus_alpha
+  - p_user_bookmark_count_plus_alpha
+  - p_user_comments_count_plus_alpha
+  - p_user_dislike_count_plus_alpha
+  - p_user_heartbeat15_count_plus_alpha
+  - p_user_heartbeat30_count_plus_alpha
+  - p_item_show_count
+  - p_item_show_count_plus_beta
+  - p_item_timespent_sum_seconds
+  - p_item_like_count_plus_alpha
+  - p_item_share_count_plus_alpha
+  - p_item_bookmark_count_plus_alpha
+  - p_item_comments_count_plus_alpha
+  - p_item_dislike_count_plus_alpha
+  - p_item_click_on_author_count_plus_alpha
+  - p_item_heartbeat15_count_plus_alpha
+  - p_item_heartbeat30_count_plus_alpha
+  - p_ials_viewtime_dot
+  - p_ials_viewtime_user_norm
+  - p_ials_viewtime_item_norm
+  - p_ials_feedback_dot
+  - p_ials_feedback_user_norm
+  - p_ials_feedback_item_norm
+  - p_ials_survival_dot
+  - p_ials_survival_user_norm
+  - p_ials_survival_item_norm
+  - e_ials_viewtime_cosine
+  - e_ials_feedback_cosine
+  - e_ials_survival_cosine
+  - v_user_history_present
+  - v_item_history_present
+  - v_item_metadata_present
+  - v_duration_positive
+  - v_ials_viewtime_user_seen
+  - v_ials_viewtime_item_seen
+  - v_ials_viewtime_user_norm_positive
+  - v_ials_viewtime_item_norm_positive
+  - v_ials_feedback_user_seen
+  - v_ials_feedback_item_seen
+  - v_ials_feedback_user_norm_positive
+  - v_ials_feedback_item_norm_positive
+  - v_ials_survival_user_seen
+  - v_ials_survival_item_seen
+  - v_ials_survival_user_norm_positive
+  - v_ials_survival_item_norm_positive
+  - v_duration_seconds_reciprocal_floor_active
+  - v_user_show_count_reciprocal_floor_active
+  - v_user_show_count_plus_beta_reciprocal_floor_active
+  - v_item_show_count_reciprocal_floor_active
+  - v_item_show_count_plus_beta_reciprocal_floor_active
+  ordered_R_div:
+  - e_user_avg_timespent_seconds
+  - e_user_like_rate
+  - e_user_share_rate
+  - e_user_bookmark_rate
+  - e_user_comments_rate
+  - e_user_dislike_rate
+  - e_user_heartbeat15_rate
+  - e_user_heartbeat30_rate
+  - e_item_avg_timespent_seconds
+  - e_item_like_rate
+  - e_item_share_rate
+  - e_item_bookmark_rate
+  - e_item_comments_rate
+  - e_item_dislike_rate
+  - e_item_click_on_author_rate
+  - e_item_heartbeat15_rate
+  - e_item_heartbeat30_rate
+  ordered_denominator_mask:
+  - true
+  - true
+  - true
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - true
+  - true
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  schema_hashes:
+    FULL_physical: d48a44cc82b479d7f958d30cb7ede02882714a244dc644cd5b1f4e77ffd531da
+    P_shared: 8130cff38700f5a1d319f49ce962981251f54cfb5155cea221cda00e47b405cf
+    REDUCED_physical: 5ba82a4b9c4dcff099d422c8bcb5f4725666c103170661d2131c1980540b58c9
+    R_div: 5a8b6cbff7eb087ff30c3ed4a66e3e0f96e0afdfb553c2b75a17a8e1bfae03ea
+    denominator_mask: 186ec50742dcd32b0a823fcfcd5be52bafa9427c7e95a516bec59a0db8bfa5ab
+  similarity_fields_shared:
+  - e_ials_viewtime_cosine
+  - e_ials_feedback_cosine
+  - e_ials_survival_cosine
+  target_columns:
+  - label_watch_time
+  - label_like
+  - label_dislike
+  - label_share
+  - label_bookmark
+  - label_click_on_author
+  - label_open_comments
+  target_kinds:
+  - regression
+  - binary
+  - binary
+  - binary
+  - binary
+  - binary
+  - binary
+  target_mask_columns:
+  - label_mask_watch_time
+  - label_mask_like
+  - label_mask_dislike
+  - label_mask_share
+  - label_mask_bookmark
+  - label_mask_click_on_author
+  - label_mask_open_comments
+  target_names:
+  - watch_time
+  - like
+  - dislike
+  - share
+  - bookmark
+  - click_on_author
+  - open_comments
+  test_unlocked: false
+contract_state_sha256: 4a9af8510cc7b6f975c727f27b32cdadf47c1e680ef01addae9852e8d76916f9
+dataset_id: vk_lsvd_up0.01_ir0.01
+feature_algebra:
+  FULL_physical_schema_sha256: d48a44cc82b479d7f958d30cb7ede02882714a244dc644cd5b1f4e77ffd531da
+  REDUCED_physical_schema_sha256: 5ba82a4b9c4dcff099d422c8bcb5f4725666c103170661d2131c1980540b58c9
+  ordered_D:
+  - p_duration_seconds
+  - p_user_show_count
+  - p_user_show_count_plus_beta
+  - p_item_show_count
+  - p_item_show_count_plus_beta
+  ordered_P_shared:
+  - p_duration_seconds
+  - p_user_show_count
+  - p_user_show_count_plus_beta
+  - p_user_timespent_sum_seconds
+  - p_user_like_count_plus_alpha
+  - p_user_share_count_plus_alpha
+  - p_user_bookmark_count_plus_alpha
+  - p_user_comments_count_plus_alpha
+  - p_user_dislike_count_plus_alpha
+  - p_user_heartbeat15_count_plus_alpha
+  - p_user_heartbeat30_count_plus_alpha
+  - p_item_show_count
+  - p_item_show_count_plus_beta
+  - p_item_timespent_sum_seconds
+  - p_item_like_count_plus_alpha
+  - p_item_share_count_plus_alpha
+  - p_item_bookmark_count_plus_alpha
+  - p_item_comments_count_plus_alpha
+  - p_item_dislike_count_plus_alpha
+  - p_item_click_on_author_count_plus_alpha
+  - p_item_heartbeat15_count_plus_alpha
+  - p_item_heartbeat30_count_plus_alpha
+  - p_ials_viewtime_dot
+  - p_ials_viewtime_user_norm
+  - p_ials_viewtime_item_norm
+  - p_ials_feedback_dot
+  - p_ials_feedback_user_norm
+  - p_ials_feedback_item_norm
+  - p_ials_survival_dot
+  - p_ials_survival_user_norm
+  - p_ials_survival_item_norm
+  - e_ials_viewtime_cosine
+  - e_ials_feedback_cosine
+  - e_ials_survival_cosine
+  - v_user_history_present
+  - v_item_history_present
+  - v_item_metadata_present
+  - v_duration_positive
+  - v_ials_viewtime_user_seen
+  - v_ials_viewtime_item_seen
+  - v_ials_viewtime_user_norm_positive
+  - v_ials_viewtime_item_norm_positive
+  - v_ials_feedback_user_seen
+  - v_ials_feedback_item_seen
+  - v_ials_feedback_user_norm_positive
+  - v_ials_feedback_item_norm_positive
+  - v_ials_survival_user_seen
+  - v_ials_survival_item_seen
+  - v_ials_survival_user_norm_positive
+  - v_ials_survival_item_norm_positive
+  - v_duration_seconds_reciprocal_floor_active
+  - v_user_show_count_reciprocal_floor_active
+  - v_user_show_count_plus_beta_reciprocal_floor_active
+  - v_item_show_count_reciprocal_floor_active
+  - v_item_show_count_plus_beta_reciprocal_floor_active
+  ordered_R_div:
+  - e_user_avg_timespent_seconds
+  - e_user_like_rate
+  - e_user_share_rate
+  - e_user_bookmark_rate
+  - e_user_comments_rate
+  - e_user_dislike_rate
+  - e_user_heartbeat15_rate
+  - e_user_heartbeat30_rate
+  - e_item_avg_timespent_seconds
+  - e_item_like_rate
+  - e_item_share_rate
+  - e_item_bookmark_rate
+  - e_item_comments_rate
+  - e_item_dislike_rate
+  - e_item_click_on_author_rate
+  - e_item_heartbeat15_rate
+  - e_item_heartbeat30_rate
+  ordered_denominator_mask:
+  - true
+  - true
+  - true
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - true
+  - true
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  shared_similarity_fields:
+  - e_ials_viewtime_cosine
+  - e_ials_feedback_cosine
+  - e_ials_survival_cosine
+feature_policy_sha256: fd8baeeaa82ba8e7d825762f30207c7875449a45a625d173bde419869c79b0a3
+legacy_views_manifest_sha256: 738d3610fd83a93297d94ccad4c4316dd3ad8b241f8409e84daf5b2322040dbe
+materialization_state: complete_and_hash_verified
+materialized_utc: '2026-08-21T07:15:22.704917Z'
+matrix_multitask_sha256: 1b73dcb34a565f192cb66669163f71bac244884401e9c958a2cc836b2de36946
+row_counts:
+  total: 9022651
+  train: 7505820
+  validation: 1516831
+schema_version: 2
+shards:
+- FULL:
+    bytes: 237870912
+    path: FULL/train/week_20.parquet
+    row_groups: 6
+    rows: 1406185
+    sha256: 31d3a35315334d82fb072d5c11daf87fc41ee039ba7d1781eb644df3095a914d
+  REDUCED:
+    bytes: 169335675
+    path: REDUCED/train/week_20.parquet
+    row_groups: 6
+    rows: 1406185
+    sha256: e3bb7b4e9cd902861e342ed0af255092a16a532c2384f3866c0656066d76ac96
+  labels_and_masks_sha256: 1d9d26b5cf1d8c956ef66bbbe4e34cad86f52c054aad4ff68d261dd47ef2a2a0
+  legacy_feature_sha256: efae842b3b5fbea47faa43470fff62f4df72765f6dde5b4ae2bac03a1ab23551
+  raw_label_source_sha256: 98e41f0e7adc04a7a2a85d750feaea62524d13690a9fc43fe4dbd5e2c7d7ce58
+  role: train
+  rows: 1406185
+  shared_C_plus_P_values_sha256: f22972720b04262350c07bcf6a87782af9e061a60611f14a7d298ec7d08cccbf
+  stable_row_ids_sha256: 3b53204d78d09f041b73dfb06abb51774b35ce83d4243c523b7618a4a6259325
+  week: 20
+- FULL:
+    bytes: 254281603
+    path: FULL/train/week_21.parquet
+    row_groups: 6
+    rows: 1543021
+    sha256: d0f7890bb91091892c370516f5878aaaf44c79a6fbd5d9cd7feb88614648a8a9
+  REDUCED:
+    bytes: 181981482
+    path: REDUCED/train/week_21.parquet
+    row_groups: 6
+    rows: 1543021
+    sha256: e54134f7525a2c6499249739352657aea9d37d1f6ce776ee2baf28bca231a31d
+  labels_and_masks_sha256: 1f26e54295002997a22eaa172766acacb368eeffa67829345440aab59b53cdad
+  legacy_feature_sha256: 61eb4d2a071346e02d12db2ba7ce6bd0a88b5049e5657b816a35369f8317eba9
+  raw_label_source_sha256: 5c3a1bc3e623d90eab7c2965eb6c6f3e9ed424068eb5ca1e42fcdf80f6456b15
+  role: train
+  rows: 1543021
+  shared_C_plus_P_values_sha256: 4948bd3212614bde196812496e715e1306ee679fedce25f487c65a1bb46821d2
+  stable_row_ids_sha256: 79f0b0c8f67465fa33bb7b2a47074af52ac8da9eb6ed1c72da0864bb8a3136a7
+  week: 21
+- FULL:
+    bytes: 244074629
+    path: FULL/train/week_22.parquet
+    row_groups: 6
+    rows: 1494808
+    sha256: fec1f6aaac138b1406da964749efa5d15f1be59611f4f51400b199f64d711869
+  REDUCED:
+    bytes: 174813514
+    path: REDUCED/train/week_22.parquet
+    row_groups: 6
+    rows: 1494808
+    sha256: bf8aa725878b5a5aae9711a42f64f646467559d87f66be5090ef8dc845861ac5
+  labels_and_masks_sha256: 624ef5308e40bcbf5afe9a9fab64a10e9468f1479351849aa615a25aa12cb8fe
+  legacy_feature_sha256: f0bc0ac53023e0e50a50585896ca1b3cf32f0a240b463016dcc374e08f93eb32
+  raw_label_source_sha256: e7fb8dfd2cfd0c3f6e605f6cef9ff17f8fb2634fc128bfd4cbb15dabfa6347e9
+  role: train
+  rows: 1494808
+  shared_C_plus_P_values_sha256: e8230f0dd3e827f82998d5c6e5cbd842f873f23d406da49ae8be3d6e5807f09c
+  stable_row_ids_sha256: 2c86f7ba87fd637ec6b33c5dfa3982d86970a07f1cc76d480730b2e42ae0a384
+  week: 22
+- FULL:
+    bytes: 257702531
+    path: FULL/train/week_23.parquet
+    row_groups: 7
+    rows: 1617706
+    sha256: 40ac8862e1ab98e0726493d67dfb34cf3111aea74d91b91dec95c6d2d3a6ff45
+  REDUCED:
+    bytes: 184922474
+    path: REDUCED/train/week_23.parquet
+    row_groups: 7
+    rows: 1617706
+    sha256: 5ca99f1b1a40521e33a73452702a330370201bd1c824b95f2d0930d53315a62e
+  labels_and_masks_sha256: af6979db36cd6e150eac36fcf3cb3ca255b4119ad8bf0bcb1bd70850b544f843
+  legacy_feature_sha256: 0e14729d242b14188c9b5b4b7024d91312a8892f94f20cdb65af9a428b220ee5
+  raw_label_source_sha256: 2b10ef2b96784fb2e4246d8b966ceed12e35a45bd3edd6a5ff24f490426cab5c
+  role: train
+  rows: 1617706
+  shared_C_plus_P_values_sha256: 114adab41474536b43594b653915c7a6f5297c07c1cf0abdc539ec44adbac670
+  stable_row_ids_sha256: ec1cb8b756e830ccc72c0fdccaa60b806965bc34973b801e8943203bd01af711
+  week: 23
+- FULL:
+    bytes: 232574429
+    path: FULL/train/week_24.parquet
+    row_groups: 6
+    rows: 1444100
+    sha256: 31f8c44fc6fdc9cfff93c662fecc1b7a3471eee1d16fccbba707faaabb6913f9
+  REDUCED:
+    bytes: 166726218
+    path: REDUCED/train/week_24.parquet
+    row_groups: 6
+    rows: 1444100
+    sha256: b37fd009f0a73aab0ec3b9c6ff5226fa6f105072288b3eb22ed9b0d155cc4d9c
+  labels_and_masks_sha256: fbc74ce9f136398ced6c4e3490783bdf147b5580a2727cba8a3a6728e4729ac6
+  legacy_feature_sha256: d3ef80d180459426e1fc5e8011c2d1edc14c68664091e659725c588a7ea77726
+  raw_label_source_sha256: 2d315e0aa318e18fac4ea45323ac545eac77c1b429e831d94d1e4c4a0ffc95a5
+  role: train
+  rows: 1444100
+  shared_C_plus_P_values_sha256: 6cc29265782c31262e18adb9732c4abe8ee8e73a09299dbb7bec0402a5604ad2
+  stable_row_ids_sha256: 91756a1c4129f6498f3faf8049d1625e96f431be1788ca020842f99dcd22540c
+  week: 24
+- FULL:
+    bytes: 233871885
+    path: FULL/validation/week_25.parquet
+    row_groups: 6
+    rows: 1516831
+    sha256: 3587520fedcfb98082fd0ba237ee99ca86d748603f3d6a6653017997578c7c89
+  REDUCED:
+    bytes: 168339491
+    path: REDUCED/validation/week_25.parquet
+    row_groups: 6
+    rows: 1516831
+    sha256: ee343fa01d5b9252e0d088a318644685088bf584a8e01088ff7667d9e84edcfa
+  labels_and_masks_sha256: f0aa57650894ec06598e52ce844eb0bd136c089d87cdc415008ea9da1c0b8e9f
+  legacy_feature_sha256: 870660d6d064f89e9b81f50b41e30f06d08442f7962f69796747ccb7a31e240c
+  raw_label_source_sha256: 74322f7ebc25d63a7ad6087120f72679d68d38b06ad2485205df3291c76b4081
+  role: validation
+  rows: 1516831
+  shared_C_plus_P_values_sha256: def00538d9fbc97430f51e6ad671a9ba58c59ddeea2c5fb13b0ccc3c235d9422
+  stable_row_ids_sha256: 0d395d80ea1aafd74302968b53dc86d7cdd1babaebc4fa159b2db661def923bf
+  week: 25
+split:
+  sealed_test_week: 26
+  train_weeks:
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  validation_week: 25
+targets:
+  all_labels_observed: true
+  columns:
+  - label_watch_time
+  - label_like
+  - label_dislike
+  - label_share
+  - label_bookmark
+  - label_click_on_author
+  - label_open_comments
+  kinds:
+  - regression
+  - binary
+  - binary
+  - binary
+  - binary
+  - binary
+  - binary
+  mask_columns:
+  - label_mask_watch_time
+  - label_mask_like
+  - label_mask_dislike
+  - label_mask_share
+  - label_mask_bookmark
+  - label_mask_click_on_author
+  - label_mask_open_comments
+  names:
+  - watch_time
+  - like
+  - dislike
+  - share
+  - bookmark
+  - click_on_author
+  - open_comments
+targets_multitask_v2_sha256: d03704fb856551cb5d2eee7810992f0e8fa23909860a9c28c626b5362456c6a6
+test_labels_opened: false
+test_metrics_computed: false
+test_unlocked: false
+test_view_materialized: false
+validation_model_metrics_computed: false
+week26_file_open_attempted: false

@@ -1311,4 +1311,23 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   eligible-user and eligible-row coverage. No real data, GPU, validation
   metric, or test path was opened while freezing this contract.
 
+- **VK-LSVD seven-head train/validation materialization recorded
+  2026-08-21.** Under clean commit
+  `83dfe21de90746000544402e17ac07453020b6fc`, the forward-only v2
+  materializer produced the immutable manifest
+  `data/manifests/vk_lsvd_multitask_views_v2.yaml`, SHA-256
+  `e880130ae672e97257343e7c1e57c91c5087dd9e303231dd0b738fe6c3b88bf5`.
+  It covers 9,022,651 rows: 7,505,820 train rows from weeks 20--24 and
+  1,516,831 validation rows from week 25, represented by twelve FULL/REDUCED
+  Parquet shards. An independent streaming audit rehashed and reopened every
+  shard, verified schema and row counts, confirmed every one of the seven
+  label masks observed, and proved that projecting each FULL shard onto the
+  ordered REDUCED columns is bitwise identical to its REDUCED mate. The
+  manifest binds target-v2, feature-policy, experiment-matrix, and legacy-view
+  identities. Week 26 was neither materialized nor opened;
+  `test_unlocked=false`, `test_labels_opened=false`, and
+  `test_metrics_computed=false`. This is data evidence only: no multi-target
+  model metric has been computed. The next gate is the seven-head runtime and
+  training-harness integration followed by train-only deterministic smokes.
+
 Update this decision log whenever a material choice changes.
