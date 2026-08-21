@@ -13,6 +13,9 @@ that cell requires the test unlock and remains unexecuted.
 | pilot, before the R reorder | `results/kuairand_multitask/rq23_pilot_pre_reorder_v1/` | superseded |
 | pilot, two-point LR grid | `results/kuairand_multitask/rq23_pilot_two_point_grid_v1/` | evidence the grid was too coarse |
 | geometric preconditioner | `results/kuairand_multitask/rq23_geometric_rejected_v1/` | evidence for the rejection, **not a result** |
+| single-head `watch_time` | `results/kuairand_multitask/single_target_v1/` | section 9 |
+| its contrasts | `results/kuairand_multitask/contrasts_single_target_v1/` | section 9 |
+| transfer comparison | `results/kuairand_multitask/transfer_v1/` | section 9 |
 
 The three non-final bundles are kept because each one is the evidence for a
 decision taken in section 3; none of their numbers may be quoted as findings.
@@ -316,9 +319,125 @@ python scripts/run_kuairand_multitask.py \
     --output-dir results/kuairand_multitask/rq23_v1
 ```
 
+The single-head `watch_time` follow-up of section 9, and its paired transfer
+comparison against the corresponding multi-task head:
+
+```bash
+python scripts/run_kuairand_single_target.py \
+    --device cuda:0 --preconditioner rms --annex-seeds \
+    --output-dir results/kuairand_multitask/single_target_v1
+
+python scripts/report_kuairand_contrasts.py \
+    --results results/kuairand_multitask/single_target_v1/results_v1.json \
+    --output-dir results/kuairand_multitask/contrasts_single_target_v1
+
+python scripts/report_kuairand_transfer.py
+```
+
 Tests covering the leak-sensitive parts of the materializer, the contract order
 of R, the seed scopes, and the convergence gate:
 
 ```bash
 python -m pytest tests/test_kuairand_materialize.py tests/test_kuairand_contrasts.py
 ```
+
+## 9. Single-head `watch_time` follow-up
+
+Run because `watch_time` is the one head whose structure is a ratio, and
+because section 6.3 showed the multi-target aggregate is largely a `watch_time`
+report — which leaves "this arm models watch_time well" and "this arm's shared
+trunk was pulled around by four binary heads" indistinguishable. Training it
+alone separates them.
+
+**Standing.** This is **not** the frozen single-target study.
+`configs/single_target_followup_v1.yaml` requires
+`training_may_start_only_after: main_multi_target_table_complete`, and the main
+table is not complete. That study is unmodified and still blocked, and its
+KuaiRand headline target is still `long_view`. This one is scoped by
+`configs/data/kuairand_pure/single_target_rq23_v1.yaml`
+(sha256 `07b6e22629650df6ceabcf362077e5bc72e8715ba92e3b3ccce981a3211713f5`)
+and may not substitute for it or rescue any main-table conclusion.
+
+Everything is held identical to the multi-target study — splits, materialized
+views, preconditioner, encoder, optimizer, batch, steps, patience, grid, seeds.
+The single difference is one regression head trained on `watch_time` alone. The
+capacity match is recomputed for the narrower head, identically for every arm,
+and resolves to the same rank 97.
+
+### 9.1 Task transfer: strongly negative
+
+Paired per arm and per seed against the corresponding multi-task head, 95%
+percentile bootstrap over seeds. Positive difference = the single head won.
+
+| arm | single | multi-task head | difference | 95% CI (8 seeds) | verdict |
+|---|---|---|---|---|---|
+| `dcnv2_reduced` | 4.881 | 17.497 | +12.615 | [+6.51, +20.84] | negative transfer |
+| `dcdn_full` | 0.479 | 4.510 | +4.031 | [+2.70, +5.50] | negative transfer |
+| `dcdn_reduced` | 0.983 | 2.653 | +1.670 | [+0.64, +2.79] | negative transfer |
+| `dcnv2_full` | 0.990 | 1.577 | +0.588 | [−0.22, +1.32] | no detected effect |
+| `afn_reduced` | 0.409 | 0.965 | +0.557 | [+0.20, +0.96] | negative transfer |
+| `dcnv2_capacity_reduced` | 0.825 | 1.057 | +0.231 | [−0.19, +0.71] | no detected effect |
+| `afn_full` | 0.294 | 0.448 | +0.154 | [+0.07, +0.24] | negative transfer |
+
+The sign is the same for every one of the seven arms, and the single head wins
+on 7 or 8 of 8 seeds almost everywhere. Multi-tasking costs `watch_time`
+quality on this dataset; nothing here shows it buying anything back. The two
+"no detected effect" rows are reported as exactly that, not as equality.
+
+The comparison is only meaningful because the normalizer is shared. The report
+verifies rather than assumes it: both bundles must record the same
+`view_manifest_sha256`, and it refuses to run otherwise. The two
+`task_constants_sha256` values are *not* comparable — one covers five targets,
+the other one.
+
+### 9.2 The architecture contrasts on the ratio target
+
+Single-head `watch_time`, normalized loss, lower is better.
+
+| arm | frozen mean ± sd | annex mean ± sd | MAE (s) |
+|---|---|---|---|
+| `afn_full` | **0.310 ± 0.094** | **0.294 ± 0.059** | 12.4 |
+| `afn_reduced` | 0.370 ± 0.017 | 0.409 ± 0.100 | 16.8 |
+| `dcdn_full` | 0.476 ± 0.018 | 0.479 ± 0.107 | 17.0 |
+| `dcnv2_capacity_reduced` | 0.760 ± 0.126 | 0.825 ± 0.207 | 27.8 |
+| `dcnv2_full` | 0.880 ± 0.289 | 0.990 ± 0.916 | 20.8 |
+| `dcdn_reduced` | 0.992 ± 0.273 | 0.983 ± 0.364 | 23.8 |
+| `dcnv2_reduced` | 3.512 ± 1.073 | 4.881 ± 2.901 | 43.9 |
+
+| contrast | frozen (3) | clean (2) | annex (8) |
+|---|---|---|---|
+| C1 `dcdn_reduced − dcnv2_reduced` | **3.541× SEP** | **3.614× SEP** | not comparable |
+| C2 `dcdn_reduced − afn_reduced` | **AFN+ 2.680× SEP** | **AFN+ 3.016× SEP** | AFN+ 2.406× |
+| C3 `dcdn_reduced − dcnv2_capacity_reduced` | DCNv2 1.306× | **DCNv2 1.471× SEP** | DCNv2 1.191× |
+| C4 `dcnv2_full − dcnv2_reduced` | **3.993× SEP** | **3.949× SEP** | not comparable |
+| C5 `dcdn_reduced − dcnv2_full` | DCNv2 1.128× | **DCNv2 1.093× SEP** | DCDN 1.007× |
+| C6 `dcdn_full − dcnv2_full` | **DCDN 1.849× SEP** | **DCDN 2.174× SEP** | DCDN 2.067× |
+| C7 `afn_full − dcnv2_full` | **AFN+ 2.834× SEP** | **AFN+ 3.037× SEP** | AFN+ 3.370× |
+
+### 9.3 What the ratio target adds, and what it takes away
+
+**It strengthens DCDN against DCNv2.** On the pure ratio target DCDN beats
+DCNv2 by 3.54× at identical REDUCED inputs and 1.85× at identical FULL inputs,
+both separated — a far larger and cleaner margin than the multi-target
+aggregate or `long_view` AUC gave. That is the predicted direction: this is the
+target whose structure the reciprocal branch is built for.
+
+**It does not rescue RQ3.** C3 still favours the capacity-matched DCNv2, and in
+the clean scope it now separates *against* DCDN. Two independent targets now
+agree that the reciprocal structure buys nothing over spending the same
+capacity differently.
+
+**It produces the sharpest counter-evidence in this document.** AFN+ beats DCDN
+on `watch_time` by 2.68–3.02×, separated in both frozen scopes, and `afn_full`
+is the best arm outright. That is coherent rather than surprising: AFN+'s
+logarithmic transformation layer turns a ratio into a difference of logs, which
+is a *more* direct inductive bias for this target than a reciprocal branch. On
+the target that most favours modelling quotients, the log-based competitor wins.
+
+**C4 gets much stronger.** The removed manual divisions are worth 3.99× to
+DCNv2 on `watch_time`, against 1.71× on the aggregate. Historical
+`play_over_duration` ratios are close relatives of the target, so this is
+expected — and it further weakens any reading of C5 as "the divisions were
+redundant". C5 remains a tie: DCNv2-full is ahead in the frozen scope and the
+two are level at eight seeds.
+

@@ -168,7 +168,7 @@ class KuaiRandEncoder(nn.Module):
 
 
 class KuaiRandModel(nn.Module):
-    """Shared encoder, audited interaction block, five per-target heads."""
+    """Shared encoder, audited interaction block, per-target heads."""
 
     def __init__(
         self,
@@ -179,6 +179,7 @@ class KuaiRandModel(nn.Module):
         init_seed: int,
         *,
         with_afn_view: bool,
+        output_dim: int | None = None,
     ) -> None:
         super().__init__()
         spec = EncoderSpec(
@@ -201,7 +202,13 @@ class KuaiRandModel(nn.Module):
             encoder_spec=spec,
             interaction_config=config,
             head_config=HeadConfig(
-                hidden_dims=HEAD_HIDDEN_DIMS, dropout=0.0, output_dim=len(TARGETS)
+                hidden_dims=HEAD_HIDDEN_DIMS,
+                dropout=0.0,
+                # Defaults to the five multi-target heads; the single-target
+                # follow-up in `run_kuairand_single_target.py` passes 1 so that
+                # everything upstream of the head stays bit-for-bit identical
+                # between the two studies.
+                output_dim=len(TARGETS) if output_dim is None else output_dim,
             ),
             init_seed=init_seed,
         )

@@ -1,0 +1,2156 @@
+{
+  "annex_seeds": [
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "artifact_role": "kuairand_pure_single_target_results",
+  "evaluated_split": "validation",
+  "final_seeds": [
+    42,
+    43,
+    44
+  ],
+  "is_the_frozen_single_target_study": false,
+  "pre_training_manifest_sha256": "251d1c319545760fd736dcc64364da843c60f7735abd3874e1593364d47dc094",
+  "records": [
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 135720,
+        "matched": 169065,
+        "non_embedding": 173289,
+        "total": 943401
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.653569692745805,
+        "validation_macro_nloss": 2.2740068435668945
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "macro_nloss": 2.2740068435668945,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 2.2740068435668945
+        },
+        "per_target_raw": {
+          "watch_time": 0.019733551889657974
+        },
+        "watch_time_mae": 0.08185036480426788,
+        "watch_time_mae_seconds": 36.074156831279396
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 135720,
+        "matched": 169065,
+        "non_embedding": 173289,
+        "total": 943401
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.878774965181947,
+        "validation_macro_nloss": 4.117530822753906
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 4.117530822753906,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 4.117530822753906
+        },
+        "per_target_raw": {
+          "watch_time": 0.03573142737150192
+        },
+        "watch_time_mae": 0.09313321113586426,
+        "watch_time_mae_seconds": 41.046879543542865
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 135720,
+        "matched": 169065,
+        "non_embedding": 173289,
+        "total": 943401
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.810248285531998,
+        "validation_macro_nloss": 4.145524024963379
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 4.145524024963379,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 4.145524024963379
+        },
+        "per_target_raw": {
+          "watch_time": 0.035974349826574326
+        },
+        "watch_time_mae": 0.07651010900735855,
+        "watch_time_mae_seconds": 33.72052987314016
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 135720,
+        "matched": 169065,
+        "non_embedding": 173289,
+        "total": 943401
+      },
+      "regime": "reduced",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 2250,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.58675072900951,
+        "validation_macro_nloss": 4.208685398101807
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 4.208685398101807,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 4.208685398101807
+        },
+        "per_target_raw": {
+          "watch_time": 0.036522455513477325
+        },
+        "watch_time_mae": 0.10196060687303543,
+        "watch_time_mae_seconds": 44.93740414897353
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 135720,
+        "matched": 169065,
+        "non_embedding": 173289,
+        "total": 943401
+      },
+      "regime": "reduced",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.029421789571643,
+        "validation_macro_nloss": 5.070372104644775
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 5.070372104644775,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 5.070372104644775
+        },
+        "per_target_raw": {
+          "watch_time": 0.04400006681680679
+        },
+        "watch_time_mae": 0.09716285765171051,
+        "watch_time_mae_seconds": 42.822877741411325
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 135720,
+        "matched": 169065,
+        "non_embedding": 173289,
+        "total": 943401
+      },
+      "regime": "reduced",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.9094033520668745,
+        "validation_macro_nloss": 2.041173219680786
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 2.041173219680786,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 2.041173219680786
+        },
+        "per_target_raw": {
+          "watch_time": 0.017713051289319992
+        },
+        "watch_time_mae": 0.08000566810369492,
+        "watch_time_mae_seconds": 35.26113812034577
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 135720,
+        "matched": 169065,
+        "non_embedding": 173289,
+        "total": 943401
+      },
+      "regime": "reduced",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.84392410889268,
+        "validation_macro_nloss": 11.318479537963867
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 11.318479537963867,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 11.318479537963867
+        },
+        "per_target_raw": {
+          "watch_time": 0.09822037816047668
+        },
+        "watch_time_mae": 0.1352117359638214,
+        "watch_time_mae_seconds": 59.5922740265429
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 135720,
+        "matched": 169065,
+        "non_embedding": 173289,
+        "total": 943401
+      },
+      "regime": "reduced",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.754244450479746,
+        "validation_macro_nloss": 5.875465393066406
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 5.875465393066406,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 5.875465393066406
+        },
+        "per_target_raw": {
+          "watch_time": 0.05098656937479973
+        },
+        "watch_time_mae": 0.13142487406730652,
+        "watch_time_mae_seconds": 57.923279022306204
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35112,
+        "matched": 68457,
+        "non_embedding": 72681,
+        "total": 842793
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1500,
+        "nonfinite_training_batches": 0,
+        "seconds": 14.7583824172616,
+        "validation_macro_nloss": 0.6890811324119568
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "macro_nloss": 0.6890811324119568,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.6890811324119568
+        },
+        "per_target_raw": {
+          "watch_time": 0.005979761481285095
+        },
+        "watch_time_mae": 0.03641621768474579,
+        "watch_time_mae_seconds": 16.049828868851066
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35112,
+        "matched": 68457,
+        "non_embedding": 72681,
+        "total": 842793
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.741895265877247,
+        "validation_macro_nloss": 1.218745470046997
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 1.218745470046997,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 1.218745470046997
+        },
+        "per_target_raw": {
+          "watch_time": 0.010576123371720314
+        },
+        "watch_time_mae": 0.04703192412853241,
+        "watch_time_mae_seconds": 20.728521016940476
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35112,
+        "matched": 68457,
+        "non_embedding": 72681,
+        "total": 842793
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.840800667181611,
+        "validation_macro_nloss": 1.067950963973999
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 1.067950963973999,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 1.067950963973999
+        },
+        "per_target_raw": {
+          "watch_time": 0.00926754716783762
+        },
+        "watch_time_mae": 0.0636804848909378,
+        "watch_time_mae_seconds": 28.066091147437692
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35112,
+        "matched": 68457,
+        "non_embedding": 72681,
+        "total": 842793
+      },
+      "regime": "reduced",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.959248669445515,
+        "validation_macro_nloss": 1.4019030332565308
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 1.4019030332565308,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 1.4019030332565308
+        },
+        "per_target_raw": {
+          "watch_time": 0.01216554269194603
+        },
+        "watch_time_mae": 0.05729220062494278,
+        "watch_time_mae_seconds": 25.250563458032907
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35112,
+        "matched": 68457,
+        "non_embedding": 72681,
+        "total": 842793
+      },
+      "regime": "reduced",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.794693538919091,
+        "validation_macro_nloss": 1.21855890750885
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 1.21855890750885,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 1.21855890750885
+        },
+        "per_target_raw": {
+          "watch_time": 0.010574504733085632
+        },
+        "watch_time_mae": 0.07422495633363724,
+        "watch_time_mae_seconds": 32.71338767979294
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35112,
+        "matched": 68457,
+        "non_embedding": 72681,
+        "total": 842793
+      },
+      "regime": "reduced",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.842159364372492,
+        "validation_macro_nloss": 0.5236403346061707
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.5236403346061707,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.5236403346061707
+        },
+        "per_target_raw": {
+          "watch_time": 0.004544086754322052
+        },
+        "watch_time_mae": 0.042501300573349,
+        "watch_time_mae_seconds": 18.731725705593824
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35112,
+        "matched": 68457,
+        "non_embedding": 72681,
+        "total": 842793
+      },
+      "regime": "reduced",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.800154956057668,
+        "validation_macro_nloss": 0.4760769307613373
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.4760769307613373,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.4760769307613373
+        },
+        "per_target_raw": {
+          "watch_time": 0.004131337162107229
+        },
+        "watch_time_mae": 0.04525122418999672,
+        "watch_time_mae_seconds": 19.943707790929825
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35112,
+        "matched": 68457,
+        "non_embedding": 72681,
+        "total": 842793
+      },
+      "regime": "reduced",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 11.00802418589592,
+        "validation_macro_nloss": 1.2684907913208008
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 1.2684907913208008,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 1.2684907913208008
+        },
+        "per_target_raw": {
+          "watch_time": 0.011007807217538357
+        },
+        "watch_time_mae": 0.06497900933027267,
+        "watch_time_mae_seconds": 28.638393719159065
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2215962,
+        "matched": 2232795,
+        "non_embedding": 2241243,
+        "total": 3781467
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.070047464221716,
+        "validation_macro_nloss": 0.35235998034477234
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "macro_nloss": 0.35235998034477234,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.35235998034477234
+        },
+        "per_target_raw": {
+          "watch_time": 0.0030577366705983877
+        },
+        "watch_time_mae": 0.035268571227788925,
+        "watch_time_mae_seconds": 15.544023202937096
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2215962,
+        "matched": 2232795,
+        "non_embedding": 2241243,
+        "total": 3781467
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.906461704522371,
+        "validation_macro_nloss": 0.3720293641090393
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.3720293641090393,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.3720293641090393
+        },
+        "per_target_raw": {
+          "watch_time": 0.003228425281122327
+        },
+        "watch_time_mae": 0.03757099062204361,
+        "watch_time_mae_seconds": 16.558775409825145
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2215962,
+        "matched": 2232795,
+        "non_embedding": 2241243,
+        "total": 3781467
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.778469916433096,
+        "validation_macro_nloss": 0.38616567850112915
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.38616567850112915,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.38616567850112915
+        },
+        "per_target_raw": {
+          "watch_time": 0.0033510983921587467
+        },
+        "watch_time_mae": 0.035486236214637756,
+        "watch_time_mae_seconds": 15.639955345585943
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2215962,
+        "matched": 2232795,
+        "non_embedding": 2241243,
+        "total": 3781467
+      },
+      "regime": "reduced",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 21.093608990311623,
+        "validation_macro_nloss": 0.29345765709877014
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.29345765709877014,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.29345765709877014
+        },
+        "per_target_raw": {
+          "watch_time": 0.0025465895887464285
+        },
+        "watch_time_mae": 0.029356038197875023,
+        "watch_time_mae_seconds": 12.938174783064053
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2215962,
+        "matched": 2232795,
+        "non_embedding": 2241243,
+        "total": 3781467
+      },
+      "regime": "reduced",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.748084919527173,
+        "validation_macro_nloss": 0.345788836479187
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.345788836479187,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.345788836479187
+        },
+        "per_target_raw": {
+          "watch_time": 0.003000713186338544
+        },
+        "watch_time_mae": 0.03378967568278313,
+        "watch_time_mae_seconds": 14.892225132700055
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2215962,
+        "matched": 2232795,
+        "non_embedding": 2241243,
+        "total": 3781467
+      },
+      "regime": "reduced",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 16.918006313964725,
+        "validation_macro_nloss": 0.5639943480491638
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.5639943480491638,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.5639943480491638
+        },
+        "per_target_raw": {
+          "watch_time": 0.004894273821264505
+        },
+        "watch_time_mae": 0.050602495670318604,
+        "watch_time_mae_seconds": 22.30218972426653
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2215962,
+        "matched": 2232795,
+        "non_embedding": 2241243,
+        "total": 3781467
+      },
+      "regime": "reduced",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.699651461094618,
+        "validation_macro_nloss": 0.3942604660987854
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.3942604660987854,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.3942604660987854
+        },
+        "per_target_raw": {
+          "watch_time": 0.00342134409584105
+        },
+        "watch_time_mae": 0.041168563067913055,
+        "watch_time_mae_seconds": 18.144344306610524
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2215962,
+        "matched": 2232795,
+        "non_embedding": 2241243,
+        "total": 3781467
+      },
+      "regime": "reduced",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1800,
+        "nonfinite_training_batches": 0,
+        "seconds": 35.72513262555003,
+        "validation_macro_nloss": 0.5600827932357788
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.5600827932357788,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.5600827932357788
+        },
+        "per_target_raw": {
+          "watch_time": 0.004860329907387495
+        },
+        "watch_time_mae": 0.04174935445189476,
+        "watch_time_mae_seconds": 18.400318235646935
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35281,
+        "matched": 68626,
+        "non_embedding": 72850,
+        "total": 842962
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.162132777273655,
+        "validation_macro_nloss": 0.7245965600013733
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "macro_nloss": 0.7245965600013733,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.7245965600013733
+        },
+        "per_target_raw": {
+          "watch_time": 0.006287960335612297
+        },
+        "watch_time_mae": 0.06970679759979248,
+        "watch_time_mae_seconds": 30.722086026549338
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35281,
+        "matched": 68626,
+        "non_embedding": 72850,
+        "total": 842962
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.197884159162641,
+        "validation_macro_nloss": 0.8998377323150635
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.8998377323150635,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.8998377323150635
+        },
+        "per_target_raw": {
+          "watch_time": 0.0078086815774440765
+        },
+        "watch_time_mae": 0.06081261485815048,
+        "watch_time_mae_seconds": 26.80212618427724
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35281,
+        "matched": 68626,
+        "non_embedding": 72850,
+        "total": 842962
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.609091565012932,
+        "validation_macro_nloss": 0.6548369526863098
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.6548369526863098,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.6548369526863098
+        },
+        "per_target_raw": {
+          "watch_time": 0.005682594608515501
+        },
+        "watch_time_mae": 0.0525648333132267,
+        "watch_time_mae_seconds": 23.167056680638343
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35281,
+        "matched": 68626,
+        "non_embedding": 72850,
+        "total": 842962
+      },
+      "regime": "reduced",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.180072544142604,
+        "validation_macro_nloss": 0.578436553478241
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.578436553478241,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.578436553478241
+        },
+        "per_target_raw": {
+          "watch_time": 0.005019601434469223
+        },
+        "watch_time_mae": 0.056421831250190735,
+        "watch_time_mae_seconds": 24.866962952390313
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35281,
+        "matched": 68626,
+        "non_embedding": 72850,
+        "total": 842962
+      },
+      "regime": "reduced",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.170326789841056,
+        "validation_macro_nloss": 0.8588806390762329
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.8588806390762329,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.8588806390762329
+        },
+        "per_target_raw": {
+          "watch_time": 0.0074532609432935715
+        },
+        "watch_time_mae": 0.057679399847984314,
+        "watch_time_mae_seconds": 25.42121493320167
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35281,
+        "matched": 68626,
+        "non_embedding": 72850,
+        "total": 842962
+      },
+      "regime": "reduced",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.186169167980552,
+        "validation_macro_nloss": 1.264945149421692
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 1.264945149421692,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 1.264945149421692
+        },
+        "per_target_raw": {
+          "watch_time": 0.010977039113640785
+        },
+        "watch_time_mae": 0.08058854937553406,
+        "watch_time_mae_seconds": 35.518033131927254
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35281,
+        "matched": 68626,
+        "non_embedding": 72850,
+        "total": 842962
+      },
+      "regime": "reduced",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.20832802914083,
+        "validation_macro_nloss": 0.8170072436332703
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.8170072436332703,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.8170072436332703
+        },
+        "per_target_raw": {
+          "watch_time": 0.0070898886770009995
+        },
+        "watch_time_mae": 0.06577624380588531,
+        "watch_time_mae_seconds": 28.989761261299254
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16641,
+        "interaction": 35281,
+        "matched": 68626,
+        "non_embedding": 72850,
+        "total": 842962
+      },
+      "regime": "reduced",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.439220864325762,
+        "validation_macro_nloss": 0.8042697310447693
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.8042697310447693,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.8042697310447693
+        },
+        "per_target_raw": {
+          "watch_time": 0.006979354191571474
+        },
+        "watch_time_mae": 0.061244428157806396,
+        "watch_time_mae_seconds": 26.992440555274488
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 277512,
+        "matched": 318025,
+        "non_embedding": 325833,
+        "total": 1095945
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 11.332634875550866,
+        "validation_macro_nloss": 0.5463736057281494
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "macro_nloss": 0.5463736057281494,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.5463736057281494
+        },
+        "per_target_raw": {
+          "watch_time": 0.004741363227367401
+        },
+        "watch_time_mae": 0.03937593102455139,
+        "watch_time_mae_seconds": 17.354272208243607
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 277512,
+        "matched": 318025,
+        "non_embedding": 325833,
+        "total": 1095945
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1650,
+        "nonfinite_training_batches": 0,
+        "seconds": 16.152974335476756,
+        "validation_macro_nloss": 1.0660687685012817
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 1.0660687685012817,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 1.0660687685012817
+        },
+        "per_target_raw": {
+          "watch_time": 0.009251214563846588
+        },
+        "watch_time_mae": 0.048729486763477325,
+        "watch_time_mae_seconds": 21.47669288972765
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 277512,
+        "matched": 318025,
+        "non_embedding": 325833,
+        "total": 1095945
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.964033784344792,
+        "validation_macro_nloss": 1.0262811183929443
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 1.0262811183929443,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 1.0262811183929443
+        },
+        "per_target_raw": {
+          "watch_time": 0.008905941620469093
+        },
+        "watch_time_mae": 0.05807190760970116,
+        "watch_time_mae_seconds": 25.59420605654642
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 277512,
+        "matched": 318025,
+        "non_embedding": 325833,
+        "total": 1095945
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.011846397072077,
+        "validation_macro_nloss": 0.3592841923236847
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.3592841923236847,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.3592841923236847
+        },
+        "per_target_raw": {
+          "watch_time": 0.0031178242061287165
+        },
+        "watch_time_mae": 0.044036660343408585,
+        "watch_time_mae_seconds": 19.408409423131495
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 277512,
+        "matched": 318025,
+        "non_embedding": 325833,
+        "total": 1095945
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.414725352078676,
+        "validation_macro_nloss": 1.2471154928207397
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 1.2471154928207397,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 1.2471154928207397
+        },
+        "per_target_raw": {
+          "watch_time": 0.010822315700352192
+        },
+        "watch_time_mae": 0.06600721925497055,
+        "watch_time_mae_seconds": 29.091559763900936
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 277512,
+        "matched": 318025,
+        "non_embedding": 325833,
+        "total": 1095945
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.661714412271976,
+        "validation_macro_nloss": 3.0586814880371094
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 3.0586814880371094,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 3.0586814880371094
+        },
+        "per_target_raw": {
+          "watch_time": 0.026542862877249718
+        },
+        "watch_time_mae": 0.04796743020415306,
+        "watch_time_mae_seconds": 21.14082941616699
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 277512,
+        "matched": 318025,
+        "non_embedding": 325833,
+        "total": 1095945
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.925775323063135,
+        "validation_macro_nloss": 0.32824069261550903
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.32824069261550903,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.32824069261550903
+        },
+        "per_target_raw": {
+          "watch_time": 0.002848432632163167
+        },
+        "watch_time_mae": 0.04262666404247284,
+        "watch_time_mae_seconds": 18.786977523431183
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 277512,
+        "matched": 318025,
+        "non_embedding": 325833,
+        "total": 1095945
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1200,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.850020445883274,
+        "validation_macro_nloss": 0.28702715039253235
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.28702715039253235,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.28702715039253235
+        },
+        "per_target_raw": {
+          "watch_time": 0.0024907863698899746
+        },
+        "watch_time_mae": 0.03104860894382,
+        "watch_time_mae_seconds": 13.68414656563662
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 119560,
+        "matched": 160073,
+        "non_embedding": 167881,
+        "total": 937993
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.336902951821685,
+        "validation_macro_nloss": 0.4640735983848572
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "macro_nloss": 0.4640735983848572,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.4640735983848572
+        },
+        "per_target_raw": {
+          "watch_time": 0.004027173854410648
+        },
+        "watch_time_mae": 0.031637322157621384,
+        "watch_time_mae_seconds": 13.943611906494946
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 119560,
+        "matched": 160073,
+        "non_embedding": 167881,
+        "total": 937993
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.281816253438592,
+        "validation_macro_nloss": 0.4662933349609375
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.4662933349609375,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.4662933349609375
+        },
+        "per_target_raw": {
+          "watch_time": 0.00404643639922142
+        },
+        "watch_time_mae": 0.03436798229813576,
+        "watch_time_mae_seconds": 15.147103942204266
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 119560,
+        "matched": 160073,
+        "non_embedding": 167881,
+        "total": 937993
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.044046696275473,
+        "validation_macro_nloss": 0.49635621905326843
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.49635621905326843,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.49635621905326843
+        },
+        "per_target_raw": {
+          "watch_time": 0.004307318478822708
+        },
+        "watch_time_mae": 0.04617687687277794,
+        "watch_time_mae_seconds": 20.35167347477004
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 119560,
+        "matched": 160073,
+        "non_embedding": 167881,
+        "total": 937993
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.062153929844499,
+        "validation_macro_nloss": 0.4508790671825409
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.4508790671825409,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.4508790671825409
+        },
+        "per_target_raw": {
+          "watch_time": 0.003912673331797123
+        },
+        "watch_time_mae": 0.038734208792448044,
+        "watch_time_mae_seconds": 17.071444043722003
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 119560,
+        "matched": 160073,
+        "non_embedding": 167881,
+        "total": 937993
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.904651204124093,
+        "validation_macro_nloss": 0.6021698117256165
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.6021698117256165,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.6021698117256165
+        },
+        "per_target_raw": {
+          "watch_time": 0.005225555971264839
+        },
+        "watch_time_mae": 0.0400238074362278,
+        "watch_time_mae_seconds": 17.639812722790985
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 119560,
+        "matched": 160073,
+        "non_embedding": 167881,
+        "total": 937993
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.105529226362705,
+        "validation_macro_nloss": 0.6400774717330933
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.6400774717330933,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.6400774717330933
+        },
+        "per_target_raw": {
+          "watch_time": 0.00555451400578022
+        },
+        "watch_time_mae": 0.0490773506462574,
+        "watch_time_mae_seconds": 21.630007982376963
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 119560,
+        "matched": 160073,
+        "non_embedding": 167881,
+        "total": 937993
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1050,
+        "nonfinite_training_batches": 0,
+        "seconds": 11.922749118879437,
+        "validation_macro_nloss": 0.29734984040260315
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.29734984040260315,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.29734984040260315
+        },
+        "per_target_raw": {
+          "watch_time": 0.0025803653988987207
+        },
+        "watch_time_mae": 0.02962273731827736,
+        "watch_time_mae_seconds": 13.055717886496335
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16641,
+        "interaction": 119560,
+        "matched": 160073,
+        "non_embedding": 167881,
+        "total": 937993
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.0299871526658535,
+        "validation_macro_nloss": 0.41450461745262146
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.41450461745262146,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.41450461745262146
+        },
+        "per_target_raw": {
+          "watch_time": 0.003597020171582699
+        },
+        "watch_time_mae": 0.03964553773403168,
+        "watch_time_mae_seconds": 17.473096782132984
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 3148026,
+        "matched": 3164859,
+        "non_embedding": 3180475,
+        "total": 4720699
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.135368306189775,
+        "validation_macro_nloss": 0.24206899106502533
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "macro_nloss": 0.24206899106502533,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.24206899106502533
+        },
+        "per_target_raw": {
+          "watch_time": 0.00210064509883523
+        },
+        "watch_time_mae": 0.026027362793684006,
+        "watch_time_mae_seconds": 11.471117686148734
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 3148026,
+        "matched": 3164859,
+        "non_embedding": 3180475,
+        "total": 4720699
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 20.114195987582207,
+        "validation_macro_nloss": 0.27189257740974426
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.27189257740974426,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.27189257740974426
+        },
+        "per_target_raw": {
+          "watch_time": 0.002359450561925769
+        },
+        "watch_time_mae": 0.02352502942085266,
+        "watch_time_mae_seconds": 10.368256791740656
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 3148026,
+        "matched": 3164859,
+        "non_embedding": 3180475,
+        "total": 4720699
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.114198235794902,
+        "validation_macro_nloss": 0.41706642508506775
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.41706642508506775,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.41706642508506775
+        },
+        "per_target_raw": {
+          "watch_time": 0.0036192513071000576
+        },
+        "watch_time_mae": 0.04282878339290619,
+        "watch_time_mae_seconds": 18.876058191105724
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 3148026,
+        "matched": 3164859,
+        "non_embedding": 3180475,
+        "total": 4720699
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.22697314620018,
+        "validation_macro_nloss": 0.3103181719779968
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.3103181719779968,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.3103181719779968
+        },
+        "per_target_raw": {
+          "watch_time": 0.002692903159186244
+        },
+        "watch_time_mae": 0.023611508309841156,
+        "watch_time_mae_seconds": 10.406370891921222
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 3148026,
+        "matched": 3164859,
+        "non_embedding": 3180475,
+        "total": 4720699
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.128746530041099,
+        "validation_macro_nloss": 0.333082377910614
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.333082377910614,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.333082377910614
+        },
+        "per_target_raw": {
+          "watch_time": 0.002890448085963726
+        },
+        "watch_time_mae": 0.039044737815856934,
+        "watch_time_mae_seconds": 17.208304431796073
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 3148026,
+        "matched": 3164859,
+        "non_embedding": 3180475,
+        "total": 4720699
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.230050221085548,
+        "validation_macro_nloss": 0.24360471963882446
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.24360471963882446,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.24360471963882446
+        },
+        "per_target_raw": {
+          "watch_time": 0.00211397185921669
+        },
+        "watch_time_mae": 0.020247776061296463,
+        "watch_time_mae_seconds": 8.923863086823374
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 3148026,
+        "matched": 3164859,
+        "non_embedding": 3180475,
+        "total": 4720699
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.339728450402617,
+        "validation_macro_nloss": 0.26267126202583313
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.26267126202583313,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.26267126202583313
+        },
+        "per_target_raw": {
+          "watch_time": 0.0022794289980083704
+        },
+        "watch_time_mae": 0.027150321751832962,
+        "watch_time_mae_seconds": 11.966042756650596
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 3148026,
+        "matched": 3164859,
+        "non_embedding": 3180475,
+        "total": 4720699
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.283678768202662,
+        "validation_macro_nloss": 0.26940351724624634
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "macro_nloss": 0.26940351724624634,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.26940351724624634
+        },
+        "per_target_raw": {
+          "watch_time": 0.0023378506302833557
+        },
+        "watch_time_mae": 0.022790852934122086,
+        "watch_time_mae_seconds": 10.044680986214429
+      }
+    }
+  ],
+  "schema_version": 1,
+  "selected_configs_sha256": "36c0d49c087c41fe7fda591a99af04f75e03cd8693838a3adfdaa624da88f640",
+  "study": "kuairand_pure_single_target_watch_time",
+  "target": "watch_time",
+  "targets": [
+    "watch_time"
+  ],
+  "test_unlocked": false
+}

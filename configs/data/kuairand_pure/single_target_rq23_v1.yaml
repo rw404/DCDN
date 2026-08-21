@@ -1,0 +1,111 @@
+schema_version: 1
+artifact_role: study_scoped_single_target_protocol
+study: kuairand_pure_single_target_watch_time
+status: frozen_before_metrics
+test_unlocked: false
+
+# ---------------------------------------------------------------------------
+# Standing — read this before citing anything from this study
+# ---------------------------------------------------------------------------
+# This is NOT the frozen single-target study. `configs/single_target_followup_v1.yaml`
+# declares `training_may_start_only_after: main_multi_target_table_complete`,
+# and the main multi-target table is not complete: VK-LSVD is in progress and
+# Yambda-50M has no acquisition code or data. That frozen study therefore
+# remains blocked and unmodified, and its KuaiRand headline target is still
+# `long_view`.
+#
+# This study is scoped to the validation-only KuaiRand RQ2/RQ3 work. It exists
+# because the owner asked what running KuaiRand on watch_time would give.
+standing:
+  is_the_frozen_single_target_study: false
+  frozen_study: configs/single_target_followup_v1.yaml
+  frozen_study_status: blocked_on_main_multi_target_table
+  frozen_study_modified: false
+  may_substitute_for_the_frozen_study: false
+  may_rescue_or_override_a_main_table_conclusion: false
+  results_appear_in_the_main_table: false
+  evaluated_split: validation
+  test_ever_opened: false
+
+# ---------------------------------------------------------------------------
+# Target
+# ---------------------------------------------------------------------------
+target:
+  name: watch_time
+  kind: regression
+  definition_source: configs/data/kuairand_pure/targets_rq23_v1.yaml
+  rationale: >
+    watch_time is clip(play_time_ms / 1000, 0, c) / c - a ratio. Of the five
+    heads it is the only one whose structure matches what DCDN's reciprocal
+    branch encodes, so isolating it is the cleanest available test of that
+    hypothesis on real data. It is also the head that dominates Macro-NLoss on
+    this dataset, so the multi-target aggregate cannot separate "models
+    watch_time well" from "shared trunk pulled around by four binary heads".
+
+# ---------------------------------------------------------------------------
+# Held identical to the multi-target study
+# ---------------------------------------------------------------------------
+held_identical:
+  splits: true
+  materialized_views: true
+  view_manifest_sha256_shared: true
+  feature_manifests: true
+  input_preconditioner: true
+  encoder: true
+  representation_width: true
+  denominator_mask: true
+  optimizer_family: true
+  batch_size: true
+  maximum_steps: true
+  patience: true
+  learning_rate_grid: true
+  tuning_seed: 42
+  final_seeds: [42, 43, 44]
+  annex_seeds: [45, 46, 47, 48, 49]
+
+only_difference:
+  heads: single_regression_head_for_watch_time
+  objective: the_watch_time_normalized_loss_replaces_macro_nloss
+  selection_metric: the_same_single_target_normalized_loss
+  everything_else: unchanged
+
+capacity_control:
+  recomputed_for_a_one_wide_head: true
+  reason: >
+    The head is narrower here than in the multi-target study, identically for
+    every arm, so the matched rank is resolved against the DCDN of this study
+    rather than inherited from another. Selection stays mechanical; no
+    validation metric is read.
+
+# ---------------------------------------------------------------------------
+# Transfer comparison
+# ---------------------------------------------------------------------------
+comparison:
+  unit: per_arm_per_seed
+  single_task_result_vs: the_corresponding_watch_time_head_of_the_multi_task_model
+  same_validation_rows: true
+  same_normalizer: true
+  normalizer_equality_is_verified_not_assumed: true
+  normalizer_verification: >
+    both bundles must record the same `view_manifest_sha256`; the constant is
+    the train-only variance of watch_time over those rows and its definition is
+    fixed in the contract, so a shared view implies a shared normalizer. The
+    two `task_constants_sha256` values are NOT comparable, because one covers
+    five targets and the other one.
+  paired: true
+  uncertainty: paired_percentile_bootstrap_over_seeds
+  bootstrap_resamples: 20000
+  bootstrap_seed: 20260821
+  sign_convention: >
+    difference = multi_task_head - single_head; positive means the single head
+    won, which is negative transfer
+
+transfer_classification:
+  positive_transfer: paired_interval_entirely_below_zero
+  negative_transfer: paired_interval_entirely_above_zero
+  no_detected_effect: paired_interval_contains_zero
+  nonsignificant_is_not_equality: true
+
+reporting:
+  publish_direction_as_measured: true
+  seed_scopes_never_pooled: true

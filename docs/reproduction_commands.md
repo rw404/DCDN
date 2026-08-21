@@ -157,6 +157,16 @@ python scripts/run_kuairand_multitask.py \
     --output-dir results/kuairand_multitask/rq23_geometric_rejected_v1
 ```
 
+The single-head `watch_time` follow-up and its paired transfer comparison:
+
+```bash
+python scripts/run_kuairand_single_target.py \
+    --device cuda:0 --preconditioner rms --annex-seeds \
+    --output-dir results/kuairand_multitask/single_target_v1
+
+python scripts/report_kuairand_transfer.py
+```
+
 Findings and the reasoning behind the preconditioner, the learning-rate grid,
 and the seed scopes are in `docs/rq23_kuairand_quality.md`.
 

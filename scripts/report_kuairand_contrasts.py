@@ -229,7 +229,7 @@ def _per_target_rows(
                     and _arm_status(comparator_records)[0])
         for target in targets:
             for metric, lower_is_better in (("per_target", True), ("auc", False)):
-                available = subject_records[0]["validation"]["roc_auc"]
+                available = subject_records[0]["validation"].get("roc_auc", {})
                 if metric == "auc" and target not in available:
                     continue
                 left = _values(subject_records, metric, target)
@@ -297,7 +297,7 @@ def _summary_rows(
                 _values(records, "per_target", target)
             )
         for target in targets:
-            if target in records[0]["validation"]["roc_auc"]:
+            if target in records[0]["validation"].get("roc_auc", {}):
                 entry[f"auc_{target}"] = statistics.fmean(
                     _values(records, "auc", target)
                 )

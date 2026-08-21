@@ -1507,3 +1507,39 @@ single-target follow-up on KuaiRand should move from `long_view` to
 than an edit.
 
 Full suite: 833 passed, and the one failure this violation caused is resolved.
+
+## KuaiRand-Pure single-head watch_time follow-up — 2026-08-21
+
+Run on validation, test still locked. **Not** the frozen single-target study:
+`configs/single_target_followup_v1.yaml` requires the main multi-target table to
+be complete first, and it is not, so that study stays blocked and unmodified
+with `long_view` as its KuaiRand headline target. This one is scoped by
+`configs/data/kuairand_pure/single_target_rq23_v1.yaml`. Section 9 of
+`docs/rq23_kuairand_quality.md`.
+
+**Transfer is negative, consistently.** Paired per arm and per seed against the
+corresponding multi-task head, the single head wins for all seven arms; five are
+classified negative transfer with a bootstrap interval excluding zero, two as no
+detected effect. Largest gaps: `dcnv2_reduced` +12.6 and `dcdn_full` +4.0.
+Multi-tasking costs watch_time quality here and nothing shows it buying anything
+back. Comparability is verified rather than assumed — both bundles must record
+the same `view_manifest_sha256`, and the report refuses to run otherwise.
+
+**On the ratio target DCDN beats DCNv2 more clearly than anywhere else:** 3.54x
+at identical REDUCED inputs and 1.85x at identical FULL inputs, both separated,
+against 1.10x-ish margins on long_view AUC. That is the predicted direction for
+a target that is literally a quotient.
+
+**Two things it does not do.** RQ3 still fails — the capacity-matched DCNv2 is
+ahead again, and in the clean scope now separates against DCDN, so two
+independent targets agree the reciprocal structure buys nothing over the same
+capacity spent differently. And it produces the sharpest counter-evidence in the
+study: AFN+ beats DCDN on watch_time by 2.68-3.02x, separated, with `afn_full`
+the best arm outright. Coherent rather than surprising — AFN+'s logarithmic
+layer turns a ratio into a difference of logs, a more direct bias for this
+target than a reciprocal branch. On the target that most favours modelling
+quotients, the log-based competitor wins.
+
+C4 also strengthens sharply: the removed manual divisions are worth 3.99x to
+DCNv2 on watch_time against 1.71x on the aggregate, which further weakens any
+reading of C5 as "the divisions were redundant". C5 remains a tie.

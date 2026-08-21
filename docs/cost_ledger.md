@@ -378,3 +378,21 @@ The finalization reserve begins `2026-08-23T01:13:18Z`. No provider action,
 external mutation, test access, or Pod lifecycle action occurred;
 `test_unlocked=false` remains in force and the locked KuaiRand test window
 (365,420 rows) was never read.
+
+At `2026-08-21T11:45:00Z`, the single-head `watch_time` follow-up on
+KuaiRand-Pure completed on one A100; the second stayed idle. Seven arms x (four
+tuning trials + eight seeds) on validation, with the test split never opened.
+Task transfer against the corresponding multi-task head is negative for all
+seven arms - five with a bootstrap interval excluding zero - so multi-tasking
+costs watch_time quality on this dataset. On this ratio-structured target DCDN
+beats DCNv2 by 3.54x at identical reduced inputs and 1.85x at identical full
+inputs, both separated; but AFN+ beats DCDN by 2.68-3.02x and RQ3 fails again,
+now separating against DCDN in the clean scope.
+
+Compute was roughly 0.4 GPU-hours. The credential-free estimate is USD 270.20
+for 74.528541 elapsed Pod-hours including the fixed USD 25 storage reserve,
+leaving USD 99.80 of warning-threshold headroom and USD 189.80 of hard-cap
+headroom. The finalization reserve begins `2026-08-23T01:13:18Z`. No provider
+action, external mutation, test access, or Pod lifecycle action occurred;
+`test_unlocked=false` remains in force.
+
