@@ -1,6 +1,6 @@
 # DCDN execution status
 
-Updated: `2026-08-19T05:35:14Z`
+Updated: `2026-08-21T11:05:20Z`
 
 ## Current checkpoint
 
@@ -1451,3 +1451,59 @@ multi-target/protocol regression passed 135 tests. No task worker or trainer is
 running. The next executable gate is a dedicated seven-head supervised CLI and
 one-effective-batch DCDN/DCNv2 implementation smoke; no validation metric may
 be used by that smoke.
+
+## KuaiRand-Pure RQ2-quality and RQ3 — 2026-08-21
+
+Executed on validation with the test split locked throughout; the locked
+three-day window (365,420 rows) was never read. This is **not** the mandatory
+main-table `kuairand_pure` cell, which still requires the test unlock and
+remains unexecuted. Full write-up in `docs/rq23_kuairand_quality.md`.
+
+Runtime views: REDUCED 132 columns (P 108 + V 24), FULL 244 (+ R 112), 24
+denominators, 201,320 train and 311,490 validation rows. `watch_time` uses a
+train-only constant of 440.733 s with 0.026% clip incidence. Seven arms,
+four-point learning-rate grid, three frozen seeds plus a five-seed stability
+annex, reported at three seed scopes that are never pooled.
+
+**Supported.** DCDN separates from DCNv2 and from AFN+ on the frozen primary
+target `long_view` at identical REDUCED inputs (C1: 0.6171 vs 0.5597; C2: 0.6171
+vs 0.5600), and from DCNv2 at identical FULL inputs (C6: 0.6266 vs 0.5875). C2
+holds at all three seed scopes.
+
+**Not supported.** RQ3 fails here: against the mechanically capacity-matched
+DCNv2 (rank 97, ratios 1.0025) the gap never separates (0.6171 vs 0.6148) and
+**reverses sign at eight seeds** (0.6135 vs 0.6198). RQ2-quality is a tie, not a
+win: C5 separates only in the two-seed clean scope and is 0.6135 vs 0.6121
+across eight seeds. C4 shows the removed manual divisions are not redundant —
+DCNv2 is genuinely worse without them.
+
+**Three method decisions, all recorded with their evidence.** (1) The frozen
+feature contract forbids fitted scales, so raw counters reach 9.8e7 and overflow
+float32; a purely multiplicative train-only RMS input preconditioner was added —
+no log, no shift, because either would convert a quotient into a difference and
+hand the additive baselines the structure DCDN must discover. (2) A geometric
+alternative was tried after seeing a divergence, run in full, and **rejected**:
+it drove `dcnv2_full` to 1.75e18 with below-chance AUC. The reporter now refuses
+to name a winner against a non-convergent arm, which withholds C7 everywhere.
+(3) The learning-rate grid was widened from two to four points after arms swung
+12.46 → 2.10 across one step.
+
+An adversarial audit (125 agents, five lenses, three refuters per finding) found
+one real defect: the materialized R block was a permutation of the frozen
+contract's declared column order. Fixed, re-materialized, and covered by
+regression tests; no metric depended on it.
+
+**One frozen-artifact violation was made and reverted.** The KuaiRand
+`watch_time` head was first added by editing `configs/targets_multitask_v1.yaml`
+in place. `configs/targets_multitask_v2.yaml` declares v1 immutable provenance
+and pins its sha256 as its predecessor, so that edit broke the supersession
+chain and failed `tests/test_vk_lsvd_multitask.py`. v1 and
+`configs/single_target_followup_v1.yaml` are restored byte-for-byte (v1 back at
+`2a9e3a8e…`), and the five-head target set now lives in the study-scoped
+`configs/data/kuairand_pure/targets_rq23_v1.yaml`. No result changed: the runner
+always carried the five heads in code. Open and awaiting a decision: whether the
+single-target follow-up on KuaiRand should move from `long_view` to
+`watch_time`, which needs a versioned successor to the follow-up protocol rather
+than an edit.
+
+Full suite: 833 passed, and the one failure this violation caused is resolved.

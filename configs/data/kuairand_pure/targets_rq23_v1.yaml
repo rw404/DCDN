@@ -1,0 +1,131 @@
+schema_version: 1
+artifact_role: study_scoped_target_specification
+study: kuairand_pure_rq2_quality_and_rq3
+status: frozen_before_metrics
+test_unlocked: false
+
+# ---------------------------------------------------------------------------
+# Why this file exists instead of an edit to a frozen artifact
+# ---------------------------------------------------------------------------
+# The owner asked for consistency: wherever a dataset carries a watch-time
+# signal, the single-head follow-up target should be watch_time, as it already
+# is for VK-LSVD and KuaiRec. On KuaiRand that requires a watch_time head to
+# exist, because the follow-up compares a single-task model against the
+# *corresponding head* of the multi-task model.
+#
+# That head was first added by amending `configs/targets_multitask_v1.yaml`
+# directly. That was wrong. `configs/targets_multitask_v2.yaml` declares v1
+# "immutable provenance for Synthetic-MultiQuotient-3 RQ1 and every artifact
+# that already binds it", and pins v1's sha256 as its predecessor, so mutating
+# v1 broke that supersession chain. The amendment has been reverted and v1 is
+# back at 2a9e3a8e0a5547b500682b9b632800e2bd103dbf67bebec101b281794bc29674.
+#
+# This file carries the target set instead, scoped to one study. That is also
+# the more accurate placement: the RQ2-quality/RQ3 work on KuaiRand is a
+# validation-only study, not the mandatory main-table `kuairand_pure` cell, so
+# it has no business redefining the main-table objective.
+scope:
+  governs:
+    - results/kuairand_multitask/rq23_final_v1
+    - results/kuairand_multitask/contrasts_v1
+  does_not_govern:
+    - the mandatory main-table kuairand_pure cell
+    - any dataset other than kuairand_pure
+  main_table_objective_remains: configs/targets_multitask_v2.yaml
+  main_table_cell_status: not_executed_test_still_locked
+
+relationship_to_frozen_artifacts:
+  targets_multitask_v1:
+    path: configs/targets_multitask_v1.yaml
+    sha256: 2a9e3a8e0a5547b500682b9b632800e2bd103dbf67bebec101b281794bc29674
+    disposition: unmodified_immutable_provenance
+  targets_multitask_v2:
+    path: configs/targets_multitask_v2.yaml
+    disposition: unmodified_governs_the_main_table
+    difference: >
+      v2 gives kuairand_pure four binary heads. This study adds a fifth,
+      watch_time, and changes nothing else. The four binary heads, their source
+      columns, the excluded `is_click` target, and the excluded
+      `video_features_statistic.csv` source are all taken from v2 verbatim.
+
+# ---------------------------------------------------------------------------
+# Objective
+# ---------------------------------------------------------------------------
+# Identical in form to v2: Macro-NLoss = mean_t(L_t / K_t), unweighted, with
+# train-only frozen constants. No task weight other than one.
+objective:
+  name: macro_nloss
+  aggregation: unweighted_mean_over_targets
+  per_target_reduction: mean_over_observed_labels_only
+  binary_loss: binary_cross_entropy_with_logits
+  regression_loss: mean_squared_error
+  binary_constant: train_label_entropy_H_t
+  regression_constant: train_label_variance_V_t
+  constants_estimated_on: train_split_only
+  constants_frozen_before_training: true
+  per_target_reporting_mandatory: true
+
+# ---------------------------------------------------------------------------
+# Targets
+# ---------------------------------------------------------------------------
+primary_confirmatory_target: long_view
+# Deliberately unchanged from v2. AGENTS.md and the original override both fix
+# it, and moving it would change the scope of the multiplicity correction.
+# Adding a head does not change which target is confirmatory.
+
+targets:
+  - name: long_view
+    kind: binary
+    source_columns: [log.long_view]
+    always_observed: true
+  - name: like
+    kind: binary
+    source_columns: [log.is_like]
+    always_observed: true
+  - name: forward
+    kind: binary
+    source_columns: [log.is_forward]
+    always_observed: true
+  - name: hate
+    kind: binary
+    source_columns: [log.is_hate]
+    always_observed: true
+  - name: watch_time
+    kind: regression
+    source_columns: [log.play_time_ms, log.duration_ms]
+    unit: seconds
+    transform: "clip(play_time_ms / 1000, 0, c) / c"
+    c_seconds: 440.733
+    c_provenance: train_split_duration_ms_q0.99_seconds_frozen_before_metrics
+    c_fitted_on: train_only
+    clip_incidence: 0.00026
+    reporting_units: seconds
+    always_observed: true
+    note: >
+      Same construction as the VK-LSVD and KuaiRec watch-time heads. Both
+      play_time_ms and duration_ms are current-row outcomes and are used as
+      label inputs only, never as features of their own row.
+
+excluded_targets:
+  - name: is_click
+    reason: >
+      Taken verbatim from v2: UI semantics of a click differ across surfaces in
+      KuaiRand, so it is excluded from the objective and may be descriptive
+      only.
+
+excluded_sources:
+  - video_features_statistic.csv
+
+# ---------------------------------------------------------------------------
+# Single-target follow-up
+# ---------------------------------------------------------------------------
+# `configs/single_target_followup_v1.yaml` is likewise left unmodified. Its
+# headline target for kuairand_pure remains `long_view`. If the owner wants the
+# follow-up run on watch_time for consistency with the other datasets, that is
+# a change to the follow-up protocol and belongs in a v2 of that file, made
+# before the first test unlock - not in an edit to a frozen artifact.
+single_target_followup:
+  frozen_protocol_headline_target: long_view
+  consistency_request_recorded: watch_time
+  resolution: requires_a_versioned_successor_to_single_target_followup_v1
+  blocked_on: owner_decision

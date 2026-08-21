@@ -1,0 +1,1151 @@
+{
+  "artifact_role": "kuairand_pure_rq23_result",
+  "evaluated_split": "validation",
+  "pre_training_manifest_sha256": "6cef25f0e010026d1849c7113df45556dbf7395e668831d19add274ae153fe11",
+  "records": [
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16901,
+        "interaction": 135720,
+        "matched": 169325,
+        "non_embedding": 173549,
+        "total": 943661
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "training": {
+        "best_step": 1500,
+        "nonfinite_training_batches": 0,
+        "seconds": 17.405198354274035,
+        "validation_macro_nloss": 326756640.0
+      },
+      "validation": {
+        "macro_nloss": 326756640.0,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 796.9570922851562,
+          "hate": 3474.877197265625,
+          "like": 411.482421875,
+          "long_view": 1050.19384765625,
+          "watch_time": 1633777536.0
+        },
+        "per_target_raw": {
+          "forward": 5.012335777282715,
+          "hate": 20.985801696777344,
+          "like": 37.578338623046875,
+          "long_view": 653.9962158203125,
+          "watch_time": 14177721.0
+        },
+        "roc_auc": {
+          "forward": 0.4925630544182232,
+          "hate": 0.3768923224453234,
+          "like": 0.48692731854074545,
+          "long_view": 0.47535280415922043
+        },
+        "watch_time_mae": 313.0820007324219,
+        "watch_time_mae_seconds": 137985.5694288025
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16901,
+        "interaction": 135720,
+        "matched": 169325,
+        "non_embedding": 173549,
+        "total": 943661
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.949936905875802,
+        "validation_macro_nloss": 679941824.0
+      },
+      "validation": {
+        "macro_nloss": 679941824.0,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 2703.708251953125,
+          "hate": 6127.74951171875,
+          "like": 46979.28515625,
+          "long_view": 9512.541015625,
+          "watch_time": 3399643648.0
+        },
+        "per_target_raw": {
+          "forward": 17.004545211791992,
+          "hate": 37.00727462768555,
+          "like": 4290.349609375,
+          "long_view": 5923.82568359375,
+          "watch_time": 29501692.0
+        },
+        "roc_auc": {
+          "forward": 0.48663602178029863,
+          "hate": 0.39860072982480577,
+          "like": 0.5103705724955427,
+          "long_view": 0.5527450909067808
+        },
+        "watch_time_mae": 445.6789245605469,
+        "watch_time_mae_seconds": 196425.40945834352
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16901,
+        "interaction": 135720,
+        "matched": 169325,
+        "non_embedding": 173549,
+        "total": 943661
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "training": {
+        "best_step": 2550,
+        "nonfinite_training_batches": 0,
+        "seconds": 24.19423335045576,
+        "validation_macro_nloss": 297665184.0
+      },
+      "validation": {
+        "macro_nloss": 297665184.0,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 3605.234619140625,
+          "hate": 2883.8173828125,
+          "like": 293.97088623046875,
+          "long_view": 1157.9925537109375,
+          "watch_time": 1488317952.0
+        },
+        "per_target_raw": {
+          "forward": 22.67455291748047,
+          "hate": 17.416217803955078,
+          "like": 26.846681594848633,
+          "long_view": 721.1265869140625,
+          "watch_time": 12915441.0
+        },
+        "roc_auc": {
+          "forward": 0.4878428384135901,
+          "hate": 0.3654591806984898,
+          "like": 0.42088732381285304,
+          "long_view": 0.5012792585557411
+        },
+        "watch_time_mae": 412.9677734375,
+        "watch_time_mae_seconds": 182008.5256904297
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16901,
+        "interaction": 35112,
+        "matched": 68717,
+        "non_embedding": 72941,
+        "total": 843053
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "training": {
+        "best_step": 1950,
+        "nonfinite_training_batches": 0,
+        "seconds": 21.525182893499732,
+        "validation_macro_nloss": 152051.734375
+      },
+      "validation": {
+        "macro_nloss": 152051.734375,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 93.03324127197266,
+          "hate": 64.27639770507812,
+          "like": 29.74559783935547,
+          "long_view": 69.3906021118164,
+          "watch_time": 760002.25
+        },
+        "per_target_raw": {
+          "forward": 0.5851178765296936,
+          "hate": 0.38818398118019104,
+          "like": 2.7164955139160156,
+          "long_view": 43.21220397949219,
+          "watch_time": 6595.20654296875
+        },
+        "roc_auc": {
+          "forward": 0.44612914034616385,
+          "hate": 0.3724993691872002,
+          "like": 0.47136576103551164,
+          "long_view": 0.48242009421076204
+        },
+        "watch_time_mae": 17.892032623291016,
+        "watch_time_mae_seconds": 7885.60921416092
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16901,
+        "interaction": 35112,
+        "matched": 68717,
+        "non_embedding": 72941,
+        "total": 843053
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 13.421338668093085,
+        "validation_macro_nloss": 1306020.125
+      },
+      "validation": {
+        "macro_nloss": 1306020.125,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 697.0704345703125,
+          "hate": 537.5519409179688,
+          "like": 121.5125732421875,
+          "long_view": 47.55752944946289,
+          "watch_time": 6528697.0
+        },
+        "per_target_raw": {
+          "forward": 4.3841142654418945,
+          "hate": 3.246433734893799,
+          "like": 11.09704875946045,
+          "long_view": 29.61590576171875,
+          "watch_time": 56655.234375
+        },
+        "roc_auc": {
+          "forward": 0.49788990716616427,
+          "hate": 0.4037985813816819,
+          "like": 0.40959240585131323,
+          "long_view": 0.4615024413510057
+        },
+        "watch_time_mae": 45.4621467590332,
+        "watch_time_mae_seconds": 20036.66832754898
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.0003,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16901,
+        "interaction": 35112,
+        "matched": 68717,
+        "non_embedding": 72941,
+        "total": 843053
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.470691621303558,
+        "validation_macro_nloss": 1043346.0
+      },
+      "validation": {
+        "macro_nloss": 1043346.0,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 234.79083251953125,
+          "hate": 609.919677734375,
+          "like": 48.394805908203125,
+          "long_view": 432.88677978515625,
+          "watch_time": 5215404.0
+        },
+        "per_target_raw": {
+          "forward": 1.476679801940918,
+          "hate": 3.683483600616455,
+          "like": 4.419620990753174,
+          "long_view": 269.5752868652344,
+          "watch_time": 45258.63671875
+        },
+        "roc_auc": {
+          "forward": 0.49290263707455484,
+          "hate": 0.3584490184211767,
+          "like": 0.425355573442993,
+          "long_view": 0.5581478344428057
+        },
+        "watch_time_mae": 58.3714599609375,
+        "watch_time_mae_seconds": 25726.228662963866
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16901,
+        "interaction": 2215962,
+        "matched": 2233055,
+        "non_embedding": 2241503,
+        "total": 3781727
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 16.145478639751673,
+        "validation_macro_nloss": 0.884375274181366
+      },
+      "validation": {
+        "macro_nloss": 0.884375274181366,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.5952923893928528,
+          "hate": 1.8355662822723389,
+          "like": 0.4307289719581604,
+          "long_view": 0.7949451208114624,
+          "watch_time": 0.7653437256813049
+        },
+        "per_target_raw": {
+          "forward": 0.0037439975421875715,
+          "hate": 0.01108552236109972,
+          "like": 0.03933601453900337,
+          "long_view": 0.49504297971725464,
+          "watch_time": 0.006641558837145567
+        },
+        "roc_auc": {
+          "forward": 0.48837440142578253,
+          "hate": 0.6175749697903705,
+          "like": 0.5961665954807065,
+          "long_view": 0.561944344127649
+        },
+        "watch_time_mae": 0.06439278274774551,
+        "watch_time_mae_seconds": 28.380024318762125
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16901,
+        "interaction": 2215962,
+        "matched": 2233055,
+        "non_embedding": 2241503,
+        "total": 3781727
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 13.822952449321747,
+        "validation_macro_nloss": 0.8010106086730957
+      },
+      "validation": {
+        "macro_nloss": 0.8010106086730957,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.5377246737480164,
+          "hate": 1.4628170728683472,
+          "like": 0.4064241349697113,
+          "long_view": 0.6750766634941101,
+          "watch_time": 0.9230107069015503
+        },
+        "per_target_raw": {
+          "forward": 0.003381934482604265,
+          "hate": 0.00883438065648079,
+          "like": 0.0371163934469223,
+          "long_view": 0.42039623856544495,
+          "watch_time": 0.008009773679077625
+        },
+        "roc_auc": {
+          "forward": 0.5061420219393628,
+          "hate": 0.6913788070942741,
+          "like": 0.6972021076411138,
+          "long_view": 0.5724004223885968
+        },
+        "watch_time_mae": 0.06239398941397667,
+        "watch_time_mae_seconds": 27.49909013639018
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16901,
+        "interaction": 2215962,
+        "matched": 2233055,
+        "non_embedding": 2241503,
+        "total": 3781727
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "training": {
+        "best_step": 1050,
+        "nonfinite_training_batches": 0,
+        "seconds": 27.69499757140875,
+        "validation_macro_nloss": 1.0778709650039673
+      },
+      "validation": {
+        "macro_nloss": 1.0778709650039673,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.7368295788764954,
+          "hate": 2.4795210361480713,
+          "like": 0.5318556427955627,
+          "long_view": 0.7980219721794128,
+          "watch_time": 0.8431268334388733
+        },
+        "per_target_raw": {
+          "forward": 0.00463417312130332,
+          "hate": 0.014974554069340229,
+          "like": 0.04857133701443672,
+          "long_view": 0.49695903062820435,
+          "watch_time": 0.007316551171243191
+        },
+        "roc_auc": {
+          "forward": 0.4832046483604512,
+          "hate": 0.4427441236165021,
+          "like": 0.7337726725286307,
+          "long_view": 0.6127986332181838
+        },
+        "watch_time_mae": 0.06540454924106598,
+        "watch_time_mae_seconds": 28.82594320066273
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16901,
+        "interaction": 35281,
+        "matched": 68886,
+        "non_embedding": 73110,
+        "total": 843222
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "training": {
+        "best_step": 1800,
+        "nonfinite_training_batches": 0,
+        "seconds": 21.144720440730453,
+        "validation_macro_nloss": 0.993255078792572
+      },
+      "validation": {
+        "macro_nloss": 0.993255078792572,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.7833776473999023,
+          "hate": 2.365368604660034,
+          "like": 0.34224385023117065,
+          "long_view": 0.7910674214363098,
+          "watch_time": 0.6842176914215088
+        },
+        "per_target_raw": {
+          "forward": 0.0049269297160208225,
+          "hate": 0.014285154640674591,
+          "like": 0.031255174428224564,
+          "long_view": 0.49262818694114685,
+          "watch_time": 0.005937557201832533
+        },
+        "roc_auc": {
+          "forward": 0.46885331819400516,
+          "hate": 0.5118864817873483,
+          "like": 0.7800904806110929,
+          "long_view": 0.6099999979653422
+        },
+        "watch_time_mae": 0.045358553528785706,
+        "watch_time_mae_seconds": 19.991011372402312
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16901,
+        "interaction": 35281,
+        "matched": 68886,
+        "non_embedding": 73110,
+        "total": 843222
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "training": {
+        "best_step": 1800,
+        "nonfinite_training_batches": 0,
+        "seconds": 21.07120170071721,
+        "validation_macro_nloss": 1.1370714902877808
+      },
+      "validation": {
+        "macro_nloss": 1.1370714902877808,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.7465607523918152,
+          "hate": 2.137932777404785,
+          "like": 0.45762118697166443,
+          "long_view": 0.7455512285232544,
+          "watch_time": 1.5976914167404175
+        },
+        "per_target_raw": {
+          "forward": 0.004695375915616751,
+          "hate": 0.012911601923406124,
+          "like": 0.04179192706942558,
+          "long_view": 0.46428346633911133,
+          "watch_time": 0.013864570297300816
+        },
+        "roc_auc": {
+          "forward": 0.5299685281353455,
+          "hate": 0.5754218935691726,
+          "like": 0.7738025472995669,
+          "long_view": 0.6104856384226012
+        },
+        "watch_time_mae": 0.05966640263795853,
+        "watch_time_mae_seconds": 26.296952633835375
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 16704,
+        "head": 16901,
+        "interaction": 35281,
+        "matched": 68886,
+        "non_embedding": 73110,
+        "total": 843222
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "training": {
+        "best_step": 1650,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.867387253791094,
+        "validation_macro_nloss": 1.1323641538619995
+      },
+      "validation": {
+        "macro_nloss": 1.1323641538619995,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.5834682583808899,
+          "hate": 1.7168388366699219,
+          "like": 0.7793052792549133,
+          "long_view": 1.1014199256896973,
+          "watch_time": 1.4807881116867065
+        },
+        "per_target_raw": {
+          "forward": 0.0036696314346045256,
+          "hate": 0.01036849245429039,
+          "like": 0.07116949558258057,
+          "long_view": 0.685896635055542,
+          "watch_time": 0.012850098311901093
+        },
+        "roc_auc": {
+          "forward": 0.47619841589132045,
+          "hate": 0.6131318682147567,
+          "like": 0.7690856059089946,
+          "long_view": 0.5806052026141412
+        },
+        "watch_time_mae": 0.06481871008872986,
+        "watch_time_mae_seconds": 28.567744553536176
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16901,
+        "interaction": 277512,
+        "matched": 318285,
+        "non_embedding": 326093,
+        "total": 1096205
+      },
+      "regime": "full",
+      "seed": 42,
+      "training": {
+        "best_step": 2700,
+        "nonfinite_training_batches": 0,
+        "seconds": 23.627370161935687,
+        "validation_macro_nloss": 126180458496.0
+      },
+      "validation": {
+        "macro_nloss": 126180458496.0,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 21601.068359375,
+          "hate": 118371.875,
+          "like": 5063.9931640625,
+          "long_view": 11952.6630859375,
+          "watch_time": 630902161408.0
+        },
+        "per_target_raw": {
+          "forward": 135.85650634765625,
+          "hate": 714.8824462890625,
+          "like": 462.4655456542969,
+          "long_view": 7443.3837890625,
+          "watch_time": 5474891776.0
+        },
+        "roc_auc": {
+          "forward": 0.494439658553397,
+          "hate": 0.43060454368305906,
+          "like": 0.399976345751037,
+          "long_view": 0.4421553385029269
+        },
+        "watch_time_mae": 2762.3681640625,
+        "watch_time_mae_seconds": 1217466.8080517577
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16901,
+        "interaction": 277512,
+        "matched": 318285,
+        "non_embedding": 326093,
+        "total": 1096205
+      },
+      "regime": "full",
+      "seed": 43,
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.6851753406226635,
+        "validation_macro_nloss": 2.9637404646178816e+17
+      },
+      "validation": {
+        "macro_nloss": 2.9637404646178816e+17,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 527479360.0,
+          "hate": 168923680.0,
+          "like": 21273114.0,
+          "long_view": 2789022.5,
+          "watch_time": 1.4818702323089408e+18
+        },
+        "per_target_raw": {
+          "forward": 3317498.0,
+          "hate": 1020179.625,
+          "like": 1942751.875,
+          "long_view": 1736831.75,
+          "watch_time": 1.2859488566509568e+16
+        },
+        "roc_auc": {
+          "forward": 0.5179120968771241,
+          "hate": 0.6091444679233061,
+          "like": 0.5832817836032501,
+          "long_view": 0.5372596721758464
+        },
+        "watch_time_mae": 3089774.5,
+        "watch_time_mae_seconds": 1361765584.7085
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16901,
+        "interaction": 277512,
+        "matched": 318285,
+        "non_embedding": 326093,
+        "total": 1096205
+      },
+      "regime": "full",
+      "seed": 44,
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.651363780722022,
+        "validation_macro_nloss": 1.746559927071015e+18
+      },
+      "validation": {
+        "macro_nloss": 1.746559927071015e+18,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 261623.046875,
+          "hate": 36398420.0,
+          "like": 559364.5625,
+          "long_view": 326343.3125,
+          "watch_time": 8.732799635355075e+18
+        },
+        "per_target_raw": {
+          "forward": 1645.436767578125,
+          "hate": 219820.734375,
+          "like": 51083.56640625,
+          "long_view": 203226.5625,
+          "watch_time": 7.578216390721536e+16
+        },
+        "roc_auc": {
+          "forward": 0.5027279009582927,
+          "hate": 0.43491643694592586,
+          "like": 0.450082986690424,
+          "long_view": 0.4872021628031616
+        },
+        "watch_time_mae": 2835494.75,
+        "watch_time_mae_seconds": 1249696107.65175
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16901,
+        "interaction": 119560,
+        "matched": 160333,
+        "non_embedding": 168141,
+        "total": 938253
+      },
+      "regime": "full",
+      "seed": 42,
+      "training": {
+        "best_step": 2850,
+        "nonfinite_training_batches": 0,
+        "seconds": 25.8611642383039,
+        "validation_macro_nloss": 3.1006581783294678
+      },
+      "validation": {
+        "macro_nloss": 3.1006581783294678,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 3.4048008918762207,
+          "hate": 6.579475402832031,
+          "like": 1.3817328214645386,
+          "long_view": 0.9202026724815369,
+          "watch_time": 3.2170798778533936
+        },
+        "per_target_raw": {
+          "forward": 0.021413957700133324,
+          "hate": 0.03973538056015968,
+          "like": 0.12618575990200043,
+          "long_view": 0.5730456709861755,
+          "watch_time": 0.027917424216866493
+        },
+        "roc_auc": {
+          "forward": 0.5408964107548082,
+          "hate": 0.5079494968588011,
+          "like": 0.49693139814369497,
+          "long_view": 0.47085200793851967
+        },
+        "watch_time_mae": 0.12442365288734436,
+        "watch_time_mae_seconds": 54.83760980799794
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16901,
+        "interaction": 119560,
+        "matched": 160333,
+        "non_embedding": 168141,
+        "total": 938253
+      },
+      "regime": "full",
+      "seed": 43,
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.976845478639007,
+        "validation_macro_nloss": 91950400.0
+      },
+      "validation": {
+        "macro_nloss": 91950400.0,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 439.41253662109375,
+          "hate": 1418.66650390625,
+          "like": 237.16261291503906,
+          "long_view": 516.9697875976562,
+          "watch_time": 459749408.0
+        },
+        "per_target_raw": {
+          "forward": 2.763615608215332,
+          "hate": 8.567742347717285,
+          "like": 21.658706665039062,
+          "long_view": 321.93701171875,
+          "watch_time": 3989649.0
+        },
+        "roc_auc": {
+          "forward": 0.4826461134662493,
+          "hate": 0.37466672381126165,
+          "like": 0.3957812651523997,
+          "long_view": 0.4706016295468811
+        },
+        "watch_time_mae": 223.14747619628906,
+        "watch_time_mae_seconds": 98348.45662641907
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 23872,
+        "head": 16901,
+        "interaction": 119560,
+        "matched": 160333,
+        "non_embedding": 168141,
+        "total": 938253
+      },
+      "regime": "full",
+      "seed": 44,
+      "training": {
+        "best_step": 2850,
+        "nonfinite_training_batches": 0,
+        "seconds": 24.874712901189923,
+        "validation_macro_nloss": 0.6716168522834778
+      },
+      "validation": {
+        "macro_nloss": 0.6716168522834778,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.471780925989151,
+          "hate": 1.4349725246429443,
+          "like": 0.4097575545310974,
+          "long_view": 0.7097758650779724,
+          "watch_time": 0.3317974805831909
+        },
+        "per_target_raw": {
+          "forward": 0.0029671916272491217,
+          "hate": 0.00866621918976307,
+          "like": 0.03742081671953201,
+          "long_view": 0.4420047700405121,
+          "watch_time": 0.0028792978264391422
+        },
+        "roc_auc": {
+          "forward": 0.5,
+          "hate": 0.5,
+          "like": 0.5,
+          "long_view": 0.5
+        },
+        "watch_time_mae": 0.04306001216173172,
+        "watch_time_mae_seconds": 18.977968340076508
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16901,
+        "interaction": 3148026,
+        "matched": 3165119,
+        "non_embedding": 3180735,
+        "total": 4720959
+      },
+      "regime": "full",
+      "seed": 42,
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 27.421083997935057,
+        "validation_macro_nloss": 0.7502760887145996
+      },
+      "validation": {
+        "macro_nloss": 0.7502760887145996,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.7799850702285767,
+          "hate": 1.592616319656372,
+          "like": 0.40012624859809875,
+          "long_view": 0.6278429627418518,
+          "watch_time": 0.3508097529411316
+        },
+        "per_target_raw": {
+          "forward": 0.004905592650175095,
+          "hate": 0.009618276730179787,
+          "like": 0.03654124215245247,
+          "long_view": 0.3909820020198822,
+          "watch_time": 0.003044283948838711
+        },
+        "roc_auc": {
+          "forward": 0.541446866041543,
+          "hate": 0.6545852760848062,
+          "like": 0.7768283959845715,
+          "long_view": 0.6160909236048017
+        },
+        "watch_time_mae": 0.03354226425290108,
+        "watch_time_mae_seconds": 14.78318275097385
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16901,
+        "interaction": 3148026,
+        "matched": 3165119,
+        "non_embedding": 3180735,
+        "total": 4720959
+      },
+      "regime": "full",
+      "seed": 43,
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.05044642649591,
+        "validation_macro_nloss": 0.7211589217185974
+      },
+      "validation": {
+        "macro_nloss": 0.7211589217185974,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.6169906258583069,
+          "hate": 1.306579828262329,
+          "like": 0.3927367925643921,
+          "long_view": 0.6805325746536255,
+          "watch_time": 0.6089546084403992
+        },
+        "per_target_raw": {
+          "forward": 0.003880465170368552,
+          "hate": 0.007890818640589714,
+          "like": 0.03586640581488609,
+          "long_view": 0.42379385232925415,
+          "watch_time": 0.005284433253109455
+        },
+        "roc_auc": {
+          "forward": 0.5682900551066808,
+          "hate": 0.772590193674545,
+          "like": 0.7273204380941262,
+          "long_view": 0.5497999721067934
+        },
+        "watch_time_mae": 0.04515084624290466,
+        "watch_time_mae_seconds": 19.8994679171741
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16901,
+        "interaction": 3148026,
+        "matched": 3165119,
+        "non_embedding": 3180735,
+        "total": 4720959
+      },
+      "regime": "full",
+      "seed": 44,
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 24.73750744946301,
+        "validation_macro_nloss": 0.6596455574035645
+      },
+      "validation": {
+        "macro_nloss": 0.6596455574035645,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "forward": 311490,
+          "hate": 311490,
+          "like": 311490,
+          "long_view": 311490,
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "forward": 0.509053647518158,
+          "hate": 1.3892629146575928,
+          "like": 0.39021483063697815,
+          "long_view": 0.6694545745849609,
+          "watch_time": 0.3402417004108429
+        },
+        "per_target_raw": {
+          "forward": 0.0032016125041991472,
+          "hate": 0.008390165865421295,
+          "like": 0.035636089742183685,
+          "long_view": 0.41689518094062805,
+          "watch_time": 0.0029525759164243937
+        },
+        "roc_auc": {
+          "forward": 0.5290500322091075,
+          "hate": 0.6790883043376205,
+          "like": 0.734609962663328,
+          "long_view": 0.5843341597318805
+        },
+        "watch_time_mae": 0.027696354314684868,
+        "watch_time_mae_seconds": 12.206697326174005
+      }
+    }
+  ],
+  "schema_version": 1,
+  "selected_configs_sha256": "d99cd485ce765cca68e29bc8365e85c77b1fed381e27f24f43d66d0bd5ddc7e6",
+  "targets": [
+    "long_view",
+    "like",
+    "forward",
+    "hate",
+    "watch_time"
+  ],
+  "test_unlocked": false
+}

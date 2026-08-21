@@ -352,3 +352,29 @@ multi-target encoder/capacity/Protocol freeze then completed CPU-only with no
 model metric. Storage remained healthy at 22.702860 GiB of the 40 GiB durable
 cap with 51.435146 GiB overlay free. Both A100s were idle, the test remained
 locked, and no provider, external, or Pod-lifecycle action occurred.
+
+At `2026-08-21T11:05:20Z`, the KuaiRand-Pure RQ2-quality and RQ3 study completed
+on one A100; the second GPU carried a parallel rejected-variant run for part of
+the window. Runtime views were materialized twice (the second time to bring the
+R block into the frozen contract's column order), and the seven-arm matrix was
+executed four times: a two-point learning-rate pilot, a geometric-preconditioner
+run that is retained only as the evidence for rejecting that preconditioner, a
+pilot before the R reorder, and the final run of seven arms x (four tuning
+trials + eight seeds) on validation.
+
+Findings: DCDN separates from both same-input baselines on the frozen primary
+target `long_view` (C1 and C2), and from DCNv2 on identical full inputs (C6).
+RQ3 is **not** supported - against a capacity-matched DCNv2 the advantage never
+separates and reverses sign at eight seeds - and RQ2-quality is a tie rather
+than a win. Two arms failed the convergence gate on at least one seed, which
+withholds C7 everywhere.
+
+Compute was roughly 1.6 GPU-hours across both A100s. The credential-free
+estimate is USD 268.02 for 73.867499 elapsed Pod-hours including the fixed USD
+25 storage reserve, leaving USD 101.98 of warning-threshold headroom and USD
+191.98 of hard-cap headroom. Durable project usage is 22.704 GiB of the frozen
+50 GiB logical envelope with 27.296 GiB of headroom and 50.831 GiB overlay free.
+The finalization reserve begins `2026-08-23T01:13:18Z`. No provider action,
+external mutation, test access, or Pod lifecycle action occurred;
+`test_unlocked=false` remains in force and the locked KuaiRand test window
+(365,420 rows) was never read.

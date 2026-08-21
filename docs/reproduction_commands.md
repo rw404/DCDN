@@ -128,7 +128,39 @@ Determinism: two consecutive runs of the notebook produce bit-identical values
 for every reported metric. Only wall-clock timings and latency measurements
 differ, as they must.
 
-## 6. Not yet executable
+## 6. KuaiRand-Pure, RQ2-quality and RQ3 (validation only)
+
+Runtime views, the seven-arm matrix, and the contrast tables. The test split is
+locked throughout; this is **not** the mandatory main-table cell, which still
+requires the test unlock.
+
+```bash
+source scripts/env.sh
+
+python scripts/data/kuairand_pure_materialize.py
+
+python scripts/run_kuairand_multitask.py \
+    --device cuda:0 --preconditioner rms --annex-seeds \
+    --output-dir results/kuairand_multitask/rq23_final_v1
+
+python scripts/report_kuairand_contrasts.py \
+    --results results/kuairand_multitask/rq23_final_v1/results_v1.json \
+    --output-dir results/kuairand_multitask/contrasts_v1
+```
+
+The rejected geometric preconditioner, retained as the evidence for rejecting
+it rather than as a co-equal variant:
+
+```bash
+python scripts/run_kuairand_multitask.py \
+    --device cuda:0 --preconditioner geometric \
+    --output-dir results/kuairand_multitask/rq23_geometric_rejected_v1
+```
+
+Findings and the reasoning behind the preconditioner, the learning-rate grid,
+and the seed scopes are in `docs/rq23_kuairand_quality.md`.
+
+## 7. Not yet executable
 
 The remaining mandatory multi-target cells cannot be reproduced yet because
 their inputs do not exist in this clone:
@@ -136,7 +168,6 @@ their inputs do not exist in this clone:
 | dataset | blocking step |
 |---|---|
 | VK-LSVD | runtime views must be rebuilt: the override moves the three iALS cosines into `P_shared` and removes the six iALS norms from `D`, which changes `features_sha256` and `denominator_mask_sha256`; the four multi-target labels (`watch_time`, `like`, `share`, `dislike`) must also be materialized |
-| KuaiRand-Pure | raw data downloaded and verified, but no runtime views are built |
 | KuaiRec big matrix | raw data downloaded and verified, but no runtime views are built |
 | Yambda-50M | no acquisition code and no data; the full pipeline is unwritten |
 
