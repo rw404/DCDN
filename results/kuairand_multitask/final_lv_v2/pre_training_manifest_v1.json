@@ -1,0 +1,106 @@
+{
+  "annex_seeds": [
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "arm_order": [
+    "dcnv2_reduced",
+    "dcdn_reduced",
+    "afn_reduced",
+    "dcnv2_capacity_reduced",
+    "dcnv2_full",
+    "dcdn_full",
+    "afn_full"
+  ],
+  "artifact_role": "kuairand_pure_single_target_followup_manifest",
+  "capacity_resolution": {
+    "candidates_considered": 768,
+    "flop_contract": "dcdn-forward-floating-arithmetic-flops-v1",
+    "lower_bracket": null,
+    "matched": true,
+    "selected": {
+      "adapter_flops": 33280,
+      "adapter_parameters": 16704,
+      "expert_flops": 70429,
+      "expert_parameters": 35017,
+      "flops": 137063,
+      "head_flops": 33088,
+      "head_parameters": 16641,
+      "interaction_flops": 70695,
+      "interaction_flops_per_layer": 70695,
+      "interaction_parameters": 35281,
+      "interaction_parameters_per_layer": 35281,
+      "low_rank": 97,
+      "num_experts": 1,
+      "num_layers": 1,
+      "parameters": 68626
+    },
+    "selected_ratios": {
+      "distance": 0.00494203962766868,
+      "flop_ratio": 1.0024794476463532,
+      "parameter_ratio": 1.0024687029814336,
+      "within_tolerance": true
+    },
+    "selection_rule": "minimum_log_distance_in_parameter_and_flop_space",
+    "selection_used_validation_quality": false,
+    "target": {
+      "adapter_flops": 33280,
+      "adapter_parameters": 16704,
+      "architecture": "DCDN-Core-L1",
+      "flops": 136724,
+      "head_flops": 33088,
+      "head_parameters": 16641,
+      "interaction_flops": 70356,
+      "interaction_flops_per_layer": 70224,
+      "interaction_parameters": 35112,
+      "interaction_parameters_per_layer": 35112,
+      "num_layers": 1,
+      "parameters": 68457,
+      "reciprocal_flops": 132
+    },
+    "tolerance_fraction": 0.05,
+    "upper_bracket": null
+  },
+  "dataset_id": "kuairand_pure",
+  "evaluated_split": "validation",
+  "final_seeds": [
+    42,
+    43,
+    44
+  ],
+  "frozen_study_blocked_on": "main_multi_target_table_complete",
+  "held_identical_to_multitask": [
+    "splits",
+    "feature_manifests",
+    "input_preconditioner",
+    "encoder",
+    "representation_width",
+    "capacity_control",
+    "optimizer",
+    "batch_size",
+    "maximum_steps",
+    "patience",
+    "learning_rate_grid",
+    "seeds"
+  ],
+  "is_the_frozen_single_target_study": false,
+  "learning_rates": [
+    0.0001,
+    0.0003,
+    0.001,
+    0.003
+  ],
+  "locked_test_window_read": false,
+  "objective_spec_sha256": "55194260fe7adcfa39003cf6e667e21c00f7d02d005e9ae595ff405783aefc15",
+  "only_difference": "single regression head trained on watch_time alone",
+  "schema_version": 1,
+  "study": "kuairand_pure_single_target_watch_time",
+  "target": "long_view",
+  "target_kind": "binary",
+  "task_constants_sha256": "a438580b1b03678f918771714721695e0768d4013fd55c5acc0c8e1ccd54dbf0",
+  "test_unlocked": false,
+  "view_manifest_sha256": "0c26843079e7bb2789421885141afa98e5d0b5ad6563039bccaaab9bc5cc5049"
+}

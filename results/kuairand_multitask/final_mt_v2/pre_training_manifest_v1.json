@@ -1,0 +1,125 @@
+{
+  "annex_seeds": [
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "arm_order": [
+    "dcnv2_reduced",
+    "dcdn_reduced",
+    "afn_reduced",
+    "dcnv2_capacity_reduced",
+    "dcnv2_full",
+    "dcdn_full",
+    "afn_full"
+  ],
+  "artifact_role": "kuairand_pure_rq23_pre_training_manifest",
+  "capacity_resolution": {
+    "candidates_considered": 768,
+    "flop_contract": "dcdn-forward-floating-arithmetic-flops-v1",
+    "lower_bracket": null,
+    "matched": true,
+    "selected": {
+      "adapter_flops": 33280,
+      "adapter_parameters": 16704,
+      "expert_flops": 70429,
+      "expert_parameters": 35017,
+      "flops": 137575,
+      "head_flops": 33600,
+      "head_parameters": 16901,
+      "interaction_flops": 70695,
+      "interaction_flops_per_layer": 70695,
+      "interaction_parameters": 35281,
+      "interaction_parameters_per_layer": 35281,
+      "low_rank": 97,
+      "num_experts": 1,
+      "num_layers": 1,
+      "parameters": 68886
+    },
+    "selected_ratios": {
+      "distance": 0.0049234944318217256,
+      "flop_ratio": 1.0024701973243173,
+      "parameter_ratio": 1.0024593623120917,
+      "within_tolerance": true
+    },
+    "selection_rule": "minimum_log_distance_in_parameter_and_flop_space",
+    "selection_used_validation_quality": false,
+    "target": {
+      "adapter_flops": 33280,
+      "adapter_parameters": 16704,
+      "architecture": "DCDN-Core-L1",
+      "flops": 137236,
+      "head_flops": 33600,
+      "head_parameters": 16901,
+      "interaction_flops": 70356,
+      "interaction_flops_per_layer": 70224,
+      "interaction_parameters": 35112,
+      "interaction_parameters_per_layer": 35112,
+      "num_layers": 1,
+      "parameters": 68717,
+      "reciprocal_flops": 132
+    },
+    "tolerance_fraction": 0.05,
+    "upper_bracket": null
+  },
+  "dataset_id": "kuairand_pure",
+  "evaluated_split": "validation",
+  "final_seeds": [
+    42,
+    43,
+    44
+  ],
+  "input_preconditioner": {
+    "alternative_also_published": [
+      "geometric"
+    ],
+    "applied_to_blocks": [
+      "P",
+      "R"
+    ],
+    "fitted_on": "train_only",
+    "identity_on_blocks": [
+      "V"
+    ],
+    "kind": "per_column_train_rms_divide",
+    "pre_registered": false,
+    "ratio_preserving": true,
+    "reason": "frozen feature contract forbids fitted scales, but raw counters reach 9.8e7 and overflow float32 through two multiplicative interaction layers; a purely multiplicative rescale bounds magnitude without linearizing quotients. The specific scale was selected after observing divergence and is therefore reported under both variants, not pre-registered.",
+    "scale_sha256": {
+      "P": "0f95508cd8a4521d2d4cf01f6b3790908dc10eb687a5db270cb12b489cf28412",
+      "R": "4546fce150185e8dd1bab40d20f76161f9c5328be9cfc29bb1197ce43e7bb083",
+      "V": "6ef38a009dcc7a3e6fe6efa83150e7db71ac83eb8a1d0a6ac6d3dab284863246"
+    },
+    "shift": "none"
+  },
+  "learning_rates": [
+    0.0001,
+    0.0003,
+    0.001,
+    0.003
+  ],
+  "locked_test_window_read": false,
+  "objective_spec_sha256": "a6b3413e90b5c70a659d0daefb3f1f45636fc0387e55489d1a79fe09e9d59054",
+  "schema_version": 1,
+  "seed_42_is_tuning_contaminated_on_validation": true,
+  "target_kinds": [
+    "binary",
+    "binary",
+    "binary",
+    "binary",
+    "regression"
+  ],
+  "targets": [
+    "long_view",
+    "like",
+    "forward",
+    "hate",
+    "watch_time"
+  ],
+  "task_constants_sha256": "37bdcb14a10e1f76b679f6a44e43fb88ba11d3c7dbcccac9547c37d4c0e6ce43",
+  "test_unlocked": false,
+  "tuning_seed": 42,
+  "view_manifest_sha256": "0c26843079e7bb2789421885141afa98e5d0b5ad6563039bccaaab9bc5cc5049"
+}
