@@ -296,3 +296,21 @@ warning-threshold headroom and USD 203.71 of hard-cap headroom.
 Durable project storage was 16.325 GiB of the 40 GiB cap. No
 provider action, external mutation, or test access occurred;
 `test_unlocked=false` remains in force.
+
+At `2026-08-21T07:58:14Z`, the RQ2 batch sweep
+completed on one A100: 15 batch sizes from 1 to 16384, five arms, each under its
+best available implementation. Latency proved essentially flat across the range
+(+6% for DCNv2, +11% for DCDN against a 16,384-fold work increase), so the model
+class is dispatch-bound throughout the production batch range and DCDN's lower
+FLOP count never becomes a throughput win. Wall-over-device agreement was 1.01
+at every point. Figures were emitted as dependency-free SVG, leaving `uv.lock`
+untouched.
+
+This study trains nothing and reads no dataset row, label, or test metric.
+Compute was roughly 0.25 GPU-hours on one A100; the second stayed idle. The
+credential-free estimate is USD 257.76 for 70.749102 elapsed Pod-hours
+including the fixed USD 25 storage reserve, leaving USD 112.24 of
+warning-threshold headroom and USD 202.24 of hard-cap headroom. Durable
+project storage was 16.326 GiB of the 40 GiB cap. No provider
+action, external mutation, or test access occurred; `test_unlocked=false`
+remains in force.

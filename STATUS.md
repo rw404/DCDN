@@ -1271,3 +1271,64 @@ quotient is handed to it. M2 wins decisively when operand scale shifts, where
 DCNv2's product path grows with the input and the supplied ratios do not help.
 On high-ratio the nominal 5.94x favouring M2 is unstable: DCNv2-FULL's three
 seeds span 179.1 / 20.6 / 9.7, an 18-fold range, so the ranges overlap.
+
+## 2026-08-21 RQ2 addendum: batch sweep across the production range
+
+The runtime-parity claim no longer rests on a single operating point. Full
+report: `docs/rq2_batch_sweep.md`. Artifacts:
+`results/efficiency/rq2_batch_sweep_v1/` — `results_v1.json` (`2fd8aa9f…`),
+`batch_sweep.csv` (75 rows, `4cc54f99…`), pre-measurement manifest published
+before the first timed forward, all verified against exact-byte sidecars.
+Figures: `docs/figures/batch-sweep-{latency,throughput,ratio}[-dark].svg`.
+
+**Why.** The frozen threshold is defined at `p95(B=1)`, but production batches
+dynamically over `1..16000`, and `B=1` is the worst point for this comparison:
+pure fixed overhead, where DCDN's 2.2x lower interaction FLOPs cannot show.
+15 batch sizes from 1 to 16384 were measured under each arm's best available
+implementation (DCDN fused, DCNv2 reference), with a declared lighter sweep
+protocol of 50 warmups / 300 forwards / 3 rounds.
+
+**Headline: there is no crossover.** Latency is essentially flat across the
+whole range — a 16,384-fold increase in work costs 6-11% more time:
+
+| arm | B=1 | B=1024 | B=16384 | growth |
+|---|---:|---:|---:|---:|
+| DCNv2-REDUCED | 0.920 | 0.972 | 0.974 | +6% |
+| DCDN-REDUCED (fused) | 0.952 | 1.025 | 1.059 | +11% |
+| DCNv2-capacity-matched | 1.662 | 1.726 | 1.725 | +4% |
+
+On an A100 this model class stays dispatch-bound across the entire production
+batch range. Throughput scales near-linearly to ~16.8M examples/s purely by
+amortising a fixed ~0.95 ms call.
+
+**DCDN stays runtime-matched at every batch size**, but the margin narrows:
+latency ratio 1.035 at `B=1` rising to 1.086 at `B=16384` against the 1.10
+threshold; throughput 0.966 falling to 0.920 against the 0.90 threshold. Parity
+is comfortable below `B~1024` and thin at the top of the range.
+
+**Why the FLOP advantage never materialises.** Arithmetic is never the
+bottleneck: at `B=16384` the adapter is ~165 MFLOP, which an A100 retires in
+under 0.01 ms against a ~0.95 ms call. CUDA-event device time confirms this is
+real GPU-timeline behaviour, not host overhead — wall-over-device is **1.01 at
+every point**, and DCNv2's device latency moves only 0.907 -> 0.961 ms across
+the sweep. The ~0.95 ms is dispatch and inter-kernel gaps. **The remaining
+lever is dispatch elimination (CUDA Graphs, fusing across the encoder/tower
+boundary), not further FLOP reduction.**
+
+**Refutes a plausible expectation.** One might predict DCDN's lower FLOP count
+would become a throughput win at large batch. It does not, anywhere in the
+production range, on this hardware. Publishing that prediction would have been
+wrong.
+
+**Capacity control at scale.** `M4`, matched to DCDN within 0.1% on parameters
+and FLOPs, costs 1.72 ms at every batch size and delivers 9.5M/s against DCDN's
+15.5M/s at `B=16384` — 39% less throughput. Its gating softmax and expert loop
+are many small kernels regardless of FLOP count. This is a second, stronger
+demonstration that capacity matching and runtime matching are different checks:
+the gap holds across four orders of magnitude in batch size.
+
+Figures are self-contained SVG emitted by `scripts/plot_batch_sweep.py` with no
+plotting dependency, so the pinned `uv.lock` environment is untouched; light and
+dark surfaces are generated from the same palette steps, series are direct
+labelled as well as colour coded, and latency and throughput are separate charts
+rather than a dual axis.
