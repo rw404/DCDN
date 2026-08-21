@@ -69,6 +69,10 @@ from dcdn.models import (
     build_controlled_model,
 )
 from dcdn.monitor import AsyncNonFiniteMonitor, NumericalMonitorError
+from dcdn.multitask_model import (
+    MultiTargetTrainableEncodedModel,
+    ProvenancedMultiTargetModel,
+)
 from dcdn.protocol import (
     SHA256_RE,
     ProtocolGate,
@@ -102,7 +106,11 @@ from dcdn.selection_artifact import (
 
 Split = Literal["train", "validation", "test"]
 RunPhase = Literal["tuning", "final"]
-LossName = Literal["binary_cross_entropy_with_logits", "normalized_mean_squared_error"]
+LossName = Literal[
+    "binary_cross_entropy_with_logits",
+    "normalized_mean_squared_error",
+    "macro_nloss",
+]
 
 _SECRET_RE = re.compile(
     r"(github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]{20,}|"
@@ -275,6 +283,7 @@ class TrainingConfig:
         if self.loss not in {
             "binary_cross_entropy_with_logits",
             "normalized_mean_squared_error",
+            "macro_nloss",
         }:
             raise ValueError("unsupported frozen loss")
         if self.selection_direction != "minimize":
@@ -870,13 +879,18 @@ def _mask_sha256(mask: Sequence[bool]) -> str:
 
 
 def _controlled_model(
-    model: TrainableEncodedModel | ProvenancedControlledModel,
-) -> ProvenancedControlledModel:
-    if isinstance(model, TrainableEncodedModel):
+    model: (
+        TrainableEncodedModel
+        | MultiTargetTrainableEncodedModel
+        | ProvenancedControlledModel
+        | ProvenancedMultiTargetModel
+    ),
+) -> ProvenancedControlledModel | ProvenancedMultiTargetModel:
+    if isinstance(model, TrainableEncodedModel | MultiTargetTrainableEncodedModel):
         return model.controlled_model
-    if isinstance(model, ProvenancedControlledModel):
+    if isinstance(model, ProvenancedControlledModel | ProvenancedMultiTargetModel):
         return model
-    raise TypeError("model must be a controlled model or TrainableEncodedModel")
+    raise TypeError("model must be a frozen controlled or joint model")
 
 
 def _expected_frozen_interaction_config(
@@ -1130,7 +1144,12 @@ def _expected_capacity_parameter_count_for_feature_regime(
 def validate_frozen_training_contract(
     config: TrainingConfig,
     *,
-    model: TrainableEncodedModel | ProvenancedControlledModel,
+    model: (
+        TrainableEncodedModel
+        | MultiTargetTrainableEncodedModel
+        | ProvenancedControlledModel
+        | ProvenancedMultiTargetModel
+    ),
     search_lock: SearchSpaceLock,
 ) -> None:
     """Bind one resolved run to the frozen search/model/common-head contract."""
@@ -1138,7 +1157,13 @@ def validate_frozen_training_contract(
     controlled = _controlled_model(model)
     if search_lock.digest != config.search_space_sha256:
         raise TrainingContractError("search-space digest mismatch")
-    if search_lock.experiment_matrix_digest != config.experiment_matrix_sha256:
+    multi_target = isinstance(controlled, ProvenancedMultiTargetModel)
+    expected_matrix_digest = (
+        "1b73dcb34a565f192cb66669163f71bac244884401e9c958a2cc836b2de36946"
+        if multi_target
+        else search_lock.experiment_matrix_digest
+    )
+    if expected_matrix_digest != config.experiment_matrix_sha256:
         raise TrainingContractError("experiment-matrix digest mismatch")
     if controlled.model_key != config.model_key:
         raise TrainingContractError("resolved model_key does not match built model")
@@ -1151,14 +1176,24 @@ def validate_frozen_training_contract(
         raise TrainingContractError("semantic denominator-mask hash mismatch")
     if spec.representation_dim != 64:
         raise TrainingContractError("common representation width must remain 64")
-    if controlled.head_config != HeadConfig(hidden_dims=(), dropout=0.0, output_dim=1):
+    expected_output_dim = len(controlled.target_spec) if multi_target else 1
+    if controlled.head_config != HeadConfig(
+        hidden_dims=(), dropout=0.0, output_dim=expected_output_dim
+    ):
         raise TrainingContractError("model does not use the frozen common linear head")
+    if multi_target and (
+        config.loss != "macro_nloss"
+        or config.selection_metric != "macro_nloss"
+        or controlled.target_spec.contract_sha256
+        != "850251f3808910ca1ffe12838c60d533631b6daba431f56c22eb77acbf9deb59"
+    ):
+        raise TrainingContractError("multi-target objective/spec contract drifted")
     _validate_frozen_interaction_contract(
         config,
         controlled.interaction.config,
         search_lock,
     )
-    if isinstance(model, TrainableEncodedModel):
+    if isinstance(model, TrainableEncodedModel | MultiTargetTrainableEncodedModel):
         if model.encoder.spec.dataset_id != config.dataset_id:
             raise TrainingContractError("joint encoder dataset_id mismatch")
         if model.encoder.spec.feature_regime != config.feature_regime:
@@ -1267,10 +1302,11 @@ def validate_frozen_training_contract(
     expected = {
         "maximum_train_examples": config.maximum_train_examples,
         "validate_every_examples": config.validate_every_examples,
-        "loss": config.loss,
-        "selection_metric": config.selection_metric,
         "selection_direction": config.selection_direction,
     }
+    if not multi_target:
+        expected["loss"] = config.loss
+        expected["selection_metric"] = config.selection_metric
     for name, value in expected.items():
         if dataset_stop.get(name) != value:
             raise TrainingContractError(f"frozen stopping field mismatch: {name}")
@@ -1629,7 +1665,12 @@ class TrainingHarness:
     def __init__(
         self,
         *,
-        model: TrainableEncodedModel | ProvenancedControlledModel,
+        model: (
+            TrainableEncodedModel
+            | MultiTargetTrainableEncodedModel
+            | ProvenancedControlledModel
+            | ProvenancedMultiTargetModel
+        ),
         config: TrainingConfig,
         safety: SafetyAttestation,
         search_lock: SearchSpaceLock,
@@ -1644,7 +1685,9 @@ class TrainingHarness:
         heartbeat: Callable[[], None] | None = None,
     ) -> None:
         controlled = _controlled_model(model)
-        self.raw_execution = isinstance(model, TrainableEncodedModel)
+        self.raw_execution = isinstance(
+            model, TrainableEncodedModel | MultiTargetTrainableEncodedModel
+        )
         if not self.raw_execution:
             assert_synthetic_encoded_execution(config.dataset_id)
         self.model = model
@@ -1817,7 +1860,9 @@ class TrainingHarness:
         if self.capacity_resolution_sha256 != safety.capacity_resolution_sha256:
             raise TrainingContractError("capacity digest differs from safety evidence")
         if self.raw_execution:
-            assert isinstance(model, TrainableEncodedModel)
+            assert isinstance(
+                model, TrainableEncodedModel | MultiTargetTrainableEncodedModel
+            )
             model.encoder.spec.assert_source_identity(safety.train_source_identity)
             model.encoder.spec.assert_source_identity(safety.validation_source_identity)
             controlled_count = count_trainable_non_embedding_parameters(controlled)
@@ -1844,7 +1889,9 @@ class TrainingHarness:
                 )
             assert self.capacity_artifact is not None
             expected_capacity_count = (
-                _expected_capacity_parameter_count_for_feature_regime(
+                None
+                if isinstance(model, MultiTargetTrainableEncodedModel)
+                else _expected_capacity_parameter_count_for_feature_regime(
                     config,
                     controlled_model_key=controlled.model_key,
                     artifact=self.capacity_artifact,
@@ -2159,7 +2206,9 @@ class TrainingHarness:
             raise SplitAccessError("raw source runtime_value_checks is not boolean")
         if source.runtime_value_checks != self.config.runtime_value_checks:
             raise SplitAccessError("raw source runtime check mode mismatch")
-        if not isinstance(self.model, TrainableEncodedModel):
+        if not isinstance(
+            self.model, TrainableEncodedModel | MultiTargetTrainableEncodedModel
+        ):
             raise TrainingContractError("raw source requires TrainableEncodedModel")
         if self.model.encoder.runtime_value_checks != source.runtime_value_checks:
             raise SplitAccessError("source and encoder runtime check modes differ")
@@ -2195,7 +2244,9 @@ class TrainingHarness:
     ) -> tuple[Any, torch.Tensor]:
         before_hooks = self.monitor.activation_hook_observations
         if self.raw_execution:
-            assert isinstance(self.model, TrainableEncodedModel)
+            assert isinstance(
+                self.model, TrainableEncodedModel | MultiTargetTrainableEncodedModel
+            )
             raw_source = source
             self._assert_raw_source(raw_source, split)  # type: ignore[arg-type]
             raw_batch = raw_source.batch(indices, device=self.device)  # type: ignore[union-attr]
@@ -2679,7 +2730,9 @@ class TrainingHarness:
         """Run one exact final test cell and publish its immutable metric bundle."""
 
         if not self.raw_execution or not isinstance(self.model, TrainableEncodedModel):
-            raise SplitAccessError("final test bundles require real raw execution")
+            raise SplitAccessError(
+                "legacy scalar final bundle does not support multi-target execution"
+            )
         if self.config.phase != "final" or not self.safety.protocol_gate.test_unlocked:
             raise SplitAccessError(
                 "final test bundle requires an active final protocol"
