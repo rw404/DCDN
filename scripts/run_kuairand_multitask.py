@@ -315,7 +315,11 @@ def build_arms(capacity: dict[str, int]) -> tuple[Arm, ...]:
 
 #: The two preconditioners. Both are run and both are published; see the
 #: comment in `Views.__init__` for why the choice is not pre-registered.
-PRECONDITIONERS = ("geometric", "rms")
+#: `none` is the correct choice for a dataset whose own contract already
+#: mandates a fitted normalization at materialization time - KuaiRec divides
+#: every P and E column by max(train q99, 1.0) - because rescaling again here
+#: would normalize twice.
+PRECONDITIONERS = ("geometric", "rms", "none")
 
 
 def _column_scale(block: np.ndarray, kind: str) -> np.ndarray:
@@ -327,6 +331,8 @@ def _column_scale(block: np.ndarray, kind: str) -> np.ndarray:
     """
 
     values = block.astype(np.float64)
+    if kind == "none":
+        return np.ones(values.shape[1], dtype=np.float64)
     if kind == "rms":
         scale = np.sqrt(np.mean(np.square(values), axis=0))
     elif kind == "geometric":
@@ -351,14 +357,28 @@ class Views:
         manifest = json.loads((root / "manifest_v1.json").read_text(encoding="utf-8"))
         self.manifest = manifest
         self.cardinalities = manifest["cardinalities"]
+        # The engineered division block is called R on KuaiRand and E on
+        # KuaiRec. Both mean the same thing - the manually materialized
+        # divisions of historical counters that the REDUCED view removes - so
+        # the name is read from the manifest rather than hard-coded.
+        self.engineered_block = "R" if "R_names" in manifest else "E"
+        self.blocks = ("P", "V", self.engineered_block)
         p_count = len(manifest["P_names"])
         v_count = len(manifest["V_names"])
-        r_count = len(manifest["R_names"])
-        # The frozen mask is aligned to P; V and R are never denominators.
+        r_count = len(manifest[f"{self.engineered_block}_names"])
+        # The frozen mask is aligned to P on KuaiRand and to P+V on KuaiRec, so
+        # accept either and pad to the reduced width. V and the engineered
+        # block are never denominators.
         mask = list(manifest["denominator_mask"])
-        assert len(mask) == p_count
-        self.mask_reduced = tuple(mask + [False] * v_count)
-        self.mask_full = tuple(mask + [False] * v_count + [False] * r_count)
+        if len(mask) == p_count:
+            mask = mask + [False] * v_count
+        if len(mask) != p_count + v_count:
+            raise ValueError(
+                f"denominator mask has {len(mask)} entries; expected "
+                f"{p_count} or {p_count + v_count}"
+            )
+        self.mask_reduced = tuple(mask)
+        self.mask_full = tuple(mask + [False] * r_count)
         self.reduced_width = p_count + v_count
         self.full_width = p_count + v_count + r_count
 
@@ -396,7 +416,7 @@ class Views:
         train_payload = np.load(root / "train.npz")
         self.input_scale = {
             block: _column_scale(train_payload[block], preconditioner)
-            for block in ("P", "V", "R")
+            for block in self.blocks
         }
         # V is a set of 0/1 validity indicators with fixed semantics; leave it
         # exactly as materialized so a flag never becomes a non-unit number.
@@ -407,11 +427,11 @@ class Views:
             payload = np.load(root / f"{split}.npz")
             blocks = {
                 block: (payload[block] / self.input_scale[block]).astype(np.float32)
-                for block in ("P", "V", "R")
+                for block in self.blocks
             }
             numeric_reduced = np.concatenate([blocks["P"], blocks["V"]], axis=1)
             numeric_full = np.concatenate(
-                [blocks["P"], blocks["V"], blocks["R"]], axis=1
+                [blocks[name] for name in self.blocks], axis=1
             )
             labels = payload["labels"]
             self.data[split] = {

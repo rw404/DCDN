@@ -1,0 +1,162 @@
+schema_version: 1
+artifact_role: study_scoped_single_target_protocol
+study: kuairec_big_matrix_single_target_watch_time
+status: frozen_before_metrics
+test_unlocked: false
+
+# ---------------------------------------------------------------------------
+# Standing
+# ---------------------------------------------------------------------------
+# The KuaiRand counterpart of this study is
+# `configs/data/kuairand_pure/single_target_rq23_v1.yaml`; this file plays the
+# same role for KuaiRec and carries the same subordination.
+standing:
+  is_the_frozen_single_target_study: false
+  frozen_study: configs/single_target_followup_v1.yaml
+  frozen_study_status: blocked_on_main_multi_target_table
+  frozen_study_modified: false
+  may_substitute_for_the_frozen_study: false
+  may_rescue_or_override_a_main_table_conclusion: false
+  results_appear_in_the_main_table: false
+  evaluated_split: validation
+  test_ever_opened: false
+
+# ---------------------------------------------------------------------------
+# Why no amendment to the frozen feature contract was needed
+# ---------------------------------------------------------------------------
+# On KuaiRand a `watch_time` head had to be added, because the frozen objective
+# gave that dataset four binary heads and none of them was a ratio. KuaiRec
+# needs no such amendment: `configs/data/kuairec/features_v1.yaml` already
+# declares exactly this single head, with the same transform, the same
+# train-only constant fit, and `normalized_mse` as both training loss and
+# selection metric. This study uses that block verbatim.
+#
+# `configs/targets_multitask_v2.yaml` additionally mandates a `completion` head
+# for the MULTI-target table. That is a different study; adding it here would
+# change what is being measured.
+target:
+  name: watch_time
+  kind: regression
+  definition_source: configs/data/kuairec/features_v1.yaml
+  contract_block: label
+  contract_amended: false
+  transform: "clip(current_play_duration_ms/1000, 0, c_seconds) / c_seconds"
+  c_fit: filtered_train_video_duration_ms_div_1000_q99_linear_r7
+  c_fitted_on: filtered_train_only
+  selection_metric: normalized_mse
+  selection_direction: minimize
+
+# ---------------------------------------------------------------------------
+# Reading of the test lock, recorded rather than assumed
+# ---------------------------------------------------------------------------
+# `metrics.model_metrics_allowed_before_test_unlock: false` could be read as
+# forbidding every model metric, including validation ones, which would make
+# this study impossible. That is not the reading applied here, for two reasons
+# stated so a reviewer can disagree with them:
+#
+#   1. `test_lock.no_test_metric_or_label_summary_before_unlock: true` scopes
+#      the prohibition to TEST metrics and label summaries.
+#   2. `test_lock.unlock_requires` lists
+#      `all_validation_only_tuning_complete`, which presupposes that
+#      validation-only work happens BEFORE the unlock. Under the strict
+#      reading that precondition could never be satisfied.
+#
+# The `model_metrics_read: false` flag in the contract is a status record of
+# what has happened so far, not a prohibition; this study makes it true for
+# validation metrics only.
+# ---------------------------------------------------------------------------
+# OPEN DISCREPANCY — the split does not reproduce the audit's membership hash
+# ---------------------------------------------------------------------------
+# The materializer follows every rule `features_v1.yaml: split` states: the
+# sort keys [timestamp, user_id, video_id, source_row_index0], the predicate
+# order [static_video_type_is_not_AD, current_play_duration_gt_0,
+# current_video_duration_gt_0], floor(0.8N)/floor(0.1N)/remainder, train-only
+# mapping fit, and inner-drop of cold users and items. Ordering is fully
+# determined: 947,566 rows share a (timestamp, user_id, video_id) triple, but
+# `source_row_index0` is unique and resolves every tie.
+#
+# Everything the audit reports independently agrees:
+#   filter stages   12,530,806 -> 12,495,027 -> 12,255,608 -> 12,255,608  MATCH
+#   split counts    9,804,486 / 1,225,560 / 1,225,562                     MATCH
+#   train mappings  7,176 users, 9,049 videos                             MATCH
+#   label constant  c = 131.684 s                                         MATCH
+#   cold drop       84,405 removed against the audit's 84,406             OFF BY 1
+#
+# The three `split_membership_sha256` values nonetheless differ. Several
+# encodings of the documented payload were tried - hex-string and raw-byte
+# digest, big- and little-endian, 32- and 64-bit, zero- and one-based indices -
+# and none reproduced the frozen value. The cause is not recoverable from the
+# frozen artifacts alone, and guessing further would be fitting to a target
+# rather than reproducing a method.
+#
+# This study therefore proceeds on a contract-conforming split that is NOT
+# bit-identical to the audited one. The manifest records the computed hashes and
+# the per-split match flags so the divergence travels with the data. Any result
+# from this study must be read as conditional on that.
+split_membership_discrepancy:
+  status: open
+  materializer_conforms_to_every_stated_rule: true
+  reproduces_audit_membership_hash: false
+  independent_agreements: [filter_stage_counts, split_counts,
+                           train_mapping_cardinalities, train_only_label_constant]
+  disagreement: cold_drop_84405_vs_audited_84406
+  encodings_tried: [hex_string_digest, raw_byte_digest, big_endian_u64,
+                    little_endian_u64, u32, one_based_index]
+  resolution_requires: the_audit_side_ordering_or_its_generating_code
+
+test_lock_reading:
+  prohibition_scope: test_metrics_and_label_summaries_only
+  validation_metrics_permitted: true
+  basis: test_lock.unlock_requires.all_validation_only_tuning_complete
+  sealed_test_rows_materialized: false
+  sealed_test_rows_counted_only: 1225562
+
+# ---------------------------------------------------------------------------
+# Feature views
+# ---------------------------------------------------------------------------
+views:
+  reduced: P + V
+  full: P + V + E
+  engineered_block: E
+  engineered_block_is_the_removed_divisions: true
+  reduced_removes: manually_materialized_divisions_of_historical_counters_only
+  denominators: 5
+
+# ---------------------------------------------------------------------------
+# Input preconditioning
+# ---------------------------------------------------------------------------
+# KuaiRand needed a model-input RMS rescale because its contract fixes
+# data-independent scales and forbids fitting them, which left raw counters at
+# 9.8e7. KuaiRec's contract mandates the opposite: every numerical P and E
+# column is divided by max(train_absolute_q99, 1.0) at materialization time.
+# Applying the KuaiRand preconditioner on top would normalize twice, so the
+# runner is given `--preconditioner none` and that is not a deviation.
+preconditioner:
+  kind: none
+  reason: contract_already_mandates_a_fitted_train_only_normalization
+  contract_rule: divide_by_max(train_absolute_q99_linear_r7, 1.0)
+
+# ---------------------------------------------------------------------------
+# Metrics
+# ---------------------------------------------------------------------------
+# Taken from the contract's own `metrics` block, which already names exactly the
+# set used on KuaiRand: normalized MSE, MAE in seconds, and pairwise
+# concordance. `global_concordance` is the contract's name for X-AUC.
+metrics:
+  primary: [normalized_mse, mae_seconds, mse_seconds_squared]
+  secondary: [global_xauc, user_grouped_xauc]
+  implementation: src/dcdn/metrics.py
+  contract_name_for_xauc: global_concordance
+  grouping_key: c_user_id
+  session_grouping: unavailable_kuairec_has_no_session_identifier
+
+held_identical_to_kuairand_study:
+  arms: [dcnv2_reduced, dcdn_reduced, afn_reduced, dcnv2_capacity_reduced,
+         dcnv2_full, dcdn_full, afn_full]
+  learning_rate_grid: [0.0001, 0.0003, 0.001, 0.003]
+  tuning_seed: 42
+  final_seeds: [42, 43, 44]
+  annex_seeds: [45, 46, 47, 48, 49]
+  seed_scopes_never_pooled: true
+  convergence_gate: true
+  paired_comparison: true

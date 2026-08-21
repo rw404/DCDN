@@ -349,6 +349,23 @@ GEOMETRIES: tuple[Geometry, ...] = (
         quality_source_compatible=True,
     ),
     Geometry(
+        geometry_id="kuairec_watch_time",
+        description=(
+            "the exact widths the KuaiRec big-matrix study trained at - 5 "
+            "categorical fields, 50 reduced and 96 full numeric operands, 5 "
+            "denominators, one head. Pairs one-to-one with the KuaiRec quality "
+            "numbers. Random inputs only; no KuaiRec row or label is read."
+        ),
+        categorical_fields=5,
+        categorical_cardinality=9_050,
+        embedding_dim=16,
+        reduced_operands=50,
+        full_operands=96,
+        denominator_count=5,
+        num_targets=1,
+        quality_source_compatible=True,
+    ),
+    Geometry(
         geometry_id="kuairand_watch_time",
         description=(
             "the exact widths the KuaiRand-Pure study trained at - 8 categorical "

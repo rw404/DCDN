@@ -84,7 +84,25 @@ from dcdn.multitask_capacity import (  # noqa: E402
 #: Which single heads this study may be run on, and what kind each is.
 #: `watch_time` is the ratio target; `long_view` is the frozen primary
 #: confirmatory target of the multi-target study.
-SUPPORTED_TARGETS = {"watch_time": "regression", "long_view": "binary"}
+SUPPORTED_TARGETS = {
+    "watch_time": "regression",
+    "long_view": "binary",
+    # KuaiRec's canonical engagement label: the user played the video through
+    # more than twice.
+    "watch_ratio_gt2": "binary",
+}
+
+
+def krm_manifest_targets(views: Path) -> list[str]:
+    """The label columns the materialized view actually carries, in order."""
+
+    manifest = json.loads((views / "manifest_v1.json").read_text(encoding="utf-8"))
+    declared = manifest.get("label_names")
+    if declared:
+        return list(declared)
+    # KuaiRand's manifest predates `label_names`; its column order is the
+    # runner's frozen TARGETS tuple.
+    return list(krm.TARGETS)
 
 
 def build_spec(target: str) -> MultiTargetSpec:
@@ -204,7 +222,12 @@ def main(argv: list[str] | None = None) -> int:
 
     target = args.target
     spec = build_spec(target)
-    target_index = krm.TARGETS.index(target)
+    # KuaiRand materializes five label columns and this study selects one;
+    # KuaiRec materializes the single watch_time column already, so there is
+    # nothing to select. Deciding by the manifest rather than by dataset name
+    # keeps the runner dataset-agnostic.
+    label_names = krm_manifest_targets(args.views)
+    target_index = label_names.index(target) if target in label_names else 0
 
     device = torch.device(args.device)
     beff.prepare_output_dir(args.output_dir)
