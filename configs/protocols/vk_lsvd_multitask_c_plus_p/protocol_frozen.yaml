@@ -1,0 +1,37 @@
+schema_version: 3
+dataset_id: vk_lsvd_up0.01_ir0.01
+feature_regime: C+P
+required_model_keys:
+- dcnv2_full_rank
+- dcdn_core
+- afn_plus
+- dcnv2_capacity_matched_core
+test_unlocked: false
+test_path_available: false
+hashes:
+  data_manifest_sha256: 5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac
+  views_manifest_sha256: e880130ae672e97257343e7c1e57c91c5087dd9e303231dd0b738fe6c3b88bf5
+  features_sha256: ad4d912439e438a345119adfb52de4384ac7d71d4584b79c59fd3f24ed01aa22
+  split_sha256: 73e4d4f99fd228f0a62f6188678f18f184af50d9d883b4e4e00a39164d006a79
+  search_space_sha256: b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344
+  experiment_matrix_sha256: 1b73dcb34a565f192cb66669163f71bac244884401e9c958a2cc836b2de36946
+  physical_schema_sha256: 5ba82a4b9c4dcff099d422c8bcb5f4725666c103170661d2131c1980540b58c9
+  expanded_schema_sha256: 9754b5d50b0937a469abb15ea983a994b07588c53de3c624563c7ffcad97e4a2
+  operand_schema_sha256: 8130cff38700f5a1d319f49ce962981251f54cfb5155cea221cda00e47b405cf
+  denominator_mask_sha256: 186ec50742dcd32b0a823fcfcd5be52bafa9427c7e95a516bec59a0db8bfa5ab
+  full_materialized_scan_sha256: e67f72187f73ed9ad37e1a23cdd5c8b679d1fbc3be35a2781968c270a1497bb6
+  cache_content_sha256: 72834709c5c1735b8369571cbade96cb7b0f705d2bccaeb0335e444dd49044b8
+  encoder_contract_sha256: 287af1de7e1c213e04b436fa57917ee21f2d58edcc70018e11ce0e6a336d44ff
+  capacity_resolution_sha256: b18d2151212aaca4c358b8e1a6dcc8dd3345ce7ed3fdd26cd85c809c36c2d1de
+split_row_counts:
+  train: 7505820
+  validation: 1516831
+final_seeds:
+- 42
+- 43
+- 44
+tuning_seed: 42
+tuning_splits:
+- train
+- validation
+test_evaluations_per_final_seed: 1

@@ -1,0 +1,74 @@
+schema_version: 2
+contract: dcdn-vk-seven-head-encoder-capacity-v2
+status: frozen_before_first_real_dataset_model_metric
+test_unlocked: false
+
+metric_firewall:
+  validation_metrics_opened: false
+  test_metrics_opened: false
+  gpu_used: false
+
+bindings:
+  data_manifest_sha256: 5dbbfeb23442a6b1ebdb829dc239c6a3c6c655d71446cde4551b83cc6af456ac
+  views_manifest_sha256: e880130ae672e97257343e7c1e57c91c5087dd9e303231dd0b738fe6c3b88bf5
+  feature_contract_sha256: ad4d912439e438a345119adfb52de4384ac7d71d4584b79c59fd3f24ed01aa22
+  feature_policy_sha256: fd8baeeaa82ba8e7d825762f30207c7875449a45a625d173bde419869c79b0a3
+  matrix_multitask_sha256: 1b73dcb34a565f192cb66669163f71bac244884401e9c958a2cc836b2de36946
+  targets_multitask_v2_sha256: d03704fb856551cb5d2eee7810992f0e8fa23909860a9c28c626b5362456c6a6
+  target_spec_sha256: 850251f3808910ca1ffe12838c60d533631b6daba431f56c22eb77acbf9deb59
+  task_constants_sha256: 2efe2f491d459ac4aa42cf3eb9b921f8cddc445a119652d3bd98a73fe650d741
+  full_materialized_scan_sha256: e67f72187f73ed9ad37e1a23cdd5c8b679d1fbc3be35a2781968c270a1497bb6
+
+architecture:
+  context_embedding_dim: 16
+  representation_dim: 64
+  shared_head_hidden_dims: []
+  shared_head_dropout: 0.0
+  num_targets: 7
+
+dataset:
+  dataset_id: vk_lsvd_up0.01_ir0.01
+  ordered_context_fields: [age, gender, geo, place, platform, agent]
+  categorical_cardinalities: [55, 4, 82, 24, 13, 22]
+
+regimes:
+  C+P:
+    operand_width: 55
+    flat_width: 151
+    physical_schema_sha256: 5ba82a4b9c4dcff099d422c8bcb5f4725666c103170661d2131c1980540b58c9
+    expanded_schema_sha256: 9754b5d50b0937a469abb15ea983a994b07588c53de3c624563c7ffcad97e4a2
+    operand_schema_sha256: 8130cff38700f5a1d319f49ce962981251f54cfb5155cea221cda00e47b405cf
+    denominator_mask_sha256: 186ec50742dcd32b0a823fcfcd5be52bafa9427c7e95a516bec59a0db8bfa5ab
+    cache_content_sha256: 72834709c5c1735b8369571cbade96cb7b0f705d2bccaeb0335e444dd49044b8
+    cache_metadata_sha256: f9cb51ae80d4ce45b532ef2f1f10877c216d85eeab34d5dc1d40db223e6cc293
+    allowed_models:
+      - dcnv2_full_rank
+      - dcdn_core
+      - afn_plus
+      - dcnv2_capacity_matched_core
+  C+P+E:
+    operand_width: 72
+    flat_width: 168
+    physical_schema_sha256: d48a44cc82b479d7f958d30cb7ede02882714a244dc644cd5b1f4e77ffd531da
+    expanded_schema_sha256: acb2938eebeef2cd29d9ae99ca732b2359f851c22d94665625a06e02c7b653ef
+    operand_schema_sha256: 45b02ded7c2d9aaaf9ff279fda0eb702b45f5536e2b150cc5169ba051f7b4d2b
+    denominator_mask_sha256: d86a1590c2ae06f220d8e72dbaf2cd696ebdb24a930f5e1ed623a30aab240d5a
+    cache_content_sha256: 29208049ffda758f7f302e5080dabf8301631691402f9c0fcef44c72dc39d615
+    cache_metadata_sha256: 2e3d139e5601e50b72bb26d86040b134f442203cf436ee10be4a41d637ebc085
+    allowed_models:
+      - dcnv2_full_rank
+      - dcdn_core
+      - afn_plus
+
+capacity_resolution:
+  target_model: dcdn_core
+  control_model: dcnv2_capacity_matched_core
+  selection_used_validation_quality: false
+  tolerance_fraction: 0.05
+  target_parameters: 22503
+  target_flops: 44919
+  selected_rank: 12
+  selected_parameters: 22445
+  selected_flops: 45862
+  parameter_ratio: 0.9974225658801049
+  flop_ratio: 1.0209933435739886

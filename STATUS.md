@@ -1432,3 +1432,22 @@ tower + heads 21-24%. The differing part is only 21-30% of the forward, which
 is why a 1.29x block-level gap becomes 1.03x end to end. The runtime-parity
 verdict is therefore partly a consequence of the shared parts dominating; a
 configuration where the block is a larger fraction could read differently.
+
+## VK-LSVD seven-head encoder/capacity/protocol freeze — 2026-08-21
+
+The premetric multi-target execution boundary is now frozen without opening a
+validation metric or using a GPU. `configs/encoder_multitask_v2.yaml` binds the
+seven-head target/task constants, exact FULL/REDUCED cache identities, field
+orders, denominator masks, and model allowlists. The mechanical capacity
+artifact selects rank 12 for `DCNv2-capacity-matched`: 22,445 versus 22,503
+trainable non-embedding parameters (0.9974x) and 45,862 versus 44,919 FLOPs
+(1.0210x), both inside the frozen ±5% rule and without quality metrics.
+
+Separate Protocol v3 locks are active for `C+P` and `C+P+E`; both are
+`premetric_locked`, `test_unlocked=false`, and `test_path_available=false`.
+An end-to-end CPU reopen verified train/validation row counts and every runtime
+hash through cache identity → encoder lock → active Protocol. The focused
+multi-target/protocol regression passed 135 tests. No task worker or trainer is
+running. The next executable gate is a dedicated seven-head supervised CLI and
+one-effective-batch DCDN/DCNv2 implementation smoke; no validation metric may
+be used by that smoke.

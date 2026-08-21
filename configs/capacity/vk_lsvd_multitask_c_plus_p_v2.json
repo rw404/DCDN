@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "contract": "dcdn-vk-seven-head-capacity-resolution-v1",
+  "status": "resolved_before_first_real_dataset_model_metric",
+  "test_unlocked": false,
+  "metric_firewall": {
+    "data_rows_opened": false,
+    "labels_opened": false,
+    "validation_metrics_opened": false,
+    "test_metrics_opened": false,
+    "gpu_used": false
+  },
+  "bindings": {
+    "encoder_multitask_v2_sha256": "287af1de7e1c213e04b436fa57917ee21f2d58edcc70018e11ce0e6a336d44ff",
+    "matrix_multitask_sha256": "1b73dcb34a565f192cb66669163f71bac244884401e9c958a2cc836b2de36946",
+    "search_space_v1_sha256": "b263b55da768ec33656ebdb1506d58f2809fd5826aa8b4976aedaecee53bb344",
+    "operand_schema_sha256": "8130cff38700f5a1d319f49ce962981251f54cfb5155cea221cda00e47b405cf",
+    "denominator_mask_sha256": "186ec50742dcd32b0a823fcfcd5be52bafa9427c7e95a516bec59a0db8bfa5ab"
+  },
+  "geometry": {
+    "context_bypass_width": 96,
+    "operand_width": 55,
+    "flat_width": 151,
+    "representation_width": 64,
+    "head_hidden_dims": [],
+    "head_output_width": 7,
+    "dcdn_num_layers": 2,
+    "capacity_num_layers": 2,
+    "capacity_num_experts": 4
+  },
+  "common_counts": {
+    "adapter_parameters": 9728,
+    "adapter_flops": 19328,
+    "tower_parameters": 0,
+    "tower_flops": 0,
+    "head_parameters": 455,
+    "head_flops": 896,
+    "linear_head_parameters": 455,
+    "linear_head_flops": 896,
+    "num_targets": 7
+  },
+  "dcdn_target": {
+    "architecture": "DCDN-Core-L2",
+    "interaction_parameters_per_layer": 6160,
+    "interaction_parameters": 12320,
+    "adapter_parameters": 9728,
+    "head_parameters": 455,
+    "parameters": 22503,
+    "reciprocal_flops": 55,
+    "interaction_flops_per_layer": 12320,
+    "interaction_flops": 24695,
+    "adapter_flops": 19328,
+    "head_flops": 896,
+    "flops": 44919,
+    "num_layers": 2
+  },
+  "ordinary_dcnv2": {
+    "architecture": "DCNv2-full-rank-L2",
+    "interaction_parameters_per_layer": 22952,
+    "interaction_parameters": 45904,
+    "adapter_parameters": 9728,
+    "head_parameters": 455,
+    "parameters": 56087,
+    "interaction_flops_per_layer": 45904,
+    "interaction_flops": 91808,
+    "adapter_flops": 19328,
+    "head_flops": 896,
+    "flops": 112032,
+    "num_layers": 2
+  },
+  "decision": {
+    "flop_contract": "dcdn-forward-floating-arithmetic-flops-v1",
+    "tolerance_fraction": 0.05,
+    "selection_rule": "minimum_log_distance_in_parameter_and_flop_space",
+    "selection_used_validation_quality": false,
+    "candidates_considered": 55,
+    "target": {
+      "architecture": "DCDN-Core-L2",
+      "interaction_parameters_per_layer": 6160,
+      "interaction_parameters": 12320,
+      "adapter_parameters": 9728,
+      "head_parameters": 455,
+      "parameters": 22503,
+      "reciprocal_flops": 55,
+      "interaction_flops_per_layer": 12320,
+      "interaction_flops": 24695,
+      "adapter_flops": 19328,
+      "head_flops": 896,
+      "flops": 44919,
+      "num_layers": 2
+    },
+    "matched": true,
+    "selected": {
+      "low_rank": 12,
+      "num_layers": 2,
+      "num_experts": 4,
+      "expert_parameters": 1464,
+      "interaction_parameters_per_layer": 6131,
+      "interaction_parameters": 12262,
+      "adapter_parameters": 9728,
+      "head_parameters": 455,
+      "parameters": 22445,
+      "expert_flops": 3092,
+      "interaction_flops_per_layer": 12819,
+      "interaction_flops": 25638,
+      "adapter_flops": 19328,
+      "head_flops": 896,
+      "flops": 45862
+    },
+    "selected_ratios": {
+      "parameter_ratio": 0.9974225658801049,
+      "flop_ratio": 1.0209933435739886,
+      "within_tolerance": true,
+      "distance": 0.023356781066818058
+    },
+    "lower_bracket": null,
+    "upper_bracket": null
+  }
+}

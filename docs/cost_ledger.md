@@ -344,3 +344,11 @@ warning-threshold headroom and USD 200.63 of hard-cap headroom. Durable
 project storage was 16.326 GiB of the 40 GiB cap. No provider
 action, external mutation, or test access occurred; `test_unlocked=false`
 remains in force.
+
+At `2026-08-21T08:26:45.558692Z`, the local mandatory-compute guard estimated
+USD 259.33 cumulative and USD 265.91 at a conservative two-hour ETA, below the
+USD 370 warning and USD 460 hard cap and before the finalization reserve. The
+multi-target encoder/capacity/Protocol freeze then completed CPU-only with no
+model metric. Storage remained healthy at 22.702860 GiB of the 40 GiB durable
+cap with 51.435146 GiB overlay free. Both A100s were idle, the test remained
+locked, and no provider, external, or Pod-lifecycle action occurred.

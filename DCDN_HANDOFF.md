@@ -1347,3 +1347,18 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   train-only deterministic smokes; week 26 remains sealed.
 
 Update this decision log whenever a material choice changes.
+
+- **VK-LSVD seven-head encoder/capacity/protocol freeze recorded 2026-08-21.**
+  The immutable encoder lock SHA-256 is
+  `287af1de7e1c213e04b436fa57917ee21f2d58edcc70018e11ce0e6a336d44ff`.
+  The independent capacity artifact SHA-256 is
+  `b18d2151212aaca4c358b8e1a6dcc8dd3345ce7ed3fdd26cd85c809c36c2d1de`;
+  its metric-free arithmetic selects rank 12 at parameter/FLOP ratios
+  `0.9974225658801049` and `1.0209933435739886`. The active premetric
+  Protocol v3 digests are `e84dc50d...cc521` for `C+P` and
+  `9f5a4f95...58832` for `C+P+E`. Both keep the test path unavailable.
+  Exact train/validation source identities resolve through the new encoder lock
+  and active Protocols for both regimes; a focused 135-test CPU regression
+  passed. This is still premetric infrastructure evidence: the next step is the
+  seven-head supervised CLI plus one-batch DCDN/DCNv2 smoke, not validation or
+  test evaluation.
