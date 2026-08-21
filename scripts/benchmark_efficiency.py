@@ -349,6 +349,40 @@ GEOMETRIES: tuple[Geometry, ...] = (
         quality_source_compatible=True,
     ),
     Geometry(
+        geometry_id="kuairand_watch_time",
+        description=(
+            "the exact widths the KuaiRand-Pure study trained at - 8 categorical "
+            "fields, 132 reduced and 244 full numeric operands, 24 denominators, "
+            "one regression head. Pairs one-to-one with the single-head "
+            "watch_time quality numbers, so cost and quality here describe the "
+            "same models. Random inputs only; no KuaiRand row or label is read."
+        ),
+        categorical_fields=8,
+        categorical_cardinality=26_872,
+        embedding_dim=16,
+        reduced_operands=132,
+        full_operands=244,
+        denominator_count=24,
+        num_targets=1,
+        quality_source_compatible=True,
+    ),
+    Geometry(
+        geometry_id="kuairand_multitask",
+        description=(
+            "same widths as kuairand_watch_time with the five-head multi-target "
+            "output. Differs only in the final head width, so it exists to show "
+            "that head count is not what drives the cost comparison."
+        ),
+        categorical_fields=8,
+        categorical_cardinality=26_872,
+        embedding_dim=16,
+        reduced_operands=132,
+        full_operands=244,
+        denominator_count=24,
+        num_targets=5,
+        quality_source_compatible=True,
+    ),
+    Geometry(
         geometry_id="ranker",
         description=(
             "industrial-scale geometry stand-in matching the field and width "

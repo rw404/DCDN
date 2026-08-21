@@ -411,3 +411,115 @@ def test_publisher_round_trip_writes_every_table(
     assert set(report["seed_scopes"]) == set(rc.SEED_SCOPES)
     assert _c1(report, "frozen_protocol")["seeds_used"] == 3
     assert _c1(report, "all_seeds")["seeds_used"] == 8
+
+
+# ---------------------------------------------------------------------------
+# Paired comparison — the instrument that unpaired ranges got wrong
+# ---------------------------------------------------------------------------
+
+
+def _paired_payload(subject: list[float], comparator: list[float]) -> dict:
+    """Same seeds for both arms, so the pairing is well defined."""
+
+    records = []
+    for index, value in enumerate(subject):
+        records.append(_record("dcdn_reduced", 42 + index, value))
+    for index, value in enumerate(comparator):
+        records.append(_record("dcnv2_reduced", 42 + index, value))
+    return {
+        "targets": list(TARGETS),
+        "evaluated_split": "validation",
+        "test_unlocked": False,
+        "selected_configs_sha256": "0" * 64,
+        "final_seeds": [42, 43, 44],
+        "annex_seeds": [],
+        "records": records,
+    }
+
+
+def test_a_unanimous_sweep_is_caught_even_when_ranges_overlap() -> None:
+    """The exact shape the KuaiRand watch_time contrast had.
+
+    The subject wins on every seed, yet the comparator's best seed sits above
+    the subject's worst, so unpaired ranges overlap. The paired test must see
+    the sweep the range test throws away.
+    """
+
+    def loss(seed: int, value: float) -> dict:
+        return {"seed": seed, "validation": {"macro_nloss": value}}
+
+    subject = [loss(42, 0.10), loss(43, 0.20), loss(44, 0.30), loss(45, 0.40)]
+    comparator = [loss(42, 0.15), loss(43, 0.25), loss(44, 0.35), loss(45, 0.45)]
+
+    assert not rc._separated([0.10, 0.20, 0.30, 0.40], [0.15, 0.25, 0.35, 0.45])
+
+    paired = rc._paired_difference(subject, comparator, "macro", None)
+    assert paired["seeds_favouring_subject"] == 4
+    assert paired["paired_mean_difference"] < 0
+    assert paired["paired_interval_excludes_zero"] is True
+
+
+def test_paired_comparison_is_deterministic() -> None:
+    subject = [{"seed": s, "validation": {"macro_nloss": v}}
+               for s, v in zip([42, 43, 44], [0.1, 0.3, 0.2], strict=False)]
+    comparator = [{"seed": s, "validation": {"macro_nloss": v}}
+                  for s, v in zip([42, 43, 44], [0.2, 0.4, 0.35], strict=False)]
+    first = rc._paired_difference(subject, comparator, "macro", None)
+    second = rc._paired_difference(subject, comparator, "macro", None)
+    assert first == second
+
+
+def test_paired_comparison_pairs_by_seed_not_by_order() -> None:
+    """Records arrive grouped by arm; the pairing must use the seed."""
+
+    subject = [{"seed": s, "validation": {"macro_nloss": v}}
+               for s, v in zip([44, 42, 43], [0.30, 0.10, 0.20], strict=False)]
+    comparator = [{"seed": s, "validation": {"macro_nloss": v}}
+                  for s, v in zip([42, 43, 44], [0.15, 0.25, 0.35], strict=False)]
+    paired = rc._paired_difference(subject, comparator, "macro", None)
+    # Every pairing gives -0.05; a misaligned pairing would not.
+    assert paired["paired_mean_difference"] == pytest.approx(-0.05)
+    assert paired["seeds_favouring_subject"] == 3
+
+
+def test_higher_is_better_for_auc_flips_the_win_direction() -> None:
+    subject = [{"seed": s, "validation": {"roc_auc": {"long_view": v}}}
+               for s, v in zip([42, 43], [0.70, 0.72], strict=False)]
+    comparator = [{"seed": s, "validation": {"roc_auc": {"long_view": v}}}
+                  for s, v in zip([42, 43], [0.60, 0.62], strict=False)]
+    paired = rc._paired_difference(subject, comparator, "auc", "long_view")
+    assert paired["seeds_favouring_subject"] == 2
+    assert paired["paired_mean_difference"] > 0
+
+
+def test_a_single_shared_seed_yields_no_interval() -> None:
+    subject = [{"seed": 42, "validation": {"macro_nloss": 0.1}}]
+    comparator = [{"seed": 42, "validation": {"macro_nloss": 0.2}}]
+    paired = rc._paired_difference(subject, comparator, "macro", None)
+    assert paired["paired_interval_excludes_zero"] is False
+    assert paired["paired_seeds"] == 1
+
+
+def test_paired_columns_reach_the_published_contrast(
+    tmp_path: Path, scratch: Path
+) -> None:
+    report = _build(_paired_payload([0.10, 0.20, 0.30], [0.15, 0.25, 0.35]))
+    c1 = _c1(report)
+    assert c1["seeds_favouring_subject"] == 3
+    assert c1["paired_interval_excludes_zero"] is True
+    assert c1["seed_ranges_disjoint"] is False
+
+
+def test_a_non_convergent_arm_gets_no_paired_number(
+    tmp_path: Path, scratch: Path
+) -> None:
+    """A diverged comparator must not acquire a confident paired interval."""
+
+    report = _run(tmp_path, scratch, {
+        "dcdn_reduced": [0.50, 0.51, 0.52],
+        "dcnv2_reduced": [1.26e11, 2.96e17, 1.75e18],
+    })
+    c1 = _c1(report)
+    assert c1["quotable"] is False
+    assert c1["paired_interval_excludes_zero"] is None
+    assert c1["paired_mean_difference"] is None

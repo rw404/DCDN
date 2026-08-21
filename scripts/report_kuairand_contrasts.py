@@ -157,6 +157,82 @@ def _separated(left: list[float], right: list[float]) -> bool:
     return max(left) < min(right) or max(right) < min(left)
 
 
+#: Bootstrap settings for the paired test. Deterministic: the same bundle must
+#: always produce the same interval.
+BOOTSTRAP_RESAMPLES = 20000
+BOOTSTRAP_SEED = 20260821
+
+
+def _paired_difference(
+    subject: list[dict[str, Any]],
+    comparator: list[dict[str, Any]],
+    metric: str,
+    target: str | None,
+) -> dict[str, Any]:
+    """Compare two arms seed by seed, not range against range.
+
+    The disjoint-range test this file used first is the wrong instrument here,
+    and KuaiRand shows it concretely. On single-head `watch_time`, DCDN's X-AUC
+    beats full-input DCNv2 on **all eight seeds**, yet the ranges overlap -
+    because DCNv2's best seed (0.5391) exceeds DCDN's worst seed (0.5317), and
+    those are different seeds. Comparing unpaired ranges throws away the pairing
+    that the shared seed provides and calls a clean 8/8 sweep "not established".
+
+    Runs are paired by seed: the same seed means the same initialization and the
+    same batch order, so the per-seed difference removes that shared variance.
+    A percentile bootstrap over those differences gives the interval, and the
+    sign count is reported beside it because with few seeds a unanimous sweep is
+    itself informative.
+    """
+
+    import random
+
+    left = {r["seed"]: r for r in subject}
+    right = {r["seed"]: r for r in comparator}
+    seeds = sorted(set(left) & set(right))
+    if len(seeds) < 2:
+        return {
+            "paired_seeds": len(seeds),
+            "paired_mean_difference": float("nan"),
+            "paired_ci95_low": float("nan"),
+            "paired_ci95_high": float("nan"),
+            "paired_interval_excludes_zero": False,
+            "seeds_favouring_subject": 0,
+        }
+
+    def value(record: dict[str, Any]) -> float:
+        validation = record["validation"]
+        if metric == "macro":
+            return validation["macro_nloss"]
+        if metric == "per_target":
+            return validation["per_target_normalized"][target]
+        return validation["roc_auc"][target]
+
+    differences = [value(left[s]) - value(right[s]) for s in seeds]
+
+    generator = random.Random(BOOTSTRAP_SEED)
+    count = len(differences)
+    means = sorted(
+        statistics.fmean(differences[generator.randrange(count)] for _ in range(count))
+        for _ in range(BOOTSTRAP_RESAMPLES)
+    )
+    low = means[int(0.025 * BOOTSTRAP_RESAMPLES)]
+    high = means[int(0.975 * BOOTSTRAP_RESAMPLES) - 1]
+    # For a loss, lower is better, so the subject wins on a negative difference.
+    lower_is_better = metric in {"macro", "per_target"}
+    favouring = sum(
+        1 for d in differences if (d < 0 if lower_is_better else d > 0)
+    )
+    return {
+        "paired_seeds": count,
+        "paired_mean_difference": statistics.fmean(differences),
+        "paired_ci95_low": low,
+        "paired_ci95_high": high,
+        "paired_interval_excludes_zero": low > 0.0 or high < 0.0,
+        "seeds_favouring_subject": favouring,
+    }
+
+
 def _arm_status(records: list[dict[str, Any]]) -> tuple[bool, list[str]]:
     reasons = sorted({reason for reason in
                       (_convergence(r)[1] for r in records) if reason})
@@ -209,6 +285,12 @@ def _contrast_rows(
                 + [f"{comparator}:{r}" for r in comparator_why]
             ),
             "seed_ranges_disjoint": quotable and _separated(left, right),
+            **{
+                key: (value if quotable else None)
+                for key, value in _paired_difference(
+                    subject_records, comparator_records, "macro", None
+                ).items()
+            },
             "subject_per_seed": ";".join(f"{v:.8g}" for v in sorted(left)),
             "comparator_per_seed": ";".join(f"{v:.8g}" for v in sorted(right)),
         })
@@ -258,6 +340,12 @@ def _per_target_rows(
                     ),
                     "quotable": quotable,
                     "seed_ranges_disjoint": quotable and _separated(left, right),
+                    **{
+                        key: (value if quotable else None)
+                        for key, value in _paired_difference(
+                            subject_records, comparator_records, metric, target
+                        ).items()
+                    },
                     "subject_per_seed": ";".join(f"{v:.6g}" for v in sorted(left)),
                     "comparator_per_seed": ";".join(f"{v:.6g}" for v in sorted(right)),
                 })
