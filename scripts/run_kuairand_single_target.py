@@ -210,6 +210,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--annex-seeds", action="store_true")
     parser.add_argument(
+        "--field",
+        action="store_true",
+        help="also run the five architectures outside the frozen M1-M7 matrix "
+             "(MLP, DeepFM, original DCN, AutoInt+, Wukong-small), reported "
+             "separately so the frozen matrix is not silently widened",
+    )
+    parser.add_argument(
         "--save-predictions",
         action="store_true",
         help="persist per-row validation predictions to the data cache so a "
@@ -270,6 +277,10 @@ def main(argv: list[str] | None = None) -> int:
         f"flop_ratio={payload['selected_ratios']['flop_ratio']:.4f}"
     )
     arms = krm.build_arms(capacity)
+    if args.field:
+        arms = arms + krm.build_field_arms()
+        print(f"field arms appended: {len(krm.build_field_arms())} "
+              f"({', '.join(a.arm_id for a in krm.build_field_arms())})")
 
     def make(arm: krm.Arm, seed: int) -> krm.KuaiRandModel:
         width = views.reduced_width if arm.regime == "reduced" else views.full_width

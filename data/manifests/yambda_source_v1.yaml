@@ -1,0 +1,63 @@
+schema_version: 1
+dataset_id: yambda-50m
+artifact_role: raw_source_provenance_only
+acquisition_state: raw_download_verified
+raw_download_verified: true
+test_unlocked: false
+values_not_scanned: true
+test_labels_opened: false
+validation_or_test_metrics_read: false
+artifact_class: raw_public_source_manifest
+verified_at_utc: '2026-08-21T18:29:01Z'
+source:
+  repository: https://huggingface.co/datasets/yandex/yambda
+  revision: dd6f3a19eef5866e346c3270e098baa641a44948
+  access: public_unauthenticated_read_only
+  credentials_used: false
+  telemetry_used: false
+  gated: false
+license_provenance:
+  declared: apache-2.0
+  raw_redistribution: forbidden_by_project_policy
+objects:
+  - path: flat/50m/listens.parquet
+    role: mandatory_listen_stream
+    expected_bytes: 369110332
+    verified_bytes: 369110332
+    expected_sha256: eed9cbd094af1e189507d2f8132a0dc9653b90e65480125c7cdccd601e0592d1
+    verified_sha256: eed9cbd094af1e189507d2f8132a0dc9653b90e65480125c7cdccd601e0592d1
+  - path: album_item_mapping.parquet
+    role: item_side_categorical
+    expected_bytes: 54528894
+    verified_bytes: 54528894
+    expected_sha256: 559b6576063d96280414574b32292eee7b47ee0b9f2952cb3ae670a5d19125e4
+    verified_sha256: 559b6576063d96280414574b32292eee7b47ee0b9f2952cb3ae670a5d19125e4
+  - path: artist_item_mapping.parquet
+    role: item_side_categorical
+    expected_bytes: 38274621
+    verified_bytes: 38274621
+    expected_sha256: cf1110aa2413ed70008ec9232d395660b2181ffda731002fb74da54e87b6f25d
+    verified_sha256: cf1110aa2413ed70008ec9232d395660b2181ffda731002fb74da54e87b6f25d
+skipped_objects:
+  - path: flat/50m/likes.parquet
+    reason: event_stream_join_policy_forbids_unattributed_join
+  - path: flat/50m/dislikes.parquet
+    reason: event_stream_join_policy_forbids_unattributed_join
+  - path: flat/50m/unlikes.parquet
+    reason: event_stream_join_policy_forbids_unattributed_join
+  - path: flat/50m/undislikes.parquet
+    reason: event_stream_join_policy_forbids_unattributed_join
+  - path: flat/50m/multi_event.parquet
+    reason: same_streams_interleaved_not_needed
+  - path: embeddings.parquet
+    reason: 13.8GB_would_consume_half_the_durable_envelope
+inspection:
+  byte_hashes_computed: true
+  parquet_metadata_read: false
+  row_values_scanned: false
+  test_labels_opened: false
+  validation_or_test_metrics_read: false
+storage:
+  class: ephemeral_regenerable_public_raw_data
+  persistent_raw_copy: false
+  committed_to_git: false

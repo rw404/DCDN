@@ -60,11 +60,18 @@ from dcdn.models.afn import AFNPlusConfig  # noqa: E402
 from dcdn.models.common import HeadConfig  # noqa: E402
 from dcdn.models.contracts import EncodedInteractionBatch, EncoderSpec  # noqa: E402
 from dcdn.models.cross import (  # noqa: E402
+    DCNConfig,
     DCNv2CapacityCoreConfig,
     DCNv2FullRankConfig,
 )
 from dcdn.models.dcdn import DCDNCoreConfig  # noqa: E402
+from dcdn.models.field import (  # noqa: E402
+    AutoIntPlusConfig,
+    DeepFMConfig,
+    MLPConfig,
+)
 from dcdn.models.suite import build_controlled_model  # noqa: E402
+from dcdn.models.wukong import WukongSmallConfig  # noqa: E402
 from dcdn.multitask import (  # noqa: E402
     MultiTargetSpec,
     TargetSpec,
@@ -310,6 +317,38 @@ def build_arms(capacity: dict[str, int]) -> tuple[Arm, ...]:
             DCNv2FullRankConfig(num_layers=2, product_init_scale=0.1)),
         Arm("dcdn_full", "M6 DCDN-Core-FULL-MTL", "full", _dcdn()),
         Arm("afn_full", "M7 AFN+-FULL-MTL", "full", _afn(), with_afn_view=True),
+    )
+
+
+#: The five architectures outside the frozen M1-M7 matrix. They exist to place
+#: DCDN against the field rather than against three chosen comparators, and they
+#: are reported SEPARATELY from M1-M7 so the frozen matrix is not silently
+#: widened.
+#:
+#: Every one runs on the FULL view, deliberately. The question is whether DCDN
+#: on the REDUCED inputs can stand against the field given EVERYTHING - all the
+#: engineered divisions included. Putting the field on the reduced view too
+#: would answer a narrower question, and would flatter DCDN by denying its
+#: competitors the very features that were built for them.
+def build_field_arms() -> tuple[Arm, ...]:
+    return (
+        Arm("mlp_full", "F1 DNN/MLP-FULL", "full",
+            MLPConfig(hidden_dims=(400, 400, 400), dropout=0.0)),
+        Arm("deepfm_full", "F2 DeepFM-FULL", "full",
+            DeepFMConfig(deep_hidden_dims=(400, 400, 400), dropout=0.0)),
+        Arm("dcn_full", "F3 DCN-original-FULL", "full",
+            DCNConfig(num_layers=2, product_init_scale=0.1)),
+        Arm("autoint_full", "F4 AutoInt+-FULL", "full",
+            AutoIntPlusConfig(
+                attention_layers=3, attention_dim=64, num_heads=2,
+                dnn_hidden_dims=(400, 400), dropout=0.0,
+                scale_attention=True, layer_norm=True,
+            )),
+        Arm("wukong_full", "F5 Wukong-small-FULL", "full",
+            WukongSmallConfig(
+                num_layers=2, lcb_features=16, fmb_features=16, fmb_rank=8,
+                fmb_hidden_dims=(256, 256), dropout=0.0, layer_norm=True,
+            )),
     )
 
 
