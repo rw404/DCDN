@@ -35,7 +35,9 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 import sys
+import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -49,6 +51,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
+from dcdn.metrics import (  # noqa: E402
+    group_concordance,
+    masked_binary_target_metrics,
+    watch_time_metrics,
+)
 from dcdn.models.afn import AFNPlusConfig  # noqa: E402
 from dcdn.models.common import HeadConfig  # noqa: E402
 from dcdn.models.contracts import EncodedInteractionBatch, EncoderSpec  # noqa: E402
@@ -86,6 +93,10 @@ EMBEDDING_DIM = 16
 REPRESENTATION_DIM = 64
 HEAD_HIDDEN_DIMS = (128, 64)
 DIV_EPS = 1e-2
+
+#: `c_user_id` is column 0 of the materialized categorical block; it is the
+#: grouping key for every user-grouped metric.
+USER_COLUMN = 0
 
 TUNING_SEED = 42
 #: The frozen matrix fixes `final_seeds: [42, 43, 44]`. Two facts make three
@@ -535,6 +546,139 @@ def train_one(
     }
 
 
+
+
+class PredictionStore:
+    """Per-row validation predictions, so a new metric never needs a retrain.
+
+    Adding user-GAUC and X-AUC to this study cost a full retrain of every arm
+    and seed, purely because predictions were computed inline and discarded
+    with the model. Keeping them makes any future metric a seconds-long
+    recomputation instead.
+
+    They go to `$DCDN_DATA_CACHE`, never to the repository: at float32 and
+    311,490 validation rows a single run is roughly 350 MB, which has no place
+    in git. float32 rather than float16 is deliberate - X-AUC counts tied
+    predictions explicitly, and half precision would manufacture ties that the
+    model did not produce.
+
+    Opt-in via `--save-predictions`. With the flag absent this class is never
+    constructed and the run behaves exactly as it did before.
+    """
+
+    def __init__(self, root: Path, study: str) -> None:
+        self.path = root / "predictions" / f"{study}.npz"
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.arrays: dict[str, np.ndarray] = {}
+
+    def add_context(self, views: Views, spec) -> None:
+        valid = views.data["validation"]
+        self.arrays["labels"] = valid["labels"].cpu().numpy()
+        self.arrays["masks"] = valid["masks"].cpu().numpy()
+        self.arrays["user_ids"] = valid["categorical"][:, USER_COLUMN].cpu().numpy()
+        self.arrays["target_names"] = np.array(list(spec.names))
+
+    def add(self, arm_id: str, seed: int, predictions: np.ndarray) -> None:
+        self.arrays[f"pred__{arm_id}__{seed}"] = predictions.astype(np.float32)
+
+    def write(self) -> str:
+        with tempfile.NamedTemporaryFile(
+            dir=self.path.parent, suffix=".npz", delete=False
+        ) as handle:
+            temporary = Path(handle.name)
+        np.savez(temporary, **self.arrays)
+        os.replace(temporary, self.path)
+        digest = hashlib.sha256(self.path.read_bytes()).hexdigest()
+        return digest
+
+
+def frozen_metric_set(
+    spec,
+    predictions: np.ndarray,
+    labels: np.ndarray,
+    masks: np.ndarray,
+    user_ids: np.ndarray,
+    c_seconds: float,
+) -> dict[str, Any]:
+    """Every metric `configs/metrics_multitask_v1.yaml` freezes, per head.
+
+    Binary heads get log-loss, ROC-AUC, AUPRC and uniform user-GAUC with its
+    coverage. The regression head gets normalized MSE, MAE in seconds, and the
+    continuous pairwise ordering metrics: global X-AUC and its user-grouped
+    counterpart. All of it comes from `src/dcdn/metrics.py`, which is the frozen
+    implementation - nothing is recomputed locally.
+
+    KuaiRand-Pure ships no session identifier, so `session_gauc` is reported as
+    null with an explicit reason. The frozen `session_policy` forbids
+    synthesizing sessions to fill the gap.
+    """
+
+    report: dict[str, Any] = {}
+    for index, target in enumerate(spec.targets):
+        column = predictions[:, index]
+        truth = labels[:, index]
+        observed = masks[:, index].astype(bool)
+        if target.kind == "binary":
+            probability = 1.0 / (1.0 + np.exp(-np.clip(column, -60.0, 60.0)))
+            binary = masked_binary_target_metrics(
+                truth, probability, user_ids, observed
+            )
+            report[target.name] = {
+                "kind": "binary",
+                "log_loss": binary.log_loss,
+                "roc_auc": binary.roc_auc,
+                "auprc": binary.auprc,
+                "user_gauc": binary.user_gauc.value,
+                "user_gauc_group_coverage": binary.user_gauc.group_coverage,
+                "user_gauc_row_coverage": binary.user_gauc.row_coverage,
+                "user_gauc_retained_groups": binary.user_gauc.retained_groups,
+                "user_gauc_total_groups": binary.user_gauc.total_groups,
+                "user_gauc_weighting": binary.user_gauc.weighting,
+                "session_gauc": None,
+                "session_gauc_availability": (
+                    "not_available_kuairand_pure_has_no_session_identifier"
+                ),
+                "observed_rows": binary.observed_rows,
+            }
+            continue
+
+        selected_truth = np.clip(truth[observed], 0.0, 1.0)
+        selected_prediction = column[observed]
+        watch = watch_time_metrics(
+            selected_truth, selected_prediction,
+            duration_constant_seconds=c_seconds,
+        )
+        grouped = group_concordance(
+            c_seconds * selected_truth,
+            c_seconds * np.clip(selected_prediction, 0.0, 1.0),
+            user_ids[observed],
+            weighting="uniform",
+        )
+        report[target.name] = {
+            "kind": "regression",
+            "normalized_mse": watch.normalized_mse,
+            "mae_seconds": watch.mae_seconds,
+            "mse_seconds2": watch.mse_seconds2,
+            "global_xauc": watch.global_xauc.value,
+            "global_xauc_comparable_pair_coverage": (
+                watch.global_xauc.comparable_pair_coverage
+            ),
+            "global_xauc_comparable_pairs": watch.global_xauc.comparable_pairs,
+            "user_xgauc": grouped.value,
+            "user_xgauc_group_coverage": grouped.group_coverage,
+            "user_xgauc_row_coverage": grouped.row_coverage,
+            "user_xgauc_retained_groups": grouped.retained_groups,
+            "user_xgauc_total_groups": grouped.total_groups,
+            "user_xgauc_weighting": grouped.weighting,
+            "session_gauc": None,
+            "session_gauc_availability": (
+                "not_available_kuairand_pure_has_no_session_identifier"
+            ),
+            "observed_rows": int(observed.sum()),
+        }
+    return report
+
+
 @torch.no_grad()
 def evaluate(model: nn.Module, views: Views, arm: Arm, constants) -> dict[str, Any]:
     model.eval()
@@ -557,6 +701,13 @@ def evaluate(model: nn.Module, views: Views, arm: Arm, constants) -> dict[str, A
             continue
         auc[name] = _roc_auc(scores[:, index], labels[:, index])
     report["roc_auc"] = auc
+    report["_predictions"] = scores
+    report["frozen_metrics"] = frozen_metric_set(
+        SPEC, scores, labels,
+        valid["masks"].cpu().numpy(),
+        valid["categorical"][:, USER_COLUMN].cpu().numpy(),
+        float(views.manifest["watch_time_c_seconds"]),
+    )
     watch_index = TARGETS.index("watch_time")
     normalized_mae = float(
         np.abs(scores[:, watch_index] - labels[:, watch_index]).mean()
@@ -608,6 +759,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--preconditioner", choices=PRECONDITIONERS, default="rms"
+    )
+    parser.add_argument(
+        "--save-predictions",
+        action="store_true",
+        help="persist per-row validation predictions to the data cache so a "
+             "future metric can be computed without retraining",
     )
     parser.add_argument(
         "--annex-seeds",
@@ -719,6 +876,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(f"pre-training manifest sha256: {digest}\n")
 
+    store = None
+    if args.save_predictions:
+        store = PredictionStore(
+            Path(os.environ.get("DCDN_DATA_CACHE", "/tmp")), args.output_dir.name
+        )
+        store.add_context(views, SPEC)
+
     print("--- tuning (seed 42, validation-selected) ---")
     selected: dict[str, float] = {}
     for arm in arms:
@@ -769,6 +933,9 @@ def main(argv: list[str] | None = None) -> int:
                 "seed": seed, "learning_rate": selected[arm.arm_id],
                 "parameters": counts, "training": training, "validation": report,
             })
+            stored = report.pop("_predictions")
+            if store is not None:
+                store.add(arm.arm_id, seed, stored)
             print(
                 f"  {arm.arm_id:<24} seed={seed} "
                 f"Macro-NLoss={report['macro_nloss']:.6f} "
@@ -778,6 +945,10 @@ def main(argv: list[str] | None = None) -> int:
             del model
             torch.cuda.empty_cache()
 
+    predictions_digest = store.write() if store is not None else None
+    if predictions_digest:
+        print(f"\npredictions cached: {store.path} sha256={predictions_digest}")
+
     results = {
         "artifact_role": "kuairand_pure_rq23_result",
         "schema_version": 1,
@@ -786,6 +957,12 @@ def main(argv: list[str] | None = None) -> int:
         "evaluated_split": "validation",
         "test_unlocked": False,
         "targets": list(TARGETS),
+        # Where the raw per-row validation predictions live, when they were
+        # kept. Outside the repository by design; the digest pins the file.
+        "cached_predictions_sha256": predictions_digest,
+        "cached_predictions_path": (
+            str(store.path) if store is not None else None
+        ),
         "records": records,
     }
     results_digest = beff.publish_json(args.output_dir / "results_v1.json", results)

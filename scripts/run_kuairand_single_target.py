@@ -81,21 +81,29 @@ from dcdn.multitask_capacity import (  # noqa: E402
     resolve_capacity_control,
 )
 
-TARGET = "watch_time"
-TARGET_INDEX = krm.TARGETS.index(TARGET)
-
-#: A one-target spec. `macro_nloss` over a single target reduces to that
-#: target's normalized loss, so the selection metric, the early-stopping metric
-#: and the reported metric are the same quantity as the multi-task model's
-#: `watch_time` head — which is what makes the two directly comparable.
-SPEC = MultiTargetSpec(
-    dataset_id="kuairand_pure",
-    targets=(TargetSpec(name=TARGET, kind="regression"),),
-    primary_confirmatory_target=TARGET,
-)
+#: Which single heads this study may be run on, and what kind each is.
+#: `watch_time` is the ratio target; `long_view` is the frozen primary
+#: confirmatory target of the multi-target study.
+SUPPORTED_TARGETS = {"watch_time": "regression", "long_view": "binary"}
 
 
-def narrow_to_target(views: krm.Views) -> None:
+def build_spec(target: str) -> MultiTargetSpec:
+    """A one-target spec.
+
+    `macro_nloss` over a single target reduces to that target's normalized
+    loss, so the selection metric, the early-stopping metric and the reported
+    metric are the same quantity as the corresponding head of the multi-task
+    model — which is what makes the two directly comparable.
+    """
+
+    return MultiTargetSpec(
+        dataset_id="kuairand_pure",
+        targets=(TargetSpec(name=target, kind=SUPPORTED_TARGETS[target]),),
+        primary_confirmatory_target=target,
+    )
+
+
+def narrow_to_target(views: krm.Views, target_index: int) -> None:
     """Restrict the loaded labels and masks to the single follow-up target.
 
     Everything else about `views` — the numeric blocks, the input
@@ -107,12 +115,28 @@ def narrow_to_target(views: krm.Views) -> None:
 
     for split in ("train", "validation"):
         payload = views.data[split]
-        payload["labels"] = payload["labels"][:, TARGET_INDEX : TARGET_INDEX + 1]
-        payload["masks"] = payload["masks"][:, TARGET_INDEX : TARGET_INDEX + 1]
+        payload["labels"] = payload["labels"][:, target_index : target_index + 1]
+        payload["masks"] = payload["masks"][:, target_index : target_index + 1]
+
+
+def _headline(report: dict[str, Any], target: str) -> str:
+    """One short per-seed line, in the units that suit the head's kind."""
+
+    metrics = report["frozen_metrics"][target]
+    if metrics["kind"] == "binary":
+        return (
+            f"AUC={metrics['roc_auc']:.4f} gAUC={metrics['user_gauc']:.4f} "
+            f"(cov {metrics['user_gauc_group_coverage']:.2f})"
+        )
+    return (
+        f"xAUC={metrics['global_xauc']:.4f} "
+        f"xgAUC={metrics['user_xgauc']:.4f} "
+        f"MAE={metrics['mae_seconds']:.2f}s"
+    )
 
 
 @torch.no_grad()
-def evaluate(model: torch.nn.Module, views: krm.Views, arm: krm.Arm, constants):
+def evaluate(model, views, arm, constants, spec, target, c_seconds):
     model.eval()
     valid = views.data["validation"]
     numeric = views.numeric("validation", arm.regime)
@@ -125,17 +149,26 @@ def evaluate(model: torch.nn.Module, views: krm.Views, arm: krm.Arm, constants):
     from dcdn.multitask import macro_nloss
 
     report = macro_nloss(
-        SPEC, constants, safe, valid["labels"], valid["masks"]
-    ).as_report(SPEC)
+        spec, constants, safe, valid["labels"], valid["masks"]
+    ).as_report(spec)
     report["nonfinite_predictions"] = nonfinite
 
-    scores = safe[:, 0].cpu().numpy()
-    labels = valid["labels"][:, 0].cpu().numpy()
-    normalized_mae = float(np.abs(scores - labels).mean())
-    report["watch_time_mae"] = normalized_mae
-    report["watch_time_mae_seconds"] = normalized_mae * float(
-        views.manifest["watch_time_c_seconds"]
+    scores = safe.cpu().numpy()
+    labels = valid["labels"].cpu().numpy()
+    # The same frozen metric set the multi-target study reports, so the single
+    # head and the corresponding multi-task head are compared on identical
+    # definitions rather than on two similar-looking implementations.
+    report["_predictions"] = scores
+    report["frozen_metrics"] = krm.frozen_metric_set(
+        spec, scores, labels,
+        valid["masks"].cpu().numpy(),
+        valid["categorical"][:, krm.USER_COLUMN].cpu().numpy(),
+        c_seconds,
     )
+    if target == "watch_time":
+        normalized_mae = float(np.abs(scores[:, 0] - labels[:, 0]).mean())
+        report["watch_time_mae"] = normalized_mae
+        report["watch_time_mae_seconds"] = normalized_mae * c_seconds
     return report
 
 
@@ -158,23 +191,37 @@ def main(argv: list[str] | None = None) -> int:
         "--preconditioner", choices=krm.PRECONDITIONERS, default="rms"
     )
     parser.add_argument("--annex-seeds", action="store_true")
+    parser.add_argument(
+        "--save-predictions",
+        action="store_true",
+        help="persist per-row validation predictions to the data cache so a "
+             "future metric can be computed without retraining",
+    )
+    parser.add_argument(
+        "--target", choices=sorted(SUPPORTED_TARGETS), default="watch_time"
+    )
     args = parser.parse_args(argv)
+
+    target = args.target
+    spec = build_spec(target)
+    target_index = krm.TARGETS.index(target)
 
     device = torch.device(args.device)
     beff.prepare_output_dir(args.output_dir)
     views = krm.Views(args.views, device, preconditioner=args.preconditioner)
-    narrow_to_target(views)
+    narrow_to_target(views, target_index)
+    c_seconds = float(views.manifest["watch_time_c_seconds"])
     print(
         f"views: train={views.data['train']['labels'].shape[0]:,} "
         f"validation={views.data['validation']['labels'].shape[0]:,} "
         f"reduced={views.reduced_width} full={views.full_width} "
-        f"target={TARGET}"
+        f"target={target}"
     )
 
     constants = compute_task_constants(
-        SPEC, views.data["train"]["labels"], views.data["train"]["masks"]
+        spec, views.data["train"]["labels"], views.data["train"]["masks"]
     )
-    print(f"frozen task constant: {TARGET}={constants.values[0]:.6g}")
+    print(f"frozen task constant: {target}={constants.values[0]:.6g}")
 
     # Mechanical capacity control, recomputed for a one-wide head. No
     # validation metric is read. The head is narrower here than in the
@@ -214,7 +261,7 @@ def main(argv: list[str] | None = None) -> int:
     # the multi-target runner. Point it at the one-target spec for the duration
     # of this study so selection, early stopping and reporting all use the same
     # single-target quantity.
-    krm.SPEC = SPEC
+    krm.SPEC = spec
 
     manifest = {
         "artifact_role": "kuairand_pure_single_target_followup_manifest",
@@ -223,9 +270,9 @@ def main(argv: list[str] | None = None) -> int:
         "study": "kuairand_pure_single_target_watch_time",
         "is_the_frozen_single_target_study": False,
         "frozen_study_blocked_on": "main_multi_target_table_complete",
-        "target": TARGET,
-        "target_kind": "regression",
-        "objective_spec_sha256": SPEC.contract_sha256,
+        "target": target,
+        "target_kind": SUPPORTED_TARGETS[target],
+        "objective_spec_sha256": spec.contract_sha256,
         "task_constants_sha256": constants.contract_sha256,
         "view_manifest_sha256": hashlib.sha256(
             (args.views / "manifest_v1.json").read_bytes()
@@ -251,6 +298,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(f"pre-training manifest sha256: {digest}\n")
 
+    store = None
+    if args.save_predictions:
+        store = krm.PredictionStore(
+            Path(__import__("os").environ.get("DCDN_DATA_CACHE", "/tmp")),
+            args.output_dir.name,
+        )
+        store.add_context(views, spec)
+
     print("--- tuning (seed 42, validation-selected) ---")
     selected: dict[str, float] = {}
     for arm in arms:
@@ -273,10 +328,10 @@ def main(argv: list[str] | None = None) -> int:
     frozen = {
         "artifact_role": "kuairand_pure_single_target_selected_configs",
         "schema_version": 1,
-        "target": TARGET,
+        "target": target,
         "selected_learning_rate": selected,
         "capacity_resolution": payload,
-        "objective_spec_sha256": SPEC.contract_sha256,
+        "objective_spec_sha256": spec.contract_sha256,
         "task_constants_sha256": constants.contract_sha256,
     }
     frozen_digest = beff.publish_json(
@@ -295,7 +350,9 @@ def main(argv: list[str] | None = None) -> int:
             training = krm.train_one(
                 model, views, arm, constants, device, selected[arm.arm_id], seed
             )
-            report = evaluate(model, views, arm, constants)
+            report = evaluate(
+                model, views, arm, constants, spec, target, c_seconds
+            )
             counts = model.counts()
             records.append({
                 "arm_id": arm.arm_id, "label": arm.label, "regime": arm.regime,
@@ -307,14 +364,19 @@ def main(argv: list[str] | None = None) -> int:
                 "seed": seed, "learning_rate": selected[arm.arm_id],
                 "parameters": counts, "training": training, "validation": report,
             })
+            stored = report.pop("_predictions")
+            if store is not None:
+                store.add(arm.arm_id, seed, stored)
             print(
                 f"  {arm.arm_id:<24} seed={seed} "
-                f"NLoss={report['macro_nloss']:.6f} "
-                f"MAE={report['watch_time_mae']:.4f} "
-                f"({report['watch_time_mae_seconds']:.2f}s)"
+                f"NLoss={report['macro_nloss']:.6f} {_headline(report, target)}"
             )
             del model
             torch.cuda.empty_cache()
+
+    predictions_digest = store.write() if store is not None else None
+    if predictions_digest:
+        print(f"\npredictions cached: {store.path} sha256={predictions_digest}")
 
     published = beff.publish_json(args.output_dir / "results_v1.json", {
         "artifact_role": "kuairand_pure_single_target_results",
@@ -325,10 +387,12 @@ def main(argv: list[str] | None = None) -> int:
         "selected_configs_sha256": frozen_digest,
         "evaluated_split": "validation",
         "test_unlocked": False,
-        "target": TARGET,
-        "targets": [TARGET],
+        "target": target,
+        "targets": [target],
         "final_seeds": list(krm.FINAL_SEEDS),
         "annex_seeds": list(krm.ANNEX_SEEDS) if args.annex_seeds else [],
+        "cached_predictions_sha256": predictions_digest,
+        "cached_predictions_path": str(store.path) if store is not None else None,
         "records": records,
     })
     print(f"\npublished results_v1.json sha256={published}")
