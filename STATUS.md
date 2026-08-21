@@ -1332,3 +1332,37 @@ plotting dependency, so the pinned `uv.lock` environment is untouched; light and
 dark surfaces are generated from the same palette steps, series are direct
 labelled as well as colour coded, and latency and throughput are separate charts
 rather than a dual axis.
+
+## 2026-08-21 VK-LSVD seven-head runtime/cache checkpoint
+
+The seven-head runtime and training integration is locally frozen at commit
+`004e753177ce9e981e2b0dbbddbdb1a185b2a2ac`. The full CPU repository suite
+passed 766 tests; Ruff, format, bytecode compilation, and `git diff --check`
+passed. The legacy scalar final-evaluation runner explicitly rejects the
+multi-target model, so week 26 cannot be opened through that path.
+
+The immutable train/validation scan
+`data/manifests/vk_lsvd_multitask_full_scan_v2.json` has SHA-256
+`e67f72187f73ed9ad37e1a23cdd5c8b679d1fbc3be35a2781968c270a1497bb6`.
+It rehashed and reopened all twelve FULL/REDUCED shards and records 7,505,820
+train plus 1,516,831 validation rows. It records
+`test_split_present=false`, `week26_path_constructed=false`, and
+`model_metrics_computed=false`.
+
+Two regenerable overlay caches were built and independently reopened for both
+train and validation. `C+P` binds metadata SHA-256
+`f9cb51ae80d4ce45b532ef2f1f10877c216d85eeab34d5dc1d40db223e6cc293`
+and content SHA-256
+`72834709c5c1735b8369571cbade96cb7b0f705d2bccaeb0335e444dd49044b8`;
+`C+P+E` binds metadata SHA-256
+`2e3d139e5601e50b72bb26d86040b134f442203cf436ee10be4a41d637ebc085`
+and content SHA-256
+`29208049ffda758f7f302e5080dabf8301631691402f9c0fcef44c72dc39d615`.
+Both contain the ordered seven targets and the same row identity; cosine,
+dot-product, norm, and iALS fields remain in both regimes with reciprocal mask
+false, while only the seventeen frozen historical divisions are added to
+`C+P+E`. No GPU or model metric was used.
+
+At `2026-08-21T08:18:59Z`, estimated spend was USD 258.90 and the one-hour
+projection USD 262.19. Durable project usage was 22.702611 GiB of 40 GiB;
+overlay free space was 51.439293 GiB. The next gate is a new immutable

@@ -314,3 +314,16 @@ warning-threshold headroom and USD 202.24 of hard-cap headroom. Durable
 project storage was 16.326 GiB of the 40 GiB cap. No provider
 action, external mutation, or test access occurred; `test_unlocked=false`
 remains in force.
+
+At `2026-08-21T08:18:59Z`, the VK-LSVD seven-head runtime checkpoint completed
+without GPU use or model metrics. A full CPU regression passed 766 tests. The
+immutable twelve-shard train/validation scan SHA-256 is
+`e67f72187f73ed9ad37e1a23cdd5c8b679d1fbc3be35a2781968c270a1497bb6`.
+Regenerable `C+P` and `C+P+E` caches occupy 3,085,756,941 and 3,852,682,774
+bytes on temporary overlay storage and were independently reopened by exact
+content hashes. The credential-free estimate is USD 258.90 for 71.094775
+elapsed Pod-hours including the fixed USD 25 storage reserve; a conservative
+one-hour projection is USD 262.19. Durable project usage is 22.702611 GiB of
+the 40 GiB cap and overlay free space is 51.439293 GiB. The reserve begins
+`2026-08-23T01:13:18Z`; no provider action, external mutation, test access, or
+Pod lifecycle action occurred.

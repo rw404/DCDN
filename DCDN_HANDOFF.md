@@ -1330,4 +1330,20 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   model metric has been computed. The next gate is the seven-head runtime and
   training-harness integration followed by train-only deterministic smokes.
 
+- **VK-LSVD seven-head runtime/cache checkpoint recorded 2026-08-21.** Commit
+  `004e753177ce9e981e2b0dbbddbdb1a185b2a2ac` adds the sealed multi-target
+  source, shared-encoder/model wrapper, Macro-NLoss harness, and mandatory
+  per-target/user-GAUC reporting while keeping the legacy scalar final runner
+  closed to multi-target execution. The full CPU suite passed 766 tests. The
+  immutable twelve-shard train/validation scan SHA-256 is
+  `e67f72187f73ed9ad37e1a23cdd5c8b679d1fbc3be35a2781968c270a1497bb6`.
+  Reopened `C+P` and `C+P+E` cache content SHA-256 values are respectively
+  `72834709c5c1735b8369571cbade96cb7b0f705d2bccaeb0335e444dd49044b8`
+  and
+  `29208049ffda758f7f302e5080dabf8301631691402f9c0fcef44c72dc39d615`.
+  Each cache has 7,505,820 train and 1,516,831 validation rows, seven ordered
+  targets, and no test split. No GPU or model metric was used. The next gate
+  is the immutable multi-target encoder/capacity/protocol freeze followed by
+  train-only deterministic smokes; week 26 remains sealed.
+
 Update this decision log whenever a material choice changes.
