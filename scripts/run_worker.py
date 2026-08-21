@@ -59,6 +59,9 @@ from dcdn.selection_artifact import (
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 _TRAIN_SCRIPT = PROJECT_ROOT / "scripts" / "train_model.py"
+_MULTITASK_SMOKE_SCRIPT = PROJECT_ROOT / "scripts" / "smoke_multitask_model.py"
+_MULTITASK_SMOKE_TRAINER = "vk_lsvd_multitask_smoke_v1"
+_MULTITASK_SMOKE_SCHEMA = 5
 _DATASET_ID = "vk_lsvd_up0.01_ir0.01"
 _C_PLUS_P = "C+P"
 _C_PLUS_P_PLUS_E = "C+P+E"
@@ -144,11 +147,115 @@ def _inside(path: Path, root: Path, field: str) -> Path:
     return path
 
 
+def _is_multitask_smoke(resolved: Mapping[str, Any]) -> bool:
+    return resolved.get("trainer_kind") == _MULTITASK_SMOKE_TRAINER
+
+
+def _validate_multitask_smoke_contract(
+    resolved: Mapping[str, Any],
+    training: Mapping[str, Any],
+) -> str:
+    expected_root_keys = {
+        "schema_version",
+        "trainer_kind",
+        "execution_kind",
+        "run_id",
+        "project_root",
+        "protocol_path",
+        "overlay_path",
+        "result_path",
+        "runtime",
+        "training",
+    }
+    if set(resolved) != expected_root_keys:
+        raise WorkerError("multi-target smoke resolved keys mismatch")
+    if (
+        type(resolved.get("schema_version")) is not int
+        or resolved["schema_version"] != _MULTITASK_SMOKE_SCHEMA
+        or resolved.get("execution_kind") != "implementation_smoke"
+    ):
+        raise WorkerError("multi-target smoke requires schema v5 implementation scope")
+    expected_training_keys = {
+        "dataset_id",
+        "feature_regime",
+        "model_key",
+        "phase",
+        "seed",
+        "effective_batch_size",
+        "validate_every_examples",
+        "runtime_value_checks",
+        "capacity_resolution_sha256",
+        "encoder_contract_sha256",
+        "cache_metadata_sha256",
+        "cache_content_sha256",
+        "full_materialized_scan_sha256",
+        "targets_multitask_v2_sha256",
+        "task_constants_sha256",
+    }
+    if set(training) != expected_training_keys:
+        raise WorkerError("multi-target smoke training keys mismatch")
+    if (
+        training.get("dataset_id") != _DATASET_ID
+        or training.get("feature_regime") != _C_PLUS_P
+        or training.get("model_key") not in {"dcdn_core", "dcnv2_full_rank"}
+        or training.get("phase") != "tuning"
+        or type(training.get("seed")) is not int
+        or training["seed"] != 42
+        or type(training.get("effective_batch_size")) is not int
+        or training["effective_batch_size"] != 4096
+        or type(training.get("validate_every_examples")) is not int
+        or training["validate_every_examples"] <= 4096
+        or training.get("runtime_value_checks") is not True
+    ):
+        raise WorkerError("multi-target smoke frozen training contract mismatch")
+    for field in (
+        "capacity_resolution_sha256",
+        "encoder_contract_sha256",
+        "cache_metadata_sha256",
+        "cache_content_sha256",
+        "full_materialized_scan_sha256",
+        "targets_multitask_v2_sha256",
+        "task_constants_sha256",
+    ):
+        if (
+            type(training.get(field)) is not str
+            or _SHA256_RE.fullmatch(training[field]) is None
+        ):
+            raise WorkerError(f"multi-target smoke {field} is invalid")
+    runtime = _mapping(resolved.get("runtime"), "resolved.runtime")
+    if set(runtime) != {
+        "device",
+        "eta_hours",
+        "resume",
+        "stop_after_examples",
+        "latency",
+    }:
+        raise WorkerError("multi-target smoke runtime keys mismatch")
+    eta_hours = runtime.get("eta_hours")
+    if (
+        runtime.get("device") != "cuda:0"
+        or type(eta_hours) not in {int, float}
+        or isinstance(eta_hours, bool)
+        or not math.isfinite(float(eta_hours))
+        or not 0.0 <= float(eta_hours) <= 0.25
+        or runtime.get("resume") is not False
+        or type(runtime.get("stop_after_examples")) is not int
+        or runtime["stop_after_examples"] != 4096
+        or runtime.get("latency") is not None
+    ):
+        raise WorkerError("multi-target smoke runtime contract mismatch")
+    return "implementation_smoke"
+
+
 def _validate_resolved_execution_contract(
     resolved: Mapping[str, Any],
 ) -> str:
     training = _mapping(resolved.get("training"), "resolved.training")
     _validate_resolved_feature_regime(training)
+    if _is_multitask_smoke(resolved):
+        return _validate_multitask_smoke_contract(resolved, training)
+    if "trainer_kind" in resolved:
+        raise WorkerError("unknown resolved trainer_kind")
     is_capacity = training.get("model_key") == "dcnv2_capacity_matched_core"
     schema_version = resolved.get("schema_version")
     if type(schema_version) is not int or (
@@ -389,6 +496,27 @@ def _verify_final_selection_receipt(
             )
 
 
+def _verify_run_authorization(
+    resolved: Mapping[str, Any],
+    project_root: Path,
+    *,
+    record: Mapping[str, Any],
+) -> CapacityBindingEvidence | None:
+    if _is_multitask_smoke(resolved):
+        return None
+    capacity_evidence = _verify_capacity_binding(
+        resolved,
+        project_root,
+        record=record,
+    )
+    _verify_final_selection_receipt(
+        resolved,
+        project_root,
+        capacity_evidence=capacity_evidence,
+    )
+    return capacity_evidence
+
+
 def _verify_capacity_checkpoint_binding(
     path: Path,
     *,
@@ -505,6 +633,181 @@ def _completed_reason(execution_kind: str, result_digest: str) -> str:
     )
 
 
+def _verify_multitask_smoke_result(
+    *,
+    project_root: Path,
+    resolved: Mapping[str, Any],
+    resolved_digest: str,
+    run_id: str,
+) -> tuple[str, bool]:
+    result_path = _inside(
+        _resolved_path(
+            resolved.get("result_path"),
+            root=project_root,
+            field="resolved.result_path",
+        ),
+        project_root,
+        "resolved.result_path",
+    )
+    artifact = read_verified_artifact(result_path)
+
+    def reject_constant(value: str) -> None:
+        raise ValueError(f"non-finite JSON constant {value!r}")
+
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if not isinstance(key, str) or key in result:
+                raise ValueError(f"duplicate or invalid JSON key: {key!r}")
+            result[key] = value
+        return result
+
+    try:
+        receipt = json.loads(
+            artifact.data.decode("ascii"),
+            object_pairs_hook=unique_object,
+            parse_constant=reject_constant,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        raise WorkerError(
+            "multi-target smoke result is not strict finite ASCII JSON"
+        ) from exc
+    expected_keys = {
+        "schema_version",
+        "artifact_role",
+        "execution_kind",
+        "scientific_result_eligible",
+        "run_id",
+        "resolved_config_sha256",
+        "model_key",
+        "feature_regime",
+        "seed",
+        "examples_seen",
+        "optimizer_steps",
+        "validation_checks",
+        "test_metrics",
+        "training_loss_non_scientific",
+        "elapsed_seconds",
+        "throughput_examples_per_second",
+        "peak_vram_bytes",
+        "trainable_parameters",
+        "gradient_norm_before_clip",
+        "capacity_artifact_file_sha256",
+        "nonfinite_count",
+        "joint_model_contract_sha256",
+        "protocol_sha256",
+        "encoder_contract_sha256",
+        "capacity_resolution_sha256",
+        "cache_metadata_sha256",
+        "cache_content_sha256",
+        "full_materialized_scan_sha256",
+        "cost_snapshot",
+        "storage_snapshot",
+        "targets_multitask_v2_sha256",
+        "task_constants_sha256",
+        "test_unlocked",
+        "telemetry",
+    }
+    if not isinstance(receipt, Mapping) or set(receipt) != expected_keys:
+        raise WorkerError("multi-target smoke result keys mismatch")
+    training = _mapping(resolved.get("training"), "resolved.training")
+    if (
+        type(receipt["schema_version"]) is not int
+        or receipt["schema_version"] != _MULTITASK_SMOKE_SCHEMA
+        or receipt["artifact_role"] != "vk_lsvd_seven_head_implementation_smoke"
+        or receipt["execution_kind"] != "implementation_smoke"
+        or receipt["scientific_result_eligible"] is not False
+        or receipt["run_id"] != run_id
+        or receipt["resolved_config_sha256"] != resolved_digest
+        or receipt["model_key"] != training["model_key"]
+        or receipt["feature_regime"] != _C_PLUS_P
+        or type(receipt["seed"]) is not int
+        or receipt["seed"] != 42
+        or receipt["test_metrics"] is not None
+        or receipt["test_unlocked"] is not False
+        or receipt["telemetry"] != "disabled"
+    ):
+        raise WorkerError("multi-target smoke result identity mismatch")
+    for field, expected in (
+        ("examples_seen", 4096),
+        ("optimizer_steps", 1),
+        ("validation_checks", 0),
+        ("nonfinite_count", 0),
+    ):
+        if type(receipt[field]) is not int or receipt[field] != expected:
+            raise WorkerError(f"multi-target smoke result {field} mismatch")
+    for field in ("peak_vram_bytes", "trainable_parameters"):
+        if type(receipt[field]) is not int or receipt[field] <= 0:
+            raise WorkerError(f"multi-target smoke result {field} is invalid")
+    for field in (
+        "training_loss_non_scientific",
+        "elapsed_seconds",
+        "throughput_examples_per_second",
+        "gradient_norm_before_clip",
+    ):
+        value = receipt[field]
+        if type(value) is not float or not math.isfinite(value) or value < 0.0:
+            raise WorkerError(f"multi-target smoke result {field} is invalid")
+    if (
+        receipt["elapsed_seconds"] <= 0.0
+        or receipt["throughput_examples_per_second"] <= 0.0
+    ):
+        raise WorkerError("multi-target smoke timing must be positive")
+    protocol_path = _inside(
+        _resolved_path(
+            resolved.get("protocol_path"),
+            root=project_root,
+            field="resolved.protocol_path",
+        ),
+        project_root,
+        "resolved.protocol_path",
+    )
+    protocol = load_verified_yaml_artifact(protocol_path)
+    _require_protocol_feature_regime(resolved, protocol.payload)
+    if (
+        protocol.payload.get("test_unlocked") is not False
+        or protocol.payload.get("test_path_available") is not False
+        or receipt["protocol_sha256"] != protocol.digest
+    ):
+        raise WorkerError("multi-target smoke protocol/test lock mismatch")
+    hash_bindings = {
+        "encoder_contract_sha256": "encoder_contract_sha256",
+        "capacity_resolution_sha256": "capacity_resolution_sha256",
+        "cache_metadata_sha256": "cache_metadata_sha256",
+        "cache_content_sha256": "cache_content_sha256",
+        "full_materialized_scan_sha256": "full_materialized_scan_sha256",
+        "targets_multitask_v2_sha256": "targets_multitask_v2_sha256",
+        "task_constants_sha256": "task_constants_sha256",
+    }
+    for receipt_field, training_field in hash_bindings.items():
+        if (
+            type(receipt[receipt_field]) is not str
+            or _SHA256_RE.fullmatch(receipt[receipt_field]) is None
+            or receipt[receipt_field] != training[training_field]
+        ):
+            raise WorkerError(
+                f"multi-target smoke result {receipt_field} binding mismatch"
+            )
+    if (
+        receipt["capacity_artifact_file_sha256"]
+        != receipt["capacity_resolution_sha256"]
+    ):
+        raise WorkerError("multi-target smoke capacity file digest mismatch")
+    if (
+        type(receipt["joint_model_contract_sha256"]) is not str
+        or _SHA256_RE.fullmatch(receipt["joint_model_contract_sha256"]) is None
+    ):
+        raise WorkerError("multi-target smoke joint model digest is invalid")
+    if (
+        _mapping(receipt["cost_snapshot"], "result.cost_snapshot").get("launch_allowed")
+        is not True
+        or _mapping(receipt["storage_snapshot"], "result.storage_snapshot").get("ok")
+        is not True
+    ):
+        raise WorkerError("multi-target smoke final resource guard failed")
+    return artifact.digest, False
+
+
 def _verify_completed_result(
     *,
     project_root: Path,
@@ -522,6 +825,13 @@ def _verify_completed_result(
     if reloaded != expected_resolved:
         raise WorkerError("resolved config payload drifted while worker was running")
     execution_kind = _validate_resolved_execution_contract(reloaded)
+    if _is_multitask_smoke(reloaded):
+        return _verify_multitask_smoke_result(
+            project_root=project_root,
+            resolved=reloaded,
+            resolved_digest=expected_resolved_digest,
+            run_id=run_id,
+        )
     capacity_evidence = _verify_capacity_binding(reloaded, project_root)
     _verify_final_selection_receipt(
         reloaded,
@@ -1567,8 +1877,12 @@ def _worker_environment(gpu: int) -> dict[str, str]:
     return environment
 
 
-def _trainer_command(resolved_config: Path) -> list[str]:
-    return [
+def _trainer_command(
+    resolved_config: Path,
+    resolved: Mapping[str, Any] | None = None,
+    resolved_config_sha256: str | None = None,
+) -> list[str]:
+    prefix = [
         sys.executable,
         "-m",
         "dcdn.supervised_exec",
@@ -1576,6 +1890,33 @@ def _trainer_command(resolved_config: Path) -> list[str]:
         str(os.getpid()),
         "--",
         sys.executable,
+    ]
+    if resolved is not None and _is_multitask_smoke(resolved):
+        if (
+            type(resolved_config_sha256) is not str
+            or _SHA256_RE.fullmatch(resolved_config_sha256) is None
+        ):
+            raise WorkerError("multi-target trainer requires resolved config digest")
+        training = _mapping(resolved.get("training"), "resolved.training")
+        result_path = _resolved_path(
+            resolved.get("result_path"),
+            root=PROJECT_ROOT,
+            field="resolved.result_path",
+        )
+        return [
+            *prefix,
+            str(_MULTITASK_SMOKE_SCRIPT),
+            "--model",
+            str(training["model_key"]),
+            "--output",
+            str(result_path),
+            "--run-id",
+            str(resolved["run_id"]),
+            "--resolved-config-sha256",
+            resolved_config_sha256,
+        ]
+    return [
+        *prefix,
         str(_TRAIN_SCRIPT),
         "run",
         "--resolved",
@@ -1854,9 +2195,10 @@ def run_worker(
     )
     if recorded_resolved != resolved_config:
         raise WorkerError("registry resolved_config_path mismatch")
-    capacity_evidence = _verify_capacity_binding(resolved, project_root, record=record)
-    _verify_final_selection_receipt(
-        resolved, project_root, capacity_evidence=capacity_evidence
+    _verify_run_authorization(
+        resolved,
+        project_root,
+        record=record,
     )
     log_path = _inside(
         _resolved_path(record["log_path"], root=project_root, field="record.log_path"),
@@ -1910,7 +2252,7 @@ def run_worker(
             registry_root,
         )
         _require_code_identity(project_root, record)
-        command = _trainer_command(resolved_config)
+        command = _trainer_command(resolved_config, resolved, resolved_config_digest)
         environment = _worker_environment(gpu)
         with log_path.open("ab", buffering=0) as log_handle:
             if stop_signal is not None:
@@ -2017,13 +2359,10 @@ def run_worker(
                                 f"registry identity drifted: {identity_field}"
                             )
                     _require_code_identity(project_root, post_run_record)
-                    capacity_evidence = _verify_capacity_binding(
-                        resolved, project_root, record=post_run_record
-                    )
-                    _verify_final_selection_receipt(
+                    _verify_run_authorization(
                         resolved,
                         project_root,
-                        capacity_evidence=capacity_evidence,
+                        record=post_run_record,
                     )
                     (
                         result_digest,
@@ -2086,15 +2425,10 @@ def run_worker(
                                 f"completed registry identity drifted: {identity_field}"
                             )
                     _require_code_identity(project_root, completed_record)
-                    capacity_evidence = _verify_capacity_binding(
+                    _verify_run_authorization(
                         resolved,
                         project_root,
                         record=completed_record,
-                    )
-                    _verify_final_selection_receipt(
-                        resolved,
-                        project_root,
-                        capacity_evidence=capacity_evidence,
                     )
                     terminal_published = True
                     return 0
