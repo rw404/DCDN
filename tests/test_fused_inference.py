@@ -214,3 +214,66 @@ def test_fused_forward_is_deterministic() -> None:
     x0 = _positive(128, 61, "cuda")
     with torch.inference_mode():
         assert torch.equal(fused(x0), fused(x0))
+
+
+# ---------------------------------------------------------------------------
+# The validity guard must be movable off the hot path without being weakened
+# ---------------------------------------------------------------------------
+
+
+def test_validity_guard_defaults_to_checking_every_call() -> None:
+    """Correctness is the default; the fast path must be opted into."""
+
+    core = FusedDCDNCore.from_core(_core(6, 2, 2))
+    assert core.validate_validity_per_call is True
+
+
+def test_verify_all_valid_accepts_an_all_valid_tensor() -> None:
+    core = FusedDCDNCore.from_core(_core(6, 2, 2))
+    core.verify_all_valid(torch.ones(4, dtype=torch.bool))
+    core.verify_all_valid(None)
+
+
+def test_verify_all_valid_rejects_a_gating_tensor() -> None:
+    """The same rejection the per-call guard performed, off the hot path."""
+
+    core = FusedDCDNCore.from_core(_core(6, 2, 2))
+    with pytest.raises(FusedInferenceError, match="all-valid"):
+        core.verify_all_valid(torch.zeros(4, dtype=torch.bool))
+    with pytest.raises(FusedInferenceError, match="all-valid"):
+        core.verify_all_valid(torch.tensor([True, True, False, True]))
+
+
+def test_disabling_the_per_call_check_does_not_change_any_output() -> None:
+    """Turning the guard off is a scheduling change, never a numeric one."""
+
+    if not TRITON_AVAILABLE or not torch.cuda.is_available():
+        pytest.skip("needs Triton and CUDA")
+    core = FusedDCDNCore.from_core(_core(6, 2, 2)).cuda()
+    inputs = torch.rand(8, core.features_count, device="cuda") + 0.5
+    validity = torch.ones(8, core.features_count, dtype=torch.bool, device="cuda")
+
+    core.validate_validity_per_call = True
+    checked = core(inputs, validity)
+    core.validate_validity_per_call = False
+    unchecked = core(inputs, validity)
+    assert torch.equal(checked, unchecked)
+
+
+def test_disabled_guard_stops_rejecting_so_the_caller_must_verify() -> None:
+    """States the contract the flag creates, so it cannot be set casually."""
+
+    if not TRITON_AVAILABLE or not torch.cuda.is_available():
+        pytest.skip("needs Triton and CUDA")
+    core = FusedDCDNCore.from_core(_core(6, 2, 2)).cuda()
+    inputs = torch.rand(4, core.features_count, device="cuda") + 0.5
+    gating = torch.zeros(4, core.features_count, dtype=torch.bool, device="cuda")
+
+    core.validate_validity_per_call = True
+    with pytest.raises(FusedInferenceError):
+        core(inputs, gating)
+
+    # With the check hoisted the module trusts the caller; that is exactly why
+    # `verify_all_valid` must be run once first.
+    core.validate_validity_per_call = False
+    core(inputs, gating)

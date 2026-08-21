@@ -49,7 +49,10 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from dcdn.fused_inference import TRITON_AVAILABLE  # noqa: E402
+from dcdn.fused_inference import (  # noqa: E402
+    TRITON_AVAILABLE,
+    FusedDCDNCore,
+)
 
 
 def _load(name: str, path: Path):
@@ -85,7 +88,12 @@ BEST_IMPLEMENTATION = {
 
 @torch.inference_mode()
 def _measure_point(
-    model: nn.Module, geometry, regime: str, batch: int, device: torch.device
+    model: nn.Module,
+    geometry,
+    regime: str,
+    batch: int,
+    device: torch.device,
+    capture_graph: bool = False,
 ) -> dict[str, Any]:
     categorical, operands, validity = beff._make_inputs(
         geometry, regime, batch, device
@@ -93,6 +101,29 @@ def _measure_point(
     for _ in range(SWEEP_WARMUPS):
         model(categorical, operands, validity)
     torch.cuda.synchronize(device)
+
+    graph: torch.cuda.CUDAGraph | None = None
+    if capture_graph:
+        # Capture on a side stream, as the CUDA graph API requires. The replay
+        # reuses the captured input tensors, which is exactly the production
+        # shape-specialized serving pattern: one graph per batch size.
+        side = torch.cuda.Stream(device=device)
+        side.wait_stream(torch.cuda.current_stream(device))
+        with torch.cuda.stream(side):
+            for _ in range(3):
+                model(categorical, operands, validity)
+        torch.cuda.current_stream(device).wait_stream(side)
+        graph = torch.cuda.CUDAGraph()
+        with torch.cuda.graph(graph):
+            model(categorical, operands, validity)
+        torch.cuda.synchronize(device)
+
+    def run() -> None:
+        if graph is not None:
+            graph.replay()
+        else:
+            model(categorical, operands, validity)
+
     torch.cuda.reset_peak_memory_stats(device)
 
     wall: list[float] = []
@@ -104,7 +135,7 @@ def _measure_point(
             torch.cuda.synchronize(device)
             start_event.record()
             started = time.perf_counter()
-            model(categorical, operands, validity)
+            run()
             end_event.record()
             torch.cuda.synchronize(device)
             wall.append((time.perf_counter() - started) * 1e3)
@@ -123,6 +154,7 @@ def _measure_point(
         "device_throughput_examples_per_second": batch / (d50 / 1e3),
         "wall_over_device_p50": p50 / d50 if d50 > 0 else None,
         "peak_vram_bytes": int(torch.cuda.max_memory_allocated(device)),
+        "cuda_graph": capture_graph,
     }
 
 
@@ -130,6 +162,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--geometry", default="ranker")
+    parser.add_argument(
+        "--cuda-graphs",
+        action="store_true",
+        help="capture each (arm, batch) into a CUDA graph and time the "
+             "replay; applied identically to every arm",
+    )
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -141,6 +179,12 @@ def main(argv: list[str] | None = None) -> int:
     if not TRITON_AVAILABLE:
         raise SystemExit("Triton is required for the fused arms")
     device = torch.device(args.device)
+    if device.type == "cuda":
+        # Without this, CUDA events are created on the default device while the
+        # work runs on `device`, and bracketing a graph replay with them fails
+        # outright. It only shows on a non-default device, which is why the
+        # eager path on cuda:0 never surfaced it.
+        torch.cuda.set_device(device)
     state = beff.host_state(device)
     print(
         f"device: {device}  geometry: {args.geometry}  batches: "
@@ -204,9 +248,24 @@ def main(argv: list[str] | None = None) -> int:
         model = beff.instantiate(arm, geometry).to(device).eval()
         if implementation == "fused":
             model = bfus._swap_to_fused(model, bfus.FUSABLE[arm_id])
+            # The fused DCDN carrier used to read its validity tensor into
+            # Python on every forward. That device-to-host synchronization cost
+            # 4.5% of the B=1 forward and made the module impossible to capture
+            # in a CUDA graph, and the comparator has no equivalent
+            # synchronization anywhere - so it was charging a guard to the
+            # architecture. The invariant is verified once here, on the same
+            # tensors the sweep will use, and then taken off the hot path.
+            _, _, validity = beff._make_inputs(geometry, arm.regime, 8, device)
+            for module in model.modules():
+                if isinstance(module, FusedDCDNCore):
+                    module.verify_all_valid(validity)
+                    module.validate_validity_per_call = False
         rows: dict[int, dict[str, Any]] = {}
         for batch in SWEEP_BATCHES:
-            rows[batch] = _measure_point(model, geometry, arm.regime, batch, device)
+            rows[batch] = _measure_point(
+                model, geometry, arm.regime, batch, device,
+                capture_graph=args.cuda_graphs,
+            )
             row = rows[batch]
             print(
                 f"  {arm_id:<24} B={batch:<6} p50={row['batch_latency_ms_p50']:8.4f}ms "

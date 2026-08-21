@@ -186,8 +186,22 @@ class FusedDCDNCore(nn.Module):
         div_eps: float,
         fused_weight: list[torch.Tensor],
         fused_bias: list[torch.Tensor],
+        validate_validity_per_call: bool = True,
     ) -> None:
         super().__init__()
+        # The per-call guard below reads a device tensor into Python, which
+        # forces a device-to-host synchronization on EVERY forward. That has two
+        # costs, and both were being charged to the architecture rather than to
+        # the guard: it serializes the pipeline (0.045 ms of a 0.993 ms forward
+        # at B=1, i.e. 4.5%), and it makes the module impossible to capture in a
+        # CUDA graph, which is the single largest win available to a
+        # dispatch-bound ranker. The comparator, DCNv2, has no equivalent
+        # synchronization anywhere in its path, so leaving this on the hot path
+        # measured a guard, not a design.
+        #
+        # `verify_all_valid` performs exactly the same check once, off the hot
+        # path. Set this False only after calling it.
+        self.validate_validity_per_call = bool(validate_validity_per_call)
         self.features_count = features_count
         self.num_layers = num_layers
         self.div_eps = float(div_eps)
@@ -235,6 +249,26 @@ class FusedDCDNCore(nn.Module):
             fused_bias=biases,
         )
 
+    @staticmethod
+    def verify_all_valid(denominator_validity: torch.Tensor | None) -> None:
+        """Reject a validity tensor that actually gates anything.
+
+        The fused carrier implements the all-valid case only, which is the
+        invariant the frozen preflight verifies. This is the same check the
+        forward used to run per call; it is a `staticmethod` so a caller can
+        run it once for a whole dataset and then set
+        `validate_validity_per_call = False`, instead of paying a
+        device-to-host synchronization on every inference.
+        """
+
+        if denominator_validity is None:
+            return
+        if not bool(denominator_validity.all()):
+            raise FusedInferenceError(
+                "the fused carrier implements the all-valid case only; a "
+                "gating validity tensor requires the audited core"
+            )
+
     def reciprocal_carrier(self, x_0: torch.Tensor) -> torch.Tensor:
         _require_triton()
         out = torch.empty_like(x_0)
@@ -270,13 +304,8 @@ class FusedDCDNCore(nn.Module):
             raise FusedInferenceError(
                 f"x_0 must have shape [B, {self.features_count}]"
             )
-        if denominator_validity is not None and not bool(
-            denominator_validity.all()
-        ):
-            raise FusedInferenceError(
-                "the fused carrier implements the all-valid case only; a "
-                "gating validity tensor requires the audited core"
-            )
+        if self.validate_validity_per_call:
+            self.verify_all_valid(denominator_validity)
         x_0 = x_0.contiguous()
         carrier = self.reciprocal_carrier(x_0)
         n_elements = x_0.numel()
