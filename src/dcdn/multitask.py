@@ -1,7 +1,7 @@
 """Frozen multi-target objective, task constants, and per-target heads.
 
 This module implements the objective declared in
-``configs/targets_multitask_v1.yaml``:
+the frozen ``configs/targets_multitask_v*.yaml`` contracts:
 
 .. math::
 
@@ -139,7 +139,7 @@ class MultiTargetSpec:
     def from_mapping(
         cls, dataset_id: str, payload: Mapping[str, Any]
     ) -> MultiTargetSpec:
-        """Build a spec from the frozen ``targets_multitask_v1.yaml`` shape."""
+        """Build a spec from the frozen ``targets_multitask_v*.yaml`` shape."""
 
         entries = payload.get("targets")
         if not isinstance(entries, Sequence) or isinstance(entries, str | bytes):

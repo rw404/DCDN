@@ -1124,3 +1124,28 @@ arithmetic, the denominator mask, arm-id agreement with `rq1_v2`, encoder and
 head identity across arms, capacity tolerance, verdict thresholds, the
 device-agreement gate, and exact-byte publication including refusal to
 overwrite.
+## 2026-08-21 VK-LSVD seven-head target freeze
+
+The owner explicitly confirmed the real-dataset VK headline target set:
+normalized `watch_time` plus `like`, `dislike`, `share`, `bookmark`,
+`click_on_author`, and `open_comments`. The immutable forward-only contract is
+`configs/targets_multitask_v2.yaml`, SHA-256
+`d03704fb856551cb5d2eee7810992f0e8fa23909860a9c28c626b5362456c6a6`,
+with a strict adjacent sidecar. The v1 artifact is unchanged and remains the
+lineage of completed Synthetic-MultiQuotient-3 RQ1; no existing result was
+rebound.
+
+The VK transformer/materializer now emits all seven ordered label/mask pairs,
+reads current-row actions only as labels, keeps FULL and REDUCED shared values
+bitwise identical, and binds the v2 target digest. Dataset-independent
+reporting now includes masked LogLoss, ROC-AUC, threshold-grouped AUPRC, and
+uniform user-GAUC with eligible-user and eligible-row coverage for every
+binary head. Observed zero remains a valid negative label.
+
+CPU-only verification: 148 expanded VK/feature/runtime tests passed; 67 final
+v2/objective/metric tests passed; an isolated source-only broad regression
+passed 687 tests in 82.72 seconds. Scoped Ruff lint/format, bytecode, strict
+sidecar, and `git diff --check` pass. No raw-data row, GPU, validation metric,
+test path, or test metric was opened. Next gate: exact task-owned commit and
+clean-code preflight, then immutable train/validation-only materialization for
+VK weeks 20--25; week 26 remains sealed.

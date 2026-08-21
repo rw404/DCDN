@@ -55,6 +55,14 @@ Frozen artifacts: `configs/targets_multitask_v1.yaml`,
 Legacy disposition: `docs/LEGACY_RESULTS_AUDIT.md`. No pre-override result is
 admissible into the multi-target table.
 
+**Forward-only owner confirmation recorded 2026-08-21:** new real-dataset
+VK-LSVD headline experiments bind `configs/targets_multitask_v2.yaml` and use
+normalized `watch_time` plus all six released binary actions: `like`,
+`dislike`, `share`, `bookmark`, `click_on_author`, and `open_comments`. The v1
+artifact remains immutable provenance for the completed synthetic RQ1; do not
+rewrite or retroactively rebind it. No real-dataset validation or test metric
+was observed before this v2 target freeze.
+
 The seven-row matrix, run identically on every dataset, is
 `M1 DCNv2-REDUCED`, `M2 DCDN-Core-REDUCED`, `M3 AFN+-REDUCED`,
 `M4 DCNv2-capacity-matched-REDUCED`, `M5 DCNv2-FULL`, `M6 DCDN-Core-FULL`,

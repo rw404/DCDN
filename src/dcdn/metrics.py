@@ -25,6 +25,17 @@ class GroupAUC:
 
 
 @dataclass(frozen=True)
+class BinaryTargetMetrics:
+    log_loss: float
+    roc_auc: float
+    auprc: float
+    user_gauc: GroupAUC
+    observed_rows: int
+    total_rows: int
+    observed_row_coverage: float
+
+
+@dataclass(frozen=True)
 class Concordance:
     value: float
     comparable_pairs: int
@@ -119,6 +130,41 @@ def roc_auc(
     return float(mann_whitney / (positive_count * negative_count))
 
 
+def average_precision(
+    target: Iterable[float] | npt.ArrayLike,
+    score: Iterable[float] | npt.ArrayLike,
+) -> float:
+    """Threshold-grouped average precision, invariant to row order within ties."""
+
+    y_true, y_score = _paired_arrays(target, score)
+    if not np.isin(y_true, (0.0, 1.0)).all():
+        raise ValueError("binary target must contain only zero and one")
+    positive_count = int(y_true.sum())
+    if positive_count == 0:
+        raise ValueError("average precision is undefined without a positive target")
+
+    order = np.argsort(-y_score, kind="mergesort")
+    sorted_score = y_score[order]
+    sorted_target = y_true[order]
+    true_positives = 0
+    predicted_positives = 0
+    area = 0.0
+    start = 0
+    while start < sorted_score.size:
+        stop = start + 1
+        while stop < sorted_score.size and sorted_score[stop] == sorted_score[start]:
+            stop += 1
+        group_positives = int(sorted_target[start:stop].sum())
+        true_positives += group_positives
+        predicted_positives += stop - start
+        if group_positives:
+            recall_increment = group_positives / positive_count
+            precision = true_positives / predicted_positives
+            area += recall_increment * precision
+        start = stop
+    return float(area)
+
+
 def user_group_auc(
     target: Iterable[float] | npt.ArrayLike,
     score: Iterable[float] | npt.ArrayLike,
@@ -160,6 +206,45 @@ def user_group_auc(
         group_coverage=len(aucs) / int(unique_groups.size),
         row_coverage=retained_rows / int(y_true.size),
         weighting=weighting,
+    )
+
+
+def masked_binary_target_metrics(
+    target: Iterable[float] | npt.ArrayLike,
+    probability: Iterable[float] | npt.ArrayLike,
+    group: Iterable[object] | npt.ArrayLike,
+    mask: Iterable[bool] | npt.ArrayLike,
+) -> BinaryTargetMetrics:
+    """Report one binary head over observed labels with uniform user-GAUC."""
+
+    y_true, y_probability = _paired_arrays(target, probability)
+    groups = np.asarray(group)
+    observed = np.asarray(mask)
+    if groups.ndim != 1 or groups.shape != y_true.shape:
+        raise ValueError("group must be one-dimensional and aligned with target")
+    if observed.ndim != 1 or observed.shape != y_true.shape:
+        raise ValueError("mask must be one-dimensional and aligned with target")
+    if observed.dtype != np.bool_:
+        raise TypeError("mask must contain booleans; observed zeros are valid labels")
+    observed_count = int(observed.sum())
+    if observed_count == 0:
+        raise ValueError("binary target has no observed labels")
+    selected_target = y_true[observed]
+    selected_probability = y_probability[observed]
+    selected_groups = groups[observed]
+    return BinaryTargetMetrics(
+        log_loss=binary_log_loss(selected_target, selected_probability),
+        roc_auc=roc_auc(selected_target, selected_probability),
+        auprc=average_precision(selected_target, selected_probability),
+        user_gauc=user_group_auc(
+            selected_target,
+            selected_probability,
+            selected_groups,
+            weighting="uniform",
+        ),
+        observed_rows=observed_count,
+        total_rows=int(y_true.size),
+        observed_row_coverage=observed_count / int(y_true.size),
     )
 
 

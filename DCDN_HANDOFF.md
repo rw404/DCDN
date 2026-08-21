@@ -26,6 +26,7 @@ This document is the durable source of truth for continuing the DCDN paper in an
 - Architecture split confirmed by the user on 2026-08-18: the production ranker uses **one** hybrid DCDN block with the auxiliary FC path and final projector shown in `DCDNBlock_provided.py`; public offline experiments use the simplified cross-division core without that FC path or projector.
 - Current submission risk is predominantly experimental reporting and causal controls, not lack of prose.
 - **Owner override recorded 2026-08-20 — this supersedes the single-target framing throughout this document.** The public headline study is **multi-target**. Single-target training is a **separate follow-up** that may not enter the main table and may not inform target, feature-family, loss-weight, or model selection. **VK-LSVD, Yambda-50M, KuaiRand-Pure, and KuaiRec big matrix are all mandatory**; Yambda-50M is no longer optional. The reduced feature view removes **only** manually materialized divisions of historical counters and sums — cosine similarities, dot products, vector norms, and iALS scores remain shared across both regimes, carry reciprocal mask `false`, and are never counted as removed ratio features. Frozen artifacts: `configs/targets_multitask_v1.yaml`, `configs/features_manual_hist_divisions_only_v1.yaml`, `configs/matrix_multitask_v1.yaml`, `configs/single_target_followup_v1.yaml`. Legacy disposition: `docs/LEGACY_RESULTS_AUDIT.md`. Didactic walkthrough: `notebooks/dcdn_explained.ipynb`.
+- **Forward-only owner confirmation recorded 2026-08-21:** new real-dataset VK-LSVD headline experiments use normalized `watch_time` together with all six released binary actions: `like`, `dislike`, `share`, `bookmark`, `click_on_author`, and `open_comments`. This exact seven-head set is frozen in `configs/targets_multitask_v2.yaml`. The v1 target artifact and completed Synthetic-MultiQuotient-3 RQ1 remain byte-immutable provenance and are not retroactively changed. No real-dataset multi-target validation or test metric preceded this v2 freeze.
 
 ## 2. Source-of-truth priority
 
@@ -1295,5 +1296,19 @@ Run the following two tracks in parallel. The industrial track is owner-side wor
   forensic execution evidence only. All five `rq1_v2` output pairs pass, the
   27 records contain zero non-finite predictions/training batches, and no
   public-dataset test path or metric was opened. Test remains locked.
+
+- **VK-LSVD seven-head target freeze recorded 2026-08-21.** The owner
+  explicitly confirmed that the public headline representation must be useful
+  for normalized `watch_time` and every released binary feedback action:
+  `like`, `dislike`, `share`, `bookmark`, `click_on_author`, and
+  `open_comments`. The forward-only artifact
+  `configs/targets_multitask_v2.yaml` supersedes v1 only for new real-dataset
+  work; v1 remains the immutable target lineage of Synthetic-MultiQuotient-3
+  RQ1. The VK transformer and materializer now emit seven ordered label/mask
+  pairs, bind the v2 target digest, retain all current-row outcomes as labels
+  only, and keep FULL/REDUCED shared inputs bitwise identical. Per-binary-head
+  reporting includes LogLoss, ROC-AUC, AUPRC, and uniform user-GAUC with
+  eligible-user and eligible-row coverage. No real data, GPU, validation
+  metric, or test path was opened while freezing this contract.
 
 Update this decision log whenever a material choice changes.

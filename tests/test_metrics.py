@@ -6,8 +6,10 @@ import numpy as np
 import pytest
 
 from dcdn.metrics import (
+    average_precision,
     binary_log_loss,
     global_concordance,
+    masked_binary_target_metrics,
     roc_auc,
     user_group_auc,
     watch_time_metrics,
@@ -49,6 +51,15 @@ def test_roc_auc_ties_and_single_class() -> None:
         roc_auc([1, 1], [0.0, 1.0])
 
 
+def test_average_precision_is_threshold_grouped_and_tie_invariant() -> None:
+    assert average_precision([1, 0, 1, 0], [0.9, 0.8, 0.7, 0.6]) == pytest.approx(
+        (1.0 + 2 / 3) / 2
+    )
+    assert average_precision([1, 0], [0.5, 0.5]) == pytest.approx(0.5)
+    with pytest.raises(ValueError, match="without a positive"):
+        average_precision([0, 0], [0.2, 0.1])
+
+
 def test_user_group_auc_coverage_and_explicit_weighting() -> None:
     target = [0, 1, 0, 1, 1, 1, 0]
     score = [0.0, 1.0, 0.7, 0.6, 0.2, 0.3, 0.4]
@@ -61,6 +72,30 @@ def test_user_group_auc_coverage_and_explicit_weighting() -> None:
     assert rows.retained_rows == 5
     assert rows.row_coverage == pytest.approx(5 / 7)
     assert rows.value != uniform.value
+
+
+def test_masked_binary_metrics_keep_observed_zeros_and_report_user_coverage() -> None:
+    target = np.asarray([0, 1, 0, 1, 1, 1, 0, 0], dtype=float)
+    probability = np.asarray([0.1, 0.9, 0.7, 0.6, 0.2, 0.3, 0.4, 0.8])
+    group = np.asarray(["a", "a", "b", "b", "b", "c", "d", "e"])
+    mask = np.asarray([True, True, True, True, True, True, True, False])
+    report = masked_binary_target_metrics(target, probability, group, mask)
+    assert report.observed_rows == 7
+    assert report.total_rows == 8
+    assert report.observed_row_coverage == pytest.approx(7 / 8)
+    assert report.user_gauc.weighting == "uniform"
+    assert report.user_gauc.retained_groups == 2
+    assert report.user_gauc.total_groups == 4
+    assert report.user_gauc.retained_rows == 5
+    assert report.user_gauc.group_coverage == pytest.approx(0.5)
+    assert report.user_gauc.row_coverage == pytest.approx(5 / 7)
+    assert 0.0 <= report.roc_auc <= 1.0
+    assert 0.0 <= report.auprc <= 1.0
+
+
+def test_masked_binary_metrics_reject_non_boolean_mask() -> None:
+    with pytest.raises(TypeError, match="booleans"):
+        masked_binary_target_metrics([0, 1], [0.1, 0.9], ["a", "a"], np.asarray([1, 1]))
 
 
 @pytest.mark.parametrize("seed", [0, 1, 42])
