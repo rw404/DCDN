@@ -90,6 +90,10 @@ SUPPORTED_TARGETS = {
     # KuaiRec's canonical engagement label: the user played the video through
     # more than twice.
     "watch_ratio_gt2": "binary",
+    # Yambda, both from `configs/targets_multitask_v2.yaml` verbatim.
+    # `play_fraction` is the normalized listening time.
+    "play_fraction": "regression",
+    "listen50": "binary",
 }
 
 
@@ -240,7 +244,13 @@ def main(argv: list[str] | None = None) -> int:
     beff.prepare_output_dir(args.output_dir)
     views = krm.Views(args.views, device, preconditioner=args.preconditioner)
     narrow_to_target(views, target_index)
-    c_seconds = float(views.manifest["watch_time_c_seconds"])
+    # KuaiRand and KuaiRec normalize watch time by a single train-only duration
+    # constant, so their MAE converts back to seconds. Yambda's target is a
+    # fraction of a per-row track length, so no single constant exists; 1.0
+    # leaves the error in normalized units, and the manifest records which case
+    # this is rather than presenting normalized units as seconds.
+    c_seconds = float(views.manifest.get("watch_time_c_seconds", 1.0))
+    seconds_are_real = "watch_time_c_seconds" in views.manifest
     print(
         f"views: train={views.data['train']['labels'].shape[0]:,} "
         f"validation={views.data['validation']['labels'].shape[0]:,} "
@@ -306,6 +316,8 @@ def main(argv: list[str] | None = None) -> int:
         "frozen_study_blocked_on": "main_multi_target_table_complete",
         "target": target,
         "target_kind": SUPPORTED_TARGETS[target],
+        "duration_constant_seconds": c_seconds,
+        "mae_seconds_is_real_seconds": seconds_are_real,
         "objective_spec_sha256": spec.contract_sha256,
         "task_constants_sha256": constants.contract_sha256,
         "view_manifest_sha256": hashlib.sha256(

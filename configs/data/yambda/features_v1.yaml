@@ -1,0 +1,153 @@
+schema_version: 1
+dataset_id: yambda_50m
+artifact_role: study_scoped_feature_contract
+status: frozen_before_materialization
+test_unlocked: false
+
+# ---------------------------------------------------------------------------
+# Standing
+# ---------------------------------------------------------------------------
+# Unlike KuaiRand and KuaiRec, Yambda had no feature contract in this
+# repository: the dataset ships six columns and nothing derived. This file is
+# authored here and frozen BEFORE any row is materialized, so the feature set
+# cannot be tuned against a result. It is study-scoped and does not amend
+# `configs/targets_multitask_v2.yaml`, which continues to govern the main table.
+standing:
+  authored_for: single_head_listening_time_study
+  frozen_before_materialization: true
+  amends_a_frozen_artifact: false
+  main_table_objective_remains: configs/targets_multitask_v2.yaml
+
+source:
+  manifest: data/manifests/yambda_source_v1.yaml
+  object: flat/50m/listens.parquet
+  released_columns: [uid, timestamp, item_id, is_organic, played_ratio_pct,
+                     track_length_seconds]
+  rows: 46467212
+  users: 9238
+  items: 877168
+  timestamp_units: seconds
+  span_days: 301
+
+# ---------------------------------------------------------------------------
+# What is an outcome and what is an input
+# ---------------------------------------------------------------------------
+# `played_ratio_pct` is the current row's outcome. It is the sole label source
+# and is NEVER an input to its own row. It does enter other rows' history, which
+# is the rule KuaiRand and KuaiRec follow: a row may see what happened strictly
+# before it.
+current_row_outcome: played_ratio_pct
+current_row_outcome_as_input: false
+current_row_non_outcome_inputs: [is_organic, track_length_seconds]
+
+# ---------------------------------------------------------------------------
+# Temporal protocol
+# ---------------------------------------------------------------------------
+# Day boundaries are floor(timestamp / 86400). Burn-in rows update rolling
+# history but carry no label and are never trained or scored on, so the first
+# trained day already has a deep history rather than an artificially empty one.
+temporal:
+  day_definition: floor(timestamp / 86400)
+  burn_in_days: [0, 230]
+  train_days: [231, 285]
+  validation_days: [286, 295]
+  sealed_test_days: [296, 300]
+  burn_in_rows_carry_labels: false
+  sealed_test_materialized: false
+  history_availability: strictly_earlier_timestamp_than_the_scored_row
+  equal_timestamp_rows_are_invisible_to_each_other: true
+
+# ---------------------------------------------------------------------------
+# Rolling history
+# ---------------------------------------------------------------------------
+key_groups: [user, item, artist, album]
+windows:
+  1d: 86400
+  7d: 604800
+  all: unbounded
+window_lower_bound: inclusive
+statistics:
+  - listen_count
+  - played_ratio_sum
+  - track_length_sum
+  - listen50_count
+  - organic_count
+
+# ---------------------------------------------------------------------------
+# Field blocks
+# ---------------------------------------------------------------------------
+# P = 2 current-row non-outcome inputs + 4 groups x 3 windows x 5 statistics
+#     + 4 groups x 3 windows shifted count denominators = 2 + 60 + 12 = 74
+# V = 4 groups x 3 windows presence flags = 12
+# R = 4 groups x 3 windows x 4 manual divisions = 48
+ordered_fields:
+  P_count: 74
+  V_count: 12
+  R_count: 48
+reduced_view: P_plus_V
+full_view: P_plus_V_plus_R
+reduced_removes: manually_materialized_divisions_of_historical_counters_only
+manual_divisions:
+  - mean_played_ratio
+  - listen50_rate
+  - organic_rate
+  - mean_track_length
+
+denominator_mask:
+  eligible: shifted_listen_count_per_group_per_window
+  count: 12
+  shift: plus_one
+  all_positive_by_construction: true
+  reciprocal_epsilon: 0.01
+
+# ---------------------------------------------------------------------------
+# Normalization
+# ---------------------------------------------------------------------------
+# Same rule as KuaiRec, and for the same reason: raw counters span many orders
+# of magnitude and would overflow float32 through multiplicative layers.
+normalization:
+  rule: divide_by_max(train_absolute_q99_linear, 1.0)
+  fitted_on: train_split_only
+  applied_to: [P, R]
+  identity_on: [V]
+  frozen_before_validation_features: true
+
+# ---------------------------------------------------------------------------
+# Categoricals
+# ---------------------------------------------------------------------------
+categorical_fields: [uid, item_id, artist_id, album_id]
+categorical_mapping_fit: train_only
+unseen_category_policy: map_to_out_of_vocabulary_slot_zero
+cold_user_item_policy: retain_and_map_to_OOV
+cold_policy_reason: >
+  Yambda has 877k items against 9.2k users, so an inner drop of unseen items
+  would remove much of the validation split. Unlike KuaiRec, whose audited
+  protocol prescribes an inner drop, no such prescription exists here, so rows
+  are kept and unseen ids fall to the OOV slot.
+
+# ---------------------------------------------------------------------------
+# Targets
+# ---------------------------------------------------------------------------
+# Both come from `configs/targets_multitask_v2.yaml` verbatim. No new target is
+# invented here, and the primary is named before any metric exists.
+targets:
+  - name: play_fraction
+    kind: regression
+    definition: "clip(played_ratio_pct, 0, 100) / 100"
+    is_listening_time: true
+  - name: listen50
+    kind: binary
+    definition: "played_ratio_pct >= 50"
+primary_confirmatory_target: play_fraction
+primary_reason: >
+  The study was asked for a single head on listening time, and play_fraction is
+  the normalized listening time. listen50 is reported beside it because the
+  KuaiRec result showed a bimodal regression target can be unlearnable while its
+  binary form is not; both directions are published regardless of which favours
+  which architecture.
+
+metrics:
+  regression: [normalized_mse, global_xauc, user_xgauc]
+  binary: [log_loss, roc_auc, auprc, user_gauc, ndcg_at_k]
+  grouping_key: uid
+  session_grouping: unavailable_yambda_has_no_session_identifier
