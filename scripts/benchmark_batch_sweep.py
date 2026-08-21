@@ -83,6 +83,11 @@ BEST_IMPLEMENTATION = {
     "dcnv2_capacity_reduced": "reference",
     "dcnv2_full": "reference",
     "dcdn_full": "fused",
+    # AFN+ has no fused twin, but it is one of the two architectures that beat
+    # DCDN on user-grouped ranking quality, so leaving it out of the cost table
+    # would drop exactly the comparison a reader most needs.
+    "afn_reduced": "reference",
+    "afn_full": "reference",
 }
 
 
@@ -153,15 +158,40 @@ def _measure_point(
         "throughput_examples_per_second": batch / (p50 / 1e3),
         "device_throughput_examples_per_second": batch / (d50 / 1e3),
         "wall_over_device_p50": p50 / d50 if d50 > 0 else None,
+        # Under CUDA graphs this is NOT a per-arm figure: every captured graph
+        # keeps a private memory pool alive for replay, so the peak accumulates
+        # across arms measured in the same process and reads ~1 GiB for
+        # everything. Only the eager sweep's VRAM column is meaningful, and the
+        # flag below says which one this is.
         "peak_vram_bytes": int(torch.cuda.max_memory_allocated(device)),
+        "peak_vram_is_per_arm": not capture_graph,
         "cuda_graph": capture_graph,
     }
+
+
+def _load_runner():
+    """Import the multi-target runner for its field-arm configs."""
+
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "run_kuairand_multitask", REPO_ROOT / "scripts" / "run_kuairand_multitask.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["run_kuairand_multitask"] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--geometry", default="ranker")
+    parser.add_argument(
+        "--field",
+        action="store_true",
+        help="add the five non-matrix architectures, with the exact configs the "
+             "quality run trained, so cost and quality describe the same models",
+    )
     parser.add_argument(
         "--cuda-graphs",
         action="store_true",
@@ -242,9 +272,35 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(f"pre-measurement manifest sha256: {manifest_digest}\n")
 
+    if args.field:
+        # The zoo already in `benchmark_efficiency` runs on REDUCED with its own
+        # hyperparameters, which are NOT the ones the KuaiRec quality run
+        # trained: (512,256,128) against (400,400,400), AutoInt+ at 2 layers
+        # against 3, a different Wukong width. Measuring those would price a
+        # different model than the one that produced the quality numbers - the
+        # same hazard `quality_source_compatible` exists to prevent, one level
+        # down. The configs are therefore imported from the runner itself, so
+        # identity holds by construction rather than by matching two lists.
+        krm = bfus._load(
+            "run_kuairand_multitask",
+            REPO_ROOT / "scripts" / "run_kuairand_multitask.py",
+        ) if hasattr(bfus, "_load") else _load_runner()
+        matched = []
+        for field_arm in krm.build_field_arms():
+            matched.append(beff.Arm(
+                field_arm.arm_id, field_arm.label, field_arm.regime,
+                "controlled", field_arm.config,
+                with_afn_view=field_arm.with_afn_view, tier="tier_b",
+            ))
+        arms = {**arms, **{a.arm_id: a for a in matched}}
+        print(f"field arms matched to the quality run: "
+              f"{', '.join(a.arm_id for a in matched)}\n")
+
     measurements: dict[str, dict[int, dict[str, Any]]] = {}
     for arm_id, arm in arms.items():
-        implementation = BEST_IMPLEMENTATION[arm_id]
+        # Anything outside the frozen matrix has no fused twin, so it runs
+        # reference - the same rule the matrix arms follow.
+        implementation = BEST_IMPLEMENTATION.get(arm_id, "reference")
         model = beff.instantiate(arm, geometry).to(device).eval()
         if implementation == "fused":
             model = bfus._swap_to_fused(model, bfus.FUSABLE[arm_id])
@@ -327,7 +383,9 @@ def main(argv: list[str] | None = None) -> int:
                 {
                     "geometry": geometry.geometry_id,
                     "arm_id": arm_id,
-                    "implementation": BEST_IMPLEMENTATION[arm_id],
+                    "implementation": BEST_IMPLEMENTATION.get(
+                        arm_id, "reference"
+                    ),
                     **row,
                 }
             )

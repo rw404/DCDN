@@ -100,3 +100,113 @@ python scripts/benchmark_batch_sweep.py --device cuda:0 \
     --geometry kuairec_watch_time --allow-busy-host --cuda-graphs \
     --output-dir results/kuairec_watch_time/batch_sweep_graph_v1
 ```
+
+---
+
+# Part 2 — all twelve architectures
+
+The seven-arm comparison above answers "does the reduced view cost less". This
+one answers the question the quality study raised: **the two architectures that
+beat DCDN on user-grouped ranking — AutoInt+ and AFN+ — what do they cost?**
+
+Same geometry, same protocol. The five non-matrix arms take their configs
+**imported directly from `run_kuairand_multitask.build_field_arms()`**, not
+copied, so the models priced here are the models
+`docs/kuairec_full_field.md` trained. This matters: the architecture zoo already
+present in `benchmark_efficiency.py` uses different widths — (512,256,128)
+against (400,400,400), AutoInt+ at two layers against three — and on the REDUCED
+view. Measuring those would have priced different models than the quality table
+scored.
+
+| artifact | path |
+|---|---|
+| eager, twelve arms | `results/kuairec_watch_time/batch_sweep_field_eager_v1/` |
+| CUDA graphs, twelve arms | `results/kuairec_watch_time/batch_sweep_field_v1/` |
+
+## 5. B = 16,384
+
+Throughput relative to `dcdn_reduced`. VRAM is taken from the **eager** column
+only; see §7.
+
+| arm | inputs | eager /s | ratio | graph /s | ratio | graph p50 ms | VRAM |
+|---|---|---:|---:|---:|---:|---:|---:|
+| **`dcdn_reduced`** | REDUCED | 17,398,213 | **1.000** | 26,637,755 | **1.000** | 0.615 | **161 MiB** |
+| `dcnv2_capacity_reduced` | REDUCED | 13,362,592 | 0.768 | 26,211,261 | 0.984 | 0.625 | 161 MiB |
+| `dcnv2_reduced` | REDUCED | 17,072,433 | 0.981 | 21,633,948 | 0.812 | 0.757 | 161 MiB |
+| `dcdn_full` | FULL | 17,349,929 | 0.997 | 20,155,572 | 0.757 | 0.813 | 256 MiB |
+| `dcn_full` | FULL | **18,232,701** | **1.048** | 19,816,443 | 0.744 | 0.827 | 256 MiB |
+| `dcnv2_full` | FULL | 15,704,673 | 0.903 | 16,054,180 | 0.603 | 1.021 | 256 MiB |
+| `mlp_full` | FULL | 9,309,838 | 0.535 | 9,815,414 | 0.368 | 1.669 | 258 MiB |
+| `deepfm_full` | FULL | 5,055,564 | 0.291 | 5,173,054 | 0.194 | 3.167 | 260 MiB |
+| `wukong_full` | FULL | 2,533,311 | 0.146 | 2,576,547 | 0.097 | 6.359 | 318 MiB |
+| **`afn_reduced`** | REDUCED | 2,366,040 | 0.136 | 2,407,485 | 0.090 | 6.805 | **791 MiB** |
+| **`afn_full`** | FULL | 1,848,558 | 0.106 | 1,865,183 | 0.070 | 8.784 | **983 MiB** |
+| **`autoint_full`** | FULL | **248,369** | **0.014** | 248,683 | **0.009** | **65.883** | **5,549 MiB** |
+
+At B=1 under graphs the ordering is similar but compressed: `dcdn_full` 0.0568 ms,
+`dcdn_reduced` 0.0570, `dcnv2_full` 0.0617, up to `autoint_full` 0.2627.
+
+## 6. What the quality winners cost
+
+`docs/kuairec_full_field.md` found two architectures that beat `dcdn_reduced` on
+user-grouped gAUC. Placing that gain beside its price:
+
+| architecture | gAUC gain over DCDN-reduced | throughput | VRAM |
+|---|---|---|---|
+| `autoint_full` | **+0.0026** | **70× lower** | **34× more** |
+| `afn_full` | **+0.0015** | **9.4× lower** | **6.1× more** |
+
+AutoInt+ buys a gain in the third decimal of gAUC for two orders of magnitude of
+throughput and 5.4 GiB of activation memory against 161 MiB. Its attention is
+quadratic in field count, and at 101 fields that dominates everything else.
+
+The inverse case is just as sharp. **`dcn_full` is the fastest arm measured in
+eager mode** — 1.048× DCDN — and it was **last on every quality metric**: last
+on AUC, last on gAUC, last on NDCG@10. Cheapness and quality are independent
+here, which is why neither table is publishable alone.
+
+Note also that `dcnv2_capacity_reduced` is 0.768× DCDN in eager but 0.984× under
+graphs. Its low-rank cross with experts issues more, smaller kernels; graphs
+remove that overhead and it converges on DCDN's speed. A cost verdict that only
+measured eager would have overstated DCDN's advantage over its own capacity
+control.
+
+## 7. Two measurement faults found and fixed
+
+Both invalidated earlier numbers and are recorded so the corrected ones can be
+trusted.
+
+**Three benchmark processes were running concurrently on one GPU.** Earlier
+`kill` calls took a single PID from `pgrep` while three had accumulated, so a
+sweep was measuring contention: `dcnv2_capacity_reduced` at B=4096 read 3.26 ms
+against a true ~0.34 ms, a tenfold error. The sweeps here run strictly
+sequentially, one process on the device, and `wall_over_device_p50` is
+**1.00–1.02 across all 180 eager points**.
+
+**VRAM under CUDA graphs is not a per-arm figure.** Every captured graph keeps a
+private memory pool alive for replay, so peaks accumulate across arms measured
+in one process and every arm reads ~1,067 MiB. Each row now carries
+`peak_vram_is_per_arm`, and the VRAM column above is eager-only, where the same
+models read 161–5,549 MiB.
+
+**AFN+ was absent from the cost table entirely.** The sweep filtered arms
+through a `BEST_IMPLEMENTATION` dictionary holding only five ids, so both AFN+
+arms and the linear probe were dropped silently. That removed precisely the
+comparison a reader needs, since AFN+ is one of the two architectures that beat
+DCDN on quality. It is included now, at `reference` implementation like every
+arm without a fused twin.
+
+## 8. Reproduction
+
+```bash
+source scripts/env.sh
+python scripts/benchmark_batch_sweep.py --device cuda:0 \
+    --geometry kuairec_watch_time --allow-busy-host --field \
+    --output-dir results/kuairec_watch_time/batch_sweep_field_eager_v1
+python scripts/benchmark_batch_sweep.py --device cuda:0 \
+    --geometry kuairec_watch_time --allow-busy-host --field --cuda-graphs \
+    --output-dir results/kuairec_watch_time/batch_sweep_field_v1
+```
+
+Run them **sequentially**, never concurrently: two sweeps on one device measure
+each other.
