@@ -1,0 +1,88 @@
+schema_version: 1
+artifact_role: frozen_multi_target_reporting_metrics
+status: frozen_before_real_dataset_validation_metrics
+basis: owner_confirmation_2026_08_21_continuous_pairwise_auc_and_grouped_auc
+test_unlocked: false
+
+selection_firewall:
+  training_objective: macro_nloss
+  validation_checkpoint_selection: macro_nloss
+  early_stopping: macro_nloss
+  reporting_metrics_may_change_selection: false
+  post_test_tuning: forbidden
+
+pairwise_ordering_policy:
+  target_pairs: unordered_pairs_with_unequal_observed_targets_only
+  concordant_prediction: 1.0
+  tied_prediction: 0.5
+  discordant_prediction: 0.0
+  target_ties: excluded
+  row_order_dependence: forbidden
+  contiguous_batch_approximation: forbidden_for_main_reporting
+  publish_comparable_pair_coverage: true
+
+binary_targets:
+  global:
+    - log_loss
+    - roc_auc
+    - auprc
+  user_grouped:
+    metric: user_gauc
+    definition: uniform_mean_of_per_user_roc_auc
+    eligible_group: contains_both_binary_classes
+    impression_weighted_variant: sensitivity_only
+  session_grouped:
+    metric: session_gauc
+    definition: uniform_mean_of_per_session_roc_auc
+    eligible_group: contains_both_binary_classes
+
+continuous_targets:
+  pointwise:
+    - normalized_mse
+    - mae_in_natural_units
+    - mse_in_natural_units_squared
+  global:
+    metric: global_xauc
+    definition: global_pairwise_concordance
+  user_grouped:
+    metric: user_gauc
+    definition: uniform_mean_of_per_user_xauc
+    eligible_group: contains_at_least_one_unequal_target_pair
+  session_grouped:
+    metric: session_gauc
+    definition: uniform_mean_of_per_session_xauc
+    eligible_group: contains_at_least_one_unequal_target_pair
+
+session_policy:
+  construction: consecutive_events_for_same_user_split_after_inactivity_gap
+  inactivity_gap_minutes: 30
+  stable_sort_keys: [user_id, event_timestamp, stable_row_id]
+  timestamp_required: true
+  unavailable_policy: emit_null_with_explicit_reason_and_never_synthesize_sessions
+  dataset_availability:
+    vk_lsvd_up0.01_ir0.01: not_available_released_rows_have_week_but_no_event_timestamp
+    kuairand_pure: available_from_time_ms_after_schema_validation
+    kuairec_big_matrix: available_from_timestamp_after_schema_validation
+    yambda_50m: required_after_timestamp_schema_validation
+
+group_reporting:
+  primary_weighting: uniform_over_eligible_groups
+  publish_retained_groups: true
+  publish_total_groups: true
+  publish_group_coverage: true
+  publish_retained_rows: true
+  publish_total_rows: true
+  publish_row_coverage: true
+  publish_comparable_pairs_for_continuous: true
+
+uncertainty:
+  method: paired_user_bootstrap
+  confidence_level: 0.95
+  pair_across_models_by_stable_user_identity: true
+
+hegm_compatibility:
+  batch_xauc_role: sensitivity_only_if_reproduced
+  required_label: HEGM_batch_XAUC
+  forbidden_aliases: [user_gauc, global_xauc]
+  batch_size_and_order_must_be_locked: true
+  permutation_and_batch_size_sensitivity_audit_required: true

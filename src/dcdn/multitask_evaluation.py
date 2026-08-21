@@ -12,7 +12,9 @@ import torch
 
 from dcdn.metrics import (
     BinaryTargetMetrics,
+    GroupConcordance,
     WatchTimeMetrics,
+    group_concordance,
     masked_binary_target_metrics,
     watch_time_metrics,
 )
@@ -22,9 +24,19 @@ from dcdn.multitask import MultiTargetSpec, TaskConstants, macro_nloss
 @dataclass(frozen=True)
 class RegressionTargetMetrics:
     metrics: WatchTimeMetrics
+    user_gauc: GroupConcordance
+    session_gauc: GroupConcordance | None
+    session_gauc_availability: str
     observed_rows: int
     total_rows: int
     observed_row_coverage: float
+
+
+def _regression_as_report(metrics: RegressionTargetMetrics) -> dict[str, Any]:
+    payload = asdict(metrics)
+    pointwise = payload["metrics"]
+    pointwise["global_xauc"] = pointwise.pop("concordance")
+    return payload
 
 
 @dataclass(frozen=True)
@@ -48,10 +60,17 @@ class MultiTargetEvaluation:
                 name: asdict(metrics) for name, metrics in self.binary
             },
             "per_target_regression": {
-                name: asdict(metrics) for name, metrics in self.regression
+                name: _regression_as_report(metrics)
+                for name, metrics in self.regression
             },
             "user_gauc_weighting": "uniform_over_eligible_users",
             "single_class_user_policy": "excluded_with_user_and_row_coverage",
+            "continuous_pairwise_policy": (
+                "unequal_targets_only_prediction_ties_half_credit"
+            ),
+            "continuous_user_gauc_weighting": (
+                "uniform_over_users_with_unequal_target_pairs"
+            ),
         }
 
 
@@ -96,6 +115,7 @@ def evaluate_multitarget_predictions(
     masks: npt.ArrayLike,
     user_ids: npt.ArrayLike,
     regression_scales: Mapping[str, float],
+    session_ids: npt.ArrayLike | None = None,
 ) -> MultiTargetEvaluation:
     """Evaluate one canonical pass without publishing user identifiers.
 
@@ -128,6 +148,13 @@ def evaluate_multitarget_predictions(
         raise ValueError("user_ids must be one-dimensional and row-aligned")
     if any(value is None for value in groups.tolist()):
         raise ValueError("user_ids must not contain missing values")
+    sessions: np.ndarray | None = None
+    if session_ids is not None:
+        sessions = np.asarray(session_ids)
+        if sessions.ndim != 1 or sessions.shape[0] != prediction_matrix.shape[0]:
+            raise ValueError("session_ids must be one-dimensional and row-aligned")
+        if any(value is None for value in sessions.tolist()):
+            raise ValueError("session_ids must not contain missing values")
 
     regression_names = {
         target.name for target in spec.targets if target.kind == "regression"
@@ -164,12 +191,28 @@ def evaluate_multitarget_predictions(
                         _sigmoid(prediction_matrix[:, index]),
                         groups,
                         observed,
+                        session_group=sessions,
                     ),
                 )
             )
         else:
             selected_labels = label_matrix[observed, index]
             selected_predictions = prediction_matrix[observed, index]
+            session_gauc: GroupConcordance | None = None
+            session_availability = "not_available_source_has_no_event_timestamp"
+            if sessions is not None:
+                try:
+                    session_gauc = group_concordance(
+                        selected_labels,
+                        selected_predictions,
+                        sessions[observed],
+                        weighting="uniform",
+                    )
+                    session_availability = "available"
+                except ValueError as error:
+                    if "unequal-target pairs" not in str(error):
+                        raise
+                    session_availability = "not_available_no_comparable_sessions"
             regression_reports.append(
                 (
                     target.name,
@@ -179,6 +222,14 @@ def evaluate_multitarget_predictions(
                             selected_predictions,
                             duration_constant_seconds=regression_scales[target.name],
                         ),
+                        user_gauc=group_concordance(
+                            selected_labels,
+                            selected_predictions,
+                            groups[observed],
+                            weighting="uniform",
+                        ),
+                        session_gauc=session_gauc,
+                        session_gauc_availability=session_availability,
                         observed_rows=observed_rows,
                         total_rows=prediction_matrix.shape[0],
                         observed_row_coverage=(

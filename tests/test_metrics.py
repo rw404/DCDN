@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -9,11 +10,13 @@ from dcdn.metrics import (
     average_precision,
     binary_log_loss,
     global_concordance,
+    group_concordance,
     masked_binary_target_metrics,
     roc_auc,
     user_group_auc,
     watch_time_metrics,
 )
+from dcdn.protocol import load_verified_yaml_artifact
 
 
 def brute_concordance(target: np.ndarray, prediction: np.ndarray) -> tuple:
@@ -89,8 +92,27 @@ def test_masked_binary_metrics_keep_observed_zeros_and_report_user_coverage() ->
     assert report.user_gauc.retained_rows == 5
     assert report.user_gauc.group_coverage == pytest.approx(0.5)
     assert report.user_gauc.row_coverage == pytest.approx(5 / 7)
+    assert report.session_gauc is None
+    assert (
+        report.session_gauc_availability
+        == "not_available_source_has_no_event_timestamp"
+    )
     assert 0.0 <= report.roc_auc <= 1.0
     assert 0.0 <= report.auprc <= 1.0
+
+
+def test_masked_binary_metrics_report_session_gauc_when_available() -> None:
+    report = masked_binary_target_metrics(
+        [0, 1, 0, 1],
+        [0.1, 0.9, 0.8, 0.2],
+        ["u1", "u1", "u2", "u2"],
+        np.asarray([True, True, True, True]),
+        session_group=["s1", "s1", "s2", "s2"],
+    )
+    assert report.session_gauc_availability == "available"
+    assert report.session_gauc is not None
+    assert report.session_gauc.value == pytest.approx(0.5)
+    assert report.session_gauc.retained_groups == 2
 
 
 def test_masked_binary_metrics_reject_non_boolean_mask() -> None:
@@ -119,6 +141,31 @@ def test_global_concordance_matches_brute_force_and_is_order_invariant(
     assert shuffled == actual
 
 
+def test_group_concordance_is_uniform_over_eligible_users_and_reports_coverage() -> (
+    None
+):
+    target = np.asarray([0.0, 1.0, 0.0, 2.0, 1.0, 1.0, 3.0])
+    prediction = np.asarray([0.0, 1.0, 2.0, 1.0, 0.0, 2.0, 4.0])
+    users = np.asarray(["a", "a", "b", "b", "c", "c", "d"])
+    metric = group_concordance(target, prediction, users, weighting="uniform")
+    assert metric.value == pytest.approx(0.5)
+    assert metric.retained_groups == 2
+    assert metric.total_groups == 4
+    assert metric.retained_rows == 4
+    assert metric.total_rows == 7
+    assert metric.retained_comparable_pairs == 2
+    assert metric.total_within_group_pairs == 3
+    assert metric.group_coverage == pytest.approx(0.5)
+    assert metric.row_coverage == pytest.approx(4 / 7)
+    assert metric.comparable_pair_coverage == pytest.approx(2 / 3)
+    assert metric.weighting == "uniform"
+
+
+def test_group_concordance_rejects_groups_without_unequal_targets() -> None:
+    with pytest.raises(ValueError, match="unequal-target pairs"):
+        group_concordance([1.0, 1.0], [0.0, 1.0], ["a", "a"], weighting="uniform")
+
+
 def test_global_concordance_target_and_prediction_tie_policy() -> None:
     metric = global_concordance(
         [1.0, 1.0, 2.0, 3.0],
@@ -139,4 +186,27 @@ def test_watch_time_reporting_transform_clips_prediction_only_for_reporting() ->
     assert metric.normalized_mse == pytest.approx(np.mean([0.04, 0.01, 0.04]))
     assert metric.mae_seconds == pytest.approx(1 / 3)
     assert metric.mse_seconds2 == pytest.approx(1 / 3)
-    assert metric.concordance.value == 1.0
+    assert metric.global_xauc.value == 1.0
+    assert metric.concordance is metric.global_xauc
+
+
+def test_frozen_multitarget_metric_lock_binds_continuous_xauc_and_grouping() -> None:
+    root = Path(__file__).resolve().parents[1]
+    artifact = load_verified_yaml_artifact(root / "configs/metrics_multitask_v1.yaml")
+    payload = artifact.payload
+    assert payload["schema_version"] == 1
+    assert payload["test_unlocked"] is False
+    assert payload["selection_firewall"] == {
+        "training_objective": "macro_nloss",
+        "validation_checkpoint_selection": "macro_nloss",
+        "early_stopping": "macro_nloss",
+        "reporting_metrics_may_change_selection": False,
+        "post_test_tuning": "forbidden",
+    }
+    assert payload["continuous_targets"]["global"]["metric"] == "global_xauc"
+    assert payload["continuous_targets"]["user_grouped"]["metric"] == "user_gauc"
+    assert payload["continuous_targets"]["session_grouped"]["metric"] == "session_gauc"
+    assert payload["session_policy"]["inactivity_gap_minutes"] == 30
+    assert payload["session_policy"]["dataset_availability"][
+        "vk_lsvd_up0.01_ir0.01"
+    ].startswith("not_available")

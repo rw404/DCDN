@@ -1362,3 +1362,24 @@ Update this decision log whenever a material choice changes.
   passed. This is still premetric infrastructure evidence: the next step is the
   seven-head supervised CLI plus one-batch DCDN/DCNv2 smoke, not validation or
   test evaluation.
+
+- **Multi-target ranking-metric freeze recorded 2026-08-21.** Before any new
+  real-dataset validation or test metric, the owner required continuous
+  watch/listen targets to receive the same ranking audit as binary feedback.
+  The forward-only reporting lock `configs/metrics_multitask_v1.yaml`, SHA-256
+  `3608f073be551634410dece036984192c6c5180ee2dcb805b982514c4cfab793`,
+  fixes global X-AUC as exact order-invariant pairwise concordance, uniform
+  user-GAUC as the mean per-user X-AUC, and session-GAUC as the mean
+  per-session X-AUC where an actual event timestamp exists. Unequal observed
+  target pairs alone are comparable, prediction ties receive half credit, and
+  coverage is mandatory. Binary heads retain global ROC-AUC/AUPRC/LogLoss and
+  gain the same uniform session-GAUC availability rule. VK-LSVD exposes week
+  but no event timestamp, so its session-GAUC must be null with the explicit
+  source-unavailable reason; synthetic sessions are forbidden. The reporting
+  additions cannot affect Macro-NLoss training, checkpoint selection, or early
+  stopping. The mandatory real-dataset order remains VK-LSVD, KuaiRand-Pure,
+  KuaiRec big matrix, and Yambda-50M. Only after the headline multi-target
+  table is complete, a separate single-head follow-up compares watch-time
+  prediction on the video datasets and continuous play fraction/listening time
+  on Yambda; it cannot inform the main-table model, feature, loss, or target
+  selection. No test path was opened while freezing these metrics.

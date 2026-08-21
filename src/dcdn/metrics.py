@@ -30,6 +30,8 @@ class BinaryTargetMetrics:
     roc_auc: float
     auprc: float
     user_gauc: GroupAUC
+    session_gauc: GroupAUC | None
+    session_gauc_availability: str
     observed_rows: int
     total_rows: int
     observed_row_coverage: float
@@ -47,11 +49,32 @@ class Concordance:
 
 
 @dataclass(frozen=True)
+class GroupConcordance:
+    value: float
+    retained_groups: int
+    total_groups: int
+    retained_rows: int
+    total_rows: int
+    retained_comparable_pairs: int
+    total_within_group_pairs: int
+    group_coverage: float
+    row_coverage: float
+    comparable_pair_coverage: float
+    weighting: str
+
+
+@dataclass(frozen=True)
 class WatchTimeMetrics:
     normalized_mse: float
     mae_seconds: float
     mse_seconds2: float
     concordance: Concordance
+
+    @property
+    def global_xauc(self) -> Concordance:
+        """Explicit reporting name for continuous-label concordance."""
+
+        return self.concordance
 
 
 def _one_dimensional_finite(
@@ -181,16 +204,21 @@ def user_group_auc(
     if weighting not in {"rows", "uniform"}:
         raise ValueError("weighting must be either 'rows' or 'uniform'")
 
-    unique_groups, inverse = np.unique(groups, return_inverse=True)
+    unique_groups, inverse, counts = np.unique(
+        groups, return_inverse=True, return_counts=True
+    )
+    order = np.argsort(inverse, kind="mergesort")
     aucs: list[float] = []
     weights: list[int] = []
-    for group_index in range(unique_groups.size):
-        selected = inverse == group_index
+    start = 0
+    for count_value in counts.tolist():
+        stop = start + int(count_value)
+        selected = order[start:stop]
         group_target = y_true[selected]
-        if np.unique(group_target).size < 2:
-            continue
-        aucs.append(roc_auc(group_target, y_score[selected]))
-        weights.append(int(selected.sum()))
+        if np.unique(group_target).size >= 2:
+            aucs.append(roc_auc(group_target, y_score[selected]))
+            weights.append(int(count_value))
+        start = stop
 
     if not aucs:
         raise ValueError("group AUC is undefined because every group is single-class")
@@ -214,12 +242,21 @@ def masked_binary_target_metrics(
     probability: Iterable[float] | npt.ArrayLike,
     group: Iterable[object] | npt.ArrayLike,
     mask: Iterable[bool] | npt.ArrayLike,
+    *,
+    session_group: Iterable[object] | npt.ArrayLike | None = None,
 ) -> BinaryTargetMetrics:
     """Report one binary head over observed labels with uniform user-GAUC."""
 
     y_true, y_probability = _paired_arrays(target, probability)
     groups = np.asarray(group)
     observed = np.asarray(mask)
+    sessions: np.ndarray | None = None
+    if session_group is not None:
+        sessions = np.asarray(session_group)
+        if sessions.ndim != 1 or sessions.shape != y_true.shape:
+            raise ValueError(
+                "session_group must be one-dimensional and aligned with target"
+            )
     if groups.ndim != 1 or groups.shape != y_true.shape:
         raise ValueError("group must be one-dimensional and aligned with target")
     if observed.ndim != 1 or observed.shape != y_true.shape:
@@ -232,6 +269,22 @@ def masked_binary_target_metrics(
     selected_target = y_true[observed]
     selected_probability = y_probability[observed]
     selected_groups = groups[observed]
+    selected_sessions = sessions[observed] if sessions is not None else None
+    session_gauc: GroupAUC | None = None
+    session_availability = "not_available_source_has_no_event_timestamp"
+    if selected_sessions is not None:
+        try:
+            session_gauc = user_group_auc(
+                selected_target,
+                selected_probability,
+                selected_sessions,
+                weighting="uniform",
+            )
+            session_availability = "available"
+        except ValueError as error:
+            if "single-class" not in str(error):
+                raise
+            session_availability = "not_available_no_eligible_sessions"
     return BinaryTargetMetrics(
         log_loss=binary_log_loss(selected_target, selected_probability),
         roc_auc=roc_auc(selected_target, selected_probability),
@@ -242,6 +295,8 @@ def masked_binary_target_metrics(
             selected_groups,
             weighting="uniform",
         ),
+        session_gauc=session_gauc,
+        session_gauc_availability=session_availability,
         observed_rows=observed_count,
         total_rows=int(y_true.size),
         observed_row_coverage=observed_count / int(y_true.size),
@@ -324,6 +379,80 @@ def global_concordance(
         concordant_pairs=concordant,
         discordant_pairs=discordant,
         prediction_tied_pairs=prediction_tied,
+    )
+
+
+def group_concordance(
+    target: Iterable[float] | npt.ArrayLike,
+    prediction: Iterable[float] | npt.ArrayLike,
+    group: Iterable[object] | npt.ArrayLike,
+    *,
+    weighting: Literal["rows", "uniform", "comparable_pairs"],
+) -> GroupConcordance:
+    """Average continuous-label X-AUC over eligible groups.
+
+    A group is eligible when it contains at least one pair with unequal target
+    values. Target ties are excluded and prediction ties receive half credit,
+    exactly as in :func:`global_concordance`.
+    """
+
+    y_true, y_pred = _paired_arrays(target, prediction)
+    groups = np.asarray(group)
+    if groups.ndim != 1 or groups.shape != y_true.shape:
+        raise ValueError("group must be one-dimensional and aligned with target")
+    if weighting not in {"rows", "uniform", "comparable_pairs"}:
+        raise ValueError("weighting must be 'rows', 'uniform', or 'comparable_pairs'")
+
+    unique_groups, inverse, counts = np.unique(
+        groups, return_inverse=True, return_counts=True
+    )
+    order = np.argsort(inverse, kind="mergesort")
+    values: list[float] = []
+    row_weights: list[int] = []
+    pair_weights: list[int] = []
+    total_within_group_pairs = 0
+    start = 0
+    for count_value in counts.tolist():
+        selected_rows = int(count_value)
+        stop = start + selected_rows
+        selected = order[start:stop]
+        total_within_group_pairs += selected_rows * (selected_rows - 1) // 2
+        if selected_rows >= 2 and np.unique(y_true[selected]).size >= 2:
+            metric = global_concordance(y_true[selected], y_pred[selected])
+            values.append(metric.value)
+            row_weights.append(selected_rows)
+            pair_weights.append(metric.comparable_pairs)
+        start = stop
+
+    if not values:
+        raise ValueError(
+            "group concordance is undefined because every group lacks "
+            "unequal-target pairs"
+        )
+    if weighting == "rows":
+        metric_weights = row_weights
+    elif weighting == "comparable_pairs":
+        metric_weights = pair_weights
+    else:
+        metric_weights = [1] * len(values)
+    retained_rows = int(sum(row_weights))
+    retained_pairs = int(sum(pair_weights))
+    return GroupConcordance(
+        value=float(np.average(np.asarray(values), weights=metric_weights)),
+        retained_groups=len(values),
+        total_groups=int(unique_groups.size),
+        retained_rows=retained_rows,
+        total_rows=int(y_true.size),
+        retained_comparable_pairs=retained_pairs,
+        total_within_group_pairs=total_within_group_pairs,
+        group_coverage=len(values) / int(unique_groups.size),
+        row_coverage=retained_rows / int(y_true.size),
+        comparable_pair_coverage=(
+            retained_pairs / total_within_group_pairs
+            if total_within_group_pairs
+            else 0.0
+        ),
+        weighting=weighting,
     )
 
 
