@@ -1178,3 +1178,96 @@ and the registry has no running task. The immutable ledger epoch remains
 `2026-08-18T09:13:18Z`; compute reserve starts
 `2026-08-23T01:13:18Z`. Next: integrate the seven-head runtime/training path
 and run deterministic train-only smokes. Week 26 remains sealed.
+
+## 2026-08-21 RQ2 addendum: serving cost under the best available implementation
+
+The reference-implementation verdict is **superseded for cost purposes**. Full
+report: `docs/rq2_fused_inference.md`. Artifacts:
+`results/efficiency/rq2_fused_v1/` — `results_v1.json` (`f9f1d5a7…`),
+`fused_efficiency.csv` (60 rows, `d0a00787…`), pre-measurement manifest
+published before the first timed forward. All verify against strict exact-byte
+sidecars.
+
+**Why.** `docs/rq2_serving_performance.md` found DCDN 1.33–1.39x slower at p95
+than DCNv2 while carrying 6.6x fewer interaction parameters and 2.2x fewer
+FLOPs at ranker width. That inversion is the signature of a schedule artifact:
+DCDN decomposes into 2 GEMMs + 4 elementwise passes per layer plus a ~17-op
+reciprocal carrier, against DCNv2's 1 GEMM + 2 passes. At serving batch sizes
+these blocks are launch-bound, so the reference measurement compared
+implementations, not architectures.
+
+**What was done.** `src/dcdn/fused_inference.py` adds Triton kernels fusing
+DCDN's two per-layer GEMMs into one `[2F, F]` matrix, its epilogue into one
+kernel, and its masked reciprocal carrier into one kernel — and equally fusing
+the DCNv2 cross epilogue. **Both architectures were optimised**; optimising only
+DCDN would replace one unfair comparison with its mirror image. Each arm is
+represented by whichever implementation is faster for it.
+
+**Equivalence, verified before any timing.** Worst deviation from the audited
+module across every geometry and batch: **`max|Δ| = 1.53e-05`** against a
+`1e-03` tolerance — float32 GEMM reassociation only. The fused path is
+inference-only, implements the all-valid denominator case the frozen preflight
+verifies, and rejects a gating validity tensor rather than ignoring it. No
+parameter and no quality number changes.
+
+**Result.** Fusion speeds DCDN by **1.27–1.43x** and *slows* DCNv2 to
+**0.91–0.94x** — DCNv2's reference path is already minimal and Triton launch
+overhead exceeds the remaining saving. That asymmetry is itself the evidence
+that the original gap was schedule, not architecture.
+
+p95 at `B=1`, best implementation per arm:
+
+| geometry | arm | reference | fused | best |
+|---|---|---:|---:|---:|
+| quotient | DCNv2-REDUCED | 0.772 | 0.845 | 0.772 (ref) |
+| quotient | DCDN-REDUCED | 1.163 | **0.811** | 0.811 (fused) |
+| ranker | DCNv2-REDUCED | 0.930 | 0.989 | 0.930 (ref) |
+| ranker | DCDN-REDUCED | 1.220 | **0.956** | 0.956 (fused) |
+
+**The runtime-matched verdict inverts.** Under the reference implementation
+none of the four DCDN-versus-DCNv2 pairs passed (1.33–1.39x latency,
+0.72–0.77x throughput). Under the best available implementation **all four
+pass**, with margin:
+
+| geometry | pair | p95 ratio | throughput | matched |
+|---|---|---:|---:|---|
+| quotient | DCDN vs DCNv2 | 1.050 | 0.959 | yes |
+| quotient | DCDN-FULL vs DCNv2-FULL | 1.024 | 0.968 | yes |
+| ranker | DCDN vs DCNv2 | 1.028 | 0.969 | yes |
+| ranker | DCDN-FULL vs DCNv2-FULL | 1.046 | 0.951 | yes |
+
+Worst latency ratio 1.050 against the 1.10 threshold; worst throughput 0.951
+against 0.90.
+
+**Consequences for claim wording.** "At comparable latency and throughput"
+**becomes available** for the DCDN-versus-DCNv2 pair on both geometries and
+both feature regimes, *provided the fused kernel is the deployed
+implementation*. The earlier ~40% figure remains correct for unfused PyTorch
+and must be cited that way. This does **not** establish that DCDN is cheaper —
+only parity within the frozen threshold, since both architectures are
+launch-bound rather than arithmetic-bound at `B=1`.
+
+**Unchanged.** RQ2 as a whole still cannot be answered: this supplies the cost
+denominator, and no recommendation-dataset quality numerator exists. Validity:
+median wall/device p95 agreement 1.014, worst 1.017, ceiling 2.0.
+`tests/test_fused_inference.py` adds 43 tests.
+
+## 2026-08-21 Contrast M2 − M5 recorded
+
+`M2` (DCDN on base operands, no ready-made ratios) versus `M5` (DCNv2 on base
+operands **plus** the three explicit ratios), from `rq1_v2`:
+
+| slice | M2 DCDN-REDUCED | M5 DCNv2-FULL | better | factor | seed-separated |
+|---|---:|---:|---|---:|---|
+| ID | 3.12e-4 | 1.10e-4 | M5 | 2.84x | yes |
+| OOD common-scale | 5,975 | 3.07e+06 | M2 | 514x | yes |
+| OOD low-ratio | 2,990 | 929 | M5 | 3.22x | no |
+| OOD high-ratio | 11.8 | 69.8 | M2 | 5.94x | no |
+
+The claim that DCDN on base features beats DCNv2 on the full feature set is
+**not supported in general**: two slices each, and only two of four are
+separated across seeds. M5 wins in-distribution, which is expected since the
+quotient is handed to it. M2 wins decisively when operand scale shifts, where
+DCNv2's product path grows with the input and the supplied ratios do not help.
+On high-ratio the nominal 5.94x favouring M2 is unstable: DCNv2-FULL's three
+seeds span 179.1 / 20.6 / 9.7, an 18-fold range, so the ranges overlap.

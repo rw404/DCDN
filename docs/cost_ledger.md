@@ -277,3 +277,22 @@ cap, leaving 27.298322 GiB logical headroom. The temporary overlay has
 running record, and no task trainer/worker/helper process remained. No
 provider credential, external mutation, test access, or Pod lifecycle action
 occurred.
+
+At `2026-08-21T07:31:18Z`, the RQ2 fused-inference
+addendum completed on one A100. Triton kernels fuse the DCDN carrier, its two
+per-layer GEMMs, and its epilogue, and equally fuse the DCNv2 cross epilogue;
+each arm is represented by whichever implementation is faster for it. Numerical
+equivalence against the audited modules was verified before any timing at
+`max|delta| = 1.53e-05` against a `1e-03` tolerance. Fusion speeds DCDN by
+1.27-1.43x and slows DCNv2 to 0.91-0.94x, and all four DCDN-versus-DCNv2 pairs
+move from failing to passing the runtime-matched threshold. Median wall/device
+p95 agreement was 1.014, worst 1.017.
+
+This study trains nothing and reads no dataset row, label, or test metric.
+Compute was roughly 0.3 GPU-hours on one A100; the second stayed idle. The
+credential-free estimate is USD 256.29 for 70.300025 elapsed Pod-hours
+including the fixed USD 25 storage reserve, leaving USD 113.71 of
+warning-threshold headroom and USD 203.71 of hard-cap headroom.
+Durable project storage was 16.325 GiB of the 40 GiB cap. No
+provider action, external mutation, or test access occurred;
+`test_unlocked=false` remains in force.

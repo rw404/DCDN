@@ -1,0 +1,43 @@
+{
+  "artifact_role": "rq2_fused_inference_pre_measurement_manifest",
+  "equivalence_tolerance": 0.001,
+  "fused_arms": [
+    "dcdn_full",
+    "dcdn_reduced",
+    "dcdn_reduced_l2",
+    "dcnv2_full",
+    "dcnv2_reduced"
+  ],
+  "fuses_both_architectures": true,
+  "host_state_at_start": {
+    "cpu_count": 128,
+    "cuda_version": "12.8",
+    "device_multi_processor_count": 108,
+    "device_name": "NVIDIA A100-SXM4-80GB",
+    "device_total_memory_bytes": 85093777408,
+    "host_idle": false,
+    "idle_ceiling": 2.0,
+    "load_average_15m": 2.99755859375,
+    "load_average_1m": 3.30419921875,
+    "load_average_5m": 3.5078125,
+    "platform": "Linux-6.8.0-100-generic-x86_64-with-glibc2.39",
+    "torch_version": "2.8.0+cu128"
+  },
+  "protocol": {
+    "batches": [
+      1,
+      64,
+      1024
+    ],
+    "independent_rounds": 5,
+    "synchronized_forwards": 1000,
+    "timing": "wall_clock_synchronized_and_cuda_event_device_time",
+    "warmups": 200
+  },
+  "purpose": "separate architecture cost from implementation cost by measuring every arm under both the reference and a fused Triton implementation, and comparing under each architecture's best",
+  "reads_dataset_rows": false,
+  "reads_test_metrics": false,
+  "schema_version": 1,
+  "trains_any_model": false,
+  "triton_version": "3.4.0"
+}
