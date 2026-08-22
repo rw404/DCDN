@@ -1,0 +1,109 @@
+schema_version: 1
+artifact_role: study_scoped_single_target_protocol
+study: vk_lsvd_single_target_watch_time_ladder
+status: frozen_before_any_metric
+test_unlocked: false
+
+# ---------------------------------------------------------------------------
+# Standing
+# ---------------------------------------------------------------------------
+# The VK-LSVD multi-target runtime views were built by the other agent working
+# in this repository (`multitask_v2`, 2026-08-21). This study CONSUMES those
+# views and builds nothing of its own; it does not touch the seven-head
+# supervised CLI that STATUS.md names as their next gate, and it does not amend
+# any frozen artifact.
+standing:
+  consumes_views_built_by: scripts/data/vk_lsvd_multitask_views.py
+  view_path: runtime/vk_lsvd/multitask_v2
+  builds_new_views: false
+  is_the_frozen_single_target_study: false
+  frozen_study: configs/single_target_followup_v1.yaml
+  frozen_study_status: blocked_on_main_multi_target_table
+  frozen_study_modified: false
+  may_rescue_or_override_a_main_table_conclusion: false
+  evaluated_split: validation
+  test_ever_opened: false
+
+# ---------------------------------------------------------------------------
+# The target set, declared BEFORE any of them is run
+# ---------------------------------------------------------------------------
+# The request was to try watch_time "and also watch_time_gt10 or similar, so we
+# do not have to re-run". Declaring the whole ladder here, before the first
+# training step, is what keeps that from becoming target selection: all four are
+# run and all four are published with the direction as measured, whichever
+# favours which architecture.
+#
+# Thresholds are chosen by POSITIVE RATE, spanning balanced to sparse, and were
+# read from the train split's watch_time distribution before any model existed.
+# No threshold was chosen after seeing a result.
+target_set_declared_before_running: true
+selection_basis: positive_rate_ladder_not_outcome
+
+targets:
+  - name: watch_time
+    kind: regression
+    role: frozen_primary_confirmatory_target
+    definition: "clip(timespent, 0, 157.0) / 157.0"
+    source: targets_multitask_v2.yaml verbatim
+    train_mean: 0.12047
+  - name: watch_time_gt10
+    kind: binary
+    definition: "timespent > 10s, i.e. watch_time > 10/157"
+    train_positive_rate: 0.4332
+    rationale: balanced
+  - name: watch_time_gt30
+    kind: binary
+    definition: "timespent > 30s, i.e. watch_time > 30/157"
+    train_positive_rate: 0.2288
+    rationale: intermediate
+  - name: watch_time_gt60
+    kind: binary
+    definition: "timespent > 60s, i.e. watch_time > 60/157"
+    train_positive_rate: 0.0647
+    rationale: >
+      sparse, and close to KuaiRec's watch_ratio_gt2 at 0.0764, so the two
+      datasets carry a comparable engagement label
+
+primary_confirmatory_target: watch_time
+primary_reason: >
+  It is the frozen primary in targets_multitask_v2.yaml and was not chosen by
+  this study. The three binary variants are derived from it and are reported as
+  secondary regardless of which one favours DCDN.
+
+# ---------------------------------------------------------------------------
+# Derivation
+# ---------------------------------------------------------------------------
+# All four labels come from the SAME stored column. The binary variants are
+# thresholds of the normalized watch_time already in the view, so no new outcome
+# column is read and no raw VK row is touched by this study.
+derivation:
+  source_column: targets.f32.npy column 0
+  no_new_outcome_column_read: true
+  clip_constant_seconds: 157.0
+
+# ---------------------------------------------------------------------------
+# Feature views
+# ---------------------------------------------------------------------------
+views:
+  reduced: c_plus_p
+  full: c_plus_p_plus_e
+  reduced_operands: 55
+  full_operands: 72
+  context_fields: 6
+  reduced_removes: manually_materialized_divisions_of_historical_counters_only
+
+held_identical_to_the_other_datasets:
+  arms: 12
+  learning_rate_grid: [0.0001, 0.0003, 0.001, 0.003]
+  tuning_seed: 42
+  final_seeds: [42, 43, 44]
+  annex_seeds: [45, 46, 47, 48, 49]
+  seed_scopes_never_pooled: true
+  paired_comparison: true
+  convergence_gate: true
+
+metrics:
+  regression: [normalized_mse, global_xauc, user_xgauc]
+  binary: [log_loss, roc_auc, auprc, user_gauc, ndcg_at_k]
+  grouping_key: user_id
+  implementation: src/dcdn/metrics.py
