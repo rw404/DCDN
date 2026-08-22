@@ -85,24 +85,38 @@ completely; architecture only reorders within each block.
 
 ## 3. `listen50` — the binary form
 
-| arm | inputs | AUC | sd | gAUC | NDCG@10 | AUPRC |
-|---|---|---|---|---|---|---|
-| `wukong_full` **F** | FULL | **0.8217** | 0.0003 | 0.6135 | 0.7625 | 0.8912 |
-| `afn_full` | FULL | 0.8216 | 0.0004 | 0.6140 | 0.7617 | 0.8907 |
-| `autoint_full` **F** | FULL | 0.8214 | 0.0004 | **0.6155** | 0.7623 | 0.8909 |
-| `deepfm_full` **F** | FULL | 0.8214 | 0.0005 | 0.6129 | 0.7602 | 0.8908 |
-| `mlp_full` **F** | FULL | 0.8211 | 0.0004 | 0.6133 | **0.7628** | 0.8906 |
-| `dcdn_full` | FULL | 0.8206 | 0.0005 | 0.6127 | 0.7603 | 0.8902 |
-| `dcn_full` **F** | FULL | 0.8201 | 0.0005 | 0.6111 | 0.7588 | 0.8897 |
-| `dcnv2_full` | FULL | 0.8199 | 0.0011 | 0.6085 | 0.7560 | 0.8896 |
-| `afn_reduced` | REDUCED | 0.8166 | 0.0010 | 0.6112 | 0.7613 | 0.8868 |
-| `dcnv2_capacity_reduced` | REDUCED | 0.8156 | 0.0006 | 0.6089 | 0.7571 | 0.8871 |
-| **`dcdn_reduced`** | REDUCED | **0.8149** | 0.0006 | 0.6087 | 0.7590 | 0.8863 |
-| `dcnv2_reduced` | REDUCED | 0.8143 | 0.0010 | 0.6071 | 0.7548 | 0.8852 |
+Sorted by AUC. **NDCG@5 is shown beside it because the two disagree**, and the
+disagreement is the point — see §3a.
 
-Same structure: FULL sweeps the top eight. NDCG@10 covers **96.5% of users**
-(8,092 of 8,383) with only 1.4% tied adjacent pairs — a far healthier ranking
-metric than KuaiRec's, where 24% of pairs were tied by duplicate rows.
+| arm | inputs | AUC | sd | gAUC | **NDCG@5** | NDCG@10 | AUPRC |
+|---|---|---|---|---|---|---|---|
+| `wukong_full` **F** | FULL | **0.8217** | 0.0003 | 0.6135 | 0.7501 | 0.7625 | **0.8912** |
+| `afn_full` | FULL | 0.8216 | 0.0004 | 0.6140 | 0.7491 | 0.7617 | 0.8907 |
+| `autoint_full` **F** | FULL | 0.8214 | 0.0004 | **0.6155** | 0.7499 | 0.7623 | 0.8909 |
+| `deepfm_full` **F** | FULL | 0.8214 | 0.0005 | 0.6129 | 0.7484 | 0.7602 | 0.8908 |
+| `mlp_full` **F** | FULL | 0.8211 | 0.0004 | 0.6133 | 0.7508 | **0.7628** | 0.8906 |
+| `dcdn_full` | FULL | 0.8206 | 0.0005 | 0.6127 | 0.7480 | 0.7603 | 0.8902 |
+| `dcn_full` **F** | FULL | 0.8201 | 0.0005 | 0.6111 | 0.7464 | 0.7588 | 0.8897 |
+| `dcnv2_full` | FULL | 0.8199 | 0.0011 | 0.6085 | **0.7427** | 0.7560 | 0.8896 |
+| `afn_reduced` | REDUCED | 0.8166 | 0.0010 | 0.6112 | **0.7526** | 0.7613 | 0.8868 |
+| `dcnv2_capacity_reduced` | REDUCED | 0.8156 | 0.0006 | 0.6089 | 0.7480 | 0.7571 | 0.8871 |
+| **`dcdn_reduced`** | REDUCED | 0.8149 | 0.0006 | 0.6087 | **0.7503** | 0.7590 | 0.8863 |
+| `dcnv2_reduced` | REDUCED | 0.8143 | 0.0010 | 0.6071 | 0.7451 | 0.7548 | 0.8852 |
+
+Read the AUC column and the NDCG@5 column and you get different studies.
+
+**By AUC the ordering is clean and uninteresting:** the eight FULL arms take the
+top eight, the four REDUCED arms the bottom four, `dcdn_reduced` eleventh.
+
+**By NDCG@5 the block structure breaks entirely.** The best arm in the whole
+table is `afn_reduced` at 0.7526 — a REDUCED arm — with `dcdn_reduced` third at
+0.7503, ahead of every FULL arm except `mlp_full`. The worst is `dcnv2_full` at
+0.7427, which the AUC column places eighth. Two of the four REDUCED arms sit
+above six of the eight FULL arms.
+
+NDCG covers **96.5% of users** (8,092 of 8,383) with only **1.4% tied adjacent
+pairs** — a far healthier ranking metric than KuaiRec's, where 24% of pairs were
+tied by duplicate rows the contract preserves.
 
 
 ## 3a. The metric decides the answer
