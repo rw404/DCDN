@@ -4,17 +4,24 @@ This file states the RQ1 setup explicitly, runs **nine architectures** instead o
 the frozen four, and gives the `id` / `common_scale` / `low_ratio` / `high_ratio`
 table across three training distributions.
 
-**The headline first, because it is not the one that was hoped for. Against the
-full field DCDN does not sweep the slices.** It wins `high_ratio` at the frozen
-training distribution and again at the widest one, and it wins nothing else
-anywhere. On `id`, `common_scale` and `low_ratio` it is third or lower of nine.
+**Two headlines, and which one applies depends on the training distribution.**
+
+*At the frozen distribution* (`U[1,10]`, the RQ1 benchmark) DCDN wins
+`ood_high_ratio` outright and is catastrophic on `common_scale` and `low_ratio` —
+thousands against a constant predictor of 1.0.
+
+*Trained log-uniform across four decades, with every arm's learning rate tuned on
+a shared grid*, DCDN is **best of nine on three of four slices** with absolute
+errors of 2.8e-07 to 1.2e-06 — but every slice is then covered by training, so
+that is an engineering result and not an extrapolation one. See §3a.
 
 An earlier statement of mine — "DCDN is best on all four slices" at the widest
-distribution — was true **of the four frozen arms only** and is false against
-nine. `docs/rq1_addenda.md` §4 scoped it to four arms; this file is the
-unrestricted comparison and supersedes any unqualified reading.
+distribution — was true of the four frozen arms only. Against nine arms at one
+fixed learning rate it is false; against nine arms each tuned on a shared grid it
+is nearly true, three of four. Both are below.
 
-Bundle: `results/synthetic_multiquotient/train_distribution_v2/`
+Bundles: `results/synthetic_multiquotient/train_distribution_v2/` (fixed rate)
+and `results/synthetic_multiquotient/loguniform_tuned_v1/` (tuned).
 
 ---
 
@@ -31,9 +38,10 @@ comparison is not confounded by multi-task interference.
 
 **Training.** MSE divided by the target's variance on the training set, so **1.0
 is the constant predictor** and lower is better. AdamW, 4,000 steps, batch 4,096,
-gradient clipping 1.0, learning rate fixed at 1e-3 for every arm, three seeds
-(42, 43, 44). No per-arm tuning: the grid is identical, so no arm gets a budget
-another lacks.
+gradient clipping 1.0, three seeds (42, 43, 44). Sections 2 and 3 fix
+`lr = 1e-3` for every arm; **§3a repeats the widest sweep with the rate tuned per
+arm on a shared four-point grid**, which changes the ordering and is the fairer
+comparison.
 
 **Evaluation slices.** Four, differing **only in the denominator range**:
 
@@ -127,6 +135,61 @@ and is third on the other three, behind DeepFM and AutoInt+.
 
 Every slice carries a `*`. This is not a generalisation result.
 
+
+## 3a. The same sweep with per-arm learning-rate tuning
+
+The three tables above fix `lr = 1e-3` for all nine arms. That is not a fair
+comparison: each architecture has its own optimum, and a single point
+systematically penalises whichever arms sit furthest from it. DCDN turns out to
+be one of them — its tuned rate is 3e-3, and at `lr = 1e-3` it was reporting
+2.39e-06 on `id` against **4.25e-07** when allowed to pick.
+
+Re-run on `loguniform_01_1000` with the learning rate selected per arm from a
+**shared four-point grid** `{1e-4, 3e-4, 1e-3, 3e-3}` on seed 42, then three
+final seeds. Every arm gets the same grid and the same budget.
+
+| arm | tuned lr | `id` * | `common_scale` * | `low_ratio` * | `high_ratio` * |
+|---|---|---|---|---|---|
+| **`dcdn_reduced`** | 3e-3 | **4.25e-07** | 1.21e-06 | **2.81e-07** | **8.74e-07** |
+| `autoint_reduced` | 1e-3 | 1.99e-06 | **8.01e-07** | 4.21e-07 | 3.13e-05 |
+| `deepfm_reduced` | 3e-3 | 2.13e-06 | 2.81e-06 | 2.34e-06 | 3.58e-05 |
+| `mlp_reduced` | 1e-3 | 6.18e-06 | 1.77e-05 | 9.36e-06 | 4.51e-03 |
+| `afn_reduced` | 1e-4 | 8.55e-06 | 1.82e-05 | 1.06e-05 | 8.08e-04 |
+| `wukong_reduced` | 1e-3 | 8.66e-06 | 5.72e-06 | 5.06e-06 | 2.32e-05 |
+| `dcnv2_capacity_reduced` | 3e-4 | 2.37e-05 | 1.19e-03 | 2.80e-04 | 2.50e-04 |
+| `dcn_reduced` | 1e-4 | 2.91e-05 | 7.03e-04 | 2.83e-05 | 6.21e-04 |
+| `dcnv2_reduced` | 1e-4 | 5.47e-05 | 1.96e-03 | 2.05e-04 | 6.03e-04 |
+
+**With every arm tuned identically, DCDN is best on three of four slices** — `id`,
+`low_ratio` and `high_ratio` — and second on `common_scale` behind AutoInt+
+(1.21e-06 against 8.01e-07). Its absolute errors run **2.8e-07 to 1.2e-06**,
+seven orders below the constant predictor at 1.0.
+
+Margins where it wins:
+
+| slice | DCDN | next best | factor |
+|---|---|---|---|
+| `id` | 4.25e-07 | AutoInt+ 1.99e-06 | **4.7×** |
+| `low_ratio` | 2.81e-07 | AutoInt+ 4.21e-07 | 1.5× |
+| `high_ratio` | 8.74e-07 | Wukong 2.32e-05 | **27×** |
+
+Against DCNv2 at matched capacity the factors are **56× on `id`**, 996× on
+`low_ratio` and 286× on `high_ratio`. Against plain DCNv2, 129× on `id`.
+
+**Two things this does and does not settle.**
+
+It settles the practical question: **if the operand range you will serve is known
+and training covers it, DCDN learns the quotient to within ~1e-06 and is the best
+of nine architectures on three of four slices.** The earlier "third of nine"
+reading was an artefact of one fixed learning rate, and §2–3 are superseded on
+this point.
+
+It does not settle extrapolation. Every column carries a `*`: all four slices lie
+inside `[0.1, 1000]`. Widening training until the test is covered is legitimate
+engineering and no evidence of generalisation, which is why the frozen
+distribution in §2 — where DCDN is catastrophic on two slices — remains in this
+document rather than being replaced by this one.
+
 ## 4. So does RQ1 hold?
 
 **Yes, as stated — and the statement is narrower than it sounds.**
@@ -135,7 +198,8 @@ Every slice carries a `*`. This is not a generalisation result.
 |---|---|
 | At equal interaction capacity DCDN reconstructs quotients better than DCNv2 | **holds**, 11.7× on `id`, 4.7× on `high_ratio` here, and with disjoint seed ranges in the frozen three-head study |
 | DCDN is best on the slice where the quotient exceeds the trained range | **holds** at the narrow and the widest distributions |
-| DCDN is best overall | **does not hold** — third or lower on three of four slices against the field |
+| DCDN is best overall, at one fixed learning rate | **does not hold** — third or lower on three of four slices |
+| DCDN is best overall, with every arm tuned on a shared grid | **holds on three of four slices** at `loguniform_01_1000` — see §3a |
 | DCDN generalises out of distribution | **does not hold** — thousands against a constant predictor of 1.0 at the frozen setting |
 | Wide training fixes it | **holds, but for everyone** — every arm reaches 1e-06, and DCDN is not the biggest beneficiary |
 

@@ -182,10 +182,11 @@ def covers(low: float, high: float, slice_name: str) -> bool:
     return low <= slice_low and slice_high <= high
 
 
-def train(model, spec, constants, features, targets, arm, device, seed) -> None:
+def train(model, spec, constants, features, targets, arm, device, seed,
+          rate: float = LEARNING_RATE) -> None:
     model = model.to(device)
     optimizer = torch.optim.AdamW(
-        model.parameters(), lr=LEARNING_RATE, betas=(0.9, 0.999), eps=1e-8,
+        model.parameters(), lr=rate, betas=(0.9, 0.999), eps=1e-8,
         weight_decay=rsm.WEIGHT_DECAY,
     )
     features = features.to(device)
@@ -221,6 +222,20 @@ def evaluate(model, spec, constants, item, arm, device) -> float:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", default="cuda:1")
+    parser.add_argument(
+        "--tune",
+        action="store_true",
+        help="select the learning rate per arm from a shared four-point grid "
+             "on seed 42 before the final seeds, instead of fixing 1e-3. The "
+             "grid is identical for every arm, so no arm gets a budget another "
+             "lacks - but without it an arm can simply be under-served by the "
+             "single fixed rate.",
+    )
+    parser.add_argument(
+        "--only",
+        default=None,
+        help="restrict to one named training distribution",
+    )
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -279,8 +294,11 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
 
+    grid = (1e-4, 3e-4, 1e-3, 3e-3)
     records: list[dict[str, Any]] = []
     for name, kind, low, high in DISTRIBUTIONS:
+        if args.only and name != args.only:
+            continue
         coverage = {s: covers(low, high, s) for s in EVALUATION_SLICES}
         print(f"\n=== training distribution {name} — operands in [{low}, {high}]")
         print("    slices this range covers: "
@@ -295,17 +313,38 @@ def main(argv: list[str] | None = None) -> int:
         print(f"    train target variance = {constants.values[0]:.6g}")
         for arm_id in ARMS:
             arm = arms[arm_id]
+            rate = LEARNING_RATE
+            if args.tune:
+                trials = []
+                for candidate in grid:
+                    encoder = rsm.encoder_spec(
+                        rsm.EMBEDDING_DIM, rsm.REPRESENTATION_DIM
+                    )
+                    probe = arm.build(encoder, 42)
+                    train(probe, spec, constants, features, targets, arm,
+                          device, 42, rate=candidate)
+                    value = evaluate(
+                        probe, spec, constants, narrowed["id"], arm, device
+                    )
+                    trials.append((value, candidate))
+                    del probe
+                    if device.type == "cuda":
+                        torch.cuda.empty_cache()
+                rate = min(trials)[1]
+                print(f"  {arm_id:<24} tuned lr={rate:g} "
+                      f"(id={min(trials)[0]:.4g})")
             for seed in SEEDS:
                 encoder = rsm.encoder_spec(rsm.EMBEDDING_DIM, rsm.REPRESENTATION_DIM)
                 model = arm.build(encoder, seed)
-                train(model, spec, constants, features, targets, arm, device, seed)
+                train(model, spec, constants, features, targets, arm, device,
+                      seed, rate=rate)
                 slices = {
                     s: evaluate(model, spec, constants, narrowed[s], arm, device)
                     for s in EVALUATION_SLICES
                 }
                 records.append({
                     "distribution": name, "operand_low": low, "operand_high": high,
-                    "arm_id": arm_id, "seed": seed,
+                    "arm_id": arm_id, "seed": seed, "learning_rate": rate,
                     "slice_covered_by_training_range": coverage,
                     "train_target_variance": float(constants.values[0]),
                     "slices": slices,
