@@ -25,6 +25,42 @@ and `results/synthetic_multiquotient/loguniform_tuned_v1/` (tuned).
 
 ---
 
+## 0. The hypothesis under test
+
+**RQ1.** *Given only base operands that contain none of the target quotients,
+does an explicit reciprocal branch reconstruct division more accurately than
+architectures without one, at comparable capacity?*
+
+DCDN's recurrence is `x + x₀⊙W_p(x) + inv(x₀)⊙W_d(x)`, where `inv` is a masked
+reciprocal over the declared denominators. The claim is that this makes `n/d`
+directly representable — one coordinate of the division branch computes it
+exactly — where a product-only network must approximate it.
+
+**What the hypothesis predicts, stated before reading the tables.**
+
+1. DCDN should beat product-only architectures (DCNv2, original DCN) on every
+   slice, and by the largest margin where reciprocals dominate — `high_ratio`,
+   whose denominators are 0.2–0.6, so `1/d` reaches 5 and the quotient leaves the
+   trained range upward.
+2. If the branch computes a true reciprocal rather than approximating one, DCDN
+   should be **scale-invariant**: `ood_common_scale` multiplies every operand by
+   10 and leaves the targets bitwise identical, and `(10n)/(10d) = n/d`.
+3. The advantage should be an architectural property and therefore **not** depend
+   on how wide the training distribution is.
+
+**What the tables below actually show.** Prediction 1 holds against DCNv2 and
+DCN everywhere, and the `high_ratio` margin is the largest, as predicted — 27×
+over the next-best arm once every arm is tuned. Prediction 2 **fails outright**:
+at the frozen distribution DCDN is 16,830 on `ood_common_scale` against a
+constant predictor of 1.0, and Wukong-small is 350,000× better there. Prediction
+3 **fails**: the picture depends heavily on the training distribution, which is
+what §3 and §3a measure.
+
+So the branch behaves like a very effective basis function for quotients inside
+the range it was fitted on, and not like a reciprocal operator. That is the same
+conclusion `docs/rq1_verdict.md` §6.1 reaches from the frozen three-head study,
+arrived at here independently and against a wider field.
+
 ## 1. The setup, stated plainly
 
 **Inputs.** Eight strictly positive operands, `[n1, d1, n2, d2, d3, z1, z2, z3]`.
