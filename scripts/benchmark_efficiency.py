@@ -349,6 +349,23 @@ GEOMETRIES: tuple[Geometry, ...] = (
         quality_source_compatible=True,
     ),
     Geometry(
+        geometry_id="yambda_listen",
+        description=(
+            "the exact widths the Yambda-50M listening study trained at - 4 "
+            "categorical fields, 86 reduced and 134 full numeric operands, 12 "
+            "denominators, one head. Pairs one-to-one with the Yambda quality "
+            "numbers. Random inputs only; no Yambda row or label is read."
+        ),
+        categorical_fields=4,
+        categorical_cardinality=457_500,
+        embedding_dim=16,
+        reduced_operands=86,
+        full_operands=134,
+        denominator_count=12,
+        num_targets=1,
+        quality_source_compatible=True,
+    ),
+    Geometry(
         geometry_id="kuairec_watch_time",
         description=(
             "the exact widths the KuaiRec big-matrix study trained at - 5 "

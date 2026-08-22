@@ -1,0 +1,69 @@
+{
+  "artifact_role": "kuairand_pure_single_target_selected_configs",
+  "capacity_resolution": {
+    "candidates_considered": 768,
+    "flop_contract": "dcdn-forward-floating-arithmetic-flops-v1",
+    "lower_bracket": null,
+    "matched": true,
+    "selected": {
+      "adapter_flops": 19200,
+      "adapter_parameters": 9664,
+      "expert_flops": 29867,
+      "expert_parameters": 14805,
+      "flops": 82329,
+      "head_flops": 33088,
+      "head_parameters": 16641,
+      "interaction_flops": 30041,
+      "interaction_flops_per_layer": 30041,
+      "interaction_parameters": 14977,
+      "interaction_parameters_per_layer": 14977,
+      "low_rank": 63,
+      "num_experts": 1,
+      "num_layers": 1,
+      "parameters": 41282
+    },
+    "selected_ratios": {
+      "distance": 0.0006429630886837518,
+      "flop_ratio": 1.0003280600714441,
+      "parameter_ratio": 1.0003150064212847,
+      "within_tolerance": true
+    },
+    "selection_rule": "minimum_log_distance_in_parameter_and_flop_space",
+    "selection_used_validation_quality": false,
+    "target": {
+      "adapter_flops": 19200,
+      "adapter_parameters": 9664,
+      "architecture": "DCDN-Core-L1",
+      "flops": 82302,
+      "head_flops": 33088,
+      "head_parameters": 16641,
+      "interaction_flops": 30014,
+      "interaction_flops_per_layer": 29928,
+      "interaction_parameters": 14964,
+      "interaction_parameters_per_layer": 14964,
+      "num_layers": 1,
+      "parameters": 41269,
+      "reciprocal_flops": 86
+    },
+    "tolerance_fraction": 0.05,
+    "upper_bracket": null
+  },
+  "objective_spec_sha256": "88591318989aeb68877e0a8207ca78feeb226082a45957b579d24e8378e729a3",
+  "schema_version": 1,
+  "selected_learning_rate": {
+    "afn_full": 0.001,
+    "afn_reduced": 0.0003,
+    "autoint_full": 0.001,
+    "dcdn_full": 0.0003,
+    "dcdn_reduced": 0.003,
+    "dcn_full": 0.003,
+    "dcnv2_capacity_reduced": 0.003,
+    "dcnv2_full": 0.001,
+    "dcnv2_reduced": 0.003,
+    "deepfm_full": 0.003,
+    "mlp_full": 0.0003,
+    "wukong_full": 0.0001
+  },
+  "target": "listen50",
+  "task_constants_sha256": "9141eab61137c935ee4e9b61835ed9725d95b56c2e9b446d6388d016582c16a7"
+}
