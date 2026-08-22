@@ -140,9 +140,14 @@ extrapolation test — small numbers under a `*` mean "we trained on it".
 | | `capacity` | 0.000531* | 0.000178* | 0.000142* | 0.0000739* |
 
 **Trained over four decades of operand range, DCDN reaches ~1e-06 on every
-slice and is the best arm on all four** — roughly 8× better than AFN+, 60× better
-than the capacity-matched DCNv2 and 1,900× better than DCNv2 on `id`. This is the
-regime where DCDN's reciprocal branch does what it was designed for.
+slice and is the best of these four arms** — roughly 8× better than AFN+, 60×
+better than the capacity-matched DCNv2 and 1,900× better than DCNv2 on `id`.
+
+**That "best" is scoped to the four arms in this table and does not survive the
+full field.** `docs/rq1_field_comparison.md` runs the same sweep with nine
+architectures: DCDN is then best on `high_ratio` only and third on the other
+three, behind DeepFM and AutoInt+. Read that file for the unrestricted
+comparison.
 
 Two things this does and does not mean:
 

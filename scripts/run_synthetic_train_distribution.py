@@ -75,6 +75,13 @@ sta = _load(
     REPO_ROOT / "scripts" / "run_synthetic_single_target.py",
 )
 
+from dcdn.models.cross import DCNConfig  # noqa: E402
+from dcdn.models.field import (  # noqa: E402
+    AutoIntPlusConfig,
+    DeepFMConfig,
+    MLPConfig,
+)
+from dcdn.models.wukong import WukongSmallConfig  # noqa: E402
 from dcdn.multitask import (  # noqa: E402
     MultiTargetSpec,
     TargetSpec,
@@ -92,7 +99,17 @@ SLICE_OPERAND_RANGE = {
     "ood_high_ratio": (0.2, 10.0),
 }
 
-ARMS = ("dcdn_reduced", "afn_reduced", "dcnv2_capacity_reduced", "dcnv2_reduced")
+#: The four frozen learning arms plus the five architectures outside the frozen
+#: matrix, so the quotient benchmark is run against the field and not only
+#: against three chosen comparators. All are REDUCED here: the synthetic FULL
+#: arms are positive controls that receive the target quotients as inputs
+#: (`docs/rq1_verdict.md` §2), so putting the field on FULL would hand it the
+#: answer rather than making the comparison harder.
+ARMS = (
+    "dcdn_reduced", "afn_reduced", "dcnv2_capacity_reduced", "dcnv2_reduced",
+    "mlp_reduced", "deepfm_reduced", "dcn_reduced", "autoint_reduced",
+    "wukong_reduced",
+)
 TARGET = "y1"
 SEEDS = (42, 43, 44)
 LEARNING_RATE = 1e-3
@@ -103,6 +120,30 @@ DISTRIBUTIONS = (
     ("loguniform_1_10", "loguniform", 1.0, 10.0),
     ("loguniform_1_100", "loguniform", 1.0, 100.0),
     ("loguniform_01_1000", "loguniform", 0.1, 1000.0),
+)
+
+
+#: The five architectures outside the frozen matrix, at the same widths the
+#: KuaiRec and Yambda studies used so the three datasets describe the same
+#: models.
+FIELD = (
+    ("mlp_reduced", "DNN/MLP",
+     MLPConfig(hidden_dims=(400, 400, 400), dropout=0.0)),
+    ("deepfm_reduced", "DeepFM",
+     DeepFMConfig(deep_hidden_dims=(400, 400, 400), dropout=0.0)),
+    ("dcn_reduced", "DCN-original",
+     DCNConfig(num_layers=2, product_init_scale=0.1)),
+    ("autoint_reduced", "AutoInt+",
+     AutoIntPlusConfig(
+         attention_layers=3, attention_dim=64, num_heads=2,
+         dnn_hidden_dims=(400, 400), dropout=0.0,
+         scale_attention=True, layer_norm=True,
+     )),
+    ("wukong_reduced", "Wukong-small",
+     WukongSmallConfig(
+         num_layers=2, lcb_features=16, fmb_features=16, fmb_rank=8,
+         fmb_hidden_dims=(256, 256), dropout=0.0, layer_norm=True,
+     )),
 )
 
 
@@ -216,6 +257,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     sel = resolution.payload()["selected"]
     arms = {a.arm_id: a for a in rsm._make_arms(len(COLUMNS))}
+    for arm_id, label, config in FIELD:
+        arms[arm_id] = rsm.Arm(
+            arm_id, label,
+            lambda encoder, seed, cfg=config: rsm.MultiQuotientModel(
+                encoder, cfg, num_targets=1,
+                head_hidden_dims=rsm.HEAD_HIDDEN_DIMS,
+                init_seed=seed, with_afn_view=False,
+            ),
+        )
     arms["dcnv2_capacity_reduced"] = rsm.Arm(
         "dcnv2_capacity_reduced", "DCNv2-capacity-matched",
         lambda encoder, seed: rsm.MultiQuotientModel(
