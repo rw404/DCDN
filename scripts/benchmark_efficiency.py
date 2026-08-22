@@ -383,6 +383,32 @@ GEOMETRIES: tuple[Geometry, ...] = (
         quality_source_compatible=True,
     ),
     Geometry(
+        geometry_id="vk_lsvd_watch_time",
+        description=(
+            "the exact widths the VK-LSVD single-head study trained at - 6 "
+            "categorical fields, 55 reduced and 72 full numeric operands, 5 "
+            "denominators, one head. The denominator count is the same in both "
+            "regimes here, unlike the other datasets: VK's mask covers five "
+            "historical show counts and none of the seventeen R_div ratios. "
+            "Pairs one-to-one with the VK quality numbers. Random inputs only; "
+            "no VK-LSVD row or label is read. Distinct from `ranker` below, "
+            "which is the four-head multi-target geometry at the contract's "
+            "declared 61/78 field counts. These are the widths actually "
+            "materialized: the six `v_ials_*_norm_reciprocal_floor_active` "
+            "indicators are retained in the ordered schema but excluded from "
+            "the operand block, because the override made them permanently "
+            "false. 61 - 6 = 55 and 78 - 6 = 72."
+        ),
+        categorical_fields=6,
+        categorical_cardinality=200,
+        embedding_dim=16,
+        reduced_operands=55,
+        full_operands=72,
+        denominator_count=5,
+        num_targets=1,
+        quality_source_compatible=True,
+    ),
+    Geometry(
         geometry_id="kuairand_watch_time",
         description=(
             "the exact widths the KuaiRand-Pure study trained at - 8 categorical "

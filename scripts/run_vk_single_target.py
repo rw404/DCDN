@@ -127,6 +127,7 @@ class VkViews:
 
     def __init__(
         self, root: Path, device: torch.device, target: str,
+        denominator_rescale: str = "none",
     ) -> None:
         reduced_cache = json.loads(
             (root / "c_plus_p" / "cache.json").read_text(encoding="utf-8")
@@ -199,17 +200,86 @@ class VkViews:
         self.mask_full = contract_denominator_mask(
             full_fields, full_cache["denominator_mask_sha256"]
         )
+        self.denominator_rescale = denominator_rescale
+        self.rescale_constants = self._fit_denominator_rescale(reduced_fields)
         self.manifest = {
             "reduced_cache_sha256": reduced_cache["cache_content_sha256"],
             "full_cache_sha256": full_cache["cache_content_sha256"],
             "denominator_mask_sha256": reduced_cache["denominator_mask_sha256"],
             "full_denominator_mask_sha256": full_cache["denominator_mask_sha256"],
             "denominator_mask_source": "contract_field_lists_verified_against_view_hash",
+            "denominator_rescale": denominator_rescale,
+            "denominator_rescale_constants": self.rescale_constants,
+            "denominator_rescale_is_post_hoc": denominator_rescale != "none",
             "eligible_denominators": list(ELIGIBLE_DENOMINATORS),
             "label_names": [target],
             "clip_seconds": CLIP_SECONDS,
             "watch_time_c_seconds": CLIP_SECONDS,
         }
+
+
+    def _fit_denominator_rescale(
+        self, reduced_fields: tuple[str, ...]
+    ) -> dict[str, float]:
+        """Post-hoc: put each eligible denominator's train median at 1.0.
+
+        Why this exists
+        ---------------
+        `configs/data/vk_lsvd/features_v1.yaml` normalizes by
+        `divide_by_train_abs_q99`. Item show counts are heavy-tailed, so the
+        99th percentile sits far above the median and the bulk of the
+        distribution lands near zero: after normalization the median of
+        `p_item_show_count_plus_beta` is 0.0281 against a reciprocal floor
+        `div_eps = 1e-2`. Measured on a million training rows, **42.95% of rows
+        carry at least one active denominator under the floor**, where the
+        reciprocal branch returns the constant `1/eps` instead of a quotient.
+
+        The two facts are independent of any model score: the floored fraction
+        is a property of the normalization and the floor alone. Rescaling each
+        eligible denominator by its train median drops that 42.95% to 1.34%.
+
+        Three properties keep this honest rather than a thumb on the scale:
+
+        * it is **purely multiplicative**, so every quotient `n/d` is preserved
+          exactly. A log or a shift would turn a quotient into a difference and
+          hand additive baselines the very structure under test; this does not.
+        * it rescales the *data*, which all twelve arms read, not the
+          architecture of one of them.
+        * the constants are fitted on train only, over valid rows only, and
+          frozen before validation is touched.
+
+        It is nonetheless **post-hoc** - devised after seeing DCDN lose on the
+        frozen protocol - so it is reported as a separate follow-up and never
+        merged into the frozen tables.
+        """
+
+        if self.denominator_rescale == "none":
+            return {}
+        if self.denominator_rescale != "median":
+            raise SystemExit(f"unknown rescale: {self.denominator_rescale}")
+
+        train = self.data["train"]
+        constants: dict[str, float] = {}
+        for index, gated in enumerate(self.mask_reduced):
+            if not gated:
+                continue
+            column = train["reduced"][:, index]
+            valid = train["reduced_validity"][:, index]
+            # The floor only ever sees rows where the coordinate is an active
+            # denominator, so the fallback rows must not move the constant.
+            active = column[valid]
+            if active.numel() == 0:
+                raise SystemExit(f"no valid rows for denominator {reduced_fields[index]}")
+            median = float(active.median())
+            if not (median > 0.0):
+                raise SystemExit(
+                    f"non-positive train median for {reduced_fields[index]}: {median}"
+                )
+            constants[reduced_fields[index]] = median
+            for split in ("train", "validation"):
+                for regime in ("reduced", "full"):
+                    self.data[split][regime][:, index] /= median
+        return constants
 
     def numeric(self, split: str, regime: str) -> torch.Tensor:
         return self.data[split][regime]
@@ -232,6 +302,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--save-predictions", action="store_true")
     parser.add_argument("--field", action="store_true")
     parser.add_argument("--arms", default=None)
+    parser.add_argument(
+        "--denominator-rescale", choices=("none", "median"), default="none",
+        help="post-hoc: divide each eligible denominator by its train median so "
+             "the reciprocal floor stops binding on 43%% of rows",
+    )
     args = parser.parse_args(argv)
 
     # The shared runner reads the target kind from its own table; register the
@@ -244,7 +319,7 @@ def main(argv: list[str] | None = None) -> int:
     # resolves `Views` through `sta.krm`, which is a different object.
     original = sta.krm.Views
     sta.krm.Views = lambda root, device, preconditioner="none": VkViews(  # noqa: ARG005
-        root, device, args.target
+        root, device, args.target, denominator_rescale=args.denominator_rescale
     )
     try:
         forwarded = [

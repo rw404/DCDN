@@ -1,0 +1,69 @@
+{
+  "artifact_role": "kuairand_pure_single_target_selected_configs",
+  "capacity_resolution": {
+    "candidates_considered": 768,
+    "flop_contract": "dcdn-forward-floating-arithmetic-flops-v1",
+    "lower_bracket": null,
+    "matched": true,
+    "selected": {
+      "adapter_flops": 33280,
+      "adapter_parameters": 16704,
+      "expert_flops": 70429,
+      "expert_parameters": 35017,
+      "flops": 137063,
+      "head_flops": 33088,
+      "head_parameters": 16641,
+      "interaction_flops": 70695,
+      "interaction_flops_per_layer": 70695,
+      "interaction_parameters": 35281,
+      "interaction_parameters_per_layer": 35281,
+      "low_rank": 97,
+      "num_experts": 1,
+      "num_layers": 1,
+      "parameters": 68626
+    },
+    "selected_ratios": {
+      "distance": 0.00494203962766868,
+      "flop_ratio": 1.0024794476463532,
+      "parameter_ratio": 1.0024687029814336,
+      "within_tolerance": true
+    },
+    "selection_rule": "minimum_log_distance_in_parameter_and_flop_space",
+    "selection_used_validation_quality": false,
+    "target": {
+      "adapter_flops": 33280,
+      "adapter_parameters": 16704,
+      "architecture": "DCDN-Core-L1",
+      "flops": 136724,
+      "head_flops": 33088,
+      "head_parameters": 16641,
+      "interaction_flops": 70356,
+      "interaction_flops_per_layer": 70224,
+      "interaction_parameters": 35112,
+      "interaction_parameters_per_layer": 35112,
+      "num_layers": 1,
+      "parameters": 68457,
+      "reciprocal_flops": 132
+    },
+    "tolerance_fraction": 0.05,
+    "upper_bracket": null
+  },
+  "objective_spec_sha256": "55194260fe7adcfa39003cf6e667e21c00f7d02d005e9ae595ff405783aefc15",
+  "schema_version": 1,
+  "selected_learning_rate": {
+    "afn_full": 0.0001,
+    "afn_reduced": 0.0001,
+    "autoint_full": 0.003,
+    "dcdn_full": 0.003,
+    "dcdn_reduced": 0.003,
+    "dcn_full": 0.003,
+    "dcnv2_capacity_reduced": 0.0003,
+    "dcnv2_full": 0.001,
+    "dcnv2_reduced": 0.003,
+    "deepfm_full": 0.003,
+    "mlp_full": 0.001,
+    "wukong_full": 0.001
+  },
+  "target": "long_view",
+  "task_constants_sha256": "a438580b1b03678f918771714721695e0768d4013fd55c5acc0c8e1ccd54dbf0"
+}

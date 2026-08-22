@@ -1,0 +1,60 @@
+{
+  "artifact_role": "vk_lsvd_user_grouped_metrics_recomputed_with_true_user_ids",
+  "cutoffs": [
+    5,
+    10,
+    50
+  ],
+  "grouping_key": "runtime/vk_lsvd/multitask_v2/c_plus_p/validation/user_ids.i64.npy",
+  "label_alignment_verified": true,
+  "ranking_unit": "all_of_a_users_validation_rows",
+  "ranking_unit_is_a_study_construction_not_a_released_candidate_list": true,
+  "rows": [
+    {
+      "arm_id": "dcdn_full",
+      "eligible_users": 53665,
+      "gauc_group_coverage": 0.5496660246690981,
+      "gauc_row_coverage": 0.6263703734957948,
+      "ndcg_at_10": 0.6797728354021887,
+      "ndcg_at_10_sd": 0.0026720852099369296,
+      "ndcg_at_5": 0.6164223133191359,
+      "ndcg_at_50": 0.7001011241304984,
+      "ndcg_at_50_sd": 0.002676700117249272,
+      "ndcg_at_5_sd": 0.0031959577689844067,
+      "ndcg_full": 0.7001089182801076,
+      "ndcg_full_sd": 0.002677617815988178,
+      "seeds": 8,
+      "tied_adjacent_pair_fraction": 0.03551630416595089,
+      "total_users": 97612,
+      "user_coverage": 0.5497787157316724,
+      "user_gauc": 0.8426513245971082,
+      "user_gauc_sd": 0.001080350459132154
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "eligible_users": 53665,
+      "gauc_group_coverage": 0.5496660246690981,
+      "gauc_row_coverage": 0.6263703734957948,
+      "ndcg_at_10": 0.6793642038858048,
+      "ndcg_at_10_sd": 0.0023326053226625965,
+      "ndcg_at_5": 0.6161211542710054,
+      "ndcg_at_50": 0.6997612220306328,
+      "ndcg_at_50_sd": 0.0022389109821625984,
+      "ndcg_at_5_sd": 0.002772435489379753,
+      "ndcg_full": 0.6997690489831755,
+      "ndcg_full_sd": 0.0022401676685503053,
+      "seeds": 8,
+      "tied_adjacent_pair_fraction": 0.035561481965691644,
+      "total_users": 97612,
+      "user_coverage": 0.5497787157316724,
+      "user_gauc": 0.842375834013168,
+      "user_gauc_sd": 0.0010253513166597508
+    }
+  ],
+  "schema_version": 1,
+  "source_predictions": "/home/codex/.cache/dcdn-public/predictions/watch_time_gt60_dcdn_maskfix_v1.npz",
+  "supersedes": "the user_gauc field of results_v1.json for this target",
+  "supersession_reason": "runs predated the grouping_key fix and grouped by categorical column 0, which is not a user id on VK-LSVD",
+  "target": "watch_time_gt60",
+  "tie_break": "stable_sort_by_row_position"
+}
