@@ -124,19 +124,45 @@ def main(argv: list[str] | None = None) -> int:
     if tokens.size != user_id.size:
         raise SystemExit(f"row count mismatch: view {tokens.size} vs replay {user_id.size}")
 
-    # A row grouping is the same object whichever labels name it, so compare
-    # the partitions rather than the ids: identical group boundaries under a
-    # stable sort mean the two keys induce the same partition.
-    _, raw_codes = np.unique(user_id, return_inverse=True)
-    _, token_codes = np.unique(tokens, return_inverse=True)
-    if not np.array_equal(
-        np.argsort(raw_codes, kind="stable"), np.argsort(token_codes, kind="stable")
-    ):
+    # Two independent checks, because the obvious one is wrong. Comparing the
+    # raw-user partition against the token partition fails even on a correct
+    # replay: users absent from train map to the OOV slot, so 23,952 raw ids
+    # collapse into 23,620 tokens and the token partition is strictly coarser.
+    #
+    # Check one, and the decisive one: the labels must reproduce. They are
+    # built from the same ordered `stats` array the features were built from,
+    # so an exact match on `long_view` pins the row order directly and owes
+    # nothing to the user mapping.
+    replayed_long_view = events["stats"][selector, 1].astype(np.float32)
+    view_long_view = view["labels"][:, mat.TARGETS.index("long_view")]
+    if not np.array_equal(replayed_long_view, view_long_view):
+        mismatched = int((replayed_long_view != view_long_view).sum())
         raise SystemExit(
-            "recovered user_id does not induce the view's own user grouping - "
+            f"replayed labels differ from the view on {mismatched:,} rows - "
             "row order differs, aborting rather than emitting a plausible number"
         )
-    print("alignment verified against the view's categorical user column")
+
+    # Check two: the raw-user partition must REFINE the token partition, i.e.
+    # every row of a raw user carries one token. That is what OOV collapsing
+    # permits and what a row-order shift would break.
+    order = np.argsort(user_id, kind="stable")
+    grouped_tokens = tokens[order]
+    grouped_users = user_id[order]
+    boundary = np.r_[True, grouped_users[1:] != grouped_users[:-1]]
+    # Propagate the run START INDEX, not the token value. `maximum.accumulate`
+    # only propagates a run's own value when the values are monotone, and token
+    # ids are not: on tokens [5, 5, 3, 3] it would carry the 5 into the second
+    # group and report a spurious mismatch. Positions are monotone, so the
+    # index form is correct.
+    positions = np.arange(grouped_tokens.size)
+    run_start = np.maximum.accumulate(np.where(boundary, positions, 0))
+    first_token = grouped_tokens[run_start]
+    if not np.array_equal(grouped_tokens, first_token):
+        raise SystemExit("a raw user spans more than one token - aborting")
+    print(f"alignment verified: {view_long_view.size:,} labels reproduce exactly, "
+          f"and every raw user carries one token "
+          f"({np.unique(user_id).size:,} users -> {np.unique(tokens).size:,} tokens "
+          f"after OOV collapsing)")
 
     session = build_sessions(user_id, time_ms)
     sizes = np.bincount(session)

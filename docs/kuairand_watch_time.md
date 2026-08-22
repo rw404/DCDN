@@ -218,3 +218,141 @@ python scripts/benchmark_batch_sweep.py --device cuda:0 \
     --geometry kuairand_watch_time --field \
     --output-dir results/kuairand_multitask/batch_sweep_field_v1
 ```
+
+## 5. Session-grouped metrics and NDCG — an off-contract addendum
+
+`configs/metrics_multitask_v1.yaml` freezes a session-grouped metric for every
+target and records that this dataset supplies what it needs:
+
+```yaml
+session_policy:
+  construction: consecutive_events_for_same_user_split_after_inactivity_gap
+  inactivity_gap_minutes: 30
+  dataset_availability:
+    kuairand_pure: available_from_time_ms_after_schema_validation
+```
+
+Every run nevertheless reported `session_gauc: null` with the reason
+`kuairand_pure_has_no_session_identifier`. **That reason is wrong.** The dataset
+carries `time_ms` - the entire role split is cut on it - but the materialized
+views ship only `categorical`, `P`, `V`, `R` and `labels`, so the timestamp was
+used and dropped. The runner then correctly refused to synthesize sessions, as
+`emit_null_with_explicit_reason_and_never_synthesize_sessions` demands.
+
+`scripts/data/kuairand_sessions.py` recovers the key by replaying the
+materializer's own `load_events` and `_classify_roles`. Alignment is verified,
+not assumed: all 311,490 labels reproduce exactly, and every raw user carries
+exactly one token (23,952 users collapse to 23,620 through the OOV slot, which
+is why the naive partition-equality check fails and a refinement check is the
+correct one).
+
+### What the sessions look like
+
+| | |
+|---|---|
+| sessions in validation | 136,762 |
+| median rows per session | **1** |
+| max | 89 |
+| single-row sessions | 76,286 (56%) |
+
+KuaiRand-Pure samples **1% of users**, so consecutive impressions of one person
+in the full log land far apart in time here. A 30-minute gap then cuts what
+would have been one sitting into separate events. The metric is computed
+correctly - a one-row session yields no pair and drops out on its own - but
+little is left to measure.
+
+### Session xAUC against user xAUC
+
+| arm | session xAUC | user xAUC |
+|---|---|---|
+| afn_full | **0.5125** | **0.5103** |
+| autoint_full | 0.5117 | 0.5094 |
+| **dcdn_full** | 0.5110 | 0.5084 |
+| mlp_full | 0.5105 | 0.5072 |
+| **dcdn_reduced** | 0.5082 | 0.5072 |
+| wukong_full | 0.5080 | 0.5062 |
+| afn_reduced | 0.5039 | 0.5028 |
+| dcn_full | 0.5036 | 0.5024 |
+| dcnv2_capacity_reduced | 0.5034 | 0.5018 |
+| dcnv2_full | 0.5018 | 0.5014 |
+| dcnv2_reduced | 0.5013 | 0.5007 |
+| deepfm_full | 0.4994 | 0.4998 |
+
+Group coverage: sessions **0.4415**, users 0.9115.
+
+**Within-group ranking is essentially unlearned by the whole field.** The
+twelve arms span 0.0131, from 0.4994 to 0.5125, against a global xAUC spread of
+0.043 reaching 0.557 on the same predictions. Inside one short sitting the
+items are close in context and the ordering turns on factors absent from the
+features; the global metric separates arms because it also compares across
+users and times, where signal exists.
+
+The arm ordering is nevertheless preserved across all three groupings, which is
+the useful part: the session metric confirms the picture rather than changing
+it, at a quarter of the coverage.
+
+### NDCG — computed, and explicitly off-contract
+
+`configs/data/kuairand_pure/features_v1.yaml` records
+`no_ndcg_reason: no_released_complete_candidate_lists_per_request`, and **a
+session does not remove that reason**: it is a set of logged impressions, not
+the candidate pool a ranker scored. The numbers below are a diagnostic, not a
+reported metric. They are included because the session unit is closer to a
+request than the user unit used for the KuaiRec and Yambda NDCG figures, so
+this is the strongest available approximation - not because the objection was
+answered.
+
+| arm | session @5 | session @10 | user @5 | user @10 |
+|---|---|---|---|---|
+| **dcdn_full** | **0.8482** | **0.8652** | 0.6058 | 0.6771 |
+| autoint_full | 0.8467 | 0.8637 | **0.6083** | **0.6797** |
+| mlp_full | 0.8466 | 0.8636 | 0.6061 | 0.6779 |
+| dcnv2_full | 0.8466 | 0.8639 | 0.6002 | 0.6718 |
+| afn_full | 0.8464 | 0.8634 | 0.6057 | 0.6776 |
+| wukong_full | 0.8459 | 0.8631 | 0.6028 | 0.6748 |
+| **dcdn_reduced** | 0.8445 | 0.8619 | 0.6046 | 0.6765 |
+| dcnv2_capacity_reduced | 0.8420 | 0.8598 | 0.5994 | 0.6719 |
+| afn_reduced | 0.8413 | 0.8591 | 0.5971 | 0.6696 |
+| dcn_full | 0.8410 | 0.8588 | 0.5949 | 0.6673 |
+| deepfm_full | 0.8399 | 0.8578 | 0.5948 | 0.6679 |
+| dcnv2_reduced | 0.8396 | 0.8578 | 0.5927 | 0.6654 |
+
+Coverage: sessions 0.4415, users 0.9115.
+
+**The two columns are not comparable to each other.** Sessions are short, so an
+ideal DCG is reached easily and NDCG is pushed toward one mechanically; 0.84
+against 0.60 measures group length, not ranking quality. Only the ordering
+within a column carries meaning.
+
+### Paired, seed by seed — what survives
+
+`dcdn_full` takes first place on session NDCG@5, and the paired test says the
+lead is real against the bottom half only:
+
+| beaten by dcdn_full | mean diff | se | seeds | verdict |
+|---|---|---|---|---|
+| dcnv2_reduced | -0.00854 | 0.00263 | 1/8 | **significant** |
+| deepfm_full | -0.00830 | 0.00293 | 2/8 | **significant** |
+| dcn_full | -0.00715 | 0.00221 | 1/8 | **significant** |
+| afn_reduced | -0.00685 | 0.00120 | **0/8** | **significant** |
+| dcnv2_capacity_reduced | -0.00621 | 0.00147 | 1/8 | **significant** |
+| dcdn_reduced | -0.00369 | 0.00113 | 1/8 | **significant** |
+| wukong_full, afn_full, dcnv2_full, mlp_full, autoint_full | -0.0015 to -0.0023 | ~0.0018 | 2-3/8 | not significant |
+
+So the honest statement is **not** "DCDN-FULL is the best arm on session
+NDCG@5". It is: DCDN-FULL is significantly ahead of six arms and
+indistinguishable from the other five, including the arm it nominally outranks.
+
+For `dcdn_reduced` on session NDCG@5, one comparison in each direction
+survives: it is significantly ahead of `deepfm_full` (+0.00462) and
+significantly behind `dcnv2_full` (-0.00213) and `dcdn_full`. Everything else
+is noise. On user NDCG@5 it is significantly ahead of `dcnv2_reduced`,
+`deepfm_full` and `afn_reduced`, and behind nothing at all - its best showing
+on any metric in this study.
+
+**How this sits with the rest of the file.** DCDN ranks better on top-of-list
+metrics than on pointwise ones: fifth of twelve on user NDCG@5, seventh on
+xAUC, tenth on `normalized_mse`. The three metrics disagree consistently in one
+direction - it places the right items high and predicts the value badly - and
+the contract's primary quantity for a regression head is the one it does worst
+on.
