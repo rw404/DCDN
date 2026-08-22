@@ -1,0 +1,1023 @@
+{
+  "artifact_role": "synthetic_multiquotient_training_distribution_sweep",
+  "benchmark_manifest_sha256": "659d29f565bd51338e8c311a5c1c94335a499fbb2f62017d26581e785d8e72fd",
+  "distributions": [
+    {
+      "high": 10.0,
+      "kind": "uniform",
+      "low": 1.0,
+      "name": "uniform_1_10"
+    },
+    {
+      "high": 10.0,
+      "kind": "loguniform",
+      "low": 1.0,
+      "name": "loguniform_1_10"
+    },
+    {
+      "high": 100.0,
+      "kind": "loguniform",
+      "low": 1.0,
+      "name": "loguniform_1_100"
+    },
+    {
+      "high": 1000.0,
+      "kind": "loguniform",
+      "low": 0.1,
+      "name": "loguniform_01_1000"
+    }
+  ],
+  "is_the_frozen_rq1_study": false,
+  "records": [
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.00015974530833773315,
+        "ood_common_scale": 6565.859375,
+        "ood_high_ratio": 11.60087776184082,
+        "ood_low_ratio": 576.763671875
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0001433055876987055,
+        "ood_common_scale": 620.3672485351562,
+        "ood_high_ratio": 11.479372024536133,
+        "ood_low_ratio": 194.9345703125
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.00016613781917840242,
+        "ood_common_scale": 43302.76953125,
+        "ood_high_ratio": 9.937009811401367,
+        "ood_low_ratio": 12045.34765625
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0007906456012278795,
+        "ood_common_scale": 3.516103506088257,
+        "ood_high_ratio": 68.08233642578125,
+        "ood_low_ratio": 0.02726496197283268
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.00019911935669369996,
+        "ood_common_scale": 1.5667357444763184,
+        "ood_high_ratio": 23.291316986083984,
+        "ood_low_ratio": 0.022169919684529305
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0005367147387005389,
+        "ood_common_scale": 3.197014331817627,
+        "ood_high_ratio": 15.467918395996094,
+        "ood_low_ratio": 0.09576387703418732
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 9.340836186311208e-06,
+        "ood_common_scale": 5.644974708557129,
+        "ood_high_ratio": 46.16715621948242,
+        "ood_low_ratio": 0.3040469288825989
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 6.751216278644279e-05,
+        "ood_common_scale": 6.087142467498779,
+        "ood_high_ratio": 45.560203552246094,
+        "ood_low_ratio": 0.03183628246188164
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0002938082907348871,
+        "ood_common_scale": 4.880680561065674,
+        "ood_high_ratio": 46.28504180908203,
+        "ood_low_ratio": 0.5403037667274475
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0001463415683247149,
+        "ood_common_scale": 30532534.0,
+        "ood_high_ratio": 45.40663146972656,
+        "ood_low_ratio": 359604.0625
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.004296134691685438,
+        "ood_common_scale": 5581025.0,
+        "ood_high_ratio": 48.74980545043945,
+        "ood_low_ratio": 49653.50390625
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "uniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0010327148484066129,
+        "ood_common_scale": 25557120.0,
+        "ood_high_ratio": 61.70591735839844,
+        "ood_low_ratio": 680615.8125
+      },
+      "train_target_variance": 1.6999566142561455
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0006773375207558274,
+        "ood_common_scale": 813.8469848632812,
+        "ood_high_ratio": 15.40662670135498,
+        "ood_low_ratio": 18.771028518676758
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0001933965686475858,
+        "ood_common_scale": 456.3047180175781,
+        "ood_high_ratio": 9.643467903137207,
+        "ood_low_ratio": 9.464676856994629
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0003015172842424363,
+        "ood_common_scale": 3845.310546875,
+        "ood_high_ratio": 17.441633224487305,
+        "ood_low_ratio": 1771.7978515625
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0005525011220015585,
+        "ood_common_scale": 9.494903564453125,
+        "ood_high_ratio": 58.53721618652344,
+        "ood_low_ratio": 0.26751285791397095
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0006564926006831229,
+        "ood_common_scale": 4.333199501037598,
+        "ood_high_ratio": 5.764660835266113,
+        "ood_low_ratio": 0.010737424716353416
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 7.88666948210448e-05,
+        "ood_common_scale": 0.8933542370796204,
+        "ood_high_ratio": 10.071847915649414,
+        "ood_low_ratio": 0.008971362374722958
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.0022995281033217907,
+        "ood_common_scale": 4.067653656005859,
+        "ood_high_ratio": 36.860164642333984,
+        "ood_low_ratio": 0.04360136017203331
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 1.8022738004219718e-05,
+        "ood_common_scale": 3.5811960697174072,
+        "ood_high_ratio": 33.882530212402344,
+        "ood_low_ratio": 0.04757164791226387
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.00035224927705712616,
+        "ood_common_scale": 3.52850079536438,
+        "ood_high_ratio": 35.236549377441406,
+        "ood_low_ratio": 0.13186827301979065
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.00011736225860659033,
+        "ood_common_scale": 8478005.0,
+        "ood_high_ratio": 32.23505401611328,
+        "ood_low_ratio": 79623.828125
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.00017955804651137441,
+        "ood_common_scale": 3757528.5,
+        "ood_high_ratio": 35.75160598754883,
+        "ood_low_ratio": 105998.7890625
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "loguniform_1_10",
+      "operand_high": 10.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": false,
+        "ood_high_ratio": false,
+        "ood_low_ratio": false
+      },
+      "slices": {
+        "id": 0.00018331377941649407,
+        "ood_common_scale": 903675.625,
+        "ood_high_ratio": 40.108055114746094,
+        "ood_low_ratio": 101937.6484375
+      },
+      "train_target_variance": 2.2772977613064023
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.0001537861826363951,
+        "ood_common_scale": 0.0018990549724549055,
+        "ood_high_ratio": 0.7137783169746399,
+        "ood_low_ratio": 3.552380803739652e-05
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.00013475105515681207,
+        "ood_common_scale": 0.0007745887851342559,
+        "ood_high_ratio": 0.03199458494782448,
+        "ood_low_ratio": 3.4617012715898454e-05
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 2.866425165848341e-05,
+        "ood_common_scale": 0.00029398969491012394,
+        "ood_high_ratio": 0.5886278748512268,
+        "ood_low_ratio": 4.04136699216906e-05
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 2.7533646061783656e-05,
+        "ood_common_scale": 8.908967720344663e-05,
+        "ood_high_ratio": 1.5681589841842651,
+        "ood_low_ratio": 8.826305020193104e-06
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 7.186161383287981e-05,
+        "ood_common_scale": 0.00010719745478127152,
+        "ood_high_ratio": 1.1901435852050781,
+        "ood_low_ratio": 6.237755769689102e-06
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 3.150752672809176e-05,
+        "ood_common_scale": 0.0001669750054134056,
+        "ood_high_ratio": 0.9697539806365967,
+        "ood_low_ratio": 2.0423274690983817e-05
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 5.07944896526169e-05,
+        "ood_common_scale": 0.001337738474830985,
+        "ood_high_ratio": 1.001206636428833,
+        "ood_low_ratio": 0.0004114134644623846
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 1.9037903257412836e-05,
+        "ood_common_scale": 0.00022148151765577495,
+        "ood_high_ratio": 0.9168331027030945,
+        "ood_low_ratio": 2.0309240426286124e-05
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 2.451354703225661e-05,
+        "ood_common_scale": 0.0002983293670695275,
+        "ood_high_ratio": 0.764162540435791,
+        "ood_low_ratio": 0.00021487280901055783
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.00010924002708634362,
+        "ood_common_scale": 0.0013656680239364505,
+        "ood_high_ratio": 0.7254442572593689,
+        "ood_low_ratio": 1.0856852895813063e-05
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.00010399342136224732,
+        "ood_common_scale": 0.0008699495228938758,
+        "ood_high_ratio": 1.108082890510559,
+        "ood_low_ratio": 0.00011218179133720696
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "loguniform_1_100",
+      "operand_high": 100.0,
+      "operand_low": 1.0,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": false,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.00027635012520477176,
+        "ood_common_scale": 0.030325276777148247,
+        "ood_high_ratio": 1.1818768978118896,
+        "ood_low_ratio": 0.00015097836148925126
+      },
+      "train_target_variance": 95.88143367037108
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 1.6203950963245006e-06,
+        "ood_common_scale": 2.5446354356972734e-06,
+        "ood_high_ratio": 1.5268342394847423e-05,
+        "ood_low_ratio": 2.292752469656989e-06
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 7.645314781257184e-07,
+        "ood_common_scale": 3.1924780614644988e-06,
+        "ood_high_ratio": 7.74566888139816e-06,
+        "ood_low_ratio": 1.9863923625962343e-06
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 4.783946678799111e-06,
+        "ood_common_scale": 8.194773727154825e-06,
+        "ood_high_ratio": 4.013912189293478e-07,
+        "ood_low_ratio": 2.353401214350015e-06
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 2.8538997867144644e-05,
+        "ood_common_scale": 1.7810885765356943e-05,
+        "ood_high_ratio": 6.50454021524638e-05,
+        "ood_low_ratio": 2.8923570425831713e-05
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 1.9643255654955283e-05,
+        "ood_common_scale": 4.63785681859008e-06,
+        "ood_high_ratio": 0.0003677060594782233,
+        "ood_low_ratio": 8.553227416996378e-06
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "afn_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 1.04405289675924e-05,
+        "ood_common_scale": 9.07624234969262e-06,
+        "ood_high_ratio": 8.443148544756696e-05,
+        "ood_low_ratio": 6.535934517160058e-06
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.0002656684082467109,
+        "ood_common_scale": 0.0001438178587704897,
+        "ood_high_ratio": 0.00012669464922510087,
+        "ood_low_ratio": 3.8992573536233976e-05
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.00013031908019911498,
+        "ood_common_scale": 3.263601320213638e-05,
+        "ood_high_ratio": 7.271851063705981e-05,
+        "ood_low_ratio": 0.00029087989241816103
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.0011971250642091036,
+        "ood_common_scale": 0.0003560775949154049,
+        "ood_high_ratio": 2.2244792489800602e-05,
+        "ood_low_ratio": 9.705177217256278e-05
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 42,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.0010648712050169706,
+        "ood_common_scale": 0.00020203842723276466,
+        "ood_high_ratio": 0.00018287690181750804,
+        "ood_low_ratio": 0.0007527006091549993
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 43,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 0.01277045626193285,
+        "ood_common_scale": 0.0011773055884987116,
+        "ood_high_ratio": 0.012994353659451008,
+        "ood_low_ratio": 0.0001808349188650027
+      },
+      "train_target_variance": 277371.409351782
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "distribution": "loguniform_01_1000",
+      "operand_high": 1000.0,
+      "operand_low": 0.1,
+      "seed": 44,
+      "slice_covered_by_training_range": {
+        "id": true,
+        "ood_common_scale": true,
+        "ood_high_ratio": true,
+        "ood_low_ratio": true
+      },
+      "slices": {
+        "id": 1.574947418703232e-05,
+        "ood_common_scale": 2.48514479608275e-05,
+        "ood_high_ratio": 5.7509074395056814e-05,
+        "ood_low_ratio": 6.385490269167349e-05
+      },
+      "train_target_variance": 277371.409351782
+    }
+  ],
+  "ruled_out_before_this_sweep": [
+    "reciprocal_floor_div_eps_incidence_is_exactly_zero_on_all_slices",
+    "single_target_training_made_dcdn_ood_worse_not_better"
+  ],
+  "schema_version": 1,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "slice_operand_ranges": {
+    "id": [
+      1.0,
+      10.0
+    ],
+    "ood_common_scale": [
+      10.0,
+      100.0
+    ],
+    "ood_high_ratio": [
+      0.2,
+      10.0
+    ],
+    "ood_low_ratio": [
+      1.0,
+      60.0
+    ]
+  },
+  "study": "how_wide_must_training_be_for_small_ood_loss",
+  "target": "y1"
+}

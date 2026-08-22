@@ -199,6 +199,24 @@ scale invariance where DCDN is second-worst among learning arms, unusable
 behaviour on two of four slices, and no implication whatsoever for
 recommendation quality.
 
+## 7a. Addenda
+
+Three follow-up studies in `docs/rq1_addenda.md` explain the OOD behaviour §6.2
+reports and change what can be said about it:
+
+* the reciprocal floor is **not** the cause — `div_eps` incidence is exactly 0.0
+  on all four slices;
+* training each target alone makes DCDN's OOD **worse**, so the three heads were
+  regularising rather than interfering;
+* the large OOD losses are a property of the **training distribution**. Trained
+  over four decades of operand range, DCDN reaches ~1e-06 on every slice and is
+  the best of the four learning arms — though every slice is then covered by
+  training, which the addendum marks rather than hides.
+
+The verdict below is unchanged; it describes the frozen three-head study. Its
+§6.1 reading — a good local approximation of division rather than division — is
+confirmed and given a mechanism there.
+
 ## 8. Reproduction
 
 ```bash
