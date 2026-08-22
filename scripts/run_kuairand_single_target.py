@@ -97,10 +97,30 @@ SUPPORTED_TARGETS = {
 }
 
 
+def _view_identity(views: Path) -> str:
+    """A content hash of whatever manifest the view directory carries."""
+
+    manifest = views / "manifest_v1.json"
+    if manifest.is_file():
+        return hashlib.sha256(manifest.read_bytes()).hexdigest()
+    caches = sorted(views.glob("*/cache.json"))
+    if not caches:
+        raise SystemExit(f"no manifest_v1.json or */cache.json under {views}")
+    digest = hashlib.sha256()
+    for path in caches:
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
 def krm_manifest_targets(views: Path) -> list[str]:
     """The label columns the materialized view actually carries, in order."""
 
-    manifest = json.loads((views / "manifest_v1.json").read_text(encoding="utf-8"))
+    path = views / "manifest_v1.json"
+    if not path.is_file():
+        # A view layout without a single manifest; the caller has already
+        # declared the label it materialized.
+        return list(krm.TARGETS)
+    manifest = json.loads(path.read_text(encoding="utf-8"))
     declared = manifest.get("label_names")
     if declared:
         return list(declared)
@@ -184,7 +204,7 @@ def evaluate(model, views, arm, constants, spec, target, c_seconds):
     report["frozen_metrics"] = krm.frozen_metric_set(
         spec, scores, labels,
         valid["masks"].cpu().numpy(),
-        valid["categorical"][:, krm.USER_COLUMN].cpu().numpy(),
+        krm.grouping_key(valid),
         c_seconds,
     )
     if target == "watch_time":
@@ -228,6 +248,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--target", choices=sorted(SUPPORTED_TARGETS), default="watch_time"
+    )
+    parser.add_argument(
+        "--arms",
+        default=None,
+        help="comma-separated arm ids to run instead of the whole field. Only "
+             "for re-running a subset after a fix that provably cannot move "
+             "the other arms; the resulting file is a partial study and says "
+             "so in `arm_subset`.",
     )
     args = parser.parse_args(argv)
 
@@ -291,6 +319,16 @@ def main(argv: list[str] | None = None) -> int:
         arms = arms + krm.build_field_arms()
         print(f"field arms appended: {len(krm.build_field_arms())} "
               f"({', '.join(a.arm_id for a in krm.build_field_arms())})")
+    arm_subset = None
+    if args.arms:
+        arm_subset = [name.strip() for name in args.arms.split(",") if name.strip()]
+        available = {arm.arm_id for arm in arms}
+        unknown = [name for name in arm_subset if name not in available]
+        if unknown:
+            raise SystemExit(f"unknown arm ids: {unknown}; available {sorted(available)}")
+        arms = tuple(arm for arm in arms if arm.arm_id in arm_subset)
+        print(f"arm subset: {len(arms)} of {len(available)} "
+              f"({', '.join(a.arm_id for a in arms)})")
 
     def make(arm: krm.Arm, seed: int) -> krm.KuaiRandModel:
         width = views.reduced_width if arm.regime == "reduced" else views.full_width
@@ -313,6 +351,8 @@ def main(argv: list[str] | None = None) -> int:
         "dataset_id": "kuairand_pure",
         "study": "kuairand_pure_single_target_watch_time",
         "is_the_frozen_single_target_study": False,
+        "arm_subset": arm_subset,
+        "is_a_partial_study": arm_subset is not None,
         "frozen_study_blocked_on": "main_multi_target_table_complete",
         "target": target,
         "target_kind": SUPPORTED_TARGETS[target],
@@ -320,9 +360,11 @@ def main(argv: list[str] | None = None) -> int:
         "mae_seconds_is_real_seconds": seconds_are_real,
         "objective_spec_sha256": spec.contract_sha256,
         "task_constants_sha256": constants.contract_sha256,
-        "view_manifest_sha256": hashlib.sha256(
-            (args.views / "manifest_v1.json").read_bytes()
-        ).hexdigest(),
+        # KuaiRand and KuaiRec ship one manifest_v1.json per view directory;
+        # the VK views ship a cache.json per regime instead. Hash whichever is
+        # present rather than assuming a layout, so the provenance line is
+        # always populated.
+        "view_manifest_sha256": _view_identity(args.views),
         "held_identical_to_multitask": [
             "splits", "feature_manifests", "input_preconditioner", "encoder",
             "representation_width", "capacity_control", "optimizer",
@@ -429,6 +471,8 @@ def main(argv: list[str] | None = None) -> int:
         "schema_version": 1,
         "study": "kuairand_pure_single_target_watch_time",
         "is_the_frozen_single_target_study": False,
+        "arm_subset": arm_subset,
+        "is_a_partial_study": arm_subset is not None,
         "pre_training_manifest_sha256": digest,
         "selected_configs_sha256": frozen_digest,
         "evaluated_split": "validation",

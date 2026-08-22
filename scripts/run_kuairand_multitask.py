@@ -101,9 +101,23 @@ REPRESENTATION_DIM = 64
 HEAD_HIDDEN_DIMS = (128, 64)
 DIV_EPS = 1e-2
 
-#: `c_user_id` is column 0 of the materialized categorical block; it is the
-#: grouping key for every user-grouped metric.
+#: `c_user_id` is column 0 of the materialized categorical block, and is the
+#: grouping key for every user-grouped metric **on the KuaiRand and KuaiRec
+#: views**. It is not universal: the VK-LSVD views carry no user column in the
+#: categorical block at all (its six fields have cardinalities 55, 4, 82, 24,
+#: 13, 22) and ship the grouping key as a separate `user_ids` array instead.
+#: Both readers below therefore prefer an explicit `user_ids` entry when the
+#: view supplies one and fall back to this column when it does not, so the
+#: KuaiRand and KuaiRec numbers are bit-identical to before.
 USER_COLUMN = 0
+
+
+def grouping_key(split_data: dict) -> "np.ndarray":
+    """The user id for user-grouped metrics, however this view stores it."""
+    stored = split_data.get("user_ids")
+    if stored is not None:
+        return stored.cpu().numpy()
+    return split_data["categorical"][:, USER_COLUMN].cpu().numpy()
 
 TUNING_SEED = 42
 #: The frozen matrix fixes `final_seeds: [42, 43, 44]`. Two facts make three
@@ -634,7 +648,7 @@ class PredictionStore:
         valid = views.data["validation"]
         self.arrays["labels"] = valid["labels"].cpu().numpy()
         self.arrays["masks"] = valid["masks"].cpu().numpy()
-        self.arrays["user_ids"] = valid["categorical"][:, USER_COLUMN].cpu().numpy()
+        self.arrays["user_ids"] = grouping_key(valid)
         self.arrays["target_names"] = np.array(list(spec.names))
 
     def add(self, arm_id: str, seed: int, predictions: np.ndarray) -> None:
@@ -764,7 +778,7 @@ def evaluate(model: nn.Module, views: Views, arm: Arm, constants) -> dict[str, A
     report["frozen_metrics"] = frozen_metric_set(
         SPEC, scores, labels,
         valid["masks"].cpu().numpy(),
-        valid["categorical"][:, USER_COLUMN].cpu().numpy(),
+        grouping_key(valid),
         float(views.manifest["watch_time_c_seconds"]),
     )
     watch_index = TARGETS.index("watch_time")
