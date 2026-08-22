@@ -2,11 +2,19 @@
 
 Twelve architectures, two targets, validation only, sealed test never opened.
 
-**Headline, stated plainly: on Yambda DCDN does not win.** Reduced-input DCDN
-sits eleventh of twelve on both targets. Every arm on the FULL feature view
-beats every arm on REDUCED, so on this dataset the engineered divisions are
-worth far more than the choice of architecture. RQ2 fails here and RQ3 fails
-again.
+**Headline, stated plainly: on Yambda DCDN does not win on the declared primary
+metric.** Reduced-input DCDN sits eleventh of twelve on xAUC for `play_fraction`
+and eleventh on AUC for `listen50`. Every arm on the FULL feature view beats
+every arm on REDUCED, so on this dataset the engineered divisions are worth far
+more than the choice of architecture. RQ2 fails here and RQ3 fails again.
+
+**But the metric decides the answer, and §3a says so.** On NDCG@5 the same model
+is **third of twelve**, ahead of seven arms that get 48 more features, and beats
+no fewer arms than it loses to. DCDN's advantage is concentrated in the head of
+the ranked list and disappears as the cutoff widens. An earlier revision of this
+document put "DCDN does not win" in the header on the strength of AUC and xAUC
+alone, without reading the NDCG@5 column; that was formally true of the declared
+primary and hid a real reversal.
 
 This is the opposite of KuaiRec, where the same divisions were worthless and
 reduced DCDN led on NDCG. Both results are published; neither is quoted alone.
@@ -96,6 +104,49 @@ Same structure: FULL sweeps the top eight. NDCG@10 covers **96.5% of users**
 (8,092 of 8,383) with only 1.4% tied adjacent pairs — a far healthier ranking
 metric than KuaiRec's, where 24% of pairs were tied by duplicate rows.
 
+
+## 3a. The metric decides the answer
+
+Where `dcdn_reduced` ranks among the twelve on `listen50`, by metric:
+
+| metric | rank of `dcdn_reduced` | gap to best |
+|---|---|---|
+| AUC | 11th | −0.0068 |
+| gAUC | 10th | −0.0067 |
+| **NDCG@5** | **3rd** | **−0.0023** |
+| NDCG@10 | 8th | −0.0038 |
+| NDCG@50 | 10th | −0.0044 |
+
+Same model, same predictions, same seeds. Only the metric changes.
+
+Paired over eight seeds, `dcdn_reduced` (86 inputs) against the field on FULL
+(134 inputs):
+
+| competitor | NDCG@5 | | NDCG@10 | |
+|---|---|---|---|---|
+| | difference | verdict | difference | verdict |
+| `dcnv2_full` | **+0.0076** 7/8 | **DCDN** | **+0.0030** 6/8 | **DCDN** |
+| `dcn_full` | **+0.0040** 6/8 | **DCDN** | +0.0002 4/8 | tie |
+| `deepfm_full` | +0.0020 6/8 | tie | −0.0012 2/8 | tie |
+| `afn_full` | +0.0012 6/8 | tie | −0.0027 3/8 | tie |
+| `autoint_full` | +0.0004 4/8 | tie | **−0.0033** 2/8 | **AutoInt+** |
+| `wukong_full` | +0.0003 5/8 | tie | **−0.0035** 0/8 | **Wukong** |
+| `mlp_full` | −0.0005 3/8 | tie | **−0.0038** 1/8 | **MLP** |
+
+**At @5 DCDN on 86 inputs loses to nobody and beats two.** At @10 it beats one
+and loses to three. The advantage is a head-of-list effect and it decays with
+the cutoff — the same shape found on KuaiRec (`docs/kuairec_full_field.md` §3),
+where DCDN beat all seven at @10; here the effect is present but weaker.
+
+One arm inverts sharply: `dcnv2_full` is **eighth on AUC and last of twelve on
+NDCG@5** (0.7427). The full feature set helps it across the whole pool and hurts
+it at the top.
+
+**Which metric to believe is a question about the use, not about the data.** A
+ranker that shows ten items is described by NDCG@5–10; a calibration or
+whole-pool ordering task is described by AUC. Both are published, and the
+disagreement between them is the finding rather than a nuisance.
+
 ## 4. The contrasts, paired over eight seeds
 
 | contrast | `play_fraction` xAUC | | `listen50` AUC | |
@@ -160,9 +211,22 @@ alive and the peak is not per-arm.
 | | KuaiRec `watch_ratio_gt2` | Yambda `listen50` |
 |---|---|---|
 | C4, worth of the divisions | **negative** — they hurt | **+0.0056**, 8/8 |
-| C5, reduced DCDN vs full DCNv2 | **DCDN wins** on NDCG, 7/7 | **DCNv2 wins**, 0/8 |
+| C5, reduced DCDN vs full DCNv2 on AUC | **DCDN wins** | **DCNv2 wins**, 0/8 |
+| C5 on NDCG@5 | **DCDN wins**, 7/7 | **DCDN wins**, 7/8 |
 | C3, vs capacity-matched | coin flip | **capacity wins**, 0/8 |
-| `dcdn_reduced` rank of 12 | 4th | 11th |
+| `dcdn_reduced` rank of 12, AUC | 4th | 11th |
+| `dcdn_reduced` rank of 12, NDCG@5 | 2nd | **3rd** |
+
+Note the row that survives both datasets: **on NDCG@5 reduced DCDN beats full
+DCNv2 on both** — on KuaiRec by +0.0177 winning 8 of 8 seeds, on Yambda by
++0.0076 winning 7 of 8. That is the narrowest surviving form of RQ2 and the only
+one that holds both where C4 is positive and where it is negative.
+
+The strength differs sharply, though. On KuaiRec, where the divisions are
+worthless, reduced DCDN beats **all seven** FULL competitors at @5 with every
+interval excluding zero. On Yambda, where the divisions carry the signal, it
+beats **two** and ties the rest. So even the surviving claim is graded by C4
+rather than independent of it.
 
 The two datasets give opposite answers to RQ2, and C4 says why: **the value of
 the manual divisions decides it.** Where they carry little information
