@@ -57,6 +57,10 @@ SLICES = (
      "results/kuairand_multitask/field_watch_time_rms_v1/results_v1.json", "watch_time",
      "results/kuairand_multitask/batch_sweep_field_v1/batch_sweep.csv",
      None),
+    ("VK-LSVD ur0.01_ir0.01 / timespent_gt10",
+     "results/vk_lsvd_ur/timespent_gt10_v1/results_v1.json", "timespent_gt10",
+     "results/vk_lsvd_ur/batch_sweep_v1/batch_sweep.csv",
+     "results/vk_lsvd_ur/timespent_gt10_v1/ndcg_v1/ndcg_v1.json"),
 )
 
 BATCH = 8192
