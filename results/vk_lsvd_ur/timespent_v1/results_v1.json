@@ -1,0 +1,5408 @@
+{
+  "annex_seeds": [
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "arm_subset": null,
+  "artifact_role": "kuairand_pure_single_target_results",
+  "cached_predictions_path": "/home/codex/.cache/dcdn-public/predictions/timespent_v1.npz",
+  "cached_predictions_sha256": "1ddc2cb8e8b1e4c462af78e6e1f3b92b4120cdc2ab6e1004976c5ed1df26a947",
+  "evaluated_split": "validation",
+  "final_seeds": [
+    42,
+    43,
+    44
+  ],
+  "is_a_partial_study": false,
+  "is_the_frozen_single_target_study": false,
+  "pre_training_manifest_sha256": "2312600184d2c6846bb9359a769bd8b95aaf111e61b6df50cb1aa758506ebecb",
+  "records": [
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 64440,
+        "matched": 92601,
+        "non_embedding": 95769,
+        "total": 1749881
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1800,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.866784268990159,
+        "validation_macro_nloss": 0.9789104461669922
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6290270083553511,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.590702107280457,
+            "mse_seconds2": 744.2501628051408,
+            "normalized_mse": 0.03687373787386972,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5791057165781599,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9789104461669922,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9789104461669922
+        },
+        "per_target_raw": {
+          "timespent": 0.03687373921275139
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 64440,
+        "matched": 92601,
+        "non_embedding": 95769,
+        "total": 1749881
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1650,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.235959062352777,
+        "validation_macro_nloss": 0.9543748497962952
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6317777474675177,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.43265736805868,
+            "mse_seconds2": 718.9424177453446,
+            "normalized_mse": 0.03594952800725917,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5849758325536123,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9543748497962952,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9543748497962952
+        },
+        "per_target_raw": {
+          "timespent": 0.035949528217315674
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 64440,
+        "matched": 92601,
+        "non_embedding": 95769,
+        "total": 1749881
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 2250,
+        "nonfinite_training_batches": 0,
+        "seconds": 13.419020745903254,
+        "validation_macro_nloss": 0.9545449614524841
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6237403025834534,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.78582729199322,
+            "mse_seconds2": 734.2246547989442,
+            "normalized_mse": 0.03595593898409047,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5748746725784866,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9545449614524841,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9545449614524841
+        },
+        "per_target_raw": {
+          "timespent": 0.03595593571662903
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 64440,
+        "matched": 92601,
+        "non_embedding": 95769,
+        "total": 1749881
+      },
+      "regime": "reduced",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.399636872112751,
+        "validation_macro_nloss": 0.9728038311004639
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6220928766596521,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 20.04110678875659,
+            "mse_seconds2": 715.5338652418187,
+            "normalized_mse": 0.036643713276555696,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.576924794723422,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9728038311004639,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9728038311004639
+        },
+        "per_target_raw": {
+          "timespent": 0.03664371371269226
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 64440,
+        "matched": 92601,
+        "non_embedding": 95769,
+        "total": 1749881
+      },
+      "regime": "reduced",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1650,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.790914192795753,
+        "validation_macro_nloss": 0.9478974342346191
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6256599599565381,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 20.149652418978256,
+            "mse_seconds2": 724.8964193108491,
+            "normalized_mse": 0.03570553984778157,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5784743264691113,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9478974342346191,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9478974342346191
+        },
+        "per_target_raw": {
+          "timespent": 0.03570553660392761
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 64440,
+        "matched": 92601,
+        "non_embedding": 95769,
+        "total": 1749881
+      },
+      "regime": "reduced",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1350,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.428692212328315,
+        "validation_macro_nloss": 1.0339252948760986
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6241998126606327,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.21144210139353,
+            "mse_seconds2": 727.4021529601359,
+            "normalized_mse": 0.03894605156275802,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5781585956501502,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 1.0339252948760986,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 1.0339252948760986
+        },
+        "per_target_raw": {
+          "timespent": 0.03894604742527008
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 64440,
+        "matched": 92601,
+        "non_embedding": 95769,
+        "total": 1749881
+      },
+      "regime": "reduced",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 2550,
+        "nonfinite_training_batches": 0,
+        "seconds": 13.226191813126206,
+        "validation_macro_nloss": 1.0392122268676758
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6183660152946938,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.824438454525584,
+            "mse_seconds2": 774.9486618536573,
+            "normalized_mse": 0.03914519364035309,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5704882436625561,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 1.0392122268676758,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 1.0392122268676758
+        },
+        "per_target_raw": {
+          "timespent": 0.03914519399404526
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_reduced",
+      "label": "M1 DCNv2-REDUCED-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 64440,
+        "matched": 92601,
+        "non_embedding": 95769,
+        "total": 1749881
+      },
+      "regime": "reduced",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.379052130505443,
+        "validation_macro_nloss": 0.9253488183021545
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6387824310511522,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.87239251600509,
+            "mse_seconds2": 675.2636051183889,
+            "normalized_mse": 0.03485617132072482,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5930195174443762,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9253488183021545,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9253488183021545
+        },
+        "per_target_raw": {
+          "timespent": 0.034856170415878296
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19800,
+        "matched": 47961,
+        "non_embedding": 51129,
+        "total": 1705241
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.7214343305677176,
+        "validation_macro_nloss": 0.87925124168396
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6327276065540172,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.99872430972247,
+            "mse_seconds2": 675.0254056706082,
+            "normalized_mse": 0.03311976156612436,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5884612875454267,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.87925124168396,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.87925124168396
+        },
+        "per_target_raw": {
+          "timespent": 0.03311976045370102
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19800,
+        "matched": 47961,
+        "non_embedding": 51129,
+        "total": 1705241
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1200,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.746661907061934,
+        "validation_macro_nloss": 0.8781216144561768
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.626696821110495,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.238340209682033,
+            "mse_seconds2": 675.4678149709529,
+            "normalized_mse": 0.033077211606340876,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.580449130626297,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8781216144561768,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8781216144561768
+        },
+        "per_target_raw": {
+          "timespent": 0.03307721018791199
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19800,
+        "matched": 47961,
+        "non_embedding": 51129,
+        "total": 1705241
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1800,
+        "nonfinite_training_batches": 0,
+        "seconds": 11.43206555210054,
+        "validation_macro_nloss": 0.883593738079071
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6374861357030104,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.820418265309936,
+            "mse_seconds2": 680.3094170133088,
+            "normalized_mse": 0.03328333397861485,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.589529564651085,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.883593738079071,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.883593738079071
+        },
+        "per_target_raw": {
+          "timespent": 0.033283334225416183
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19800,
+        "matched": 47961,
+        "non_embedding": 51129,
+        "total": 1705241
+      },
+      "regime": "reduced",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.398008616641164,
+        "validation_macro_nloss": 1.0589549541473389
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.49999455670803994,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 22.20039647332674,
+            "mse_seconds2": 815.6874679657545,
+            "normalized_mse": 0.03988886830484398,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.49999941600365416,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 1.0589549541473389,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 1.0589549541473389
+        },
+        "per_target_raw": {
+          "timespent": 0.03988886624574661
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19800,
+        "matched": 47961,
+        "non_embedding": 51129,
+        "total": 1705241
+      },
+      "regime": "reduced",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1050,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.114609777927399,
+        "validation_macro_nloss": 0.892732560634613
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6352597652703084,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.525277013726154,
+            "mse_seconds2": 687.4612583486341,
+            "normalized_mse": 0.033627577421438924,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5920318919278382,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.892732560634613,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.892732560634613
+        },
+        "per_target_raw": {
+          "timespent": 0.033627577126026154
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19800,
+        "matched": 47961,
+        "non_embedding": 51129,
+        "total": 1705241
+      },
+      "regime": "reduced",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.407409721985459,
+        "validation_macro_nloss": 0.8938842415809631
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.63810363949949,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.24053529827194,
+            "mse_seconds2": 682.4516569588687,
+            "normalized_mse": 0.03367095611974828,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5910239695181445,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8938842415809631,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8938842415809631
+        },
+        "per_target_raw": {
+          "timespent": 0.03367095813155174
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19800,
+        "matched": 47961,
+        "non_embedding": 51129,
+        "total": 1705241
+      },
+      "regime": "reduced",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1350,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.84451268427074,
+        "validation_macro_nloss": 0.8872841596603394
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6379188385247356,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.964420073938832,
+            "mse_seconds2": 683.3864615953872,
+            "normalized_mse": 0.03342234959007958,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5958797093289764,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8872841596603394,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8872841596603394
+        },
+        "per_target_raw": {
+          "timespent": 0.03342234715819359
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_reduced",
+      "label": "M2 DCDN-Core-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19800,
+        "matched": 47961,
+        "non_embedding": 51129,
+        "total": 1705241
+      },
+      "regime": "reduced",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1050,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.465440167114139,
+        "validation_macro_nloss": 0.8955431580543518
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6375584216042155,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.13532313777809,
+            "mse_seconds2": 689.6433092420796,
+            "normalized_mse": 0.03373344604346489,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5949720913275139,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8955431580543518,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8955431580543518
+        },
+        "per_target_raw": {
+          "timespent": 0.03373344615101814
+        }
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 1916370,
+        "matched": 1933203,
+        "non_embedding": 1939539,
+        "total": 5247763
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.467143395915627,
+        "validation_macro_nloss": 0.8451516032218933
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6458283810409107,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.577540648215585,
+            "mse_seconds2": 650.9944070017817,
+            "normalized_mse": 0.03183529000454351,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5952781354297602,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8451516032218933,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8451516032218933
+        },
+        "per_target_raw": {
+          "timespent": 0.03183529153466225
+        }
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 1916370,
+        "matched": 1933203,
+        "non_embedding": 1939539,
+        "total": 5247763
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.379720345139503,
+        "validation_macro_nloss": 0.8455410599708557
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.648398551408847,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.367191032282108,
+            "mse_seconds2": 651.0386601590266,
+            "normalized_mse": 0.03184996196433034,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.592401117758146,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8455410599708557,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8455410599708557
+        },
+        "per_target_raw": {
+          "timespent": 0.03184996172785759
+        }
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 1916370,
+        "matched": 1933203,
+        "non_embedding": 1939539,
+        "total": 5247763
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.94694460555911,
+        "validation_macro_nloss": 0.8637791872024536
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6460693976002169,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.084802890335578,
+            "mse_seconds2": 665.3480624277923,
+            "normalized_mse": 0.03253695772012023,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.6013241711058552,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8637791872024536,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8637791872024536
+        },
+        "per_target_raw": {
+          "timespent": 0.032536957412958145
+        }
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 1916370,
+        "matched": 1933203,
+        "non_embedding": 1939539,
+        "total": 5247763
+      },
+      "regime": "reduced",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.39393107406795,
+        "validation_macro_nloss": 0.8421083688735962
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6506646249093732,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 17.937942784926033,
+            "mse_seconds2": 648.5336250066323,
+            "normalized_mse": 0.03172065692438771,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5974471847589526,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8421083688735962,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8421083688735962
+        },
+        "per_target_raw": {
+          "timespent": 0.03172065690159798
+        }
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 1916370,
+        "matched": 1933203,
+        "non_embedding": 1939539,
+        "total": 5247763
+      },
+      "regime": "reduced",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.410991368815303,
+        "validation_macro_nloss": 0.8473654389381409
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6487504686872065,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 17.980509197450335,
+            "mse_seconds2": 652.7030207997655,
+            "normalized_mse": 0.03191868221737285,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5972510332699699,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8473654389381409,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8473654389381409
+        },
+        "per_target_raw": {
+          "timespent": 0.03191868215799332
+        }
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 1916370,
+        "matched": 1933203,
+        "non_embedding": 1939539,
+        "total": 5247763
+      },
+      "regime": "reduced",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.413180267438293,
+        "validation_macro_nloss": 0.839180052280426
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6487311896524587,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.83057114994012,
+            "mse_seconds2": 646.4001723047297,
+            "normalized_mse": 0.03161035612033496,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.59629686859663,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.839180052280426,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.839180052280426
+        },
+        "per_target_raw": {
+          "timespent": 0.03161035478115082
+        }
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 1916370,
+        "matched": 1933203,
+        "non_embedding": 1939539,
+        "total": 5247763
+      },
+      "regime": "reduced",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.397833816707134,
+        "validation_macro_nloss": 0.8404442667961121
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.651309976634381,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.55194423222074,
+            "mse_seconds2": 647.3726101834311,
+            "normalized_mse": 0.03165797477034869,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5999119374095664,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8404442667961121,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8404442667961121
+        },
+        "per_target_raw": {
+          "timespent": 0.031657975167036057
+        }
+      }
+    },
+    {
+      "arm_id": "afn_reduced",
+      "label": "M3 AFN+-REDUCED-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 1916370,
+        "matched": 1933203,
+        "non_embedding": 1939539,
+        "total": 5247763
+      },
+      "regime": "reduced",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.369915714487433,
+        "validation_macro_nloss": 0.8541144132614136
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6455170410917712,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 17.899895953156122,
+            "mse_seconds2": 657.902614731527,
+            "normalized_mse": 0.03217290352053313,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5935325476332876,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8541144132614136,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8541144132614136
+        },
+        "per_target_raw": {
+          "timespent": 0.032172903418540955
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19638,
+        "matched": 47799,
+        "non_embedding": 50967,
+        "total": 1705079
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.795512029901147,
+        "validation_macro_nloss": 0.8842136859893799
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6384579535717538,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.800592060493567,
+            "mse_seconds2": 680.5122086136552,
+            "normalized_mse": 0.03330668541452665,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5957734499002425,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8842136859893799,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8842136859893799
+        },
+        "per_target_raw": {
+          "timespent": 0.03330668807029724
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19638,
+        "matched": 47799,
+        "non_embedding": 50967,
+        "total": 1705079
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.102453673258424,
+        "validation_macro_nloss": 0.873072624206543
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6394959270865712,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.83114887640487,
+            "mse_seconds2": 671.7305652087915,
+            "normalized_mse": 0.032887025896240894,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5971361994962402,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.873072624206543,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.873072624206543
+        },
+        "per_target_raw": {
+          "timespent": 0.03288702294230461
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19638,
+        "matched": 47799,
+        "non_embedding": 50967,
+        "total": 1705079
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.733641045168042,
+        "validation_macro_nloss": 0.8739801049232483
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.63884652333572,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.87198438104123,
+            "mse_seconds2": 672.9656919715566,
+            "normalized_mse": 0.03292120778356419,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.591415670830999,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8739801049232483,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8739801049232483
+        },
+        "per_target_raw": {
+          "timespent": 0.0329212062060833
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19638,
+        "matched": 47799,
+        "non_embedding": 50967,
+        "total": 1705079
+      },
+      "regime": "reduced",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.364244477823377,
+        "validation_macro_nloss": 0.9032471776008606
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6327741416720996,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.505849721600875,
+            "mse_seconds2": 694.4198789133588,
+            "normalized_mse": 0.034023641588333674,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5878439229352468,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9032471776008606,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9032471776008606
+        },
+        "per_target_raw": {
+          "timespent": 0.03402364253997803
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19638,
+        "matched": 47799,
+        "non_embedding": 50967,
+        "total": 1705079
+      },
+      "regime": "reduced",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.860907353460789,
+        "validation_macro_nloss": 0.88582843542099
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6422294780040229,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.94951549867755,
+            "mse_seconds2": 682.3284684451884,
+            "normalized_mse": 0.033367512949340074,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5959595820903272,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.88582843542099,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.88582843542099
+        },
+        "per_target_raw": {
+          "timespent": 0.03336751088500023
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19638,
+        "matched": 47799,
+        "non_embedding": 50967,
+        "total": 1705079
+      },
+      "regime": "reduced",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.121931210160255,
+        "validation_macro_nloss": 0.8786534667015076
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6385459197521655,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.25017724573609,
+            "mse_seconds2": 675.0569881759088,
+            "normalized_mse": 0.03309724777664499,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5905939025509543,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8786534667015076,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8786534667015076
+        },
+        "per_target_raw": {
+          "timespent": 0.033097244799137115
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19638,
+        "matched": 47799,
+        "non_embedding": 50967,
+        "total": 1705079
+      },
+      "regime": "reduced",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.121380748227239,
+        "validation_macro_nloss": 0.8956416249275208
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6421286016808491,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.928871571147255,
+            "mse_seconds2": 689.4342221818173,
+            "normalized_mse": 0.03373715830097795,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5950308009770343,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8956416249275208,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8956416249275208
+        },
+        "per_target_raw": {
+          "timespent": 0.03373715654015541
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_capacity_reduced",
+      "label": "M4 DCNv2-capacity-matched-REDUCED-MTL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 11520,
+        "head": 16641,
+        "interaction": 19638,
+        "matched": 47799,
+        "non_embedding": 50967,
+        "total": 1705079
+      },
+      "regime": "reduced",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.499014373868704,
+        "validation_macro_nloss": 0.8862988948822021
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6365549611907685,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.831735261001242,
+            "mse_seconds2": 682.6208205959647,
+            "normalized_mse": 0.03338523109465777,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.58578635272728,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8862988948822021,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8862988948822021
+        },
+        "per_target_raw": {
+          "timespent": 0.03338523209095001
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 175824,
+        "matched": 211473,
+        "non_embedding": 218385,
+        "total": 1872497
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1650,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.263382455334067,
+        "validation_macro_nloss": 0.9709240198135376
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6342729967184461,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.302243777188703,
+            "mse_seconds2": 735.846963420603,
+            "normalized_mse": 0.036572907160515075,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5886702654667662,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9709240198135376,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9709240198135376
+        },
+        "per_target_raw": {
+          "timespent": 0.0365729033946991
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 175824,
+        "matched": 211473,
+        "non_embedding": 218385,
+        "total": 1872497
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 2700,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.908720333129168,
+        "validation_macro_nloss": 0.9567692875862122
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6215189530544044,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.82040093982733,
+            "mse_seconds2": 733.4683897618061,
+            "normalized_mse": 0.036039721537667144,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5732852670157409,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9567692875862122,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9567692875862122
+        },
+        "per_target_raw": {
+          "timespent": 0.036039721220731735
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 175824,
+        "matched": 211473,
+        "non_embedding": 218385,
+        "total": 1872497
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.114306563511491,
+        "validation_macro_nloss": 1.6476383209228516
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6129925612107567,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.012011423632824,
+            "mse_seconds2": 833.7039007974324,
+            "normalized_mse": 0.062063475929192355,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5804631782592857,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 1.6476383209228516,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 1.6476383209228516
+        },
+        "per_target_raw": {
+          "timespent": 0.06206347420811653
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 175824,
+        "matched": 211473,
+        "non_embedding": 218385,
+        "total": 1872497
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1500,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.178102567791939,
+        "validation_macro_nloss": 1.0384281873703003
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6327079737735405,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 20.201007618649236,
+            "mse_seconds2": 784.5560117902398,
+            "normalized_mse": 0.03911566163422451,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5864054724203798,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 1.0384281873703003,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 1.0384281873703003
+        },
+        "per_target_raw": {
+          "timespent": 0.03911565989255905
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 175824,
+        "matched": 211473,
+        "non_embedding": 218385,
+        "total": 1872497
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.498188586905599,
+        "validation_macro_nloss": 2.589708089828491
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6122558250410843,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 24.204166238624467,
+            "mse_seconds2": 1092.689703428135,
+            "normalized_mse": 0.09754949558539487,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.574658244388673,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 2.589708089828491,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 2.589708089828491
+        },
+        "per_target_raw": {
+          "timespent": 0.09754949063062668
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 175824,
+        "matched": 211473,
+        "non_embedding": 218385,
+        "total": 1872497
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.512659717351198,
+        "validation_macro_nloss": 0.989249050617218
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6284293065454528,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.56408490964479,
+            "mse_seconds2": 709.8146671020812,
+            "normalized_mse": 0.03726317656867856,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5859830047436109,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.989249050617218,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.989249050617218
+        },
+        "per_target_raw": {
+          "timespent": 0.037263173609972
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 175824,
+        "matched": 211473,
+        "non_embedding": 218385,
+        "total": 1872497
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1500,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.642613362520933,
+        "validation_macro_nloss": 0.9260026812553406
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6370011470485061,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.510343041285633,
+            "mse_seconds2": 704.4594374471551,
+            "normalized_mse": 0.034880801242437115,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.591370900993223,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9260026812553406,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9260026812553406
+        },
+        "per_target_raw": {
+          "timespent": 0.034880802035331726
+        }
+      }
+    },
+    {
+      "arm_id": "dcnv2_full",
+      "label": "M5 DCNv2-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 175824,
+        "matched": 211473,
+        "non_embedding": 218385,
+        "total": 1872497
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1800,
+        "nonfinite_training_batches": 0,
+        "seconds": 11.160668278113008,
+        "validation_macro_nloss": 0.9817537069320679
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6329712802904519,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.74363289167411,
+            "mse_seconds2": 748.5384815014701,
+            "normalized_mse": 0.03698083988451014,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5831719262166372,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9817537069320679,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9817537069320679
+        },
+        "per_target_raw": {
+          "timespent": 0.03698083758354187
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 93744,
+        "matched": 129393,
+        "non_embedding": 136305,
+        "total": 1790417
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.534218821674585,
+        "validation_macro_nloss": 0.874176561832428
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6425133538283606,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.686390866562608,
+            "mse_seconds2": 669.1330140357285,
+            "normalized_mse": 0.03292860559945357,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5980530662821629,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.874176561832428,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.874176561832428
+        },
+        "per_target_raw": {
+          "timespent": 0.03292860835790634
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 93744,
+        "matched": 129393,
+        "non_embedding": 136305,
+        "total": 1790417
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1050,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.15339021757245,
+        "validation_macro_nloss": 0.8887010812759399
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.639390170082631,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.422530852842677,
+            "mse_seconds2": 674.2650364333824,
+            "normalized_mse": 0.033475721740438336,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5988942458774579,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8887010812759399,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8887010812759399
+        },
+        "per_target_raw": {
+          "timespent": 0.03347571939229965
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 93744,
+        "matched": 129393,
+        "non_embedding": 136305,
+        "total": 1790417
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.179054072126746,
+        "validation_macro_nloss": 0.901608943939209
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6380451993365212,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.338641294009957,
+            "mse_seconds2": 681.7772038662335,
+            "normalized_mse": 0.033961934920533246,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5948072467448032,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.901608943939209,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.901608943939209
+        },
+        "per_target_raw": {
+          "timespent": 0.033961933106184006
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 93744,
+        "matched": 129393,
+        "non_embedding": 136305,
+        "total": 1790417
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1500,
+        "nonfinite_training_batches": 0,
+        "seconds": 10.555293869227171,
+        "validation_macro_nloss": 0.9104750156402588
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6402790944073313,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.37920721050707,
+            "mse_seconds2": 679.9656255493243,
+            "normalized_mse": 0.03429590432832251,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5985239158042106,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9104750156402588,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9104750156402588
+        },
+        "per_target_raw": {
+          "timespent": 0.03429590165615082
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 93744,
+        "matched": 129393,
+        "non_embedding": 136305,
+        "total": 1790417
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 2100,
+        "nonfinite_training_batches": 0,
+        "seconds": 13.042030988261104,
+        "validation_macro_nloss": 0.8904823660850525
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6403164449621629,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.584297755311454,
+            "mse_seconds2": 684.3660892996869,
+            "normalized_mse": 0.03354281756314511,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5939574465670695,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8904823660850525,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8904823660850525
+        },
+        "per_target_raw": {
+          "timespent": 0.03354281559586525
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 93744,
+        "matched": 129393,
+        "non_embedding": 136305,
+        "total": 1790417
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.89584606513381,
+        "validation_macro_nloss": 0.9371686577796936
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6374395971456338,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.339889557706226,
+            "mse_seconds2": 704.2397006250045,
+            "normalized_mse": 0.0353014061236687,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5964256950651435,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9371686577796936,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9371686577796936
+        },
+        "per_target_raw": {
+          "timespent": 0.03530140221118927
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 93744,
+        "matched": 129393,
+        "non_embedding": 136305,
+        "total": 1790417
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.776976451277733,
+        "validation_macro_nloss": 0.8884554505348206
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6402191968076602,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.72395990645052,
+            "mse_seconds2": 671.855550437264,
+            "normalized_mse": 0.03346646596284454,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.595021582765112,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8884554505348206,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8884554505348206
+        },
+        "per_target_raw": {
+          "timespent": 0.03346646577119827
+        }
+      }
+    },
+    {
+      "arm_id": "dcdn_full",
+      "label": "M6 DCDN-Core-FULL-MTL",
+      "learning_rate": 0.001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 93744,
+        "matched": 129393,
+        "non_embedding": 136305,
+        "total": 1790417
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.408977504819632,
+        "validation_macro_nloss": 0.9400277733802795
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.632973606399697,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 20.424735377419687,
+            "mse_seconds2": 716.841261316596,
+            "normalized_mse": 0.03540909837781648,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5899370389982443,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.9400277733802795,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.9400277733802795
+        },
+        "per_target_raw": {
+          "timespent": 0.035409100353717804
+        }
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2890044,
+        "matched": 2906877,
+        "non_embedding": 2920701,
+        "total": 6228925
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.181987607851624,
+        "validation_macro_nloss": 0.8346725106239319
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6527545932245473,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.30180091294732,
+            "mse_seconds2": 642.9194637447865,
+            "normalized_mse": 0.03144056393891995,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5985570213880753,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8346725106239319,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8346725106239319
+        },
+        "per_target_raw": {
+          "timespent": 0.03144056349992752
+        }
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2890044,
+        "matched": 2906877,
+        "non_embedding": 2920701,
+        "total": 6228925
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.076606603339314,
+        "validation_macro_nloss": 0.8335154056549072
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6521274630588285,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 17.859774085973147,
+            "mse_seconds2": 642.022102380838,
+            "normalized_mse": 0.031396980572128086,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5992471480147887,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8335154056549072,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8335154056549072
+        },
+        "per_target_raw": {
+          "timespent": 0.031396977603435516
+        }
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2890044,
+        "matched": 2906877,
+        "non_embedding": 2920701,
+        "total": 6228925
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.041852109134197,
+        "validation_macro_nloss": 0.8424755334854126
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6483735034239786,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.334690318668475,
+            "mse_seconds2": 648.9193365442832,
+            "normalized_mse": 0.031734487915995126,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5957917747697883,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8424755334854126,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8424755334854126
+        },
+        "per_target_raw": {
+          "timespent": 0.031734488904476166
+        }
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2890044,
+        "matched": 2906877,
+        "non_embedding": 2920701,
+        "total": 6228925
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.021447265520692,
+        "validation_macro_nloss": 0.8288370966911316
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.652826722172133,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.742173860892983,
+            "mse_seconds2": 638.2496463673062,
+            "normalized_mse": 0.031220755094797572,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5984409191926818,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8288370966911316,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8288370966911316
+        },
+        "per_target_raw": {
+          "timespent": 0.031220752745866776
+        }
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2890044,
+        "matched": 2906877,
+        "non_embedding": 2920701,
+        "total": 6228925
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.02861780487001,
+        "validation_macro_nloss": 0.854561448097229
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6479032659018833,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.41729436791851,
+            "mse_seconds2": 658.2378940602541,
+            "normalized_mse": 0.0321897462783485,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5947673893523386,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.854561448097229,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.854561448097229
+        },
+        "per_target_raw": {
+          "timespent": 0.03218974173069
+        }
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2890044,
+        "matched": 2906877,
+        "non_embedding": 2920701,
+        "total": 6228925
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.03786982782185,
+        "validation_macro_nloss": 0.8261696696281433
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.654238941579148,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.477484967106214,
+            "mse_seconds2": 636.3785611805132,
+            "normalized_mse": 0.03112027782192347,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.6009684589184254,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8261696696281433,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8261696696281433
+        },
+        "per_target_raw": {
+          "timespent": 0.03112027607858181
+        }
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2890044,
+        "matched": 2906877,
+        "non_embedding": 2920701,
+        "total": 6228925
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.157099785283208,
+        "validation_macro_nloss": 0.8310009241104126
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.653405118543536,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.398041176066165,
+            "mse_seconds2": 640.0697367038609,
+            "normalized_mse": 0.031302262645622775,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.6018849579952522,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8310009241104126,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8310009241104126
+        },
+        "per_target_raw": {
+          "timespent": 0.03130226209759712
+        }
+      }
+    },
+    {
+      "arm_id": "afn_full",
+      "label": "M7 AFN+-FULL-MTL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 192,
+        "head": 16641,
+        "interaction": 2890044,
+        "matched": 2906877,
+        "non_embedding": 2920701,
+        "total": 6228925
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.167877521365881,
+        "validation_macro_nloss": 0.8355727791786194
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6488946186386995,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.842428107705285,
+            "mse_seconds2": 643.6214956762499,
+            "normalized_mse": 0.03147447286792753,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5967164622101077,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8355727791786194,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8355727791786194
+        },
+        "per_target_raw": {
+          "timespent": 0.03147447481751442
+        }
+      }
+    },
+    {
+      "arm_id": "mlp_full",
+      "label": "F1 DNN/MLP-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25664,
+        "head": 16641,
+        "interaction": 439600,
+        "matched": 481905,
+        "non_embedding": 488817,
+        "total": 2142929
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.905190663412213,
+        "validation_macro_nloss": 0.8488904237747192
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6480663670445789,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.59248779036352,
+            "mse_seconds2": 653.8797834748616,
+            "normalized_mse": 0.031976125171836706,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5995640793498748,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8488904237747192,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8488904237747192
+        },
+        "per_target_raw": {
+          "timespent": 0.0319761261343956
+        }
+      }
+    },
+    {
+      "arm_id": "mlp_full",
+      "label": "F1 DNN/MLP-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25664,
+        "head": 16641,
+        "interaction": 439600,
+        "matched": 481905,
+        "non_embedding": 488817,
+        "total": 2142929
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.185344772413373,
+        "validation_macro_nloss": 0.8468115329742432
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6492024871220055,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.173595222878987,
+            "mse_seconds2": 652.2776994700217,
+            "normalized_mse": 0.0318978130455518,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5975938336608803,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8468115329742432,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8468115329742432
+        },
+        "per_target_raw": {
+          "timespent": 0.03189781680703163
+        }
+      }
+    },
+    {
+      "arm_id": "mlp_full",
+      "label": "F1 DNN/MLP-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25664,
+        "head": 16641,
+        "interaction": 439600,
+        "matched": 481905,
+        "non_embedding": 488817,
+        "total": 2142929
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.4260072614997625,
+        "validation_macro_nloss": 0.8689730763435364
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6449986462870341,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.66647402271271,
+            "mse_seconds2": 669.2816587318594,
+            "normalized_mse": 0.03273260207683032,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.597824840645273,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8689730763435364,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8689730763435364
+        },
+        "per_target_raw": {
+          "timespent": 0.03273260220885277
+        }
+      }
+    },
+    {
+      "arm_id": "mlp_full",
+      "label": "F1 DNN/MLP-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25664,
+        "head": 16641,
+        "interaction": 439600,
+        "matched": 481905,
+        "non_embedding": 488817,
+        "total": 2142929
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.729793079197407,
+        "validation_macro_nloss": 0.8543028831481934
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.649582069723872,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.23598313557716,
+            "mse_seconds2": 657.9990456466251,
+            "normalized_mse": 0.03218000385677122,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.6006915682450789,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8543028831481934,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8543028831481934
+        },
+        "per_target_raw": {
+          "timespent": 0.03218000382184982
+        }
+      }
+    },
+    {
+      "arm_id": "mlp_full",
+      "label": "F1 DNN/MLP-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25664,
+        "head": 16641,
+        "interaction": 439600,
+        "matched": 481905,
+        "non_embedding": 488817,
+        "total": 2142929
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.066815514117479,
+        "validation_macro_nloss": 0.8633688688278198
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6491496224846898,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.3210279718259,
+            "mse_seconds2": 665.0322095283761,
+            "normalized_mse": 0.032521502739907865,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5987919469341649,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8633688688278198,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8633688688278198
+        },
+        "per_target_raw": {
+          "timespent": 0.03252150118350983
+        }
+      }
+    },
+    {
+      "arm_id": "mlp_full",
+      "label": "F1 DNN/MLP-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25664,
+        "head": 16641,
+        "interaction": 439600,
+        "matched": 481905,
+        "non_embedding": 488817,
+        "total": 2142929
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.732848323881626,
+        "validation_macro_nloss": 0.8606089949607849
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6488757057454697,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.07146156859697,
+            "mse_seconds2": 662.905437581179,
+            "normalized_mse": 0.03241754401443275,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.603206285781855,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8606089949607849,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8606089949607849
+        },
+        "per_target_raw": {
+          "timespent": 0.03241754323244095
+        }
+      }
+    },
+    {
+      "arm_id": "mlp_full",
+      "label": "F1 DNN/MLP-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25664,
+        "head": 16641,
+        "interaction": 439600,
+        "matched": 481905,
+        "non_embedding": 488817,
+        "total": 2142929
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.057446118444204,
+        "validation_macro_nloss": 0.8672276735305786
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6476285123752427,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.542285711158037,
+            "mse_seconds2": 668.0045503064057,
+            "normalized_mse": 0.03266685690895117,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5961806515134789,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8672276735305786,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8672276735305786
+        },
+        "per_target_raw": {
+          "timespent": 0.032666854560375214
+        }
+      }
+    },
+    {
+      "arm_id": "mlp_full",
+      "label": "F1 DNN/MLP-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25664,
+        "head": 16641,
+        "interaction": 439600,
+        "matched": 481905,
+        "non_embedding": 488817,
+        "total": 2142929
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 4.749091614037752,
+        "validation_macro_nloss": 0.8588024377822876
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.646890571055421,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.433872578135237,
+            "mse_seconds2": 661.4966251610671,
+            "normalized_mse": 0.032349492606913256,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5991385496400893,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8588024377822876,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8588024377822876
+        },
+        "per_target_raw": {
+          "timespent": 0.032349493354558945
+        }
+      }
+    },
+    {
+      "arm_id": "deepfm_full",
+      "label": "F2 DeepFM-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25792,
+        "head": 16641,
+        "interaction": 1739137,
+        "matched": 1781570,
+        "non_embedding": 1788482,
+        "total": 3442594
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 12.088043170049787,
+        "validation_macro_nloss": 0.8725787997245789
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6452776247715245,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.922301029139664,
+            "mse_seconds2": 672.0751801165966,
+            "normalized_mse": 0.03286842257983681,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5982313672420673,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8725787997245789,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8725787997245789
+        },
+        "per_target_raw": {
+          "timespent": 0.03286842256784439
+        }
+      }
+    },
+    {
+      "arm_id": "deepfm_full",
+      "label": "F2 DeepFM-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25792,
+        "head": 16641,
+        "interaction": 1739137,
+        "matched": 1781570,
+        "non_embedding": 1788482,
+        "total": 3442594
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1350,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.362172983586788,
+        "validation_macro_nloss": 0.8869912624359131
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6397030137198133,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.711658591509376,
+            "mse_seconds2": 683.0553892423804,
+            "normalized_mse": 0.03341131488577028,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5986983159262736,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8869912624359131,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8869912624359131
+        },
+        "per_target_raw": {
+          "timespent": 0.033411312848329544
+        }
+      }
+    },
+    {
+      "arm_id": "deepfm_full",
+      "label": "F2 DeepFM-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25792,
+        "head": 16641,
+        "interaction": 1739137,
+        "matched": 1781570,
+        "non_embedding": 1788482,
+        "total": 3442594
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.902066603302956,
+        "validation_macro_nloss": 0.8622176647186279
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6447418761843918,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.53396225714799,
+            "mse_seconds2": 664.0375400197672,
+            "normalized_mse": 0.03247813856316545,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5995562064443738,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8622176647186279,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8622176647186279
+        },
+        "per_target_raw": {
+          "timespent": 0.03247813880443573
+        }
+      }
+    },
+    {
+      "arm_id": "deepfm_full",
+      "label": "F2 DeepFM-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25792,
+        "head": 16641,
+        "interaction": 1739137,
+        "matched": 1781570,
+        "non_embedding": 1788482,
+        "total": 3442594
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.865464136004448,
+        "validation_macro_nloss": 0.8706963062286377
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6428101980485044,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.228672617314807,
+            "mse_seconds2": 670.6211217859761,
+            "normalized_mse": 0.03279751282309631,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5983999525847382,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8706963062286377,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8706963062286377
+        },
+        "per_target_raw": {
+          "timespent": 0.03279751166701317
+        }
+      }
+    },
+    {
+      "arm_id": "deepfm_full",
+      "label": "F2 DeepFM-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25792,
+        "head": 16641,
+        "interaction": 1739137,
+        "matched": 1781570,
+        "non_embedding": 1788482,
+        "total": 3442594
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.829017624258995,
+        "validation_macro_nloss": 0.8624510765075684
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6427951217236728,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.502733477450697,
+            "mse_seconds2": 663.8926407375174,
+            "normalized_mse": 0.0324869295130588,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5939827566452115,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8624510765075684,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8624510765075684
+        },
+        "per_target_raw": {
+          "timespent": 0.0324869304895401
+        }
+      }
+    },
+    {
+      "arm_id": "deepfm_full",
+      "label": "F2 DeepFM-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25792,
+        "head": 16641,
+        "interaction": 1739137,
+        "matched": 1781570,
+        "non_embedding": 1788482,
+        "total": 3442594
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.795693036168814,
+        "validation_macro_nloss": 0.862802267074585
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6430064229968826,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.49236594317407,
+            "mse_seconds2": 664.5957943633526,
+            "normalized_mse": 0.032500161101440286,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5966945503001554,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.862802267074585,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.862802267074585
+        },
+        "per_target_raw": {
+          "timespent": 0.03250015899538994
+        }
+      }
+    },
+    {
+      "arm_id": "deepfm_full",
+      "label": "F2 DeepFM-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25792,
+        "head": 16641,
+        "interaction": 1739137,
+        "matched": 1781570,
+        "non_embedding": 1788482,
+        "total": 3442594
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 8.794024070724845,
+        "validation_macro_nloss": 0.8812888860702515
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6450214365902794,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 20.153606230842282,
+            "mse_seconds2": 678.8311189926416,
+            "normalized_mse": 0.0331965169467372,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5968874792712672,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8812888860702515,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8812888860702515
+        },
+        "per_target_raw": {
+          "timespent": 0.03319651633501053
+        }
+      }
+    },
+    {
+      "arm_id": "deepfm_full",
+      "label": "F2 DeepFM-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 25792,
+        "head": 16641,
+        "interaction": 1739137,
+        "matched": 1781570,
+        "non_embedding": 1788482,
+        "total": 3442594
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1050,
+        "nonfinite_training_batches": 0,
+        "seconds": 13.176182175055146,
+        "validation_macro_nloss": 0.8701463937759399
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6459812808432102,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.499841498846223,
+            "mse_seconds2": 670.0758372514975,
+            "normalized_mse": 0.03277680040108362,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5998809138596272,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8701463937759399,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8701463937759399
+        },
+        "per_target_raw": {
+          "timespent": 0.03277679905295372
+        }
+      }
+    },
+    {
+      "arm_id": "dcn_full",
+      "label": "F3 DCN-original-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 1184,
+        "matched": 36833,
+        "non_embedding": 43745,
+        "total": 1697857
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.467989543452859,
+        "validation_macro_nloss": 0.8479737639427185
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6484135355892573,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.626662141106795,
+            "mse_seconds2": 651.3167213922287,
+            "normalized_mse": 0.03194159565366699,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5928136102637137,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8479737639427185,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8479737639427185
+        },
+        "per_target_raw": {
+          "timespent": 0.031941596418619156
+        }
+      }
+    },
+    {
+      "arm_id": "dcn_full",
+      "label": "F3 DCN-original-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 1184,
+        "matched": 36833,
+        "non_embedding": 43745,
+        "total": 1697857
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.483672624453902,
+        "validation_macro_nloss": 0.8503872752189636
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6475784261143467,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.420870183677362,
+            "mse_seconds2": 648.5506875928039,
+            "normalized_mse": 0.032032506421834146,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5955902150300236,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8503872752189636,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8503872752189636
+        },
+        "per_target_raw": {
+          "timespent": 0.03203250840306282
+        }
+      }
+    },
+    {
+      "arm_id": "dcn_full",
+      "label": "F3 DCN-original-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 1184,
+        "matched": 36833,
+        "non_embedding": 43745,
+        "total": 1697857
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1050,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.804019168019295,
+        "validation_macro_nloss": 0.8534039258956909
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6474673710927963,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.320347417705513,
+            "mse_seconds2": 655.4426051436236,
+            "normalized_mse": 0.03214614468125276,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5967780672444533,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8534039258956909,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8534039258956909
+        },
+        "per_target_raw": {
+          "timespent": 0.032146140933036804
+        }
+      }
+    },
+    {
+      "arm_id": "dcn_full",
+      "label": "F3 DCN-original-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 1184,
+        "matched": 36833,
+        "non_embedding": 43745,
+        "total": 1697857
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1050,
+        "nonfinite_training_batches": 0,
+        "seconds": 7.788484118878841,
+        "validation_macro_nloss": 0.8599929809570312
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6441458239817538,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.58411412654776,
+            "mse_seconds2": 661.5556765631909,
+            "normalized_mse": 0.0323943379501042,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5916471126733893,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8599929809570312,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8599929809570312
+        },
+        "per_target_raw": {
+          "timespent": 0.03239433839917183
+        }
+      }
+    },
+    {
+      "arm_id": "dcn_full",
+      "label": "F3 DCN-original-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 1184,
+        "matched": 36833,
+        "non_embedding": 43745,
+        "total": 1697857
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.856503924354911,
+        "validation_macro_nloss": 0.8503613471984863
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6490049810723999,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.163122607829205,
+            "mse_seconds2": 648.2796376312401,
+            "normalized_mse": 0.03203153169027438,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5961005999970411,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8503613471984863,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8503613471984863
+        },
+        "per_target_raw": {
+          "timespent": 0.03203153237700462
+        }
+      }
+    },
+    {
+      "arm_id": "dcn_full",
+      "label": "F3 DCN-original-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 1184,
+        "matched": 36833,
+        "non_embedding": 43745,
+        "total": 1697857
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1500,
+        "nonfinite_training_batches": 0,
+        "seconds": 9.744494246318936,
+        "validation_macro_nloss": 0.900767982006073
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6435425972324865,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.434289224107435,
+            "mse_seconds2": 675.753600626603,
+            "normalized_mse": 0.03393025708759252,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5959961517786175,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.900767982006073,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.900767982006073
+        },
+        "per_target_raw": {
+          "timespent": 0.033930256962776184
+        }
+      }
+    },
+    {
+      "arm_id": "dcn_full",
+      "label": "F3 DCN-original-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 1184,
+        "matched": 36833,
+        "non_embedding": 43745,
+        "total": 1697857
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 5.82547115162015,
+        "validation_macro_nloss": 0.8649375438690186
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6473965583558987,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.646152518296976,
+            "mse_seconds2": 650.8778433985401,
+            "normalized_mse": 0.03258059036710759,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5916490793247343,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8649375438690186,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8649375438690186
+        },
+        "per_target_raw": {
+          "timespent": 0.03258059173822403
+        }
+      }
+    },
+    {
+      "arm_id": "dcn_full",
+      "label": "F3 DCN-original-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 19008,
+        "head": 16641,
+        "interaction": 1184,
+        "matched": 36833,
+        "non_embedding": 43745,
+        "total": 1697857
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 6.481686368584633,
+        "validation_macro_nloss": 0.852548360824585
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6490909615978565,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.285379870854957,
+            "mse_seconds2": 650.8396468385164,
+            "normalized_mse": 0.03211391381589452,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5947524117111899,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.852548360824585,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.852548360824585
+        },
+        "per_target_raw": {
+          "timespent": 0.03211391344666481
+        }
+      }
+    },
+    {
+      "arm_id": "autoint_full",
+      "label": "F4 AutoInt+-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 930880,
+        "head": 16641,
+        "interaction": 1604256,
+        "matched": 2551777,
+        "non_embedding": 2558689,
+        "total": 4212801
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 191.09742234647274,
+        "validation_macro_nloss": 0.8412353992462158
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.649030716486177,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.39823013021392,
+            "mse_seconds2": 647.9735411117991,
+            "normalized_mse": 0.03168777320167875,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5971938725713898,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8412353992462158,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8412353992462158
+        },
+        "per_target_raw": {
+          "timespent": 0.03168777376413345
+        }
+      }
+    },
+    {
+      "arm_id": "autoint_full",
+      "label": "F4 AutoInt+-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 930880,
+        "head": 16641,
+        "interaction": 1604256,
+        "matched": 2551777,
+        "non_embedding": 2558689,
+        "total": 4212801
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 245.80562106333673,
+        "validation_macro_nloss": 0.8601650595664978
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.650777927652924,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.567155895481875,
+            "mse_seconds2": 662.5620009841211,
+            "normalized_mse": 0.03240081965202754,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.6020753670265104,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8601650595664978,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8601650595664978
+        },
+        "per_target_raw": {
+          "timespent": 0.03240082040429115
+        }
+      }
+    },
+    {
+      "arm_id": "autoint_full",
+      "label": "F4 AutoInt+-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 930880,
+        "head": 16641,
+        "interaction": 1604256,
+        "matched": 2551777,
+        "non_embedding": 2558689,
+        "total": 4212801
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 245.94444327242672,
+        "validation_macro_nloss": 0.8818515539169312
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6445200901514563,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 17.848598854354993,
+            "mse_seconds2": 679.2673164723254,
+            "normalized_mse": 0.03321771205279678,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5988918057433626,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8818515539169312,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8818515539169312
+        },
+        "per_target_raw": {
+          "timespent": 0.03321770951151848
+        }
+      }
+    },
+    {
+      "arm_id": "autoint_full",
+      "label": "F4 AutoInt+-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 930880,
+        "head": 16641,
+        "interaction": 1604256,
+        "matched": 2551777,
+        "non_embedding": 2558689,
+        "total": 4212801
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 246.209970574826,
+        "validation_macro_nloss": 0.8641532063484192
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6497240202109599,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.039864180937492,
+            "mse_seconds2": 665.6274582149077,
+            "normalized_mse": 0.03255104811359724,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.6000836376086414,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8641532063484192,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8641532063484192
+        },
+        "per_target_raw": {
+          "timespent": 0.03255104646086693
+        }
+      }
+    },
+    {
+      "arm_id": "autoint_full",
+      "label": "F4 AutoInt+-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 930880,
+        "head": 16641,
+        "interaction": 1604256,
+        "matched": 2551777,
+        "non_embedding": 2558689,
+        "total": 4212801
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 218.9764656536281,
+        "validation_macro_nloss": 0.8468432426452637
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6529754954305502,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 17.933923136815395,
+            "mse_seconds2": 652.302872488626,
+            "normalized_mse": 0.0318990108312693,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.6017831251930478,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8468432426452637,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8468432426452637
+        },
+        "per_target_raw": {
+          "timespent": 0.03189901262521744
+        }
+      }
+    },
+    {
+      "arm_id": "autoint_full",
+      "label": "F4 AutoInt+-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 930880,
+        "head": 16641,
+        "interaction": 1604256,
+        "matched": 2551777,
+        "non_embedding": 2558689,
+        "total": 4212801
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 218.99526005238295,
+        "validation_macro_nloss": 0.8403851389884949
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6493281688165095,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.052566451332673,
+            "mse_seconds2": 647.3284335796241,
+            "normalized_mse": 0.03165575008947254,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.6013930597729554,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8403851389884949,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8403851389884949
+        },
+        "per_target_raw": {
+          "timespent": 0.031655747443437576
+        }
+      }
+    },
+    {
+      "arm_id": "autoint_full",
+      "label": "F4 AutoInt+-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 930880,
+        "head": 16641,
+        "interaction": 1604256,
+        "matched": 2551777,
+        "non_embedding": 2558689,
+        "total": 4212801
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 191.6569036245346,
+        "validation_macro_nloss": 0.8467000722885132
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6466683613444432,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.873605422523696,
+            "mse_seconds2": 652.1926299623223,
+            "normalized_mse": 0.03189361973506392,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5932602354212633,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8467000722885132,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8467000722885132
+        },
+        "per_target_raw": {
+          "timespent": 0.031893618404865265
+        }
+      }
+    },
+    {
+      "arm_id": "autoint_full",
+      "label": "F4 AutoInt+-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 930880,
+        "head": 16641,
+        "interaction": 1604256,
+        "matched": 2551777,
+        "non_embedding": 2558689,
+        "total": 4212801
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 191.58330619335175,
+        "validation_macro_nloss": 0.8441916108131409
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6496048649352767,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.549120820213616,
+            "mse_seconds2": 650.2592345596781,
+            "normalized_mse": 0.031799130050499426,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.6001073628983175,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8441916108131409,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8441916108131409
+        },
+        "per_target_raw": {
+          "timespent": 0.03179913014173508
+        }
+      }
+    },
+    {
+      "arm_id": "wukong_full",
+      "label": "F5 Wukong-small-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 799080,
+        "matched": 848553,
+        "non_embedding": 855465,
+        "total": 2509577
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 16.168376421555877,
+        "validation_macro_nloss": 0.8602094650268555
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6427250539522084,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.50948049226225,
+            "mse_seconds2": 658.7807634792086,
+            "normalized_mse": 0.03240249294058122,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.58939291752029,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8602094650268555,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8602094650268555
+        },
+        "per_target_raw": {
+          "timespent": 0.03240249305963516
+        }
+      }
+    },
+    {
+      "arm_id": "wukong_full",
+      "label": "F5 Wukong-small-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 799080,
+        "matched": 848553,
+        "non_embedding": 855465,
+        "total": 2509577
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1200,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.25165044888854,
+        "validation_macro_nloss": 0.8649446964263916
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6404868442511197,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.559078645703494,
+            "mse_seconds2": 661.3697277707065,
+            "normalized_mse": 0.032580862930320836,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5868341926193362,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8649446964263916,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8649446964263916
+        },
+        "per_target_raw": {
+          "timespent": 0.03258085995912552
+        }
+      }
+    },
+    {
+      "arm_id": "wukong_full",
+      "label": "F5 Wukong-small-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 799080,
+        "matched": 848553,
+        "non_embedding": 855465,
+        "total": 2509577
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 1200,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.098299713805318,
+        "validation_macro_nloss": 0.8584623336791992
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.641881748066234,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.50780545894289,
+            "mse_seconds2": 658.1500673991354,
+            "normalized_mse": 0.03233668179549302,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5882226085594398,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8584623336791992,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8584623336791992
+        },
+        "per_target_raw": {
+          "timespent": 0.032336682081222534
+        }
+      }
+    },
+    {
+      "arm_id": "wukong_full",
+      "label": "F5 Wukong-small-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 799080,
+        "matched": 848553,
+        "non_embedding": 855465,
+        "total": 2509577
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 14.214262574911118,
+        "validation_macro_nloss": 0.8512501120567322
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6452997909503682,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.892415459055872,
+            "mse_seconds2": 654.6357072336054,
+            "normalized_mse": 0.03206501442036321,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.593210864709039,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8512501120567322,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8512501120567322
+        },
+        "per_target_raw": {
+          "timespent": 0.0320650115609169
+        }
+      }
+    },
+    {
+      "arm_id": "wukong_full",
+      "label": "F5 Wukong-small-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 799080,
+        "matched": 848553,
+        "non_embedding": 855465,
+        "total": 2509577
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1200,
+        "nonfinite_training_batches": 0,
+        "seconds": 19.224507220089436,
+        "validation_macro_nloss": 0.8635204434394836
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6425883842862602,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.556878778705684,
+            "mse_seconds2": 660.3080644397431,
+            "normalized_mse": 0.03252721197244848,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5896474231973671,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8635204434394836,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8635204434394836
+        },
+        "per_target_raw": {
+          "timespent": 0.03252721205353737
+        }
+      }
+    },
+    {
+      "arm_id": "wukong_full",
+      "label": "F5 Wukong-small-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 799080,
+        "matched": 848553,
+        "non_embedding": 855465,
+        "total": 2509577
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 1050,
+        "nonfinite_training_batches": 0,
+        "seconds": 17.334588084369898,
+        "validation_macro_nloss": 0.8577062487602234
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6449442224672322,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.331799210917833,
+            "mse_seconds2": 653.0468669142341,
+            "normalized_mse": 0.032308201144986205,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5926008176526636,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8577062487602234,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8577062487602234
+        },
+        "per_target_raw": {
+          "timespent": 0.03230820223689079
+        }
+      }
+    },
+    {
+      "arm_id": "wukong_full",
+      "label": "F5 Wukong-small-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 799080,
+        "matched": 848553,
+        "non_embedding": 855465,
+        "total": 2509577
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 900,
+        "nonfinite_training_batches": 0,
+        "seconds": 15.555822357535362,
+        "validation_macro_nloss": 0.8534055948257446
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6434391516491396,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 18.919448329167867,
+            "mse_seconds2": 656.3736449076549,
+            "normalized_mse": 0.032146203669176754,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5894019778125525,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8534055948257446,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8534055948257446
+        },
+        "per_target_raw": {
+          "timespent": 0.03214620426297188
+        }
+      }
+    },
+    {
+      "arm_id": "wukong_full",
+      "label": "F5 Wukong-small-FULL",
+      "learning_rate": 0.0001,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 799080,
+        "matched": 848553,
+        "non_embedding": 855465,
+        "total": 2509577
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 14.781446423381567,
+        "validation_macro_nloss": 0.8500949144363403
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "timespent": {
+            "global_xauc": 0.6444085031499253,
+            "global_xauc_comparable_pair_coverage": 0.9645831603842207,
+            "global_xauc_comparable_pairs": 13956352251,
+            "kind": "regression",
+            "mae_seconds": 19.01757390384261,
+            "mse_seconds2": 652.2729725675009,
+            "normalized_mse": 0.03202149856296254,
+            "observed_rows": 170111,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5903440749408808,
+            "user_xgauc_group_coverage": 0.6803216395773577,
+            "user_xgauc_retained_groups": 27751,
+            "user_xgauc_row_coverage": 0.9205753890107048,
+            "user_xgauc_total_groups": 40791,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.8500949144363403,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "timespent": 170111
+        },
+        "per_target_normalized": {
+          "timespent": 0.8500949144363403
+        },
+        "per_target_raw": {
+          "timespent": 0.03202149644494057
+        }
+      }
+    }
+  ],
+  "schema_version": 1,
+  "selected_configs_sha256": "cae3cf8c41bb1bbbd7f21b42d12d42e5b1aec0d897955842c3ec4c38ee423cd9",
+  "study": "kuairand_pure_single_target_watch_time",
+  "target": "timespent",
+  "targets": [
+    "timespent"
+  ],
+  "test_unlocked": false
+}

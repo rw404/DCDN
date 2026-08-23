@@ -383,6 +383,26 @@ GEOMETRIES: tuple[Geometry, ...] = (
         quality_source_compatible=True,
     ),
     Geometry(
+        geometry_id="vk_lsvd_ur",
+        description=(
+            "the exact widths the VK-LSVD ur0.01_ir0.01 high-density study "
+            "trained at - 5 categorical fields, 99 reduced and 216 full numeric "
+            "operands, 36 denominators, one head. The denominator share is 36% "
+            "of the reduced operands against 18% on KuaiRand and 9% on the "
+            "vk_lsvd_watch_time geometry below, which is the point of the "
+            "feature design rather than an accident of it. Random inputs only; "
+            "no VK-LSVD row or label is read."
+        ),
+        categorical_fields=5,
+        categorical_cardinality=68_374,
+        embedding_dim=16,
+        reduced_operands=99,
+        full_operands=216,
+        denominator_count=36,
+        num_targets=1,
+        quality_source_compatible=True,
+    ),
+    Geometry(
         geometry_id="vk_lsvd_watch_time",
         description=(
             "the exact widths the VK-LSVD single-head study trained at - 6 "
