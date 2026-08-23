@@ -16,6 +16,26 @@ _FUXICTR = {
 
 
 _SOURCE_PROVENANCE: dict[str, dict[str, Any]] = {
+    "eulernet": {
+        "implementation": "project clean-room from the published equations",
+        "upstream_source": None,
+        "paper": (
+            "Tian et al., EulerNet: Adaptive Feature Interaction Learning via "
+            "Euler's Formula for CTR Prediction, SIGIR 2023"
+        ),
+        "reference_path": None,
+        "reference_sha256": None,
+        "no_source_hash_reason": (
+            "written from the paper's equations rather than from a checked-out "
+            "reference file; inventing a digest for a file this repository has "
+            "not read would be worse than recording its absence"
+        ),
+        "clean_room_basis": (
+            "polar lift, per-layer learned order matrix over the field axis "
+            "applied to log-amplitude and phase, explicit monomial plus "
+            "implicit linear branch, layer norm"
+        ),
+    },
     "dnn": {
         "implementation": "project clean-room baseline",
         "upstream_source": None,

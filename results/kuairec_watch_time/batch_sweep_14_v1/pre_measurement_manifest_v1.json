@@ -1,0 +1,55 @@
+{
+  "artifact_role": "rq2_batch_sweep_pre_measurement_manifest",
+  "batches": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64,
+    128,
+    256,
+    512,
+    1024,
+    2048,
+    4096,
+    8192,
+    16384
+  ],
+  "best_implementation": {
+    "afn_full": "reference",
+    "afn_reduced": "reference",
+    "dcdn_full": "fused",
+    "dcdn_reduced": "fused",
+    "dcnv2_capacity_reduced": "reference",
+    "dcnv2_full": "reference",
+    "dcnv2_reduced": "reference"
+  },
+  "geometry": "kuairec_watch_time",
+  "host_state_at_start": {
+    "cpu_count": 128,
+    "cuda_version": "12.8",
+    "device_multi_processor_count": 108,
+    "device_name": "NVIDIA A100-SXM4-80GB",
+    "device_total_memory_bytes": 85093777408,
+    "host_idle": false,
+    "idle_ceiling": 2.0,
+    "load_average_15m": 6.703125,
+    "load_average_1m": 6.32666015625,
+    "load_average_5m": 7.228515625,
+    "platform": "Linux-6.8.0-100-generic-x86_64-with-glibc2.39",
+    "torch_version": "2.8.0+cu128"
+  },
+  "purpose": "trace serving cost across the production batch range rather than at the single frozen operating point B=1, which is the worst case for this comparison because both architectures are launch-bound there",
+  "reads_dataset_rows": false,
+  "reads_test_metrics": false,
+  "schema_version": 1,
+  "sweep_protocol": {
+    "independent_rounds": 3,
+    "note": "lighter than the headline 200/1000/5 protocol; this grid traces a shape across 15 batch sizes and does not re-decide the frozen threshold",
+    "synchronized_forwards": 300,
+    "warmups": 50
+  },
+  "trains_any_model": false
+}

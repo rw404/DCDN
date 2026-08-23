@@ -1,0 +1,48 @@
+{
+  "artifact_role": "user_grouped_ndcg_from_cached_predictions",
+  "cutoffs": [
+    5,
+    10,
+    50
+  ],
+  "eligibility": "at_least_one_positive_and_at_least_two_rows",
+  "ranking_unit": "all_of_a_users_validation_rows",
+  "ranking_unit_is_a_study_construction_not_a_released_candidate_list": true,
+  "rows": [
+    {
+      "arm_id": "eulernet_full",
+      "eligible_users": 24326,
+      "ndcg_at_10": 0.8514578167092358,
+      "ndcg_at_10_sd": 0.002551329169755975,
+      "ndcg_at_5": 0.8183456995200686,
+      "ndcg_at_50": 0.8650900674110658,
+      "ndcg_at_50_sd": 0.002345856756911444,
+      "ndcg_at_5_sd": 0.0028253569487760926,
+      "ndcg_full": 0.8651132660908215,
+      "ndcg_full_sd": 0.002344974894645174,
+      "seeds": 8,
+      "tied_adjacent_pair_fraction": 0.12417139083279323,
+      "total_users": 40791,
+      "user_coverage": 0.5963570395430364
+    },
+    {
+      "arm_id": "eulernet_reduced",
+      "eligible_users": 24326,
+      "ndcg_at_10": 0.8497963903114096,
+      "ndcg_at_10_sd": 0.0021374871991593956,
+      "ndcg_at_5": 0.8165433182558932,
+      "ndcg_at_50": 0.8637124626643828,
+      "ndcg_at_50_sd": 0.0019498094574996688,
+      "ndcg_at_5_sd": 0.0025054806594760385,
+      "ndcg_full": 0.8637368275026109,
+      "ndcg_full_sd": 0.0019503499594584687,
+      "seeds": 8,
+      "tied_adjacent_pair_fraction": 0.12417754387116359,
+      "total_users": 40791,
+      "user_coverage": 0.5963570395430364
+    }
+  ],
+  "schema_version": 1,
+  "source_predictions": "/home/codex/.cache/dcdn-public/predictions/timespent_gt10_euler_v1.npz",
+  "tie_break": "stable_sort_by_row_position"
+}

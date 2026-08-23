@@ -64,6 +64,7 @@ from dcdn.models.cross import (  # noqa: E402
     DCNv2CapacityCoreConfig,
     DCNv2FullRankConfig,
 )
+from dcdn.models.euler import EulerNetConfig  # noqa: E402
 from dcdn.models.dcdn import DCDNCoreConfig  # noqa: E402
 from dcdn.models.field import (  # noqa: E402
     AutoIntPlusConfig,
@@ -362,6 +363,20 @@ def build_field_arms() -> tuple[Arm, ...]:
             WukongSmallConfig(
                 num_layers=2, lcb_features=16, fmb_features=16, fmb_rank=8,
                 fmb_hidden_dims=(256, 256), dropout=0.0, layer_norm=True,
+            )),
+        # EulerNet is the second algebraic prior in the field, after AFN+: in
+        # polar form a monomial with arbitrary real exponents is linear, so a
+        # learned coefficient of -1 is reachable and division is inside its
+        # hypothesis class. Three layers of sixteen order-fields is the source
+        # paper's mid-size setting; it is a published configuration like the
+        # other four field arms, not a capacity-matched comparator.
+        Arm("eulernet_full", "F6 EulerNet-FULL", "full",
+            EulerNetConfig(
+                num_layers=3, fields_per_layer=16, dropout=0.0, exp_clip=10.0,
+            )),
+        Arm("eulernet_reduced", "F7 EulerNet-REDUCED", "reduced",
+            EulerNetConfig(
+                num_layers=3, fields_per_layer=16, dropout=0.0, exp_clip=10.0,
             )),
     )
 

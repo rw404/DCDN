@@ -1,0 +1,963 @@
+{
+  "annex_seeds": [
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "arm_subset": [
+    "eulernet_full",
+    "eulernet_reduced"
+  ],
+  "artifact_role": "kuairand_pure_single_target_results",
+  "cached_predictions_path": "/home/codex/.cache/dcdn-public/predictions/watch_time_euler_v1.npz",
+  "cached_predictions_sha256": "d05a1ca9dbddbc2170bb3696b568ac064adabc05e80755eb1d40a74f1f77e8c6",
+  "evaluated_split": "validation",
+  "final_seeds": [
+    42,
+    43,
+    44
+  ],
+  "is_a_partial_study": true,
+  "is_the_frozen_single_target_study": false,
+  "pre_training_manifest_sha256": "4aa5e8e271e9172ef8ccfbedf325c6a9a8d0a5d69dddfbe85a47e15fb43ff8d4",
+  "records": [
+    {
+      "arm_id": "eulernet_full",
+      "label": "F6 EulerNet-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 1170556,
+        "matched": 1220029,
+        "non_embedding": 1227837,
+        "total": 1997949
+      },
+      "regime": "full",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 17.287904873490334,
+        "validation_macro_nloss": 0.22287215292453766
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5233335841651264,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 6.458766046812612,
+            "mse_seconds2": 375.26775874480865,
+            "normalized_mse": 0.0019340571024559538,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5311321016774087,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.22287215292453766,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.22287215292453766
+        },
+        "per_target_raw": {
+          "watch_time": 0.0019340572180226445
+        },
+        "watch_time_mae": 0.014715665951371193,
+        "watch_time_mae_seconds": 6.48567960174568
+      }
+    },
+    {
+      "arm_id": "eulernet_full",
+      "label": "F6 EulerNet-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 1170556,
+        "matched": 1220029,
+        "non_embedding": 1227837,
+        "total": 1997949
+      },
+      "regime": "full",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 23.09546149522066,
+        "validation_macro_nloss": 0.25354284048080444
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5217003602906942,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 13.805552181943243,
+            "mse_seconds2": 427.38175053302626,
+            "normalized_mse": 0.0022002135466753234,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5302284107387624,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.25354284048080444,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.25354284048080444
+        },
+        "per_target_raw": {
+          "watch_time": 0.0022002137266099453
+        },
+        "watch_time_mae": 0.03132406994700432,
+        "watch_time_mae_seconds": 13.805551319953054
+      }
+    },
+    {
+      "arm_id": "eulernet_full",
+      "label": "F6 EulerNet-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 1170556,
+        "matched": 1220029,
+        "non_embedding": 1227837,
+        "total": 1997949
+      },
+      "regime": "full",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 28.95900028012693,
+        "validation_macro_nloss": 0.3055577874183655
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5472774517286189,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 12.065772084451007,
+            "mse_seconds2": 476.49744619572954,
+            "normalized_mse": 0.00265159308865981,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5044163118447272,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.3055577874183655,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.3055577874183655
+        },
+        "per_target_raw": {
+          "watch_time": 0.0026515929494053125
+        },
+        "watch_time_mae": 0.03196446970105171,
+        "watch_time_mae_seconds": 14.087796624753624
+      }
+    },
+    {
+      "arm_id": "eulernet_full",
+      "label": "F6 EulerNet-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 1170556,
+        "matched": 1220029,
+        "non_embedding": 1227837,
+        "total": 1997949
+      },
+      "regime": "full",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 28.88068891875446,
+        "validation_macro_nloss": 0.5601657032966614
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5501302117563414,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 18.13705500896122,
+            "mse_seconds2": 944.2372772654971,
+            "normalized_mse": 0.00486104906181137,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5087172496035868,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.5601657032966614,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.5601657032966614
+        },
+        "per_target_raw": {
+          "watch_time": 0.0048610493540763855
+        },
+        "watch_time_mae": 0.04115202650427818,
+        "watch_time_mae_seconds": 18.137056097310037
+      }
+    },
+    {
+      "arm_id": "eulernet_full",
+      "label": "F6 EulerNet-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 1170556,
+        "matched": 1220029,
+        "non_embedding": 1227837,
+        "total": 1997949
+      },
+      "regime": "full",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 750,
+        "nonfinite_training_batches": 0,
+        "seconds": 28.867950862273574,
+        "validation_macro_nloss": 0.3720172047615051
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5460849528759105,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 14.953313276460687,
+            "mse_seconds2": 603.8660409754333,
+            "normalized_mse": 0.003228319832722369,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5046298585100555,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.3720172047615051,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.3720172047615051
+        },
+        "per_target_raw": {
+          "watch_time": 0.0032283198088407516
+        },
+        "watch_time_mae": 0.03685274347662926,
+        "watch_time_mae_seconds": 16.24222019068524
+      }
+    },
+    {
+      "arm_id": "eulernet_full",
+      "label": "F6 EulerNet-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 1170556,
+        "matched": 1220029,
+        "non_embedding": 1227837,
+        "total": 1997949
+      },
+      "regime": "full",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 20.44553668051958,
+        "validation_macro_nloss": 0.42266416549682617
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 7.151892342307369,
+            "mse_seconds2": 419.1621200501962,
+            "normalized_mse": 0.0036678277667314373,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.42266416549682617,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.42266416549682617
+        },
+        "per_target_raw": {
+          "watch_time": 0.0036678279284387827
+        },
+        "watch_time_mae": 0.04247305914759636,
+        "watch_time_mae_seconds": 18.719278777297585
+      }
+    },
+    {
+      "arm_id": "eulernet_full",
+      "label": "F6 EulerNet-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 1170556,
+        "matched": 1220029,
+        "non_embedding": 1227837,
+        "total": 1997949
+      },
+      "regime": "full",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 25.979315631091595,
+        "validation_macro_nloss": 0.5277554988861084
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5428134075475732,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 26.99278851047773,
+            "mse_seconds2": 889.6053530670496,
+            "normalized_mse": 0.004579797210741576,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5126310200289295,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.5277554988861084,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.5277554988861084
+        },
+        "per_target_raw": {
+          "watch_time": 0.004579797387123108
+        },
+        "watch_time_mae": 0.06124521791934967,
+        "watch_time_mae_seconds": 26.99278862924874
+      }
+    },
+    {
+      "arm_id": "eulernet_full",
+      "label": "F6 EulerNet-FULL",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 1170556,
+        "matched": 1220029,
+        "non_embedding": 1227837,
+        "total": 1997949
+      },
+      "regime": "full",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 25.966134544461966,
+        "validation_macro_nloss": 0.44363152980804443
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5528309983236578,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 16.79704562731792,
+            "mse_seconds2": 747.800452700306,
+            "normalized_mse": 0.0038497798502581315,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5065167386863654,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.44363152980804443,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.44363152980804443
+        },
+        "per_target_raw": {
+          "watch_time": 0.003849780187010765
+        },
+        "watch_time_mae": 0.038112442940473557,
+        "watch_time_mae_seconds": 16.797411314483732
+      }
+    },
+    {
+      "arm_id": "eulernet_reduced",
+      "label": "F7 EulerNet-REDUCED",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 709900,
+        "matched": 759373,
+        "non_embedding": 763597,
+        "total": 1533709
+      },
+      "regime": "reduced",
+      "seed": 42,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 16.125995885580778,
+        "validation_macro_nloss": 0.28716692328453064
+      },
+      "tuning_contaminated": true,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 7.151892342307369,
+            "mse_seconds2": 419.1621200501962,
+            "normalized_mse": 0.0024919995264960507,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.28716692328453064,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.28716692328453064
+        },
+        "per_target_raw": {
+          "watch_time": 0.0024919994175434113
+        },
+        "watch_time_mae": 0.02445697784423828,
+        "watch_time_mae_seconds": 10.77899721622467
+      }
+    },
+    {
+      "arm_id": "eulernet_reduced",
+      "label": "F7 EulerNet-REDUCED",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 709900,
+        "matched": 759373,
+        "non_embedding": 763597,
+        "total": 1533709
+      },
+      "regime": "reduced",
+      "seed": 43,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 16.094446759670973,
+        "validation_macro_nloss": 0.32738053798675537
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 7.151892342307369,
+            "mse_seconds2": 419.1621200501962,
+            "normalized_mse": 0.0028409684090074184,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.32738053798675537,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.32738053798675537
+        },
+        "per_target_raw": {
+          "watch_time": 0.0028409683145582676
+        },
+        "watch_time_mae": 0.030805476009845734,
+        "watch_time_mae_seconds": 13.57698985824734
+      }
+    },
+    {
+      "arm_id": "eulernet_reduced",
+      "label": "F7 EulerNet-REDUCED",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 709900,
+        "matched": 759373,
+        "non_embedding": 763597,
+        "total": 1533709
+      },
+      "regime": "reduced",
+      "seed": 44,
+      "seed_class": "frozen_protocol",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 16.335814647376537,
+        "validation_macro_nloss": 0.7306204438209534
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5083586055474449,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 32.93271012069763,
+            "mse_seconds2": 1231.562492815518,
+            "normalized_mse": 0.00634023440844262,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5203842749813358,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.7306204438209534,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.7306204438209534
+        },
+        "per_target_raw": {
+          "watch_time": 0.006340234540402889
+        },
+        "watch_time_mae": 0.07472258806228638,
+        "watch_time_mae_seconds": 32.93271040445566
+      }
+    },
+    {
+      "arm_id": "eulernet_reduced",
+      "label": "F7 EulerNet-REDUCED",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 709900,
+        "matched": 759373,
+        "non_embedding": 763597,
+        "total": 1533709
+      },
+      "regime": "reduced",
+      "seed": 45,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 13.87976255454123,
+        "validation_macro_nloss": 0.22585973143577576
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5217638812351226,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 10.718002577238043,
+            "mse_seconds2": 380.71800910396894,
+            "normalized_mse": 0.0019599828959685076,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5184445669128289,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.22585973143577576,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.22585973143577576
+        },
+        "per_target_raw": {
+          "watch_time": 0.0019599830266088247
+        },
+        "watch_time_mae": 0.02431858703494072,
+        "watch_time_mae_seconds": 10.718003819670528
+      }
+    },
+    {
+      "arm_id": "eulernet_reduced",
+      "label": "F7 EulerNet-REDUCED",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 709900,
+        "matched": 759373,
+        "non_embedding": 763597,
+        "total": 1533709
+      },
+      "regime": "reduced",
+      "seed": 46,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 600,
+        "nonfinite_training_batches": 0,
+        "seconds": 20.923140164464712,
+        "validation_macro_nloss": 0.28095218539237976
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5485775547977526,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 12.681517693136849,
+            "mse_seconds2": 471.9565730175762,
+            "normalized_mse": 0.002438068270833272,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5018517745910955,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.28095218539237976,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.28095218539237976
+        },
+        "per_target_raw": {
+          "watch_time": 0.0024380686227232218
+        },
+        "watch_time_mae": 0.029092906042933464,
+        "watch_time_mae_seconds": 12.822203759020194
+      }
+    },
+    {
+      "arm_id": "eulernet_reduced",
+      "label": "F7 EulerNet-REDUCED",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 709900,
+        "matched": 759373,
+        "non_embedding": 763597,
+        "total": 1533709
+      },
+      "regime": "reduced",
+      "seed": 47,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 300,
+        "nonfinite_training_batches": 0,
+        "seconds": 16.304784405976534,
+        "validation_macro_nloss": 0.2241472452878952
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5346280541059609,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 9.083954674184907,
+            "mse_seconds2": 375.1830598318794,
+            "normalized_mse": 0.001945122347728761,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.49933719603761956,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.2241472452878952,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.2241472452878952
+        },
+        "per_target_raw": {
+          "watch_time": 0.0019451223779469728
+        },
+        "watch_time_mae": 0.02106848545372486,
+        "watch_time_mae_seconds": 9.28557679947652
+      }
+    },
+    {
+      "arm_id": "eulernet_reduced",
+      "label": "F7 EulerNet-REDUCED",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 709900,
+        "matched": 759373,
+        "non_embedding": 763597,
+        "total": 1533709
+      },
+      "regime": "reduced",
+      "seed": 48,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 150,
+        "nonfinite_training_batches": 0,
+        "seconds": 13.802478360012174,
+        "validation_macro_nloss": 0.40990281105041504
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5481662181085761,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 19.90835065388882,
+            "mse_seconds2": 690.9249406679801,
+            "normalized_mse": 0.0035570862553794273,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5206881888580807,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.40990281105041504,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.40990281105041504
+        },
+        "per_target_raw": {
+          "watch_time": 0.003557086456567049
+        },
+        "watch_time_mae": 0.04517759382724762,
+        "watch_time_mae_seconds": 19.911256460264326
+      }
+    },
+    {
+      "arm_id": "eulernet_reduced",
+      "label": "F7 EulerNet-REDUCED",
+      "learning_rate": 0.003,
+      "parameters": {
+        "adapter": 32832,
+        "head": 16641,
+        "interaction": 709900,
+        "matched": 759373,
+        "non_embedding": 763597,
+        "total": 1533709
+      },
+      "regime": "reduced",
+      "seed": 49,
+      "seed_class": "stability_annex",
+      "training": {
+        "best_step": 450,
+        "nonfinite_training_batches": 0,
+        "seconds": 18.37101960554719,
+        "validation_macro_nloss": 0.4135540723800659
+      },
+      "tuning_contaminated": false,
+      "validation": {
+        "frozen_metrics": {
+          "watch_time": {
+            "global_xauc": 0.5337376161919244,
+            "global_xauc_comparable_pair_coverage": 0.9997608947944585,
+            "global_xauc_comparable_pairs": 48501254629,
+            "kind": "regression",
+            "mae_seconds": 21.23671339716735,
+            "mse_seconds2": 697.0299513793426,
+            "normalized_mse": 0.0035887715575277108,
+            "observed_rows": 311490,
+            "session_gauc": null,
+            "session_gauc_availability": "not_available_kuairand_pure_has_no_session_identifier",
+            "user_xgauc": 0.5022110480446706,
+            "user_xgauc_group_coverage": 0.9114733276883996,
+            "user_xgauc_retained_groups": 21529,
+            "user_xgauc_row_coverage": 0.9924877203120486,
+            "user_xgauc_total_groups": 23620,
+            "user_xgauc_weighting": "uniform"
+          }
+        },
+        "macro_nloss": 0.4135540723800659,
+        "nonfinite_predictions": 0,
+        "observed_labels": {
+          "watch_time": 311490
+        },
+        "per_target_normalized": {
+          "watch_time": 0.4135540723800659
+        },
+        "per_target_raw": {
+          "watch_time": 0.003588771680369973
+        },
+        "watch_time_mae": 0.048199478536844254,
+        "watch_time_mae_seconds": 21.243100773978977
+      }
+    }
+  ],
+  "schema_version": 1,
+  "selected_configs_sha256": "1ba4e1acf61d9b058b1f5279439bbc9fb34e1043b923ee87d63129b7dd45a058",
+  "study": "kuairand_pure_single_target_watch_time",
+  "target": "watch_time",
+  "targets": [
+    "watch_time"
+  ],
+  "test_unlocked": false
+}

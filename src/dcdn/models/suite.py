@@ -29,6 +29,7 @@ from dcdn.models.cross import (
     OriginalDCNInteraction,
 )
 from dcdn.models.dcdn import DCDNCoreConfig, DCDNCoreInteraction
+from dcdn.models.euler import EulerNetConfig, EulerNetInteraction
 from dcdn.models.field import (
     AutoIntPlusConfig,
     AutoIntPlusInteraction,
@@ -72,6 +73,8 @@ def _build_interaction(
         return AFNPlusInteraction(spec, config)
     if isinstance(config, WukongSmallConfig):
         return WukongInteraction(spec, config)
+    if isinstance(config, EulerNetConfig):
+        return EulerNetInteraction(spec, config)
     if isinstance(config, DCDNCoreConfig):
         return DCDNCoreInteraction(spec, config)
     raise TypeError(f"unsupported interaction config: {type(config).__name__}")

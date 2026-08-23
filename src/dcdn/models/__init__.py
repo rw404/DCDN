@@ -17,6 +17,7 @@ from dcdn.models.cross import (
     OriginalDCNInteraction,
 )
 from dcdn.models.dcdn import DCDNCoreConfig, DCDNCoreInteraction
+from dcdn.models.euler import EulerNetConfig, EulerNetInteraction
 from dcdn.models.field import (
     AutoIntPlusConfig,
     AutoIntPlusInteraction,
@@ -44,6 +45,8 @@ __all__ = [
     "AutoIntPlusConfig",
     "AutoIntPlusInteraction",
     "DCDNCoreConfig",
+    "EulerNetConfig",
+    "EulerNetInteraction",
     "DCDNCoreInteraction",
     "DCNConfig",
     "DCNv2CapacityCoreConfig",

@@ -1,0 +1,59 @@
+{
+  "artifact_role": "kuairand_pure_single_target_selected_configs",
+  "capacity_resolution": {
+    "candidates_considered": 768,
+    "flop_contract": "dcdn-forward-floating-arithmetic-flops-v1",
+    "lower_bracket": null,
+    "matched": true,
+    "selected": {
+      "adapter_flops": 22912,
+      "adapter_parameters": 11520,
+      "expert_flops": 39176,
+      "expert_parameters": 19440,
+      "flops": 95376,
+      "head_flops": 33088,
+      "head_parameters": 16641,
+      "interaction_flops": 39376,
+      "interaction_flops_per_layer": 39376,
+      "interaction_parameters": 19638,
+      "interaction_parameters_per_layer": 19638,
+      "low_rank": 72,
+      "num_experts": 1,
+      "num_layers": 1,
+      "parameters": 47799
+    },
+    "selected_ratios": {
+      "distance": 0.006764336480332258,
+      "flop_ratio": 0.996624834115299,
+      "parameter_ratio": 0.9966222555826609,
+      "within_tolerance": true
+    },
+    "selection_rule": "minimum_log_distance_in_parameter_and_flop_space",
+    "selection_used_validation_quality": false,
+    "target": {
+      "adapter_flops": 22912,
+      "adapter_parameters": 11520,
+      "architecture": "DCDN-Core-L1",
+      "flops": 95699,
+      "head_flops": 33088,
+      "head_parameters": 16641,
+      "interaction_flops": 39699,
+      "interaction_flops_per_layer": 39600,
+      "interaction_parameters": 19800,
+      "interaction_parameters_per_layer": 19800,
+      "num_layers": 1,
+      "parameters": 47961,
+      "reciprocal_flops": 99
+    },
+    "tolerance_fraction": 0.05,
+    "upper_bracket": null
+  },
+  "objective_spec_sha256": "c1c4c2d7d2c26c9a8b5e73093ca8010249ff201be65a64366f39d7b8f32a2c04",
+  "schema_version": 1,
+  "selected_learning_rate": {
+    "eulernet_full": 0.0001,
+    "eulernet_reduced": 0.0001
+  },
+  "target": "timespent_gt10",
+  "task_constants_sha256": "d24f1860dbdcd8b2da4a2913b512fdfc95afe910db8b90444779b0f640ab7449"
+}
