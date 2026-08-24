@@ -1,0 +1,5 @@
+# Measured configuration. Older torch works for everything except the Triton kernel.
+torch==2.8.0
+triton==3.4.0
+numpy>=1.26
+pyyaml>=6.0
