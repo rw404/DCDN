@@ -100,17 +100,16 @@ frozen before any run, and nine architectures at matched capacity. Loss is MSE
 over target variance, so **1.0 is exactly the constant predictor**.
 
 **Result.** Trained across four decades of operand range, DCDN reaches **~1e-06 on
-every slice** — 8x better than AFN+ and 60x better than the capacity-matched
-DCNv2. Outside the trained range it does not hold: the head extrapolates and the
-two branches scale differently. Confirmed narrowly, and the document marks every
-cell where the evaluation slice lies inside the training range.
+every slice** — 8x better than AFN+, 60x better than the capacity-matched DCNv2
+and 1,900x better than DCNv2. The same arms trained on one decade put DCDN at
+**16,830** on the rescaled slice: the training range, not the architecture,
+decides whether the quotient is learned. Confirmed narrowly — every slice in that
+result lies inside the training range, so it is not evidence of extrapolation.
 
 📄 **[`docs/rq1_addenda.md`](docs/rq1_addenda.md)**
 
 ```bash
 python scripts/run_synthetic_train_distribution.py --device cuda:0
-python scripts/run_synthetic_scale_augment.py       --device cuda:0
-python scripts/run_synthetic_single_target.py       --device cuda:0
 ```
 
 No download required — the task is generated.
