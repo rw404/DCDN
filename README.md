@@ -9,8 +9,6 @@ counters is one weight instead of an approximation.**
 
 **Anonymous Authors**
 
-[![paper](https://img.shields.io/badge/paper-{{VENUE}}-1a1a19?style=flat-square)]({{PAPER_URL}})
-[![arXiv](https://img.shields.io/badge/arXiv-{{ARXIV_ID}}-eb6834?style=flat-square)]({{ARXIV_URL}})
 [![python](https://img.shields.io/badge/python-3.12-2a78d6?style=flat-square)](https://www.python.org)
 [![torch](https://img.shields.io/badge/torch-2.8%20%2B%20cu128-1baf7a?style=flat-square)](https://pytorch.org)
 [![license](https://img.shields.io/badge/license-Apache%202.0-6b6b6b?style=flat-square)](LICENSE)
