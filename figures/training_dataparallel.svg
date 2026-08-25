@@ -2,10 +2,10 @@
 <rect width="720" height="376" fill="#ffffff"/>
 <defs>
 <clipPath id="clip_1">
-<path transform="matrix(1,0,0,-1,0,448.08)" d="M0 72.08H720V448.08H0Z" clip-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,390)" d="M0 14H720V390H0Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_2">
-<path transform="matrix(.24,0,0,.24,0,0)" d="M0 0H3000V1865.62H0Z" clip-rule="evenodd"/>
+<path transform="matrix(.24,0,0,.24,0,0)" d="M0 0H3000V1625H0Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_3">
 <path transform="matrix(.24,0,0,.24,0,0)" d="M62.5 62.5H2937.5V1562.5H62.5Z" clip-rule="evenodd"/>
@@ -26,9 +26,6 @@
 <path transform="matrix(.001,0,0,-.001,0,0)" d="M201.66 0H73.72V-522.34H201.66V-434.81H207.08C217.39-462.74 234.16-486.31 257.4-505.52 280.63-524.74 312.53-534.34 353.08-534.34 406.41-534.34 447.52-516.5 476.4-480.82 505.28-445.14 519.72-394.73 519.72-329.59V0H391.78V-317C391.78-353.9 385.12-381.7 371.8-400.42 358.47-419.14 336.48-428.5 305.81-428.5 288.32-428.5 271.65-425.47 255.8-419.41 239.94-413.36 226.96-404.14 216.84-391.75 206.72-379.36 201.66-363.89 201.66-345.31V0Z"/>
 </g>
 <g id="font_5_7">
-</g>
-<g id="font_4_53">
-<path transform="matrix(.001,0,0,-.001,0,0)" d="M382.12 0H249.47V-273.89L10.19-698H158.34L318.97-402.89H321.27L477.66-698H622.3L382.12-275.47V0Z"/>
 </g>
 <g id="font_4_22">
 <path transform="matrix(.001,0,0,-.001,0,0)" d="M328.61 0H237.08C193.29 0 159.83-11.53 136.7-34.58 113.58-57.63 102.02-90.42 102.02-132.94V-420.62H24.77V-522.34H65.02C84.24-522.34 97.38-526.78 104.41-535.66 111.44-544.54 114.95-557.89 114.95-575.69V-664.64H229.95V-522.34H336.61V-420.62H229.95V-101.72H328.61V0Z"/>
@@ -238,8 +235,7 @@
 </defs>
 <g clip-path="url(#clip_1)">
 <g clip-path="url(#clip_2)">
-<path transform="matrix(.75,0,0,.75,0,0)" d="M0 0H960V597H0Z" fill="#ffffff"/>
-<path transform="matrix(.75,0,0,.75,0,0)" d="M0 0H960V597H0Z" fill="#ffffff"/>
+<path transform="matrix(.75,0,0,.75,0,0)" d="M0 0H960V520H0Z" fill="#ffffff"/>
 </g>
 <g clip-path="url(#clip_3)">
 <use data-text="T" xlink:href="#font_4_48" transform="matrix(11.25,0,0,-11.25,15,30)" fill="#24282c"/>
@@ -248,14 +244,11 @@
 <use data-text="i" xlink:href="#font_4_11" transform="matrix(11.25,0,0,-11.25,31.61,30)" fill="#24282c"/>
 <use data-text="n" xlink:href="#font_4_16" transform="matrix(11.25,0,0,-11.25,34.7,30)" fill="#24282c"/>
 <use data-text=" " xlink:href="#font_5_7" transform="matrix(11.25,0,0,-11.25,41.32,30)" fill="#24282c"/>
-<use data-text="Y" xlink:href="#font_4_53" transform="matrix(11.25,0,0,-11.25,43.97,30)" fill="#24282c"/>
-<use data-text="T" xlink:href="#font_4_48" transform="matrix(11.25,0,0,-11.25,51.13,30)" fill="#24282c"/>
-<use data-text=" " xlink:href="#font_5_7" transform="matrix(11.25,0,0,-11.25,57.66,30)" fill="#24282c"/>
-<use data-text="t" xlink:href="#font_4_22" transform="matrix(11.25,0,0,-11.25,60.31,30)" fill="#24282c"/>
-<use data-text="a" xlink:href="#font_4_1" transform="matrix(11.25,0,0,-11.25,64.52,30)" fill="#24282c"/>
-<use data-text="b" xlink:href="#font_4_3" transform="matrix(11.25,0,0,-11.25,70.8,30)" fill="#24282c"/>
-<use data-text="l" xlink:href="#font_4_14" transform="matrix(11.25,0,0,-11.25,77.55,30)" fill="#24282c"/>
-<use data-text="e" xlink:href="#font_4_6" transform="matrix(11.25,0,0,-11.25,80.85,30)" fill="#24282c"/>
+<use data-text="t" xlink:href="#font_4_22" transform="matrix(11.25,0,0,-11.25,43.97,30)" fill="#24282c"/>
+<use data-text="a" xlink:href="#font_4_1" transform="matrix(11.25,0,0,-11.25,48.17,30)" fill="#24282c"/>
+<use data-text="b" xlink:href="#font_4_3" transform="matrix(11.25,0,0,-11.25,54.46,30)" fill="#24282c"/>
+<use data-text="l" xlink:href="#font_4_14" transform="matrix(11.25,0,0,-11.25,61.21,30)" fill="#24282c"/>
+<use data-text="e" xlink:href="#font_4_6" transform="matrix(11.25,0,0,-11.25,64.51,30)" fill="#24282c"/>
 <use data-text="r" xlink:href="#font_6_20" transform="matrix(9.75,0,0,-9.75,15,42)" fill="#687176"/>
 <use data-text="a" xlink:href="#font_6_1" transform="matrix(9.75,0,0,-9.75,18.54,42)" fill="#687176"/>
 <use data-text="n" xlink:href="#font_6_16" transform="matrix(9.75,0,0,-9.75,23.75,42)" fill="#687176"/>
