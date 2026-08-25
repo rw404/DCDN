@@ -17,6 +17,7 @@ counters is one weight instead of an approximation.**
 
 **[Notebook](dcdn_synthetic_and_explainability.ipynb)** ·
 **[Fused Triton kernel](#the-fused-inference-kernel)** ·
+[Training throughput](#training-throughput) ·
 [RQ1 quotient learning](#rq1--quotient-learning) ·
 [RQ2 quality and latency](#rq2--quality-and-inference-efficiency) ·
 [RQ3 capacity](#rq3--capacity) ·
@@ -373,6 +374,37 @@ non-negative quadrant for DCNv2. Grey points lie inside the degree bound and are
 still out of reach, because one layer can apply the reciprocal only once. The
 notebook enumerates the same set and prints its counts, so the picture and the
 code agree by construction.
+
+---
+
+## Training throughput
+
+The production ranker trains on a range-partitioned table that is **streamed**
+rather than materialised: four H100s under DDP, sixteen reader workers, one
+optimizer step per global batch of 20,000 rows.
+
+<div align="center">
+<img src="figures/training_dataparallel.svg" alt="Range-partitioned streaming reads feeding four H100s under DDP" width="100%">
+</div>
+
+Each worker owns a **contiguous** slice, so every read is a sequential scan and
+the storage layer never sees a random access pattern. Shuffling is done where it
+is cheap — the loader permutes the **chunk fronts already resident in memory**
+instead of the table, so an assembled batch interleaves all sixteen workers while
+each underlying read stays in order. Gradients meet once per step, in a DDP
+all-reduce across the four devices.
+
+<div align="center">
+<img src="figures/training_read_overlap.svg" alt="Reading and training overlapped through a three-slot chunk buffer" width="100%">
+</div>
+
+Reading and training are overlapped by one chunk. A worker hands its chunk to the
+buffer and starts reading the next range immediately, so at step `t+2` the
+devices train on chunk 3 while chunk 5 is already being read. A chunk stays
+resident for exactly three columns — read, queued, trained — which is why three
+buffer slots are enough and a fourth would be idle: chunk 5 takes the slot chunk
+2 has just released. The devices never wait on the read and the read never waits
+on the devices, and that overlap is what makes a 20,000-row batch affordable.
 
 ---
 
