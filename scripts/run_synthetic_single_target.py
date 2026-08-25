@@ -21,7 +21,7 @@ targets would choose alone. That is testable, and this is the test. The
 prediction it makes is specific: if interference is the cause, the absolute OOD
 loss should fall substantially when each target is trained alone. If it does
 not, interference is not the explanation and the local-approximation reading in
-`docs/rq1_verdict.md` §6.1 stands.
+`docs/rq1_verdict.md` Section 6.1 stands.
 
 The same question was raised on KuaiRand as RQ4; this is the cheaper synthetic
 version of it.

@@ -13,10 +13,10 @@ on the same input.
 ## The control
 
 `dcnv2_capacity_reduced` is the only mechanically matched comparator in the
-suite. It is chosen by search over (rank 1–64) × (layers 1–2) × (experts 1, 2, 4)
-to land within **±5%** of `dcdn_reduced` on both trainable non-embedding
+suite. It is chosen by search over (rank 1–64) x (layers 1–2) x (experts 1, 2, 4)
+to land within **+/-5%** of `dcdn_reduced` on both trainable non-embedding
 parameters and FLOPs, **with no metric read** — the selection sees counts only.
-Realised agreement is **±0.2%**.
+Realised agreement is **+/-0.2%**.
 
 Both models receive exactly the same `F_reduced` inputs. To keep the comparison
 uniform across four datasets with three different primary metrics, quality is
@@ -26,20 +26,20 @@ reported as **nDCG@10** throughout.
 
 | arm | in | Yambda-50M | KuaiRec | KuaiRand-Pure | VK-LSVD ur | vs `dcdn_reduced` |
 |---|---|---|---|---|---|---|
-| dcn_full | FULL | 34,457 | 31,745 | 49,809 | 43,745 | 0.82× |
-| **dcdn_reduced** | RED | 44,021 | 31,725 | 72,681 | 51,129 | **1.00×** |
-| **dcnv2_capacity_reduced** | RED* | 44,034 | 31,794 | 72,850 | 50,967 | **1.00×** |
-| dcnv2_reduced | RED | 74,357 | 60,685 | 173,289 | 95,769 | 1.89× |
-| dcdn_full | FULL | 69,845 | 49,665 | 167,881 | 136,305 | 1.95× |
-| dcnv2_full | FULL | 112,469 | 93,345 | 325,833 | 218,385 | 3.61× |
-| mlp_full | FULL | 446,993 | 436,977 | 520,113 | 488,817 | 9.86× |
-| eulernet_reduced | RED | 556,475 | 411,368 | 763,597 | 614,473 | 12.33× |
-| wukong_full | FULL | 676,881 | 597,225 | 922,081 | 855,465 | 16.05× |
-| eulernet_full | FULL | 755,435 | 602,038 | 1,227,837 | 1,099,438 | 18.07× |
-| deepfm_full | FULL | 1,253,330 | 1,014,722 | 1,988,274 | 1,788,482 | 30.23× |
-| afn_reduced | RED | 1,822,199 | 1,528,625 | 2,241,243 | 1,939,539 | 39.66× |
-| autoint_full | FULL | 1,684,897 | 1,295,329 | 2,884,961 | 2,558,689 | 40.26× |
-| afn_full | FULL | 2,224,727 | 1,914,381 | 3,180,475 | 2,920,701 | 53.83× |
+| dcn_full | FULL | 34,457 | 31,745 | 49,809 | 43,745 | 0.82x |
+| **dcdn_reduced** | RED | 44,021 | 31,725 | 72,681 | 51,129 | **1.00x** |
+| **dcnv2_capacity_reduced** | RED* | 44,034 | 31,794 | 72,850 | 50,967 | **1.00x** |
+| dcnv2_reduced | RED | 74,357 | 60,685 | 173,289 | 95,769 | 1.89x |
+| dcdn_full | FULL | 69,845 | 49,665 | 167,881 | 136,305 | 1.95x |
+| dcnv2_full | FULL | 112,469 | 93,345 | 325,833 | 218,385 | 3.61x |
+| mlp_full | FULL | 446,993 | 436,977 | 520,113 | 488,817 | 9.86x |
+| eulernet_reduced | RED | 556,475 | 411,368 | 763,597 | 614,473 | 12.33x |
+| wukong_full | FULL | 676,881 | 597,225 | 922,081 | 855,465 | 16.05x |
+| eulernet_full | FULL | 755,435 | 602,038 | 1,227,837 | 1,099,438 | 18.07x |
+| deepfm_full | FULL | 1,253,330 | 1,014,722 | 1,988,274 | 1,788,482 | 30.23x |
+| afn_reduced | RED | 1,822,199 | 1,528,625 | 2,241,243 | 1,939,539 | 39.66x |
+| autoint_full | FULL | 1,684,897 | 1,295,329 | 2,884,961 | 2,558,689 | 40.26x |
+| afn_full | FULL | 2,224,727 | 1,914,381 | 3,180,475 | 2,920,701 | 53.83x |
 
 ### Interaction block only
 
@@ -64,23 +64,23 @@ reported as **nDCG@10** throughout.
 
 ## Result
 
-Latency is eager-mode p50 in milliseconds at batch size 8192. Δ is
+Latency is eager-mode p50 in milliseconds at batch size 8192. \Delta is
 `dcdn_reduced` minus `dcnv2_capacity_reduced`.
 
 | | nDCG@10 | | | p50 latency (ms) | | |
 |---|---|---|---|---|---|---|
-| **Dataset** | **DCNv2-cm** | **DCDN-r** | **Δ** | **DCNv2-cm** | **DCDN-r** | **speedup** |
-| Yambda | 0.7571 | **0.7590** | **+0.0019** | 0.718 | **0.622** | **1.15×** |
-| KuaiRec | 0.4375 | **0.4441** | **+0.0066** | 0.731 | **0.635** | **1.15×** |
-| KuaiRand | 0.6719 | **0.6765** | **+0.0046** | 1.045 | **0.713** | **1.47×** |
-| VK-LSVD | 0.8521 | **0.8535** | **+0.0014** | 0.838 | **0.644** | **1.30×** |
+| **Dataset** | **DCNv2-cm** | **DCDN-r** | **\Delta** | **DCNv2-cm** | **DCDN-r** | **speedup** |
+| Yambda | 0.7571 | **0.7590** | **+0.0019** | 0.718 | **0.622** | **1.15x** |
+| KuaiRec | 0.4375 | **0.4441** | **+0.0066** | 0.731 | **0.635** | **1.15x** |
+| KuaiRand | 0.6719 | **0.6765** | **+0.0046** | 1.045 | **0.713** | **1.47x** |
+| VK-LSVD | 0.8521 | **0.8535** | **+0.0014** | 0.838 | **0.644** | **1.30x** |
 
 On the unified nDCG@10 view DCDN is ahead of the capacity-matched control on
 **all four datasets**, and cheaper to serve on all four. Deepening the standard
 DCNv2 stack to the same parameter count does not recover the same top-ranking
 quality at the same realised cost — capacity matching equalises analytic counts,
 not realised kernels, and the wider the input geometry the more that gap opens
-(1.47× on KuaiRand's 132 operands against 1.15× on Yambda's 86).
+(1.47x on KuaiRand's 132 operands against 1.15x on Yambda's 86).
 
 ---
 

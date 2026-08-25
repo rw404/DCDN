@@ -32,7 +32,7 @@ was designed for.
 | regime in the paper | internal name | denominators | what it tests |
 |---|---|---|---|
 | Reference range | `id` | 1..10, as trained | did it learn what it saw |
-| Common rescaling | `ood_common_scale` | all operands ×10 | scale invariance — targets are **bitwise identical** to the reference regime |
+| Common rescaling | `ood_common_scale` | all operands x10 | scale invariance — targets are **bitwise identical** to the reference regime |
 | Large denominator | `ood_low_ratio` | 20..60 | quotient below the trained band |
 | Small denominator | `ood_high_ratio` | 0.2..0.6 | quotient above the trained band |
 
@@ -89,22 +89,22 @@ Relative to DCNv2 on the same task, the error is lower by:
 
 | regime | DCDN | DCNv2 | factor |
 |---|---|---|---|
-| Reference range | 4.25e-07 | 5.47e-05 | **129×** |
-| Common rescaling | 1.21e-06 | 1.96e-03 | **1,620×** |
-| Large denominator | 2.81e-07 | 2.05e-04 | **729×** |
-| Small denominator | 8.74e-07 | 6.03e-04 | **690×** |
+| Reference range | 4.25e-07 | 5.47e-05 | **129x** |
+| Common rescaling | 1.21e-06 | 1.96e-03 | **1,620x** |
+| Large denominator | 2.81e-07 | 2.05e-04 | **729x** |
+| Small denominator | 8.74e-07 | 6.03e-04 | **690x** |
 
 Two to three orders of magnitude in every regime. Deepening DCNv2 to a matched
 parameter budget closes part of the gap and none of the order: against
-DCNv2-capacity-matched the factors are **56×**, 983×, 996× and 286×.
+DCNv2-capacity-matched the factors are **56x**, 983x, 996x and 286x.
 
 ### Against the rest of the field
 
 | regime | DCDN | next best | factor |
 |---|---|---|---|
-| Reference range | 4.25e-07 | EulerNet 1.25e-06 | **2.9×** |
-| Large denominator | 2.81e-07 | AutoInt+ 4.21e-07 | 1.5× |
-| Small denominator | 8.74e-07 | Wukong-small 2.32e-05 | **27×** |
+| Reference range | 4.25e-07 | EulerNet 1.25e-06 | **2.9x** |
+| Large denominator | 2.81e-07 | AutoInt+ 4.21e-07 | 1.5x |
+| Small denominator | 8.74e-07 | Wukong-small 2.32e-05 | **27x** |
 
 The largest margin is on small denominators, where `1/d` reaches 5 and the
 quotient leaves the trained band upward — which is where the hypothesis

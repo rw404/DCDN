@@ -15,13 +15,13 @@ fixed serving geometry.
 
 | dataset | target | main evaluation | dim `F_reduced` | dim `F_full` | denominators | loss |
 |---|---|---|---|---|---|---|
-| Yambda-50M | listened ≥ 50% of track duration | AUC, nDCG@10 | 86 | 134 | 12 (14%) | NE |
+| Yambda-50M | listened >= 50% of track duration | AUC, nDCG@10 | 86 | 134 | 12 (14%) | NE |
 | KuaiRec | `watch_ratio > 2` | AUC, nDCG@10 | 50 | 96 | 5 (10%) | NE |
 | KuaiRand-Pure | watch time | XAUC, nDCG@10 | 132 | 244 | 24 (18%) | NMSE |
 | VK-LSVD `ur0.01_ir0.01` | time spent > 10s | AUC, nDCG@10 | 99 | 216 | 36 (36%) | NE |
 
 `F_reduced = B` contains all base features, including every numerator and
-denominator operand, but omits the engineered ratios. `F_full = B ∪ R` adds
+denominator operand, but omits the engineered ratios. `F_full = B \cup R` adds
 those ratios back. The two views differ **only** in whether the normalised
 relations are materialised explicitly.
 
@@ -66,10 +66,10 @@ interaction operator. Higher is better throughout.
 
 **The comparison that matters most is with DCNv2**, because DCDN changes only
 the cross operator while both models see the same `F_full` inputs. DCDN improves
-the primary metric on **every** dataset — AUC 0.81989 → 0.82065 on Yambda,
-0.80482 → 0.80774 on KuaiRec, 0.71303 → 0.72642 on VK-LSVD, and XAUC 0.51854 →
+the primary metric on **every** dataset — AUC 0.81989 -> 0.82065 on Yambda,
+0.80482 -> 0.80774 on KuaiRec, 0.71303 -> 0.72642 on VK-LSVD, and XAUC 0.51854 ->
 0.52935 on KuaiRand. The same direction holds for nDCG@10 on all four,
-KuaiRand included (0.6718 → 0.6771).
+KuaiRand included (0.6718 -> 0.6771).
 
 **The broader field is more informative than a win count.** DCDN is the best
 model on both reported metrics for KuaiRec and VK-LSVD. On Yambda the leaders
@@ -91,18 +91,18 @@ deliberately separate from the production measurements in
 
 | model | Yambda | KuaiRec | KuaiRand | VK-LSVD | vs DCDN |
 |---|---|---|---|---|---|
-| **DCDN** | **0.622** | **0.635** | **0.713** | **0.644** | 1.00× |
-| DCNv2 | 0.614 | 0.622 | 0.816 | 0.663 | 1.01× |
-| DCNv2 capacity-matched | 0.718 | 0.731 | 1.045 | 0.838 | 1.23× |
-| AFN+ | 4.331 | 3.752 | 5.512 | 4.648 | 7.09× |
-| EulerNet | 5.196 | 4.539 | 6.294 | 5.407 | 8.38× |
+| **DCDN** | **0.622** | **0.635** | **0.713** | **0.644** | 1.00x |
+| DCNv2 | 0.614 | 0.622 | 0.816 | 0.663 | 1.01x |
+| DCNv2 capacity-matched | 0.718 | 0.731 | 1.045 | 0.838 | 1.23x |
+| AFN+ | 4.331 | 3.752 | 5.512 | 4.648 | 7.09x |
+| EulerNet | 5.196 | 4.539 | 6.294 | 5.407 | 8.38x |
 
 DCDN stays in the same sub-millisecond regime as DCNv2 across all four feature
 geometries: within **2.1%** of DCNv2 on Yambda and KuaiRec, and *faster* on
 KuaiRand and VK-LSVD, where the wider input makes DCNv2's larger cross stack
 cost more than the reciprocal branch. The two architectures that can also
 express negative or non-integer interaction orders sit an order of magnitude
-away — AFN+ at **5.9×–7.7×** the DCDN latency and EulerNet at **7.1×–8.8×**.
+away — AFN+ at **5.9x–7.7x** the DCDN latency and EulerNet at **7.1x–8.8x**.
 
 That is the trade-off DCDN targets. It does not attempt to match the generality
 of AFN+ or EulerNet; it specialises the interaction family to reciprocal
@@ -214,9 +214,9 @@ threshold.
 
 | arm | parameters vs `dcdn_reduced` | latency vs `dcdn_reduced` | median quality rank |
 |---|---|---|---|
-| `afn_full` | 53.8× | 9.9× | 2.5 |
-| `eulernet_full` | 18.1× | 11.1× | 3.5 |
-| **`dcdn_full`** | **1.9×** | **1.2×** | **4.0** |
+| `afn_full` | 53.8x | 9.9x | 2.5 |
+| `eulernet_full` | 18.1x | 11.1x | 3.5 |
+| **`dcdn_full`** | **1.9x** | **1.2x** | **4.0** |
 
 AFN+ and EulerNet are substantially more general; DCDN deliberately hard-codes
 only the reciprocal direction. Both of the general arms outrank DCDN on median

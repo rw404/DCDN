@@ -2,7 +2,7 @@
 
 The single-target rule in ``dcdn.capacity_artifact`` matches a control to
 ``DCDN-Core`` on trainable non-embedding parameters *and* FLOPs/example, within
-±5% on both simultaneously, using a mechanical distance in
++/-5% on both simultaneously, using a mechanical distance in
 (parameter, FLOP) space rather than validation quality.
 
 This module keeps exactly that arithmetic contract and only generalizes the

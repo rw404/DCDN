@@ -104,7 +104,7 @@ SLICE_OPERAND_RANGE = {
 #: matrix, so the quotient benchmark is run against the field and not only
 #: against three chosen comparators. All are REDUCED here: the synthetic FULL
 #: arms are positive controls that receive the target quotients as inputs
-#: (`docs/rq1_verdict.md` §2), so putting the field on FULL would hand it the
+#: (`docs/rq1_verdict.md` Section 2), so putting the field on FULL would hand it the
 #: answer rather than making the comparison harder.
 ARMS = (
     "dcdn_reduced", "afn_reduced", "dcnv2_capacity_reduced", "dcnv2_reduced",

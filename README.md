@@ -61,19 +61,19 @@ ratio features. Our code is publicly released at
 
 ## The operator, in one line
 
-A DCNv2 cross layer computes `x_{i+1} = x_i + x_0 ⊙ W x_i`, so every coordinate
+A DCNv2 cross layer computes `x_{i+1} = x_i + x_0 \odot W x_i`, so every coordinate
 is a polynomial in the inputs with non-negative exponents — the quotient `n/d`
 lies outside that span and can only be approximated locally. DCDN adds one term:
 
 ```
-x_{i+1} = x_i + x_0 ⊙ W_p(x_i) + inv(x_0) ⊙ W_d(x_i)
+x_{i+1} = x_i + x_0 \odot W_p(x_i) + inv(x_0) \odot W_d(x_i)
 ```
 
 `inv(x_0)` inverts only the coordinates a frozen contract declares to be
-legitimate positive denominators. The span becomes **Laurent**, the exponent `−1`
+legitimate positive denominators. The span becomes **Laurent**, the exponent `-1`
 becomes reachable by gradient descent, and a ratio `x_j / x_i` becomes a single
 learned weight. A `K`-layer stack realises exactly the Laurent monomials of
-signed degree `−K` through `K+1`, and both bounds are attainable.
+signed degree `-K` through `K+1`, and both bounds are attainable.
 
 ---
 
@@ -86,21 +86,21 @@ tree — data acquisition, materialisation contracts, every intermediate study �
 lives on the project's experiment branch.
 
 ```
-├── README.md                                 ← RQ4 (production) lives here
-├── LICENSE                                   ← Apache 2.0
-├── dcdn_synthetic_and_explainability.ipynb   ← start here, runs in ~1 minute
-├── kernel/dcdn_fused_triton.py               ← the fused inference kernel
+├── README.md                                <- RQ4 (production) lives here
+├── LICENSE                                  <- Apache 2.0
+├── dcdn_synthetic_and_explainability.ipynb  <- start here, runs in ~1 minute
+├── kernel/dcdn_fused_triton.py              <- the fused inference kernel
 ├── docs/
-│   ├── rq1.md                                ← quotient learning
-│   ├── rq2.md                                ← ranking quality and inference efficiency
-│   └── rq3.md                                ← capacity
-├── configs/data/                             ← the frozen feature contracts
-├── data/manifests/                           ← pinned source hashes
-├── figures/                                  ← every figure, SVG
-├── src/dcdn/                                 ← model, metrics, fused inference
+│   ├── rq1.md                               <- quotient learning
+│   ├── rq2.md                               <- ranking quality and inference efficiency
+│   └── rq3.md                               <- capacity
+├── configs/data/                            <- the frozen feature contracts
+├── data/manifests/                          <- pinned source hashes
+├── figures/                                 <- every figure, SVG
+├── src/dcdn/                                <- model, metrics, fused inference
 └── scripts/
-    ├── data/                                 ← acquire and materialise the four datasets
-    └── ...                                   ← training, benchmarking, reporting
+    ├── data/                                <- acquire and materialise the four datasets
+    └── ...                                  <- training, benchmarking, reporting
 ```
 
 ---
@@ -130,29 +130,29 @@ contract under `configs/data/` ships with a `.sha256` sidecar, so a contract tha
 drifted is detectable.
 
 ```bash
-pip install -r requirements-data.txt          # polars, pyarrow — this step only
+pip install -r requirements-data.txt          # polars, pyarrow - this step only
 export DCDN_DATA_CACHE="$HOME/.cache/dcdn"    # everything below lands here
 export PYTHONPATH="$PWD/src:$PWD"
 ```
 
 ```bash
-# Yambda-50M · 0.46 GB — the listen stream and two item maps
+# Yambda-50M - 0.46 GB - the listen stream and two item maps
 python scripts/data/yambda_raw.py
-python scripts/data/yambda_materialize.py            # → runtime/yambda_listen_v1
+python scripts/data/yambda_materialize.py            # -> runtime/yambda_listen_v1
 
-# KuaiRec · 432 MB archive, 1.58 GB extracted — the big matrix
+# KuaiRec - 432 MB archive, 1.58 GB extracted - the big matrix
 python scripts/data/kuairec_raw.py --manifest /tmp/kuairec_source_v1.yaml
-python scripts/data/kuairec_materialize.py           # → runtime/kuairec_watch_time_v1
+python scripts/data/kuairec_materialize.py           # -> runtime/kuairec_watch_time_v1
 
-# KuaiRand-Pure · 47 MB archive
+# KuaiRand-Pure - 47 MB archive
 python scripts/data/kuairand_pure_raw.py --extract \
     --manifest-output /tmp/kuairand_pure_source_v1.yaml
-python scripts/data/kuairand_pure_materialize.py     # → runtime/kuairand_pure_multitask_v1
+python scripts/data/kuairand_pure_materialize.py     # -> runtime/kuairand_pure_multitask_v1
 python scripts/data/kuairand_sessions.py             # 30-minute sessions, for nDCG@10
 
-# VK-LSVD ur0.01_ir0.01 · 25 MB
+# VK-LSVD ur0.01_ir0.01 - 25 MB
 python scripts/data/vk_ur_raw.py
-python scripts/data/vk_ur_materialize.py             # → runtime/vk_lsvd_ur_v1
+python scripts/data/vk_ur_materialize.py             # -> runtime/vk_lsvd_ur_v1
 ```
 
 The `runtime/` directory each materialiser writes is what `--views` takes:
@@ -210,10 +210,10 @@ so **1.0 is exactly the constant predictor**.
 
 | regime | DCDN | DCNv2 | factor |
 |---|---|---|---|
-| Reference range | **4.25e-07** | 5.47e-05 | **129×** |
-| Common rescaling | 1.21e-06 | 1.96e-03 | **1,620×** |
-| Large denominator | **2.81e-07** | 2.05e-04 | **729×** |
-| Small denominator | **8.74e-07** | 6.03e-04 | **690×** |
+| Reference range | **4.25e-07** | 5.47e-05 | **129x** |
+| Common rescaling | 1.21e-06 | 1.96e-03 | **1,620x** |
+| Large denominator | **2.81e-07** | 2.05e-04 | **729x** |
+| Small denominator | **8.74e-07** | 6.03e-04 | **690x** |
 
 **Read narrowly.** Every regime lies inside the training support, so this is not
 evidence of unrestricted arithmetic extrapolation, and on common rescaling DCDN
@@ -262,8 +262,8 @@ Eight seeds per arm, learning rate tuned per arm and then fixed.
 
 DCDN is best on both reported metrics for KuaiRec and VK-LSVD, mid-field on
 Yambda, and beaten on KuaiRand — which is the clearest counterexample to
-universal superiority. AFN+ costs **5.9×–7.7×** the DCDN latency and EulerNet
-**7.1×–8.8×**.
+universal superiority. AFN+ costs **5.9x–7.7x** the DCDN latency and EulerNet
+**7.1x–8.8x**.
 
 📄 **[`docs/rq2.md`](docs/rq2.md)**
 
@@ -286,9 +286,9 @@ python scripts/report_field_table.py \
 > persist against a capacity-matched DCNv2 control?
 
 `dcnv2_capacity_reduced` is a deeper standard DCNv2 on the **same** `F_reduced`
-input, selected by search to land within ±5% of DCDN on both trainable
+input, selected by search to land within +/-5% of DCDN on both trainable
 non-embedding parameters and FLOPs, with no metric read. Realised agreement is
-±0.2%. Quality is reported as nDCG@10 so the four datasets share one scale.
++/-0.2%. Quality is reported as nDCG@10 so the four datasets share one scale.
 
 > **Answer.** The operating point is **not explained by parameter count alone**.
 > At the same reduced input and a comparable parameter budget, DCDN achieves
@@ -296,12 +296,12 @@ non-embedding parameters and FLOPs, with no metric read. Realised agreement is
 > four datasets**. Deepening the original cross stack does not reproduce the
 > trade-off.
 
-| dataset | DCNv2-cm | DCDN | Δ nDCG@10 | speedup |
+| dataset | DCNv2-cm | DCDN | \Delta nDCG@10 | speedup |
 |---|---|---|---|---|
-| Yambda | 0.7571 | **0.7590** | **+0.0019** | **1.15×** |
-| KuaiRec | 0.4375 | **0.4441** | **+0.0066** | **1.15×** |
-| KuaiRand | 0.6719 | **0.6765** | **+0.0046** | **1.47×** |
-| VK-LSVD | 0.8521 | **0.8535** | **+0.0014** | **1.30×** |
+| Yambda | 0.7571 | **0.7590** | **+0.0019** | **1.15x** |
+| KuaiRec | 0.4375 | **0.4441** | **+0.0066** | **1.15x** |
+| KuaiRand | 0.6719 | **0.6765** | **+0.0046** | **1.47x** |
+| VK-LSVD | 0.8521 | **0.8535** | **+0.0014** | **1.30x** |
 
 📄 **[`docs/rq3.md`](docs/rq3.md)**
 
@@ -352,7 +352,7 @@ reduced pair is where the architecture earns the feature removal.
 
 | result | daily uplift, likes and shares | daily uplift, view time, fullscreen, shows |
 |---|---|---|
-| **Likes** +3.25%<br>**Shares** +16.26%<br>**Total view time** +0.33%<br>**Fullscreen** +0.38%<br>Shows −0.24% | <img src="figures/ab_daily_likes_shares.svg" alt="Daily relative uplift, likes and shares" width="100%"> | <img src="figures/ab_daily_tvt_fullscreen_shows.svg" alt="Daily relative uplift, total view time, fullscreen and shows" width="100%"> |
+| **Likes** +3.25%<br>**Shares** +16.26%<br>**Total view time** +0.33%<br>**Fullscreen** +0.38%<br>Shows -0.24% | <img src="figures/ab_daily_likes_shares.svg" alt="Daily relative uplift, likes and shares" width="100%"> | <img src="figures/ab_daily_tvt_fullscreen_shows.svg" alt="Daily relative uplift, total view time, fullscreen and shows" width="100%"> |
 
 ---
 
@@ -372,8 +372,8 @@ the recurrence into a single Triton kernel.
 
 | | speedup of the block |
 |---|---|
-| fused kernel | **2.1× – 2.2×**, flat across batch sizes |
-| + validity check hoisted off the hot path | **2.9× – 3.0×** total |
+| fused kernel | **2.1x – 2.2x**, flat across batch sizes |
+| + validity check hoisted off the hot path | **2.9x – 3.0x** total |
 
 The second one is worth naming on its own. The reference path calls
 `bool(validity.all())` on every forward, which is a **device-to-host
@@ -400,8 +400,8 @@ attention layer costs 93% of the forward pass, the interaction block is
 **0.3–0.4%** of total latency, and the kernel is worth **20% of the whole stack at
 `B=1`** and **0.3% at `B=8192`**. Fuse it if you serve online at small batches;
 skip it if you score offline in large ones. In the deployed stack of RQ4 the same
-fusion is roughly **2×** over eager DCDN, alongside a feature-encoding kernel
-that is roughly **7×** over its eager counterpart.
+fusion is roughly **2x** over eager DCDN, alongside a feature-encoding kernel
+that is roughly **7x** over its eager counterpart.
 
 ---
 
@@ -412,7 +412,7 @@ that is roughly **7×** over its eager counterpart.
 
 On `y = x_0 / x_1` with four distractor operands drawn log-uniformly over four
 decades, DCDN reaches a normalized MSE of `1.9e-05` against `6.0e-01` for a
-DCNv2-style cross of the same shape — a gap of **31,675×**.
+DCNv2-style cross of the same shape — a gap of **31,675x**.
 
 ### Both models, read back from their weights
 
@@ -425,7 +425,7 @@ relative error.
 | | DCNv2 | DCDN |
 |---|---|---|
 | form | polynomial | **Laurent polynomial** |
-| exponents | `α ≥ 0` | `α ∈ ℤ`, negative only on declared denominators |
+| exponents | `\alpha >= 0` | `\alpha \in \mathbb{Z}`, negative only on declared denominators |
 | `x0/x1` | **not in the span** | one weight, `W_d[1,0]` |
 | what it learned | 83 monomials, largest `+0.4991·x0` | **1 monomial, `+1.0003·x0/x1`** |
 | normalized MSE | 0.600 | 0.0000190 |
@@ -440,7 +440,7 @@ with it where the training mass is.
 </div>
 
 Multiplicative and reciprocal crossings shift exponents in positive and negative
-coordinate directions, so after `L` layers the reachable set is the `ℓ1` ball of
+coordinate directions, so after `L` layers the reachable set is the `\ell_1` ball of
 radius `L+1` around the coordinate vectors — the whole ball for DCDN, its
 non-negative quadrant for DCNv2. Grey points lie inside the degree bound and are
 still out of reach, because one layer can apply the reciprocal only once. The

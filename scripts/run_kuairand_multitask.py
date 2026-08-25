@@ -11,7 +11,7 @@ the full feature view?
 
 **RQ3** — is any gain explained by the reciprocal architecture or merely by
 parameters and FLOPs? Answered by `M4`, a DCNv2 low-rank mixture matched to
-`M2` within ±5% on trainable non-embedding parameters *and* FLOPs/example,
+`M2` within +/-5% on trainable non-embedding parameters *and* FLOPs/example,
 selected mechanically with no validation metric read.
 
 Five heads, per `configs/data/kuairand_pure/targets_rq23_v1.yaml`: `long_view`,
