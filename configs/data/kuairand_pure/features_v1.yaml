@@ -1,0 +1,862 @@
+schema_version: 1
+dataset_id: kuairand_pure
+artifact_role: pre_metric_feature_contract
+test_unlocked: false
+test_labels_opened: false
+model_metrics_read: false
+final_test_view_materialized: false
+feature_values_scanned: false
+phase1_gate_passed: true
+
+approved_temporal_policy:
+  status: owner_approved_and_applied
+  owner_approval_recorded_date: "2026-08-18"
+  applied: true
+  train_validation_test_dates_changed: false
+  actual_burn_in:
+    policy: standard
+    original_requested_start: "2022-04-08"
+    actual_available_start: "2022-04-09"
+    end: "2022-04-21"
+    april_08_rows_available: false
+    synthetic_or_imputed_rows_forbidden: true
+  embargo:
+    role: owner_approved_boundary_embargo
+    later_role_rows_retained: true
+    earlier_role_rule: >-
+      For each adjacent boundary, exclude an earlier-role row iff its time_ms
+      is greater than or equal to the minimum time_ms of the next-role union.
+    boundaries:
+      history_to_train: history_burn_in_before_min_train_time_ms
+      train_to_validation: train_before_min_validation_union_time_ms
+      validation_to_test: validation_union_before_min_test_union_time_ms
+    cutoff_inputs: date_time_ms_policy_source_file_and_source_row_index0_only
+    cutoffs_time_ms:
+      history_to_train: 1650552767170
+      train_to_validation: 1651503652252
+      validation_to_test: 1651762945505
+    pre_embargo_rows_by_role:
+      history_burn_in: 1141112
+      headline_test: 322152
+      in_policy_test: 43268
+      pre_validation_randomized_excluded: 548567
+      train: 202296
+      validation: 315340
+      validation_state_update_only: 49933
+    excluded_rows_by_role:
+      history_burn_in: 1204
+      train: 976
+      validation: 3850
+      validation_state_update_only: 609
+    post_embargo_rows_by_role:
+      history_burn_in: 1139908
+      headline_test: 322152
+      in_policy_test: 43268
+      pre_validation_randomized_excluded: 548567
+      train: 201320
+      validation: 311490
+      validation_state_update_only: 49324
+    total_excluded_rows: 6639
+    excluded_rows_action: exclude_from_labels_state_updates_and_every_materialized_view
+    labels_or_model_features_used: false
+
+source_manifest:
+  path: data/manifests/kuairand_pure_source_v1.yaml
+  sha256: bc5b441fdd3188d033e0ecbf0bdfd73f8bcf07bbc744d474d260ee220ae4d6e9
+  raw_archive_sha256: c814bf6f3624c0cfae83c57de3df26b2ed206e5c57bab4c4dcbfabbabe20cbf0
+
+inspection_boundary:
+  phase_1_allowed_columns:
+    - date
+    - time_ms
+    - is_rand
+  phase_1_allowed_audit_values:
+    - source_file
+    - source_row_index0
+  phase_1_allowed_aggregates:
+    - rows_by_source_policy_and_date
+    - min_and_max_time_ms_by_source
+    - split_policy_coverage_counts
+    - minimum_time_ms_of_each_next_role_union
+    - embargo_exclusion_counts_by_role
+    - post_embargo_time_ms_bounds_by_role
+  labels_or_model_features_read: false
+  validation_or_test_metrics_read: false
+  test_view_materialized: false
+
+strict_exclusions:
+  video_features_statistic_pure.csv: forbidden
+  exclusion_reason: >-
+    Released monthly statistics overlap the collection period and may include
+    current or future outcomes.
+  is_rand: audit_and_stratification_only
+  current_row_outcomes:
+    - comment_stay_time
+    - duration_ms
+    - is_click
+    - is_comment
+    - is_follow
+    - is_forward
+    - is_hate
+    - is_like
+    - is_profile_enter
+    - long_view
+    - play_time_ms
+    - profile_stay_time
+  current_row_outcome_use: label_or_post_score_state_update_only
+  user_features_pure.csv: excluded_unknown_point_in_time_provenance
+  excluded_video_basic_fields:
+    upload_dt: excluded_until_upload_time_precedes_every_target_is_verified
+    visible_status: excluded_unknown_point_in_time_snapshot
+    server_width: excluded_nonessential_context
+    server_height: excluded_nonessential_context
+    tag: excluded_ambiguous_multivalue_encoding
+    video_duration: excluded_to_avoid_mixing_static_and_event_duration_definitions
+
+raw_event_contract:
+  exact_column_order:
+    - user_id
+    - video_id
+    - date
+    - hourmin
+    - time_ms
+    - is_click
+    - is_like
+    - is_follow
+    - is_comment
+    - is_forward
+    - is_hate
+    - long_view
+    - play_time_ms
+    - duration_ms
+    - profile_stay_time
+    - comment_stay_time
+    - is_profile_enter
+    - is_rand
+    - tab
+  files:
+    log_standard_4_08_to_4_21_pure.csv:
+      policy: standard
+      required_is_rand: 0
+    log_standard_4_22_to_5_08_pure.csv:
+      policy: standard
+      required_is_rand: 0
+    log_random_4_22_to_5_08_pure.csv:
+      policy: randomized
+      required_is_rand: 1
+  source_row_index0: zero_based_data_row_excluding_header
+  date_encoding: YYYYMMDD
+  timestamp_encoding: integer_unix_milliseconds_utc
+  released_date_authority: source_date_field_for_frozen_calendar_splits
+  time_ms_authority: global_prequential_order_and_strict_feature_cutoff
+  clock_relation_policy: report_released_date_minus_utc_date_without_coercion
+  boundary_assertion: nonoverlapping_time_ms_between_train_validation_and_test
+
+context_C:
+  mapping_fit_rows: embargo_eligible_standard_policy_rows_2022-04-09_through_2022-05-02
+  mapping_fit_excludes_randomized_rows: true
+  encoding: categorical_index
+  token_ids:
+    OOV: 0
+    MISSING: 1
+    first_known: 2
+  known_value_order: lexicographic_utf8_bytes
+  retain_oov_rows: true
+  fields:
+    c_user_id: {source: event.user_id}
+    c_video_id: {source: event.video_id}
+    c_author_id: {source: video_features_basic_pure.author_id}
+    c_tab: {source: event.tab}
+    c_video_type: {source: video_features_basic_pure.video_type}
+    c_upload_type: {source: video_features_basic_pure.upload_type}
+    c_music_id: {source: video_features_basic_pure.music_id}
+    c_music_type: {source: video_features_basic_pure.music_type}
+  metadata_missing_behavior: map_each_missing_value_to_MISSING
+  randomized_unseen_behavior: map_to_OOV_without_row_drop
+
+ordered_fields:
+  C:
+    - c_user_id
+    - c_video_id
+    - c_author_id
+    - c_tab
+    - c_video_type
+    - c_upload_type
+    - c_music_id
+    - c_music_type
+  P:
+    - p_user_1d_exposure_count
+    - p_user_1d_long_view_count
+    - p_user_1d_like_count
+    - p_user_1d_forward_count
+    - p_user_1d_hate_count
+    - p_user_1d_follow_count
+    - p_user_1d_play_time_ms_sum
+    - p_user_1d_duration_ms_sum
+    - p_user_1d_dwell_time_ms_sum
+    - p_user_7d_exposure_count
+    - p_user_7d_long_view_count
+    - p_user_7d_like_count
+    - p_user_7d_forward_count
+    - p_user_7d_hate_count
+    - p_user_7d_follow_count
+    - p_user_7d_play_time_ms_sum
+    - p_user_7d_duration_ms_sum
+    - p_user_7d_dwell_time_ms_sum
+    - p_user_all_exposure_count
+    - p_user_all_long_view_count
+    - p_user_all_like_count
+    - p_user_all_forward_count
+    - p_user_all_hate_count
+    - p_user_all_follow_count
+    - p_user_all_play_time_ms_sum
+    - p_user_all_duration_ms_sum
+    - p_user_all_dwell_time_ms_sum
+    - p_item_1d_exposure_count
+    - p_item_1d_long_view_count
+    - p_item_1d_like_count
+    - p_item_1d_forward_count
+    - p_item_1d_hate_count
+    - p_item_1d_follow_count
+    - p_item_1d_play_time_ms_sum
+    - p_item_1d_duration_ms_sum
+    - p_item_1d_dwell_time_ms_sum
+    - p_item_7d_exposure_count
+    - p_item_7d_long_view_count
+    - p_item_7d_like_count
+    - p_item_7d_forward_count
+    - p_item_7d_hate_count
+    - p_item_7d_follow_count
+    - p_item_7d_play_time_ms_sum
+    - p_item_7d_duration_ms_sum
+    - p_item_7d_dwell_time_ms_sum
+    - p_item_all_exposure_count
+    - p_item_all_long_view_count
+    - p_item_all_like_count
+    - p_item_all_forward_count
+    - p_item_all_hate_count
+    - p_item_all_follow_count
+    - p_item_all_play_time_ms_sum
+    - p_item_all_duration_ms_sum
+    - p_item_all_dwell_time_ms_sum
+    - p_author_1d_exposure_count
+    - p_author_1d_long_view_count
+    - p_author_1d_like_count
+    - p_author_1d_forward_count
+    - p_author_1d_hate_count
+    - p_author_1d_follow_count
+    - p_author_1d_play_time_ms_sum
+    - p_author_1d_duration_ms_sum
+    - p_author_1d_dwell_time_ms_sum
+    - p_author_7d_exposure_count
+    - p_author_7d_long_view_count
+    - p_author_7d_like_count
+    - p_author_7d_forward_count
+    - p_author_7d_hate_count
+    - p_author_7d_follow_count
+    - p_author_7d_play_time_ms_sum
+    - p_author_7d_duration_ms_sum
+    - p_author_7d_dwell_time_ms_sum
+    - p_author_all_exposure_count
+    - p_author_all_long_view_count
+    - p_author_all_like_count
+    - p_author_all_forward_count
+    - p_author_all_hate_count
+    - p_author_all_follow_count
+    - p_author_all_play_time_ms_sum
+    - p_author_all_duration_ms_sum
+    - p_author_all_dwell_time_ms_sum
+    - p_tab_1d_exposure_count
+    - p_tab_1d_long_view_count
+    - p_tab_1d_like_count
+    - p_tab_1d_forward_count
+    - p_tab_1d_hate_count
+    - p_tab_1d_follow_count
+    - p_tab_1d_play_time_ms_sum
+    - p_tab_1d_duration_ms_sum
+    - p_tab_1d_dwell_time_ms_sum
+    - p_tab_7d_exposure_count
+    - p_tab_7d_long_view_count
+    - p_tab_7d_like_count
+    - p_tab_7d_forward_count
+    - p_tab_7d_hate_count
+    - p_tab_7d_follow_count
+    - p_tab_7d_play_time_ms_sum
+    - p_tab_7d_duration_ms_sum
+    - p_tab_7d_dwell_time_ms_sum
+    - p_tab_all_exposure_count
+    - p_tab_all_long_view_count
+    - p_tab_all_like_count
+    - p_tab_all_forward_count
+    - p_tab_all_hate_count
+    - p_tab_all_follow_count
+    - p_tab_all_play_time_ms_sum
+    - p_tab_all_duration_ms_sum
+    - p_tab_all_dwell_time_ms_sum
+  V:
+    - v_user_1d_exposure_valid
+    - v_user_1d_duration_valid
+    - v_user_7d_exposure_valid
+    - v_user_7d_duration_valid
+    - v_user_all_exposure_valid
+    - v_user_all_duration_valid
+    - v_item_1d_exposure_valid
+    - v_item_1d_duration_valid
+    - v_item_7d_exposure_valid
+    - v_item_7d_duration_valid
+    - v_item_all_exposure_valid
+    - v_item_all_duration_valid
+    - v_author_1d_exposure_valid
+    - v_author_1d_duration_valid
+    - v_author_7d_exposure_valid
+    - v_author_7d_duration_valid
+    - v_author_all_exposure_valid
+    - v_author_all_duration_valid
+    - v_tab_1d_exposure_valid
+    - v_tab_1d_duration_valid
+    - v_tab_7d_exposure_valid
+    - v_tab_7d_duration_valid
+    - v_tab_all_exposure_valid
+    - v_tab_all_duration_valid
+  R:
+    - r_user_1d_long_view_per_exposure
+    - r_user_1d_like_per_exposure
+    - r_user_1d_forward_per_exposure
+    - r_user_1d_hate_per_exposure
+    - r_user_1d_follow_per_exposure
+    - r_user_1d_mean_play_time_seconds
+    - r_user_1d_play_over_duration
+    - r_user_1d_mean_dwell_time_seconds
+    - r_user_7d_long_view_per_exposure
+    - r_user_7d_like_per_exposure
+    - r_user_7d_forward_per_exposure
+    - r_user_7d_hate_per_exposure
+    - r_user_7d_follow_per_exposure
+    - r_user_7d_mean_play_time_seconds
+    - r_user_7d_play_over_duration
+    - r_user_7d_mean_dwell_time_seconds
+    - r_user_all_long_view_per_exposure
+    - r_user_all_like_per_exposure
+    - r_user_all_forward_per_exposure
+    - r_user_all_hate_per_exposure
+    - r_user_all_follow_per_exposure
+    - r_user_all_mean_play_time_seconds
+    - r_user_all_play_over_duration
+    - r_user_all_mean_dwell_time_seconds
+    - r_item_1d_long_view_per_exposure
+    - r_item_1d_like_per_exposure
+    - r_item_1d_forward_per_exposure
+    - r_item_1d_hate_per_exposure
+    - r_item_1d_follow_per_exposure
+    - r_item_1d_mean_play_time_seconds
+    - r_item_1d_play_over_duration
+    - r_item_1d_mean_dwell_time_seconds
+    - r_item_7d_long_view_per_exposure
+    - r_item_7d_like_per_exposure
+    - r_item_7d_forward_per_exposure
+    - r_item_7d_hate_per_exposure
+    - r_item_7d_follow_per_exposure
+    - r_item_7d_mean_play_time_seconds
+    - r_item_7d_play_over_duration
+    - r_item_7d_mean_dwell_time_seconds
+    - r_item_all_long_view_per_exposure
+    - r_item_all_like_per_exposure
+    - r_item_all_forward_per_exposure
+    - r_item_all_hate_per_exposure
+    - r_item_all_follow_per_exposure
+    - r_item_all_mean_play_time_seconds
+    - r_item_all_play_over_duration
+    - r_item_all_mean_dwell_time_seconds
+    - r_author_1d_long_view_per_exposure
+    - r_author_1d_like_per_exposure
+    - r_author_1d_forward_per_exposure
+    - r_author_1d_hate_per_exposure
+    - r_author_1d_follow_per_exposure
+    - r_author_1d_mean_play_time_seconds
+    - r_author_1d_play_over_duration
+    - r_author_1d_mean_dwell_time_seconds
+    - r_author_7d_long_view_per_exposure
+    - r_author_7d_like_per_exposure
+    - r_author_7d_forward_per_exposure
+    - r_author_7d_hate_per_exposure
+    - r_author_7d_follow_per_exposure
+    - r_author_7d_mean_play_time_seconds
+    - r_author_7d_play_over_duration
+    - r_author_7d_mean_dwell_time_seconds
+    - r_author_all_long_view_per_exposure
+    - r_author_all_like_per_exposure
+    - r_author_all_forward_per_exposure
+    - r_author_all_hate_per_exposure
+    - r_author_all_follow_per_exposure
+    - r_author_all_mean_play_time_seconds
+    - r_author_all_play_over_duration
+    - r_author_all_mean_dwell_time_seconds
+    - r_tab_1d_long_view_per_exposure
+    - r_tab_1d_like_per_exposure
+    - r_tab_1d_forward_per_exposure
+    - r_tab_1d_hate_per_exposure
+    - r_tab_1d_follow_per_exposure
+    - r_tab_1d_mean_play_time_seconds
+    - r_tab_1d_play_over_duration
+    - r_tab_1d_mean_dwell_time_seconds
+    - r_tab_7d_long_view_per_exposure
+    - r_tab_7d_like_per_exposure
+    - r_tab_7d_forward_per_exposure
+    - r_tab_7d_hate_per_exposure
+    - r_tab_7d_follow_per_exposure
+    - r_tab_7d_mean_play_time_seconds
+    - r_tab_7d_play_over_duration
+    - r_tab_7d_mean_dwell_time_seconds
+    - r_tab_all_long_view_per_exposure
+    - r_tab_all_like_per_exposure
+    - r_tab_all_forward_per_exposure
+    - r_tab_all_hate_per_exposure
+    - r_tab_all_follow_per_exposure
+    - r_tab_all_mean_play_time_seconds
+    - r_tab_all_play_over_duration
+    - r_tab_all_mean_dwell_time_seconds
+    - r_user_exposure_1d_over_7d
+    - r_user_exposure_7d_over_all
+    - r_user_long_view_1d_over_7d
+    - r_user_long_view_7d_over_all
+    - r_item_exposure_1d_over_7d
+    - r_item_exposure_7d_over_all
+    - r_item_long_view_1d_over_7d
+    - r_item_long_view_7d_over_all
+    - r_author_exposure_1d_over_7d
+    - r_author_exposure_7d_over_all
+    - r_author_long_view_1d_over_7d
+    - r_author_long_view_7d_over_all
+    - r_tab_exposure_1d_over_7d
+    - r_tab_exposure_7d_over_all
+    - r_tab_long_view_1d_over_7d
+    - r_tab_long_view_7d_over_all
+  numeric_interaction_operands:
+    - p_user_1d_exposure_count
+    - p_user_1d_long_view_count
+    - p_user_1d_like_count
+    - p_user_1d_forward_count
+    - p_user_1d_hate_count
+    - p_user_1d_follow_count
+    - p_user_1d_play_time_ms_sum
+    - p_user_1d_duration_ms_sum
+    - p_user_1d_dwell_time_ms_sum
+    - p_user_7d_exposure_count
+    - p_user_7d_long_view_count
+    - p_user_7d_like_count
+    - p_user_7d_forward_count
+    - p_user_7d_hate_count
+    - p_user_7d_follow_count
+    - p_user_7d_play_time_ms_sum
+    - p_user_7d_duration_ms_sum
+    - p_user_7d_dwell_time_ms_sum
+    - p_user_all_exposure_count
+    - p_user_all_long_view_count
+    - p_user_all_like_count
+    - p_user_all_forward_count
+    - p_user_all_hate_count
+    - p_user_all_follow_count
+    - p_user_all_play_time_ms_sum
+    - p_user_all_duration_ms_sum
+    - p_user_all_dwell_time_ms_sum
+    - p_item_1d_exposure_count
+    - p_item_1d_long_view_count
+    - p_item_1d_like_count
+    - p_item_1d_forward_count
+    - p_item_1d_hate_count
+    - p_item_1d_follow_count
+    - p_item_1d_play_time_ms_sum
+    - p_item_1d_duration_ms_sum
+    - p_item_1d_dwell_time_ms_sum
+    - p_item_7d_exposure_count
+    - p_item_7d_long_view_count
+    - p_item_7d_like_count
+    - p_item_7d_forward_count
+    - p_item_7d_hate_count
+    - p_item_7d_follow_count
+    - p_item_7d_play_time_ms_sum
+    - p_item_7d_duration_ms_sum
+    - p_item_7d_dwell_time_ms_sum
+    - p_item_all_exposure_count
+    - p_item_all_long_view_count
+    - p_item_all_like_count
+    - p_item_all_forward_count
+    - p_item_all_hate_count
+    - p_item_all_follow_count
+    - p_item_all_play_time_ms_sum
+    - p_item_all_duration_ms_sum
+    - p_item_all_dwell_time_ms_sum
+    - p_author_1d_exposure_count
+    - p_author_1d_long_view_count
+    - p_author_1d_like_count
+    - p_author_1d_forward_count
+    - p_author_1d_hate_count
+    - p_author_1d_follow_count
+    - p_author_1d_play_time_ms_sum
+    - p_author_1d_duration_ms_sum
+    - p_author_1d_dwell_time_ms_sum
+    - p_author_7d_exposure_count
+    - p_author_7d_long_view_count
+    - p_author_7d_like_count
+    - p_author_7d_forward_count
+    - p_author_7d_hate_count
+    - p_author_7d_follow_count
+    - p_author_7d_play_time_ms_sum
+    - p_author_7d_duration_ms_sum
+    - p_author_7d_dwell_time_ms_sum
+    - p_author_all_exposure_count
+    - p_author_all_long_view_count
+    - p_author_all_like_count
+    - p_author_all_forward_count
+    - p_author_all_hate_count
+    - p_author_all_follow_count
+    - p_author_all_play_time_ms_sum
+    - p_author_all_duration_ms_sum
+    - p_author_all_dwell_time_ms_sum
+    - p_tab_1d_exposure_count
+    - p_tab_1d_long_view_count
+    - p_tab_1d_like_count
+    - p_tab_1d_forward_count
+    - p_tab_1d_hate_count
+    - p_tab_1d_follow_count
+    - p_tab_1d_play_time_ms_sum
+    - p_tab_1d_duration_ms_sum
+    - p_tab_1d_dwell_time_ms_sum
+    - p_tab_7d_exposure_count
+    - p_tab_7d_long_view_count
+    - p_tab_7d_like_count
+    - p_tab_7d_forward_count
+    - p_tab_7d_hate_count
+    - p_tab_7d_follow_count
+    - p_tab_7d_play_time_ms_sum
+    - p_tab_7d_duration_ms_sum
+    - p_tab_7d_dwell_time_ms_sum
+    - p_tab_all_exposure_count
+    - p_tab_all_long_view_count
+    - p_tab_all_like_count
+    - p_tab_all_forward_count
+    - p_tab_all_hate_count
+    - p_tab_all_follow_count
+    - p_tab_all_play_time_ms_sum
+    - p_tab_all_duration_ms_sum
+    - p_tab_all_dwell_time_ms_sum
+    - v_user_1d_exposure_valid
+    - v_user_1d_duration_valid
+    - v_user_7d_exposure_valid
+    - v_user_7d_duration_valid
+    - v_user_all_exposure_valid
+    - v_user_all_duration_valid
+    - v_item_1d_exposure_valid
+    - v_item_1d_duration_valid
+    - v_item_7d_exposure_valid
+    - v_item_7d_duration_valid
+    - v_item_all_exposure_valid
+    - v_item_all_duration_valid
+    - v_author_1d_exposure_valid
+    - v_author_1d_duration_valid
+    - v_author_7d_exposure_valid
+    - v_author_7d_duration_valid
+    - v_author_all_exposure_valid
+    - v_author_all_duration_valid
+    - v_tab_1d_exposure_valid
+    - v_tab_1d_duration_valid
+    - v_tab_7d_exposure_valid
+    - v_tab_7d_duration_valid
+    - v_tab_all_exposure_valid
+    - v_tab_all_duration_valid
+
+rolling_aggregates:
+  history_semantics: released_candidate_pool_history_only
+  group_order: [user, item, author, tab]
+  group_keys:
+    user: event.user_id
+    item: event.video_id
+    author: video_features_basic_pure.author_id_or_MISSING
+    tab: event.tab
+  window_order: [1d, 7d, all]
+  windows:
+    1d: {lower_inclusive_ms: -86400000, upper: "time_ms<t"}
+    7d: {lower_inclusive_ms: -604800000, upper: "time_ms<t"}
+    all: {lower: burn_in_start, upper: "time_ms<t"}
+  statistic_order:
+    - exposure_count
+    - long_view_count
+    - like_count
+    - forward_count
+    - hate_count
+    - follow_count
+    - play_time_ms_sum
+    - duration_ms_sum
+    - dwell_time_ms_sum
+  update_contributions:
+    exposure_count: "1"
+    long_view_count: "require_binary(long_view)"
+    like_count: "require_binary(is_like)"
+    forward_count: "require_binary(is_forward)"
+    hate_count: "require_binary(is_hate)"
+    follow_count: "require_binary(is_follow)"
+    play_time_ms_sum: "max(require_finite(play_time_ms),0)"
+    duration_ms_sum: "max(require_finite(duration_ms),0)"
+    dwell_time_ms_sum: >-
+      max(require_finite(profile_stay_time),0) +
+      max(require_finite(comment_stay_time),0)
+  negative_time_handling: zero_contribution_and_count_in_audit
+  nonnumeric_or_nonfinite_time_handling: stop
+  nonbinary_feedback_handling: stop
+
+smoothing_and_normalization:
+  rationale: >-
+    Data-independent natural-unit constants were frozen before model metrics.
+    Jeffreys binary pseudocounts keep success operands positive; one exposure
+    and one millisecond prevent zero operands; a one-second duration floor is
+    a conservative physical unit. Count and millisecond scales are fixed, not
+    fitted, and denominators are never z-centered.
+  constants:
+    binary_success_pseudocount: 0.5
+    exposure_pseudocount: 1.0
+    time_numerator_floor_ms: 1.0
+    duration_denominator_floor_ms: 1000.0
+    count_scale: 100.0
+    time_scale_ms: 1000.0
+    normalized_denominator_floor: 0.01
+  P_formulas:
+    exposure_count: "(raw_exposure_count + 1.0) / 100.0"
+    binary_success_count: "(raw_success_count + 0.5) / 100.0"
+    play_time_ms_sum: "(raw_nonnegative_sum + 1.0) / 1000.0"
+    duration_ms_sum: "(raw_nonnegative_sum + 1000.0) / 1000.0"
+    dwell_time_ms_sum: "(raw_nonnegative_sum + 1.0) / 1000.0"
+  denominator_post_scale_transform: "max(value,0.01)"
+  numerator_post_scale_transform: identity
+  fit_from_validation_or_test: false
+  clipping_or_floor_incidence_must_be_reported: true
+
+validity_V:
+  exposure_valid: "raw_exposure_count > 0"
+  duration_valid: "raw_exposure_count > 0 and raw_duration_ms_sum > 0"
+  dtype: float32_binary
+  cold_or_oov_history: all_zero_validity
+  reciprocal_behavior_when_invalid: zero_carrier
+
+engineered_R:
+  source: same_strictly_lagged_raw_accumulators_as_P
+  formulas:
+    long_view_per_exposure: "(long_view_count + 0.5) / (exposure_count + 1.0)"
+    like_per_exposure: "(like_count + 0.5) / (exposure_count + 1.0)"
+    forward_per_exposure: "(forward_count + 0.5) / (exposure_count + 1.0)"
+    hate_per_exposure: "(hate_count + 0.5) / (exposure_count + 1.0)"
+    follow_per_exposure: "(follow_count + 0.5) / (exposure_count + 1.0)"
+    mean_play_time_seconds: "((play_time_ms_sum + 1.0) / (exposure_count + 1.0)) / 1000.0"
+    play_over_duration: "(play_time_ms_sum + 1.0) / (duration_ms_sum + 1000.0)"
+    mean_dwell_time_seconds: "((dwell_time_ms_sum + 1.0) / (exposure_count + 1.0)) / 1000.0"
+    exposure_1d_over_7d: "(exposure_count_1d + 1.0) / (exposure_count_7d + 1.0)"
+    exposure_7d_over_all: "(exposure_count_7d + 1.0) / (exposure_count_all + 1.0)"
+    long_view_1d_over_7d: "(long_view_count_1d + 0.5) / (long_view_count_7d + 0.5)"
+    long_view_7d_over_all: "(long_view_count_7d + 0.5) / (long_view_count_all + 0.5)"
+  preference_share_fields: []
+  omission_rationale: >-
+    Cross-key user-author or user-tab preference shares were omitted before
+    metrics because their sparse support and fallback semantics are not fixed
+    by the released documentation. No result-driven feature addition is allowed.
+
+denominator_mask:
+  aligned_to: ordered_fields.numeric_interaction_operands
+  eligible_fields:
+    - p_user_1d_exposure_count
+    - p_user_1d_duration_ms_sum
+    - p_user_7d_exposure_count
+    - p_user_7d_duration_ms_sum
+    - p_user_all_exposure_count
+    - p_user_all_duration_ms_sum
+    - p_item_1d_exposure_count
+    - p_item_1d_duration_ms_sum
+    - p_item_7d_exposure_count
+    - p_item_7d_duration_ms_sum
+    - p_item_all_exposure_count
+    - p_item_all_duration_ms_sum
+    - p_author_1d_exposure_count
+    - p_author_1d_duration_ms_sum
+    - p_author_7d_exposure_count
+    - p_author_7d_duration_ms_sum
+    - p_author_all_exposure_count
+    - p_author_all_duration_ms_sum
+    - p_tab_1d_exposure_count
+    - p_tab_1d_duration_ms_sum
+    - p_tab_7d_exposure_count
+    - p_tab_7d_duration_ms_sum
+    - p_tab_all_exposure_count
+    - p_tab_all_duration_ms_sum
+  ineligible: C_categorical_ids_PLE_embeddings_R_and_all_other_P_or_V_fields
+  invalid_history_behavior: zero_reciprocal_carrier
+  normalized_positive_floor: 0.01
+  exact_theory_scope: only_positive_nonfloored_valid_coordinates
+
+temporal_splits:
+  history_burn_in:
+    policy: standard
+    start: "2022-04-09"
+    end: "2022-04-21"
+    role: state_update_only
+  train:
+    policy: standard
+    start: "2022-04-22"
+    end: "2022-05-02"
+    role: label_and_state_update
+  validation:
+    policy: randomized
+    start: "2022-05-03"
+    end: "2022-05-05"
+    role: validation_label_and_state_update
+  headline_test:
+    policy: randomized
+    start: "2022-05-06"
+    end: "2022-05-08"
+    role: locked_test_label_and_state_update
+  in_policy_test:
+    policy: standard
+    start: "2022-05-06"
+    end: "2022-05-08"
+    role: locked_secondary_test_label_and_state_update
+  randomized_rows_before_validation: excluded_from_training_labels_and_initial_state
+  standard_rows_during_validation: state_update_only
+  approved_embargo: approved_temporal_policy.embargo
+  embargoed_rows_are_outside_all_views_and_state: true
+  coverage_mismatch_action: stop_before_feature_materialization_or_model_metrics
+
+rolling_state:
+  feature_cutoff: strict_time_ms_less_than_target
+  equal_timestamp_rule: score_complete_group_then_update_complete_group
+  update_order: [policy_priority, source_file, source_row_index0]
+  policy_priority: {standard: 0, randomized: 1}
+  initial_state: standard_only_through_2022-05-02
+  evaluation_updates: standard_and_randomized_union
+  embargo_excluded_rows_never_update_state: true
+  weights_frozen_after_train: true
+  forbidden_adaptation:
+    - model_weights
+    - feature_definitions
+    - smoothing_or_floor_constants
+    - aggregation_keys_or_windows
+    - mappings
+    - thresholds
+    - hyperparameters
+
+row_identity_and_dedup:
+  canonical_column_order:
+    - user_id
+    - video_id
+    - date
+    - hourmin
+    - time_ms
+    - is_click
+    - is_like
+    - is_follow
+    - is_comment
+    - is_forward
+    - is_hate
+    - long_view
+    - play_time_ms
+    - duration_ms
+    - profile_stay_time
+    - comment_stay_time
+    - is_profile_enter
+    - is_rand
+    - tab
+  field_canonicalization: >-
+    Parse CSV transport quoting, preserve field text and whitespace, normalize
+    Unicode to NFC, encode UTF-8, and length-prefix every field with unsigned
+    8-byte big-endian length. Do not coerce numeric spellings.
+  fingerprint_domain: "dcdn:kuairand-pure:full-row:v1\\0"
+  dedup_key: full_row_fingerprint_sha256
+  event_key_dedup_forbidden: true
+  canonical_duplicate_occurrence: >-
+    minimum(policy_priority, source_file, source_row_index0)
+  stable_row_id_domain: "dcdn:kuairand-pure:stable-row:v1\\0"
+  stable_row_id_inputs:
+    - full_row_fingerprint_sha256
+    - canonical_source_file
+    - canonical_source_row_index0
+  retain_audit_ids:
+    - stable_row_id
+    - full_row_fingerprint_sha256
+    - source_file
+    - source_row_index0
+    - user_id
+    - video_id
+    - date
+    - time_ms
+    - policy
+    - is_rand
+  audit_ids_are_model_features: false
+
+label:
+  name: long_view
+  source_column: long_view
+  type: binary
+  allowed_values: [0, 1]
+  current_row_feature_use: forbidden
+  state_update_timing: after_complete_equal_timestamp_group_is_scored
+
+metrics:
+  selection_split: validation_randomized_2022-05-03_through_2022-05-05
+  selection_metric: binary_log_loss
+  selection_direction: minimize
+  headline_population: randomized_2022-05-06_through_2022-05-08
+  secondary_population: standard_2022-05-06_through_2022-05-08
+  report_order:
+    - binary_log_loss
+    - roc_auc
+    - user_gauc
+  binary_log_loss:
+    prediction_clamp: [1.0e-7, 0.9999999]
+    formula: "-mean(y*ln(p)+(1-y)*ln(1-p))"
+  roc_auc:
+    ties: average_rank
+    undefined_single_class_population: report_NA
+  user_gauc:
+    per_user_metric: roc_auc
+    exclude_single_class_users: true
+    aggregation: eligible_row_count_weighted_mean
+    required_coverage_outputs:
+      - eligible_users
+      - total_users
+      - eligible_rows
+      - total_rows
+  cold_item_slices:
+    cold_definition: video_id_absent_from_standard_rows_through_2022-05-02
+    required:
+      - all_randomized_rows
+      - cold_items
+      - warm_items
+  no_ndcg_reason: no_released_complete_candidate_lists_per_request
+
+uncertainty:
+  final_seeds: [42, 43, 44]
+  point_summary: mean_and_sample_standard_deviation_across_seeds
+  paired_bootstrap:
+    clusters: user_id
+    replicates: 10000
+    rng_seed: 20260818
+    interval: percentile_95_two_sided
+    resample_unit: users_with_all_their_rows
+    prediction_combination: mean_probability_across_final_seeds_per_row
+  primary_logloss_contrast_family:
+    - DCNv2_C_plus_P_plus_R_minus_DCNv2_C_plus_P
+    - DCDN_C_plus_P_minus_DCNv2_C_plus_P_plus_R
+    - DCDN_C_plus_P_minus_DCNv2_capacity_matched_core_C_plus_P
+  multiplicity:
+    method: Holm
+    familywise_alpha: 0.05
+    applies_to: primary_logloss_contrast_family
+  secondary_contrasts: descriptive_unadjusted_with_95_percent_CI
+  noninferiority_margin: null
+  nonsignificance_interpretation: not_evidence_of_equivalence_or_noninferiority
+
+schema_hashes:
+  C: 440aca731c8141df85fefdcaf11d167828bd542422d6d478ee6a5d425833fc78
+  P: 34694edc61f220d4cf23644ffdbb45cc29f0b18ab6b2b34c1e273297ac49eef9
+  V: 27858e481458c819c9a999caebb139234b3ae026a695167ca2f805856e56667f
+  R: c286b90329609676d2415b8c7f0824829ae78431a3b0a3d53051b9b2778e1cda
+  C_plus_P_plus_V: 5c04f461cb619053e13ecaf3f7821263ef21eee93694f575da60bd2cb84ce8e5
+  C_plus_P_plus_V_plus_R: d27ab3f41b91ee5bd3462b87a90f3289fb31c753a949b659bfd588df730332ad
+  numeric_interaction_operands: b76cbd9e4b999fee0c34db1f0340cece95f8a47c1ec70b3efbe049cc60dc8563
+  denominator_mask: 394ab310899c01e63f5f8a523f892f2532e7d63470e61c55d9ec1879ed590dc7

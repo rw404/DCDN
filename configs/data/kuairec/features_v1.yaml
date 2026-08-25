@@ -1,0 +1,703 @@
+schema_version: 1
+dataset_id: kuairec_big_matrix
+artifact_role: pre_metric_feature_contract
+final_schema_frozen_utc: '2026-08-18T14:54:25Z'
+test_unlocked: false
+test_labels_opened: false
+model_metrics_read: false
+final_test_view_materialized: false
+
+schema_only_revision:
+  initial_contract_sha256: c6f539d228dce75644b62cb445bf393e141944c9e66bf84545db77e3b75a606d
+  initial_contract_status: rejected_before_interaction_scan
+  initial_gate_observation: each_target_column_had_69683_null_rows
+  initial_source_wide_all_null_interpretation: invalidated
+  failure_reason: four_declared_daily_bases_are_partially_null
+  daily_rows_checked: 343341
+  null_rows_per_excluded_source: 69683
+  nonnull_rows_per_excluded_source: 273658
+  source_wide_all_null: false
+  partially_null_sources:
+    - collect_cnt
+    - collect_user_num
+    - cancel_collect_cnt
+    - cancel_collect_user_num
+  parse_invalid_nonfinite_or_negative_nonnull_cells: 0
+  big_matrix_interaction_rows_read_before_revision: false
+  model_or_validation_or_test_metrics_read: false
+  owner_approved_resolution: exclude_exactly_four_partially_null_bases_and_four_derived_rates
+  owner_approved_full_exclusion_all_regimes: true
+  excluded_derived_rates:
+    - e_collect_per_show
+    - e_collect_per_show_user
+    - e_cancel_collect_per_show
+    - e_cancel_collect_per_show_user
+  zero_imputation_used: false
+  row_or_population_filter_added: false
+  filtering_and_split_changed: false
+  ordered_schema_names_or_hashes_changed_since_first_exclusion: false
+  corrective_diagnostic_evidence: configs/data/kuairec/blind_scan_v1.invalid.yaml
+
+unit_normalization_revision:
+  rejected_contract_sha256: c5aadbeb7da5f05a281681d30a7ef98e8c660019f6c0bc679e430c1014e5a23c
+  rejected_contract_status: rejected_after_blind_scan_before_audit_write
+  failure_gate: train_only_video_duration_q99_seconds_sanity_interval
+  failure_reason: raw_milliseconds_were_misinterpreted_as_seconds
+  raw_positive_filters_applied_before_failure: true
+  filtering_and_split_changed: false
+  ordered_schema_names_or_hashes_changed: false
+  watch_ratio_read: false
+  model_or_validation_or_test_metrics_read: false
+  audit_artifact_written: false
+  owner_approved_resolution:
+    big_matrix_video_duration: divide_raw_milliseconds_by_1000_before_c_and_P
+    current_play_duration: divide_by_1000_only_in_future_sealed_label_materialization
+    lagged_daily_play_duration: divide_cumulative_raw_milliseconds_by_1000_before_P_and_E
+    zero_or_other_imputation_used: false
+
+inspection_incident:
+  observed_utc: '2026-08-18T14:42:39Z'
+  trigger: narrow_public_search_for_pinned_HEGM_duration_unit_handling
+  unexpectedly_exposed_material:
+    - official_KuaiRec_README_example_row
+    - official_KuaiRec_published_dataset_size_summary
+  quarantine_scope: all_example_row_and_dataset_size_values
+  quarantined_values_persisted_or_used: false
+  retained_schema_fact: official_duration_fields_are_milliseconds
+  local_test_label_rows_or_vectors_read: false
+  DCDN_outputs_or_model_metrics_read: false
+  test_unlocked: false
+  further_README_result_evaluator_or_checkpoint_inspection_allowed: false
+
+invalid_intermediate_artifacts:
+  false_source_wide_claim_contract:
+    sha256: f0883ced4c8fb3f0945cacb1affa0b4891f748c4294e3a2d1016100191011b8d
+    archive_path: configs/data/kuairec/features_v1.rejected-f0883ced.yaml
+    status: invalid_not_usable
+  prior_blind_scan:
+    sha256: 3b38391097c9294b7622bc91c7b836283247b7ff41bbf41a0a7a4e84c35357ab
+    archive_path: configs/data/kuairec/blind_scan_v1.rejected-3b383910.yaml
+    generated_cli_verdict: PASS
+    status: invalid_not_usable
+    reason: upstream_contract_relied_on_false_source_wide_all_null_premise
+  evidence_deleted: false
+
+source_manifest:
+  path: data/manifests/kuairec_source_v1.yaml
+  sha256: 963019bcb4c8dbd4663f23c24a472fe0332f6494fdcbbaa74ca158a73488c5b4
+  raw_archive_sha256: c23f211cf109c7a060a25a4afe9e8c681b1ccbbc816cca921d87ad37dd11c70c
+  big_matrix_sha256: 4ee1a72ff9ce4e86ef50525da9dfd7aefcefa717b37c9d570010f689c42f4ef9
+  item_daily_features_sha256: 45943d63c44652b6403f3a4f78c7225e1afe7916bab17d9a674d7979245e085b
+
+hegm_provenance:
+  repository: https://github.com/rw404/HEGM.git
+  revision: d16c097d57f867f438f906949d9cc1efd0f6ddc4
+  preprocess_path: scripts/preprocess_kuairec.py
+  preprocess_kuairec_sha256: 184729b5dd200a3d8f8e13ae83179286242b586fb27162bb7b713e0988ae2807
+  license_path: LICENSE
+  license_sha256: eb74dde2903b7a84802e5907b35717441530b25738fc00c0b6639bb8287878c3
+  inspected_materials:
+    - scripts/preprocess_kuairec.py
+    - hegm/features.py
+    - LICENSE
+  forbidden_materials_not_opened:
+    - README.md
+    - evaluate.py
+    - hegm/metrics.py
+    - published_results
+    - released_checkpoints
+  exact_reproduced_elements:
+    - exclude_video_type_AD
+    - exclude_current_play_duration_le_0
+    - exclude_current_video_duration_le_0
+    - global_timestamp_user_video_sort
+    - interaction_count_80_10_10_split
+    - train_only_user_item_and_category_mappings
+    - validation_test_cold_user_item_inner_drop
+  intentional_time_safety_changes:
+    - >-
+      HEGM obtains one arbitrary item-daily row with unique(video_id). This
+      contract instead accepts video_type as static only after an invariance
+      gate; all numeric daily features use cumulative rows with date<d.
+    - >-
+      HEGM derives c from the full item-metadata table. This contract fits c
+      from filtered training interaction video_duration only, before any
+      validation or sealed-test value is used.
+
+inspection_boundary:
+  blind_scan_big_matrix_columns:
+    - user_id
+    - video_id
+    - play_duration
+    - video_duration
+    - date
+    - timestamp
+  current_play_duration_use: positivity_predicate_only
+  current_play_duration_values_exposed_or_summarized: false
+  watch_ratio_read: false
+  time_column_read: false
+  blind_scan_daily_columns:
+    - video_id
+    - date
+    - video_type
+    - show_cnt
+    - show_user_num
+    - play_cnt
+    - play_user_num
+    - play_duration
+    - complete_play_cnt
+    - complete_play_user_num
+    - valid_play_cnt
+    - valid_play_user_num
+    - long_time_play_cnt
+    - long_time_play_user_num
+    - short_time_play_cnt
+    - short_time_play_user_num
+    - like_cnt
+    - like_user_num
+    - click_like_cnt
+    - double_click_cnt
+    - cancel_like_cnt
+    - cancel_like_user_num
+    - comment_cnt
+    - comment_user_num
+    - direct_comment_cnt
+    - reply_comment_cnt
+    - delete_comment_cnt
+    - delete_comment_user_num
+    - comment_like_cnt
+    - comment_like_user_num
+    - follow_cnt
+    - follow_user_num
+    - cancel_follow_cnt
+    - cancel_follow_user_num
+    - share_cnt
+    - share_user_num
+    - download_cnt
+    - download_user_num
+    - report_cnt
+    - report_user_num
+    - reduce_similar_cnt
+    - reduce_similar_user_num
+  blind_scan_daily_audit_only_excluded_columns:
+    - collect_cnt
+    - collect_user_num
+    - cancel_collect_cnt
+    - cancel_collect_user_num
+  audit_only_excluded_column_use: aggregate_missingness_gate_only
+  audit_only_excluded_values_exposed_or_persisted: false
+  allowed_persisted_outputs:
+    - filter_and_split_row_counts
+    - train_mapping_cardinalities
+    - cold_user_item_drop_counts
+    - split_membership_hashes_from_source_row_indices
+    - schema_and_invariant_checks
+    - train_only_c_seconds
+    - exact_partial_null_counts_for_owner_excluded_columns
+  forbidden_persisted_outputs:
+    - row_samples
+    - individual_outcome_values
+    - outcome_distributions
+    - validation_or_test_model_metrics
+    - test_label_shards_before_protocol_unlock
+
+unit_normalization:
+  provenance: official_KuaiRec_public_schema
+  provenance_url: https://github.com/chongminggao/KuaiRec
+  raw_units:
+    big_matrix.play_duration: milliseconds
+    big_matrix.video_duration: milliseconds
+    item_daily_features.play_duration: milliseconds
+  canonical_duration_units: seconds
+  milliseconds_per_second: 1000.0
+  positivity_filters_run_on_raw_milliseconds: true
+  big_matrix_video_duration_to_c_and_P: raw_video_duration / 1000.0
+  current_play_to_future_sealed_label: raw_play_duration / 1000.0
+  lagged_daily_play_duration_to_P_and_E: cumulative_raw_milliseconds / 1000.0
+  conversion_changes_filter_split_or_order: false
+
+strict_exclusions:
+  big_matrix.watch_ratio: label_derived_outcome_never_input_and_not_read_pre_unlock
+  big_matrix.play_duration: current_label_source_or_blind_positive_filter_only
+  big_matrix.time: redundant_audit_field_not_input
+  big_matrix.date: audit_and_asof_key_only
+  big_matrix.timestamp: audit_and_global_sort_key_only
+  item_daily_features.play_progress: derived_statistic_not_a_base_operand
+  item_daily_features.comment_stay_duration: ambiguous_aggregate_semantics_excluded
+  item_daily_features.collect_cnt: owner_approved_partial_null_full_exclusion_without_imputation
+  item_daily_features.collect_user_num: owner_approved_partial_null_full_exclusion_without_imputation
+  item_daily_features.cancel_collect_cnt: owner_approved_partial_null_full_exclusion_without_imputation
+  item_daily_features.cancel_collect_user_num: owner_approved_partial_null_full_exclusion_without_imputation
+  engineered.e_collect_per_show: owner_approved_partial_null_source_exclusion
+  engineered.e_collect_per_show_user: owner_approved_partial_null_source_exclusion
+  engineered.e_cancel_collect_per_show: owner_approved_partial_null_source_exclusion
+  engineered.e_cancel_collect_per_show_user: owner_approved_partial_null_source_exclusion
+  user_features.csv: excluded_unknown_point_in_time_snapshot_provenance
+  item_categories.csv.feat: excluded_ambiguous_multivalue_encoding
+  caption_and_topic_text: excluded_unbounded_text_context
+  small_matrix.csv: excluded_wrong_interaction_population
+  social_network.csv: excluded_outside_frozen_feature_regime
+  current_row_outcomes_as_history: forbidden
+  same_day_item_daily_aggregates: forbidden
+
+filtering:
+  ordered_predicates:
+    - static_video_type_is_not_AD
+    - current_play_duration_gt_0
+    - current_video_duration_gt_0
+  duration_predicate_units: raw_milliseconds
+  positive_watch_estimand_disclosed: true
+  watch_ratio_read: false
+  video_type_static_gate:
+    normalization: strip_exact_string_no_case_fold
+    invariant_required: one_nonmissing_value_per_video_across_daily_rows
+    inconsistent_video_behavior: fail_before_split
+    missing_video_type: UNK_and_keep
+    ad_literal: AD
+  numeric_parse_failure: fail_before_split
+  deduplication: none_preserve_every_released_big_matrix_row
+
+split:
+  population: rows_after_all_frozen_filters
+  sort_keys:
+    - timestamp
+    - user_id
+    - video_id
+    - source_row_index0
+  source_row_index0: zero_based_data_row_excluding_header
+  train_fraction: 0.8
+  validation_fraction: 0.1
+  test_fraction: 0.1
+  rounding: train=floor(0.8*N); validation=floor(0.1*N); test=remainder
+  mapping_fit_split: train_only
+  validation_test_cold_user_item_policy: inner_drop_and_report_counts
+  category_oov_policy: retain_row_and_map_to_OOV
+  test_role: sealed_untouched_until_protocol_and_selected_configs_are_hashed
+
+row_identity:
+  formula: sha256(dataset_id NUL big_matrix_sha256 NUL source_row_index0)
+  membership_hash_order: filtered_global_sort_order
+  retain_audit_only:
+    - stable_row_id
+    - source_row_index0
+    - original_user_id
+    - original_video_id
+    - timestamp
+    - date
+    - filtered_sorted_rank0
+    - split
+  audit_fields_are_model_inputs: false
+
+context_C:
+  fit_split: train_only_after_frozen_filters
+  user_item_mapping:
+    ordering: ascending_integer_id
+    first_known_index: 0
+    validation_test_unseen_behavior: inner_drop_before_evaluation
+  category_mapping:
+    source: kuairec_caption_category.csv
+    fields:
+      - first_level_category_id
+      - second_level_category_id
+      - third_level_category_id
+    ordering: ascending_normalized_value
+    OOV_index: 0
+    first_known_index: 1
+    missing_behavior: OOV
+  fields:
+    c_user_id: train_mapped_big_matrix.user_id
+    c_video_id: train_mapped_big_matrix.video_id
+    c_first_level_category_id: train_mapped_caption.first_level_category_id
+    c_second_level_category_id: train_mapped_caption.second_level_category_id
+    c_third_level_category_id: train_mapped_caption.third_level_category_id
+  reciprocal_routing: bypass
+
+daily_history:
+  source: item_daily_features.csv
+  grouping_key: video_id
+  raw_time_key: date
+  availability_rule: daily_date_strictly_less_than_event_date
+  same_day_allowed: false
+  unique_video_shortcut_allowed: false
+  duplicate_video_date_policy: sum_numeric_base_columns_then_prefix
+  window: all_released_daily_rows_strictly_before_d
+  missing_history_fallback: all_base_sums_zero
+  null_nonfinite_or_negative_base_value: fail_before_materialization
+  play_duration_raw_units: milliseconds
+  play_duration_canonical_units: seconds
+  play_duration_divisor: 1000.0
+  play_duration_conversion_before_P_and_E: true
+  play_duration_output_name: hist_play_duration_sum
+  source_to_P_rule: >-
+    Every non-duration daily source is summed over dates<d and named
+    p_hist_<source>. Daily play_duration is summed in raw milliseconds,
+    divided by 1000.0, and emitted as p_hist_play_duration_sum in seconds.
+  ordered_daily_base_sources:
+    - show_cnt
+    - show_user_num
+    - play_cnt
+    - play_user_num
+    - play_duration
+    - complete_play_cnt
+    - complete_play_user_num
+    - valid_play_cnt
+    - valid_play_user_num
+    - long_time_play_cnt
+    - long_time_play_user_num
+    - short_time_play_cnt
+    - short_time_play_user_num
+    - like_cnt
+    - like_user_num
+    - click_like_cnt
+    - double_click_cnt
+    - cancel_like_cnt
+    - cancel_like_user_num
+    - comment_cnt
+    - comment_user_num
+    - direct_comment_cnt
+    - reply_comment_cnt
+    - delete_comment_cnt
+    - delete_comment_user_num
+    - comment_like_cnt
+    - comment_like_user_num
+    - follow_cnt
+    - follow_user_num
+    - cancel_follow_cnt
+    - cancel_follow_user_num
+    - share_cnt
+    - share_user_num
+    - download_cnt
+    - download_user_num
+    - report_cnt
+    - report_user_num
+    - reduce_similar_cnt
+    - reduce_similar_user_num
+
+feature_algebra:
+  P:
+    p_video_duration_seconds: big_matrix.video_duration_raw_ms / 1000.0
+    p_hist_play_duration_sum: cumulative_lagged_daily_play_duration_raw_ms / 1000.0
+    lagged_daily_fields: cumulative_sum_over_same_video_and_daily_date_lt_event_date
+    shifted_denominators:
+      p_hist_show_cnt_plus_1: p_hist_show_cnt + 1
+      p_hist_show_user_num_plus_1: p_hist_show_user_num + 1
+      p_hist_play_cnt_plus_1: p_hist_play_cnt + 1
+      p_hist_play_user_num_plus_1: p_hist_play_user_num + 1
+  V:
+    v_prior_daily_history_present: 1_if_any_daily_row_for_video_has_date_lt_d_else_0
+    v_hist_show_cnt_nonzero: 1_if_p_hist_show_cnt_gt_0_else_0
+    v_hist_show_user_num_nonzero: 1_if_p_hist_show_user_num_gt_0_else_0
+    v_hist_play_cnt_nonzero: 1_if_p_hist_play_cnt_gt_0_else_0
+    v_hist_play_user_num_nonzero: 1_if_p_hist_play_user_num_gt_0_else_0
+    v_video_duration_positive: 1_after_frozen_positive_filter
+  E:
+    e_play_per_show: p_hist_play_cnt / p_hist_show_cnt_plus_1
+    e_unique_play_per_unique_show: p_hist_play_user_num / p_hist_show_user_num_plus_1
+    count_rate_template: >-
+      For family in complete_play, valid_play, long_time_play,
+      short_time_play: family_cnt/(play_cnt+1), family_cnt/(show_cnt+1),
+      family_user_num/(play_user_num+1), and
+      family_user_num/(show_user_num+1).
+    e_average_play_duration_seconds: p_hist_play_duration_sum / p_hist_play_cnt_plus_1
+    e_play_duration_per_show_seconds: p_hist_play_duration_sum / p_hist_show_cnt_plus_1
+    engagement_rate_template: >-
+      Every ordered engagement *_cnt source is divided by
+      p_hist_show_cnt_plus_1; every *_user_num source is divided by
+      p_hist_show_user_num_plus_1.
+  smoothing_constant: 1.0
+  smoothing_source: frozen_project_choice_before_raw_scan_not_metric_derived
+
+normalization:
+  fit_split: filtered_train_only
+  numerical_P_and_E: divide_by_max(train_absolute_q99_linear_r7,1.0)
+  validity_V: identity_zero_or_one
+  z_centering: false
+  denominator_floor_before_normalization: none_shifted_denominators_are_positive
+  freeze_scales_before_validation_features: true
+
+ordered_fields:
+  C:
+    - c_user_id
+    - c_video_id
+    - c_first_level_category_id
+    - c_second_level_category_id
+    - c_third_level_category_id
+  P:
+    - p_video_duration_seconds
+    - p_hist_show_cnt
+    - p_hist_show_user_num
+    - p_hist_play_cnt
+    - p_hist_play_user_num
+    - p_hist_play_duration_sum
+    - p_hist_complete_play_cnt
+    - p_hist_complete_play_user_num
+    - p_hist_valid_play_cnt
+    - p_hist_valid_play_user_num
+    - p_hist_long_time_play_cnt
+    - p_hist_long_time_play_user_num
+    - p_hist_short_time_play_cnt
+    - p_hist_short_time_play_user_num
+    - p_hist_like_cnt
+    - p_hist_like_user_num
+    - p_hist_click_like_cnt
+    - p_hist_double_click_cnt
+    - p_hist_cancel_like_cnt
+    - p_hist_cancel_like_user_num
+    - p_hist_comment_cnt
+    - p_hist_comment_user_num
+    - p_hist_direct_comment_cnt
+    - p_hist_reply_comment_cnt
+    - p_hist_delete_comment_cnt
+    - p_hist_delete_comment_user_num
+    - p_hist_comment_like_cnt
+    - p_hist_comment_like_user_num
+    - p_hist_follow_cnt
+    - p_hist_follow_user_num
+    - p_hist_cancel_follow_cnt
+    - p_hist_cancel_follow_user_num
+    - p_hist_share_cnt
+    - p_hist_share_user_num
+    - p_hist_download_cnt
+    - p_hist_download_user_num
+    - p_hist_report_cnt
+    - p_hist_report_user_num
+    - p_hist_reduce_similar_cnt
+    - p_hist_reduce_similar_user_num
+    - p_hist_show_cnt_plus_1
+    - p_hist_show_user_num_plus_1
+    - p_hist_play_cnt_plus_1
+    - p_hist_play_user_num_plus_1
+  V:
+    - v_prior_daily_history_present
+    - v_hist_show_cnt_nonzero
+    - v_hist_show_user_num_nonzero
+    - v_hist_play_cnt_nonzero
+    - v_hist_play_user_num_nonzero
+    - v_video_duration_positive
+  E:
+    - e_play_per_show
+    - e_unique_play_per_unique_show
+    - e_complete_play_per_play
+    - e_complete_play_per_show
+    - e_valid_play_per_play
+    - e_valid_play_per_show
+    - e_long_time_play_per_play
+    - e_long_time_play_per_show
+    - e_short_time_play_per_play
+    - e_short_time_play_per_show
+    - e_complete_play_user_per_play_user
+    - e_complete_play_user_per_show_user
+    - e_valid_play_user_per_play_user
+    - e_valid_play_user_per_show_user
+    - e_long_time_play_user_per_play_user
+    - e_long_time_play_user_per_show_user
+    - e_short_time_play_user_per_play_user
+    - e_short_time_play_user_per_show_user
+    - e_average_play_duration_seconds
+    - e_play_duration_per_show_seconds
+    - e_like_per_show
+    - e_like_per_show_user
+    - e_click_like_per_show
+    - e_double_click_per_show
+    - e_cancel_like_per_show
+    - e_cancel_like_per_show_user
+    - e_comment_per_show
+    - e_comment_per_show_user
+    - e_direct_comment_per_show
+    - e_reply_comment_per_show
+    - e_delete_comment_per_show
+    - e_delete_comment_per_show_user
+    - e_comment_like_per_show
+    - e_comment_like_per_show_user
+    - e_follow_per_show
+    - e_follow_per_show_user
+    - e_cancel_follow_per_show
+    - e_cancel_follow_per_show_user
+    - e_share_per_show
+    - e_share_per_show_user
+    - e_download_per_show
+    - e_download_per_show_user
+    - e_report_per_show
+    - e_report_per_show_user
+    - e_reduce_similar_per_show
+    - e_reduce_similar_per_show_user
+  numeric_interaction_operands:
+    - p_video_duration_seconds
+    - p_hist_show_cnt
+    - p_hist_show_user_num
+    - p_hist_play_cnt
+    - p_hist_play_user_num
+    - p_hist_play_duration_sum
+    - p_hist_complete_play_cnt
+    - p_hist_complete_play_user_num
+    - p_hist_valid_play_cnt
+    - p_hist_valid_play_user_num
+    - p_hist_long_time_play_cnt
+    - p_hist_long_time_play_user_num
+    - p_hist_short_time_play_cnt
+    - p_hist_short_time_play_user_num
+    - p_hist_like_cnt
+    - p_hist_like_user_num
+    - p_hist_click_like_cnt
+    - p_hist_double_click_cnt
+    - p_hist_cancel_like_cnt
+    - p_hist_cancel_like_user_num
+    - p_hist_comment_cnt
+    - p_hist_comment_user_num
+    - p_hist_direct_comment_cnt
+    - p_hist_reply_comment_cnt
+    - p_hist_delete_comment_cnt
+    - p_hist_delete_comment_user_num
+    - p_hist_comment_like_cnt
+    - p_hist_comment_like_user_num
+    - p_hist_follow_cnt
+    - p_hist_follow_user_num
+    - p_hist_cancel_follow_cnt
+    - p_hist_cancel_follow_user_num
+    - p_hist_share_cnt
+    - p_hist_share_user_num
+    - p_hist_download_cnt
+    - p_hist_download_user_num
+    - p_hist_report_cnt
+    - p_hist_report_user_num
+    - p_hist_reduce_similar_cnt
+    - p_hist_reduce_similar_user_num
+    - p_hist_show_cnt_plus_1
+    - p_hist_show_user_num_plus_1
+    - p_hist_play_cnt_plus_1
+    - p_hist_play_user_num_plus_1
+    - v_prior_daily_history_present
+    - v_hist_show_cnt_nonzero
+    - v_hist_show_user_num_nonzero
+    - v_hist_play_cnt_nonzero
+    - v_hist_play_user_num_nonzero
+    - v_video_duration_positive
+
+denominator_mask:
+  eligible_fields:
+    - p_video_duration_seconds
+    - p_hist_show_cnt_plus_1
+    - p_hist_show_user_num_plus_1
+    - p_hist_play_cnt_plus_1
+    - p_hist_play_user_num_plus_1
+  semantic_reason: positive_duration_and_shifted_count_denominators_only
+  categorical_ID_category_and_E_fields_divided: false
+  all_enabled_values_positive_after_filter_and_shift: true
+  reciprocal_epsilon: 0.01
+  reciprocal_compute_dtype: float32
+  ordered_boolean_mask:
+    - true
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - true
+    - true
+    - true
+    - true
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+
+schema_hashes:
+  canonical_encoding: compact_ASCII_JSON_array
+  C: 08deb99c9ce479841b47771907a4d65bb022ca12f18f960d1d23bd0f0a2e0404
+  P: d19573df38f1979066051f1a06408ac12faa227164c116377798ffa94ae658d9
+  V: 024723dc5302f73c4572c6be824944a227ab1c13ecb1c309591ca0e6ea80e9cc
+  E: dcb3a271d158a98b682bbae7e753f22033f3b15ce964a1c0e27489b7be036df6
+  numeric_interaction_operands: 41a21947778c9c70c7e59989cf51bcc53854c477a523e9d7b5bcd2654943c756
+  denominator_mask: 28c0d620c8f4a063e01e13a58faf9312c7f1becd48d435409c4023008d0a9a35
+
+label:
+  source: big_matrix.current_play_duration
+  raw_source_field: big_matrix.play_duration
+  raw_source_units: milliseconds
+  sealed_seconds_conversion: raw_play_duration / 1000.0
+  watch_ratio_as_input: false
+  current_play_duration_as_input: false
+  c_fit: filtered_train_video_duration_ms_div_1000_q99_linear_r7
+  c_quantile: 0.99
+  c_units: seconds
+  c_expected_sanity_interval_seconds: [10.0, 600.0]
+  transform: clip(current_play_duration_ms/1000,0,c_seconds)/c_seconds
+  training_loss: normalized_mean_squared_error
+  selection_metric: normalized_mse
+  selection_direction: minimize
+  reporting_transform:
+    target_seconds: clip(current_play_duration_ms/1000,0,c_seconds)
+    prediction_seconds: c_seconds*clip(normalized_prediction,0,1)
+
+metrics:
+  primary:
+    - normalized_mse
+    - mae_seconds
+    - mse_seconds_squared
+  secondary:
+    - global_concordance
+  global_concordance: >-
+    All unordered pairs with unequal clipped target seconds; matching order=1,
+    reversed=0, prediction tie=0.5, target ties excluded.
+  bootstrap_cluster: original_user_id
+  confidence_level: 0.95
+  model_metrics_allowed_before_test_unlock: false
+
+architecture_routing:
+  dcdn_public_label: DCDN-Core-L{L}
+  dcdn_core_operands: P_plus_V_only
+  C: bypass_reciprocal_and_join_common_encoder
+  E: DCNv2_C_plus_P_plus_E_arm_only
+  common_context_encoder_and_head_identical: true
+  production_FC_BN_Dropout_projector_present: false
+  causal_matrix:
+    - DCNv2(C+P)
+    - DCNv2(C+P+E)
+    - DCDN(C+P)
+    - DCNv2-capacity-matched-core(C+P)
+    - AFN+(C+P)
+
+test_lock:
+  test_unlocked: false
+  unlock_requires:
+    - protocol_frozen_yaml_and_sha256
+    - selected_configs_lock_and_sha256
+    - all_validation_only_tuning_complete
+  no_test_metric_or_label_summary_before_unlock: true
+  no_protocol_or_hyperparameter_change_after_test_access: true

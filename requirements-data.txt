@@ -1,0 +1,7 @@
+# Only needed to build the dataset views. The notebook, the models and the
+# benchmarks do not import these.
+polars==1.43.0
+# Polars 1.43.0 pins this runtime transitively; naming it directly is required
+# for a resolver to accept the frozen Polars pin.
+polars-runtime-32==1.43.0
+pyarrow==25.0.0

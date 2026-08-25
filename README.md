@@ -17,6 +17,7 @@ counters is one weight instead of an approximation.**
 
 **[Notebook](dcdn_synthetic_and_explainability.ipynb)** ·
 **[Fused Triton kernel](#the-fused-inference-kernel)** ·
+[Datasets](#datasets) ·
 [Training throughput](#training-throughput) ·
 [RQ1 quotient learning](#rq1--quotient-learning) ·
 [RQ2 quality and latency](#rq2--quality-and-inference-efficiency) ·
@@ -93,9 +94,13 @@ lives on the project's experiment branch.
 │   ├── rq1.md                                ← quotient learning
 │   ├── rq2.md                                ← ranking quality and inference efficiency
 │   └── rq3.md                                ← capacity
+├── configs/data/                             ← the frozen feature contracts
+├── data/manifests/                           ← pinned source hashes
 ├── figures/                                  ← every figure, SVG
-├── src/dcdn/                                 ← 18 modules, 185 KB
-└── scripts/                                  ← training, benchmarking, reporting
+├── src/dcdn/                                 ← model, metrics, fused inference
+└── scripts/
+    ├── data/                                 ← acquire and materialise the four datasets
+    └── ...                                   ← training, benchmarking, reporting
 ```
 
 ---
@@ -112,6 +117,73 @@ export DCDN_DATA_CACHE="$HOME/.cache/dcdn"      # where materialized views live
 Measured on **NVIDIA A100-SXM4-80GB**, CUDA 12.8, cuDNN 9.10.02, PyTorch
 2.8.0+cu128, Triton 3.4.0, Python 3.12.3. The Triton kernel needs a CUDA device;
 everything else runs on CPU, slowly.
+
+---
+
+## Datasets
+
+Each of the four public tasks is built in two steps. **Acquire** verifies every
+byte against a hash pinned before the fetch and deletes anything that drifted;
+**materialise** turns the verified source into the `(categorical, P, V, E,
+labels)` arrays the runners load. Neither step reads a label, and every feature
+contract under `configs/data/` ships with a `.sha256` sidecar, so a contract that
+drifted is detectable.
+
+```bash
+pip install -r requirements-data.txt          # polars, pyarrow — this step only
+export DCDN_DATA_CACHE="$HOME/.cache/dcdn"    # everything below lands here
+export PYTHONPATH="$PWD/src:$PWD"
+```
+
+```bash
+# Yambda-50M · 0.46 GB — the listen stream and two item maps
+python scripts/data/yambda_raw.py
+python scripts/data/yambda_materialize.py            # → runtime/yambda_listen_v1
+
+# KuaiRec · 432 MB archive, 1.58 GB extracted — the big matrix
+python scripts/data/kuairec_raw.py --manifest /tmp/kuairec_source_v1.yaml
+python scripts/data/kuairec_materialize.py           # → runtime/kuairec_watch_time_v1
+
+# KuaiRand-Pure · 47 MB archive
+python scripts/data/kuairand_pure_raw.py --extract \
+    --manifest-output /tmp/kuairand_pure_source_v1.yaml
+python scripts/data/kuairand_pure_materialize.py     # → runtime/kuairand_pure_multitask_v1
+python scripts/data/kuairand_sessions.py             # 30-minute sessions, for nDCG@10
+
+# VK-LSVD ur0.01_ir0.01 · 25 MB
+python scripts/data/vk_ur_raw.py
+python scripts/data/vk_ur_materialize.py             # → runtime/vk_lsvd_ur_v1
+```
+
+The `runtime/` directory each materialiser writes is what `--views` takes:
+
+```bash
+python scripts/run_kuairand_single_target.py --device cuda:0 \
+    --target watch_ratio_gt2 --preconditioner none \
+    --views "$DCDN_DATA_CACHE/runtime/kuairec_watch_time_v1" \
+    --annex-seeds --save-predictions --field \
+    --output-dir results/kuairec_watch_time/binary_field_v1
+```
+
+Three things are worth knowing before you run this.
+
+**The manifests under `data/manifests/` are pinned inputs for VK-LSVD and
+provenance outputs for the other three.** `vk_ur_raw.py` reads
+`vk_lsvd_ur_source_v1.yaml` and fetches nothing whose size and digest disagree
+with it. The KuaiRec and KuaiRand acquirers instead pin their hashes in code and
+*write* a manifest afterwards, which is why the commands above send them to
+`/tmp` — diff the result against the committed copy to confirm you fetched the
+same bytes. `yambda_raw.py` has no such flag and rewrites
+`data/manifests/yambda_source_v1.yaml` in place; there, `git diff` is the check.
+
+**VK-LSVD week 26 is sealed.** It is listed in the manifest so the object is
+identifiable and is never requested. Yambda's likes, dislikes, `multi_event` and
+the 13.8 GB embeddings are skipped for the same reason — the frozen join policy
+does not admit them.
+
+**`F_reduced` and `F_full` come out of one materialisation.** The views carry
+both widths; the runner selects between them, so there is no second pass to
+build the reduced input.
 
 ---
 

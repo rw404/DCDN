@@ -1,0 +1,311 @@
+schema_version: 1
+dataset_id: kuairec-big-matrix
+artifact_role: raw_source_provenance_only
+acquisition_state: raw_download_verified
+raw_download_verified: true
+test_unlocked: false
+values_not_scanned: true
+test_labels_opened: false
+validation_or_test_metrics_read: false
+artifact_class: raw_public_source_manifest
+verified_at_utc: '2026-08-18T13:01:13Z'
+source:
+  url: https://zenodo.org/records/18164998/files/KuaiRec.zip
+  zenodo_record: '18164998'
+  access: public_unauthenticated_read_only
+  credentials_used: false
+  telemetry_used: false
+  expected_bytes: 431964858
+  expected_md5: 261550d472c48eff4990fb13c0e5bcf7
+  verified_bytes: 431964858
+  verified_md5: 261550d472c48eff4990fb13c0e5bcf7
+  verified_sha256: c23f211cf109c7a060a25a4afe9e8c681b1ccbbc816cca921d87ad37dd11c70c
+license_provenance:
+  zenodo_record_declared: CC-BY-4.0
+  upstream_github_declared: CC-BY-SA-4.0
+  conservative_terms_applied: CC-BY-SA-4.0
+  raw_redistribution: forbidden_by_project_policy
+inspection:
+  archive_or_repository_metadata_read: true
+  byte_hashes_computed: true
+  csv_headers_read: true
+  parquet_or_numpy_decoded: false
+  row_values_scanned: false
+  test_labels_opened: false
+  validation_or_test_metrics_read: false
+  first_line_headers_only: true
+inspection_boundary:
+  archive_filenames_read: true
+  member_sizes_and_hashes_computed: true
+  csv_header_schema_names_read: true
+  license_and_provenance_metadata_recorded: true
+  row_values_scanned: false
+  label_or_outcome_values_scanned: false
+  readme_results_or_evaluation_opened: false
+  non_csv_contents_opened_or_interpreted: false
+  filtering_or_split_construction_performed: false
+  distribution_or_metric_computed: false
+  test_unlocked: false
+storage:
+  class: ephemeral_regenerable_public_raw_data
+  persistent_raw_copy_created: false
+  raw_data_committed: false
+  archive_and_extraction: ephemeral_cache_only
+  raw_data_tracked_by_git: false
+archive:
+  format: zip
+  member_count: 15
+  total_uncompressed_bytes: 1578999143
+  safety_validation:
+    zip_slip_rejected: true
+    absolute_and_drive_paths_rejected: true
+    backslash_paths_rejected: true
+    symlinks_and_special_files_rejected: true
+    encrypted_members_rejected: true
+    duplicate_targets_rejected: true
+    member_and_total_size_caps_enforced: true
+    compression_ratio_cap_enforced: true
+  members:
+  - path: KuaiRec 2.0
+    kind: directory
+    compressed_bytes: 0
+    uncompressed_bytes: 0
+    crc32: '00000000'
+  - path: KuaiRec 2.0/LICENSE
+    kind: file
+    compressed_bytes: 6026
+    uncompressed_bytes: 20138
+    crc32: a2f5d2ac
+  - path: KuaiRec 2.0/Statistics_KuaiRec.ipynb
+    kind: file
+    compressed_bytes: 189320
+    uncompressed_bytes: 314195
+    crc32: 494ae71f
+  - path: KuaiRec 2.0/data
+    kind: directory
+    compressed_bytes: 0
+    uncompressed_bytes: 0
+    crc32: '00000000'
+  - path: KuaiRec 2.0/data/big_matrix.csv
+    kind: file
+    compressed_bytes: 292596467
+    uncompressed_bytes: 1083521226
+    crc32: d7691b83
+  - path: KuaiRec 2.0/data/item_categories.csv
+    kind: file
+    compressed_bytes: 31532
+    uncompressed_bytes: 113130
+    crc32: 6205d7f3
+  - path: KuaiRec 2.0/data/item_daily_features.csv
+    kind: file
+    compressed_bytes: 19009800
+    uncompressed_bytes: 85855213
+    crc32: 12e08ed8
+  - path: KuaiRec 2.0/data/kuairec_caption_category.csv
+    kind: file
+    compressed_bytes: 601001
+    uncompressed_bytes: 1964578
+    crc32: 7e4f7ea4
+  - path: KuaiRec 2.0/data/small_matrix.csv
+    kind: file
+    compressed_bytes: 119146250
+    uncompressed_bytes: 406155844
+    crc32: 04a13552
+  - path: KuaiRec 2.0/data/social_network.csv
+    kind: file
+    compressed_bytes: 3007
+    uncompressed_bytes: 6910
+    crc32: 3c1745ac
+  - path: KuaiRec 2.0/data/user_features.csv
+    kind: file
+    compressed_bytes: 122279
+    uncompressed_bytes: 744174
+    crc32: a6c34776
+  - path: KuaiRec 2.0/figs
+    kind: directory
+    compressed_bytes: 0
+    uncompressed_bytes: 0
+    crc32: '00000000'
+  - path: KuaiRec 2.0/figs/KuaiRec.png
+    kind: file
+    compressed_bytes: 255093
+    uncompressed_bytes: 300178
+    crc32: 26c8217b
+  - path: KuaiRec 2.0/figs/colab-badge.svg
+    kind: file
+    compressed_bytes: 1136
+    uncompressed_bytes: 2369
+    crc32: c0328030
+  - path: KuaiRec 2.0/loaddata.py
+    kind: file
+    compressed_bytes: 369
+    uncompressed_bytes: 1188
+    crc32: e8fef9fa
+extracted_files:
+- path: KuaiRec 2.0/LICENSE
+  bytes: 20138
+  sha256: 187442db4df3afd21f2f0525739fd4beac28a62daaba3ee8d3533f60e7c33ec7
+  header_columns: null
+- path: KuaiRec 2.0/Statistics_KuaiRec.ipynb
+  bytes: 314195
+  sha256: f0c91aa0dc6e412e171cb6dffc6f1d82e9b11780dcd72a08e8f8bb1a5c581895
+  header_columns: null
+- path: KuaiRec 2.0/data/big_matrix.csv
+  bytes: 1083521226
+  sha256: 4ee1a72ff9ce4e86ef50525da9dfd7aefcefa717b37c9d570010f689c42f4ef9
+  header_columns:
+  - user_id
+  - video_id
+  - play_duration
+  - video_duration
+  - time
+  - date
+  - timestamp
+  - watch_ratio
+- path: KuaiRec 2.0/data/item_categories.csv
+  bytes: 113130
+  sha256: b8b8330387cd69659ff6b35b9b69bb35303196a5264d5d7743e92ae8e19cd15e
+  header_columns:
+  - video_id
+  - feat
+- path: KuaiRec 2.0/data/item_daily_features.csv
+  bytes: 85855213
+  sha256: 45943d63c44652b6403f3a4f78c7225e1afe7916bab17d9a674d7979245e085b
+  header_columns:
+  - video_id
+  - date
+  - author_id
+  - video_type
+  - upload_dt
+  - upload_type
+  - visible_status
+  - video_duration
+  - video_width
+  - video_height
+  - music_id
+  - video_tag_id
+  - video_tag_name
+  - show_cnt
+  - show_user_num
+  - play_cnt
+  - play_user_num
+  - play_duration
+  - complete_play_cnt
+  - complete_play_user_num
+  - valid_play_cnt
+  - valid_play_user_num
+  - long_time_play_cnt
+  - long_time_play_user_num
+  - short_time_play_cnt
+  - short_time_play_user_num
+  - play_progress
+  - comment_stay_duration
+  - like_cnt
+  - like_user_num
+  - click_like_cnt
+  - double_click_cnt
+  - cancel_like_cnt
+  - cancel_like_user_num
+  - comment_cnt
+  - comment_user_num
+  - direct_comment_cnt
+  - reply_comment_cnt
+  - delete_comment_cnt
+  - delete_comment_user_num
+  - comment_like_cnt
+  - comment_like_user_num
+  - follow_cnt
+  - follow_user_num
+  - cancel_follow_cnt
+  - cancel_follow_user_num
+  - share_cnt
+  - share_user_num
+  - download_cnt
+  - download_user_num
+  - report_cnt
+  - report_user_num
+  - reduce_similar_cnt
+  - reduce_similar_user_num
+  - collect_cnt
+  - collect_user_num
+  - cancel_collect_cnt
+  - cancel_collect_user_num
+- path: KuaiRec 2.0/data/kuairec_caption_category.csv
+  bytes: 1964578
+  sha256: 08f6ec40059c5a7ecdcebf615d080d9cf8f59f9497f6d66e8d5ccabdc7cab2d9
+  header_columns:
+  - video_id
+  - manual_cover_text
+  - caption
+  - topic_tag
+  - first_level_category_id
+  - first_level_category_name
+  - second_level_category_id
+  - second_level_category_name
+  - third_level_category_id
+  - third_level_category_name
+- path: KuaiRec 2.0/data/small_matrix.csv
+  bytes: 406155844
+  sha256: 6b601cd38b2600d8734b4aede309ad73d1e201fdc4bd76d4bc7d2534793d7d15
+  header_columns:
+  - user_id
+  - video_id
+  - play_duration
+  - video_duration
+  - time
+  - date
+  - timestamp
+  - watch_ratio
+- path: KuaiRec 2.0/data/social_network.csv
+  bytes: 6910
+  sha256: 92a65bc4190778f737619167bf46d920d935e4666b93101c963647c35a80c6a6
+  header_columns:
+  - user_id
+  - friend_list
+- path: KuaiRec 2.0/data/user_features.csv
+  bytes: 744174
+  sha256: c03ce5c6e90c50407b45585bde983db3079492346f7fa676d860777abfd783f4
+  header_columns:
+  - user_id
+  - user_active_degree
+  - is_lowactive_period
+  - is_live_streamer
+  - is_video_author
+  - follow_user_num
+  - follow_user_num_range
+  - fans_user_num
+  - fans_user_num_range
+  - friend_user_num
+  - friend_user_num_range
+  - register_days
+  - register_days_range
+  - onehot_feat0
+  - onehot_feat1
+  - onehot_feat2
+  - onehot_feat3
+  - onehot_feat4
+  - onehot_feat5
+  - onehot_feat6
+  - onehot_feat7
+  - onehot_feat8
+  - onehot_feat9
+  - onehot_feat10
+  - onehot_feat11
+  - onehot_feat12
+  - onehot_feat13
+  - onehot_feat14
+  - onehot_feat15
+  - onehot_feat16
+  - onehot_feat17
+- path: KuaiRec 2.0/figs/KuaiRec.png
+  bytes: 300178
+  sha256: 3aa41a96c1f4f5eb5282cda992718ca94d1f48c311a9ddf83a24c4f9420eed62
+  header_columns: null
+- path: KuaiRec 2.0/figs/colab-badge.svg
+  bytes: 2369
+  sha256: a590b05e22690c59d120ad562fa6bd74f9e2e8e5f5a8c88381e1bebc99ad0f22
+  header_columns: null
+- path: KuaiRec 2.0/loaddata.py
+  bytes: 1188
+  sha256: c9c01274367cd718a5b458082d58d68c74e3b7a7bf6b4db9e4a58e3876308dc7
+  header_columns: null

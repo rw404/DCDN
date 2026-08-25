@@ -1,0 +1,437 @@
+# VK-LSVD ur0.01_ir0.01 - feature contract, frozen before materialization
+#
+# WHY THIS CONTRACT EXISTS, stated before any number was produced
+# ----------------------------------------------------------------
+# The programme's four completed datasets order DCDN's standing by the share of
+# operands that are legitimate positive denominators:
+#
+#   KuaiRand-Pure   24 of 132 = 18%   dcdn_reduced best of the reduced arms
+#   VK-LSVD (up)     5 of  55 =  9%   dcdn_reduced last of twelve, every target
+#
+# That is a prediction, not a decoration: a feature view with high denominator
+# density should place DCDN better, and one with low density should not. This
+# contract builds the high-density case on VK so the prediction can fail.
+#
+# It is registered here BEFORE the materializer was written and before any arm
+# was trained. Its sha256 is committed alongside. Nothing below was chosen after
+# seeing a model score, and the target ladder's thresholds come from train
+# positive rates read while no model existed.
+#
+# WHAT IS DELIBERATE
+# ------------------
+# * 36 of 99 REDUCED operands (36%) are denominators - double KuaiRand's share.
+#   Each (group, window) block contributes four: a show count, its smoothed
+#   variant, a timespent sum and its smoothed variant. Two distinct denominator
+#   families per block mean a rate per impression and a rate per second are
+#   different quotients rather than the same one rescaled.
+# * Normalization divides by the TRAIN MEDIAN OF POSITIVE VALUES rather than by
+#   a high quantile. On the up0.01_ir0.01 slice, `divide_by_train_abs_q99` put
+#   the median of `p_item_show_count_plus_beta` at 0.0281 against a reciprocal
+#   floor of 1e-2, so 48.0% of training rows had a denominator pinned to the
+#   floor and the reciprocal branch returned a constant. Median scaling puts
+#   that figure at 1.2%. The transform is purely multiplicative, so every
+#   quotient n/d is preserved exactly; a log or a shift would turn a quotient
+#   into a difference and hand the additive baselines the structure under test.
+#
+schema_version: 1
+dataset_id: vk_lsvd_ur0.01_ir0.01
+artifact_role: pre_materialization_feature_contract
+contract_revision: 2
+revision_reason: timespent_smoothing_constant_put_on_the_timespent_scale_before_any_training
+source_manifest: data/manifests/vk_lsvd_ur_source_v1.yaml
+source_manifest_sha256: def1086221c3850b1af1aa9d78cc3cb06e36540f442589b5b0b65dc186aaae80
+test_unlocked: false
+test_labels_opened: false
+validation_model_metrics_read: false
+
+split_contract:
+  history_burn_in_weeks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+  train_weeks: [20, 21, 22, 23, 24]
+  validation_week: 25
+  sealed_test_week: 26
+  temporal_rule: >
+    Every history aggregate for a row in week W is computed over rows with week
+    STRICTLY LESS THAN W. A row never contributes to its own features, and no
+    row sees any part of its own week.
+
+categorical_fields: [user_id, item_id, place, platform, agent]
+categorical_mapping_fit: train_only
+unseen_category_policy: map_to_out_of_vocabulary_slot_zero
+cold_policy: retain_and_map_to_OOV
+cold_policy_reason: >
+  25.8% of validation rows carry an item with no prior history in this slice.
+  Dropping them would remove a quarter of the split and change what is being
+  measured; they are retained and their item aggregates are zero with the
+  block's validity indicator false.
+
+groups: [user, item, user_place]
+group_definitions:
+  user: user_id
+  item: item_id
+  user_place: (user_id, place)
+windows:
+  w1: the single week immediately before the row's week
+  w4: the four weeks immediately before the row's week
+  all: every week strictly before the row's week
+
+smoothing:
+  alpha: 1.0
+  beta: 10.0
+  alpha_timespent: 232.5
+  alpha_timespent_definition: beta * train_mean_timespent_per_impression
+  train_mean_timespent_per_impression: 23.25
+  rationale: >
+    `beta` is on the order of the median short-window denominator (18
+    impressions for a user over four weeks), so smoothing a COUNT neither
+    vanishes nor dominates. Not tuned, and not selected against any model score.
+
+    A separate constant is required for the timespent sums, and this was fixed
+    before any arm was trained. Under a single alpha = 1.0 the smoothed sum for
+    a group with no history is one second against a median of several hundred,
+    so after median scaling it lands below the reciprocal floor: measured on the
+    v1 materialization, `p_item_w1_sum_timespent_plus_alpha` was floored on
+    30.9% of training rows. `alpha_timespent = beta * mean timespent per
+    impression` is the standard prior-counts-at-the-prior-mean form - beta
+    pseudo-impressions each contributing the average duration - and it puts the
+    no-history value on the same scale as the quantity it smooths.
+
+    This amendment rests on a measurement that involves no model score: the
+    floored fraction is a property of the data, the normalization and the floor
+    alone. Nothing had been trained when it was made.
+
+normalization:
+  method: divide_by_train_median_of_strictly_positive_values
+  fit_weeks: [20, 21, 22, 23, 24]
+  centering: none
+  clipping: none
+  minimum_scale: 1.0e-12
+  purely_multiplicative: true
+  freeze_before_validation: true
+
+reciprocal:
+  div_eps: 0.01
+  denominator_count: 36
+  operand_count_reduced: 99
+  denominator_density_reduced: 0.3636
+  comparison_kuairand_pure: 0.1818
+  comparison_vk_up_slice: 0.0909
+
+derived_dimensions:
+  C_fields: 5
+  P_fields: 90
+  V_fields: 9
+  R_div_fields: 117
+  REDUCED_operands: 99
+  FULL_operands: 216
+
+honest_field_count_reporting:
+  REDUCED_to_FULL:
+    before: 216
+    after: 99
+    removed: 117
+    reduction_percent: 54.2
+  claim_wording: >
+    removal of manually engineered divisions of historical counters and sums.
+    Every numerator and every denominator of a removed ratio REMAINS in
+    REDUCED; only the quotient is withheld.
+
+targets:
+  primary_confirmatory_target: timespent
+  duration_constant_c: 143
+  c_source: train_weeks_20_24_quantile_0.99
+  ladder:
+    - name: timespent
+      kind: regression
+      transform: clip(timespent, 0, c) / c
+      train_mean: 0.16001
+      train_variance: 0.037668
+    - name: timespent_gt10
+      kind: binary
+      threshold: 10
+      train_positive_rate: 0.5000
+    - name: timespent_gt20
+      kind: binary
+      threshold: 20
+      train_positive_rate: 0.3599
+    - name: timespent_gt40
+      kind: binary
+      threshold: 40
+      train_positive_rate: 0.2192
+  ladder_frozen_before_any_run: true
+  thresholds_read_from: train_weeks_20_24_only
+
+metrics:
+  binary: [log_loss, roc_auc, auprc, user_gauc, ndcg_at_k]
+  regression: [normalized_mse, mae_in_natural_units, global_xauc, user_xgauc, ndcg_at_k]
+  session_gauc: not_available_released_rows_have_week_but_no_event_timestamp
+
+ordered_P_fields:
+    - p_user_w1_n_shows
+    - p_user_w1_n_shows_plus_beta
+    - p_user_w1_sum_timespent
+    - p_user_w1_sum_timespent_plus_alpha
+    - p_user_w1_n_like_plus_alpha
+    - p_user_w1_n_dislike_plus_alpha
+    - p_user_w1_n_share_plus_alpha
+    - p_user_w1_n_bookmark_plus_alpha
+    - p_user_w1_n_click_on_author_plus_alpha
+    - p_user_w1_n_open_comments_plus_alpha
+    - p_user_w4_n_shows
+    - p_user_w4_n_shows_plus_beta
+    - p_user_w4_sum_timespent
+    - p_user_w4_sum_timespent_plus_alpha
+    - p_user_w4_n_like_plus_alpha
+    - p_user_w4_n_dislike_plus_alpha
+    - p_user_w4_n_share_plus_alpha
+    - p_user_w4_n_bookmark_plus_alpha
+    - p_user_w4_n_click_on_author_plus_alpha
+    - p_user_w4_n_open_comments_plus_alpha
+    - p_user_all_n_shows
+    - p_user_all_n_shows_plus_beta
+    - p_user_all_sum_timespent
+    - p_user_all_sum_timespent_plus_alpha
+    - p_user_all_n_like_plus_alpha
+    - p_user_all_n_dislike_plus_alpha
+    - p_user_all_n_share_plus_alpha
+    - p_user_all_n_bookmark_plus_alpha
+    - p_user_all_n_click_on_author_plus_alpha
+    - p_user_all_n_open_comments_plus_alpha
+    - p_item_w1_n_shows
+    - p_item_w1_n_shows_plus_beta
+    - p_item_w1_sum_timespent
+    - p_item_w1_sum_timespent_plus_alpha
+    - p_item_w1_n_like_plus_alpha
+    - p_item_w1_n_dislike_plus_alpha
+    - p_item_w1_n_share_plus_alpha
+    - p_item_w1_n_bookmark_plus_alpha
+    - p_item_w1_n_click_on_author_plus_alpha
+    - p_item_w1_n_open_comments_plus_alpha
+    - p_item_w4_n_shows
+    - p_item_w4_n_shows_plus_beta
+    - p_item_w4_sum_timespent
+    - p_item_w4_sum_timespent_plus_alpha
+    - p_item_w4_n_like_plus_alpha
+    - p_item_w4_n_dislike_plus_alpha
+    - p_item_w4_n_share_plus_alpha
+    - p_item_w4_n_bookmark_plus_alpha
+    - p_item_w4_n_click_on_author_plus_alpha
+    - p_item_w4_n_open_comments_plus_alpha
+    - p_item_all_n_shows
+    - p_item_all_n_shows_plus_beta
+    - p_item_all_sum_timespent
+    - p_item_all_sum_timespent_plus_alpha
+    - p_item_all_n_like_plus_alpha
+    - p_item_all_n_dislike_plus_alpha
+    - p_item_all_n_share_plus_alpha
+    - p_item_all_n_bookmark_plus_alpha
+    - p_item_all_n_click_on_author_plus_alpha
+    - p_item_all_n_open_comments_plus_alpha
+    - p_user_place_w1_n_shows
+    - p_user_place_w1_n_shows_plus_beta
+    - p_user_place_w1_sum_timespent
+    - p_user_place_w1_sum_timespent_plus_alpha
+    - p_user_place_w1_n_like_plus_alpha
+    - p_user_place_w1_n_dislike_plus_alpha
+    - p_user_place_w1_n_share_plus_alpha
+    - p_user_place_w1_n_bookmark_plus_alpha
+    - p_user_place_w1_n_click_on_author_plus_alpha
+    - p_user_place_w1_n_open_comments_plus_alpha
+    - p_user_place_w4_n_shows
+    - p_user_place_w4_n_shows_plus_beta
+    - p_user_place_w4_sum_timespent
+    - p_user_place_w4_sum_timespent_plus_alpha
+    - p_user_place_w4_n_like_plus_alpha
+    - p_user_place_w4_n_dislike_plus_alpha
+    - p_user_place_w4_n_share_plus_alpha
+    - p_user_place_w4_n_bookmark_plus_alpha
+    - p_user_place_w4_n_click_on_author_plus_alpha
+    - p_user_place_w4_n_open_comments_plus_alpha
+    - p_user_place_all_n_shows
+    - p_user_place_all_n_shows_plus_beta
+    - p_user_place_all_sum_timespent
+    - p_user_place_all_sum_timespent_plus_alpha
+    - p_user_place_all_n_like_plus_alpha
+    - p_user_place_all_n_dislike_plus_alpha
+    - p_user_place_all_n_share_plus_alpha
+    - p_user_place_all_n_bookmark_plus_alpha
+    - p_user_place_all_n_click_on_author_plus_alpha
+    - p_user_place_all_n_open_comments_plus_alpha
+
+ordered_V_fields:
+    - v_user_w1_has_history
+    - v_user_w4_has_history
+    - v_user_all_has_history
+    - v_item_w1_has_history
+    - v_item_w4_has_history
+    - v_item_all_has_history
+    - v_user_place_w1_has_history
+    - v_user_place_w4_has_history
+    - v_user_place_all_has_history
+
+ordered_denominator_fields:
+    - p_user_w1_n_shows
+    - p_user_w1_n_shows_plus_beta
+    - p_user_w1_sum_timespent
+    - p_user_w1_sum_timespent_plus_alpha
+    - p_user_w4_n_shows
+    - p_user_w4_n_shows_plus_beta
+    - p_user_w4_sum_timespent
+    - p_user_w4_sum_timespent_plus_alpha
+    - p_user_all_n_shows
+    - p_user_all_n_shows_plus_beta
+    - p_user_all_sum_timespent
+    - p_user_all_sum_timespent_plus_alpha
+    - p_item_w1_n_shows
+    - p_item_w1_n_shows_plus_beta
+    - p_item_w1_sum_timespent
+    - p_item_w1_sum_timespent_plus_alpha
+    - p_item_w4_n_shows
+    - p_item_w4_n_shows_plus_beta
+    - p_item_w4_sum_timespent
+    - p_item_w4_sum_timespent_plus_alpha
+    - p_item_all_n_shows
+    - p_item_all_n_shows_plus_beta
+    - p_item_all_sum_timespent
+    - p_item_all_sum_timespent_plus_alpha
+    - p_user_place_w1_n_shows
+    - p_user_place_w1_n_shows_plus_beta
+    - p_user_place_w1_sum_timespent
+    - p_user_place_w1_sum_timespent_plus_alpha
+    - p_user_place_w4_n_shows
+    - p_user_place_w4_n_shows_plus_beta
+    - p_user_place_w4_sum_timespent
+    - p_user_place_w4_sum_timespent_plus_alpha
+    - p_user_place_all_n_shows
+    - p_user_place_all_n_shows_plus_beta
+    - p_user_place_all_sum_timespent
+    - p_user_place_all_sum_timespent_plus_alpha
+
+ordered_R_div_fields:
+    - e_user_w1_like_rate
+    - e_user_w1_dislike_rate
+    - e_user_w1_share_rate
+    - e_user_w1_bookmark_rate
+    - e_user_w1_click_on_author_rate
+    - e_user_w1_open_comments_rate
+    - e_user_w1_avg_timespent
+    - e_user_w1_like_per_second
+    - e_user_w1_dislike_per_second
+    - e_user_w1_share_per_second
+    - e_user_w1_bookmark_per_second
+    - e_user_w1_click_on_author_per_second
+    - e_user_w1_open_comments_per_second
+    - e_user_w4_like_rate
+    - e_user_w4_dislike_rate
+    - e_user_w4_share_rate
+    - e_user_w4_bookmark_rate
+    - e_user_w4_click_on_author_rate
+    - e_user_w4_open_comments_rate
+    - e_user_w4_avg_timespent
+    - e_user_w4_like_per_second
+    - e_user_w4_dislike_per_second
+    - e_user_w4_share_per_second
+    - e_user_w4_bookmark_per_second
+    - e_user_w4_click_on_author_per_second
+    - e_user_w4_open_comments_per_second
+    - e_user_all_like_rate
+    - e_user_all_dislike_rate
+    - e_user_all_share_rate
+    - e_user_all_bookmark_rate
+    - e_user_all_click_on_author_rate
+    - e_user_all_open_comments_rate
+    - e_user_all_avg_timespent
+    - e_user_all_like_per_second
+    - e_user_all_dislike_per_second
+    - e_user_all_share_per_second
+    - e_user_all_bookmark_per_second
+    - e_user_all_click_on_author_per_second
+    - e_user_all_open_comments_per_second
+    - e_item_w1_like_rate
+    - e_item_w1_dislike_rate
+    - e_item_w1_share_rate
+    - e_item_w1_bookmark_rate
+    - e_item_w1_click_on_author_rate
+    - e_item_w1_open_comments_rate
+    - e_item_w1_avg_timespent
+    - e_item_w1_like_per_second
+    - e_item_w1_dislike_per_second
+    - e_item_w1_share_per_second
+    - e_item_w1_bookmark_per_second
+    - e_item_w1_click_on_author_per_second
+    - e_item_w1_open_comments_per_second
+    - e_item_w4_like_rate
+    - e_item_w4_dislike_rate
+    - e_item_w4_share_rate
+    - e_item_w4_bookmark_rate
+    - e_item_w4_click_on_author_rate
+    - e_item_w4_open_comments_rate
+    - e_item_w4_avg_timespent
+    - e_item_w4_like_per_second
+    - e_item_w4_dislike_per_second
+    - e_item_w4_share_per_second
+    - e_item_w4_bookmark_per_second
+    - e_item_w4_click_on_author_per_second
+    - e_item_w4_open_comments_per_second
+    - e_item_all_like_rate
+    - e_item_all_dislike_rate
+    - e_item_all_share_rate
+    - e_item_all_bookmark_rate
+    - e_item_all_click_on_author_rate
+    - e_item_all_open_comments_rate
+    - e_item_all_avg_timespent
+    - e_item_all_like_per_second
+    - e_item_all_dislike_per_second
+    - e_item_all_share_per_second
+    - e_item_all_bookmark_per_second
+    - e_item_all_click_on_author_per_second
+    - e_item_all_open_comments_per_second
+    - e_user_place_w1_like_rate
+    - e_user_place_w1_dislike_rate
+    - e_user_place_w1_share_rate
+    - e_user_place_w1_bookmark_rate
+    - e_user_place_w1_click_on_author_rate
+    - e_user_place_w1_open_comments_rate
+    - e_user_place_w1_avg_timespent
+    - e_user_place_w1_like_per_second
+    - e_user_place_w1_dislike_per_second
+    - e_user_place_w1_share_per_second
+    - e_user_place_w1_bookmark_per_second
+    - e_user_place_w1_click_on_author_per_second
+    - e_user_place_w1_open_comments_per_second
+    - e_user_place_w4_like_rate
+    - e_user_place_w4_dislike_rate
+    - e_user_place_w4_share_rate
+    - e_user_place_w4_bookmark_rate
+    - e_user_place_w4_click_on_author_rate
+    - e_user_place_w4_open_comments_rate
+    - e_user_place_w4_avg_timespent
+    - e_user_place_w4_like_per_second
+    - e_user_place_w4_dislike_per_second
+    - e_user_place_w4_share_per_second
+    - e_user_place_w4_bookmark_per_second
+    - e_user_place_w4_click_on_author_per_second
+    - e_user_place_w4_open_comments_per_second
+    - e_user_place_all_like_rate
+    - e_user_place_all_dislike_rate
+    - e_user_place_all_share_rate
+    - e_user_place_all_bookmark_rate
+    - e_user_place_all_click_on_author_rate
+    - e_user_place_all_open_comments_rate
+    - e_user_place_all_avg_timespent
+    - e_user_place_all_like_per_second
+    - e_user_place_all_dislike_per_second
+    - e_user_place_all_share_per_second
+    - e_user_place_all_bookmark_per_second
+    - e_user_place_all_click_on_author_per_second
+    - e_user_place_all_open_comments_per_second
+
+formulas:
+  p_BLOCK_n_shows: count of history rows in the block
+  p_BLOCK_n_shows_plus_beta: p_BLOCK_n_shows + beta
+  p_BLOCK_sum_timespent: sum of timespent over the block
+  p_BLOCK_sum_timespent_plus_alpha: p_BLOCK_sum_timespent + alpha
+  p_BLOCK_n_ACTION_plus_alpha: count of ACTION over the block + alpha
+  v_BLOCK_has_history: p_BLOCK_n_shows > 0
+  e_BLOCK_ACTION_rate: p_BLOCK_n_ACTION_plus_alpha / p_BLOCK_n_shows_plus_beta
+  e_BLOCK_avg_timespent: p_BLOCK_sum_timespent / p_BLOCK_n_shows when v_BLOCK_has_history else 0
+  e_BLOCK_ACTION_per_second: p_BLOCK_n_ACTION_plus_alpha / p_BLOCK_sum_timespent_plus_alpha
