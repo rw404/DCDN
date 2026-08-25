@@ -95,21 +95,27 @@ everything else runs on CPU, slowly.
 
 ### RQ1 · Does DCDN learn division, or a surface that resembles it?
 
-A synthetic multi-quotient task with a known closed form, four evaluation slices
-frozen before any run, and nine architectures at matched capacity. Loss is MSE
-over target variance, so **1.0 is exactly the constant predictor**.
+A synthetic task whose target is a quotient the inputs do not contain, four
+evaluation slices frozen before any run, and **nine architectures** with the
+learning rate tuned per arm on a shared grid. Loss is MSE over target variance,
+so **1.0 is exactly the constant predictor**.
 
-**Result.** Trained across four decades of operand range, DCDN reaches **~1e-06 on
-every slice** — 8x better than AFN+, 60x better than the capacity-matched DCNv2
-and 1,900x better than DCNv2. The same arms trained on one decade put DCDN at
-**16,830** on the rescaled slice: the training range, not the architecture,
-decides whether the quotient is learned. Confirmed narrowly — every slice in that
-result lies inside the training range, so it is not evidence of extrapolation.
+**Result.** Trained across four decades of operand range, DCDN is **best of nine
+on three of four slices**, with absolute errors of `2.8e-07` to `1.2e-06` — seven
+orders below the constant predictor, and **56x** better than DCNv2 at matched
+capacity on the reference slice. It is second on common rescaling, behind
+AutoInt+.
+
+**Confirmed narrowly.** Every slice lies inside the training range, so this is
+not evidence of extrapolation; and at the one-decade benchmark DCDN reports
+**16,830** on common rescaling, where the targets are bitwise identical to the
+reference slice. The branch is an effective basis for quotients inside the range
+it was fitted on, not a reciprocal operator.
 
 📄 **[`docs/rq1_addenda.md`](docs/rq1_addenda.md)**
 
 ```bash
-python scripts/run_synthetic_train_distribution.py --device cuda:0
+python scripts/run_synthetic_train_distribution.py --device cuda:0 --tune
 ```
 
 No download required — the task is generated.
