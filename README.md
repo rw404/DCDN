@@ -237,12 +237,13 @@ relative error.
 | form | polynomial | **Laurent polynomial** |
 | exponents | `α ≥ 0` | `α ∈ ℤ`, negative only on declared denominators |
 | `x0/x1` | **not in the span** | one weight, `W_d[1,0]` |
-| normalized MSE | 0.600 | **0.0000190** |
+| what it learned | 83 monomials, largest `+0.4991·x0` | **1 monomial, `+1.0003·x0/x1`** |
+| normalized MSE | 0.600 | 0.0000190 |
 
 DCDN did not approximate the quotient — it **selected** it, with a coefficient of
-1.0003 and every remaining term an order of magnitude smaller. The cross network
-cannot write the quotient at all, so it fits a smooth surface that agrees with it
-where the training mass is; `0.60` is what that buys.
+1.0003 and every remaining term an order of magnitude smaller. DCNv2, having no
+way to write the quotient, spent 83 monomials on a smooth surface that agrees
+with it where the training mass is.
 
 <div align="center">
 <img src="figures/monomial_reach.svg" alt="Reachable monomials for DCNv2 and DCDN" width="100%">
