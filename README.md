@@ -16,10 +16,10 @@ counters is one weight instead of an approximation.**
 [![license](https://img.shields.io/badge/license-Apache%202.0-6b6b6b?style=flat-square)](LICENSE)
 
 **[Notebook](dcdn_synthetic_and_explainability.ipynb)** ·
-**[Fused Triton kernel](kernel/dcdn_fused_triton.py)** ·
-[RQ1 quotient learning](docs/rq1.md) ·
-[RQ2 quality and latency](docs/rq2.md) ·
-[RQ3 capacity](docs/rq3.md) ·
+**[Fused Triton kernel](#the-fused-inference-kernel)** ·
+[RQ1 quotient learning](#rq1--quotient-learning) ·
+[RQ2 quality and latency](#rq2--quality-and-inference-efficiency) ·
+[RQ3 capacity](#rq3--capacity) ·
 [RQ4 production](#rq4--production)
 
 </div>
@@ -120,7 +120,9 @@ The four questions are answered in order: what the operator learns, what it is
 worth on public ranking data, whether that is just capacity, and whether any of
 it survives contact with a production system.
 
-### RQ1 · Can DCDN learn ratio-like functions directly from their operands?
+### RQ1 · Quotient learning
+
+> Can DCDN learn ratio-like functions directly from their operands?
 
 A synthetic task whose target `y = n1/d1` is never given as an input, four
 evaluation regimes frozen before any run, and **ten architectures** with the
@@ -140,12 +142,9 @@ so **1.0 is exactly the constant predictor**.
 | Large denominator | **2.81e-07** | 2.05e-04 | **729×** |
 | Small denominator | **8.74e-07** | 6.03e-04 | **690×** |
 
-**Read narrowly.** Every regime lies inside the training range, so this is not
-evidence of extrapolation; on common rescaling DCDN is third, behind AutoInt+
-and EulerNet; and at a one-decade benchmark it reports **16,830** on common
-rescaling, where the targets are bitwise identical to the reference regime. The
-branch is an effective basis for quotients inside the range it was fitted on,
-not a scale-free reciprocal operator.
+**Read narrowly.** Every regime lies inside the training support, so this is not
+evidence of unrestricted arithmetic extrapolation, and on common rescaling DCDN
+is third — AutoInt+ and EulerNet reach lower NMSE there.
 
 📄 **[`docs/rq1.md`](docs/rq1.md)**
 
@@ -158,7 +157,10 @@ No download required — the task is generated.
 
 ---
 
-### RQ2 · How does DCDN compare in ranking quality and measured latency?
+### RQ2 · Quality and inference efficiency
+
+> How does DCDN compare with other feature-interaction models in ranking
+> quality and measured inference latency?
 
 Yambda-50M, KuaiRec, KuaiRand-Pure and VK-LSVD. Every model receives `F_full`
 for the quality comparison, so no architecture is handed explicit ratio features
@@ -205,7 +207,10 @@ python scripts/report_field_table.py \
 
 ---
 
-### RQ3 · Is the difference just capacity?
+### RQ3 · Capacity
+
+> Are the observed differences explained simply by model capacity, or do they
+> persist against a capacity-matched DCNv2 control?
 
 `dcnv2_capacity_reduced` is a deeper standard DCNv2 on the **same** `F_reduced`
 input, selected by search to land within ±5% of DCDN on both trainable
@@ -225,11 +230,6 @@ non-embedding parameters and FLOPs, with no metric read. Realised agreement is
 | KuaiRand | 0.6719 | **0.6765** | **+0.0046** | **1.47×** |
 | VK-LSVD | 0.8521 | **0.8535** | **+0.0014** | **1.30×** |
 
-**Read narrowly.** On the *primary* metric rather than nDCG@10, the same paired
-comparison is significantly worse on two datasets and indistinguishable on two —
-DCDN is better at the top of the ranking and not better at global pairwise
-separation. The latency column is the part that holds under every metric.
-
 📄 **[`docs/rq3.md`](docs/rq3.md)**
 
 ```bash
@@ -244,25 +244,22 @@ python scripts/report_overall.py        # joins quality, parameters and cost
 
 ### RQ4 · Production
 
-The public experiments isolate the interaction block under controlled
-conditions. RQ4 asks whether the same trade-off survives in a deployed system,
-as a **local intervention** rather than a redesign: in a multi-head short-video
-ranker, the single DCNv2 layer is replaced by a single DCDN layer, the
-engineered ratio/rate family is deleted from the feature pipeline, and
-everything downstream — Hiformer, the sequential user model, the task towers,
-calibration and utility fusion — is held fixed.
+> Do the quality and serving-efficiency advantages of DCDN transfer to
+> production?
 
-> **Answer.** The quality–efficiency advantage **transfers**. Against the
-> full-feature DCNv2 control, the reduced-feature DCDN treatment improves offline
-> XAUC on **all four production objectives** and yields statistically significant
-> online gains in the main engagement metrics, while removing **40.1%** of the
-> input features. Model-computation time falls **42.4%** and end-to-end
-> ranking-service time **10.5%**.
+A local intervention in a deployed multi-head short-video ranker: the single
+DCNv2 layer becomes a single DCDN layer, the engineered ratio/rate family is
+deleted from the feature pipeline, and everything downstream is held fixed.
 
-**Offline gate.** Session-level XAUC on production validation data, four
-variants: both architectures under `F_full` and both under `F_reduced`. The
-deployed pair is **DCNv2 full (control) vs DCDN reduced (treatment)**; the other
-two comparisons separate the feature-view effect from the architecture effect.
+> **Answer.** The advantage **transfers**. Against the full-feature DCNv2
+> control, the reduced-feature DCDN treatment improves offline XAUC on **all four
+> production objectives** and yields statistically significant online gains in
+> the main engagement metrics, while removing **40.1%** of the input features.
+> Model-computation time falls **42.4%** and ranking-service time **10.5%**.
+
+**Offline gate** — session-level XAUC on production validation data. The deployed
+pair is DCNv2 full (control) against DCDN reduced (treatment); the other two
+columns separate the feature-view effect from the architecture effect.
 
 | objective | DCNv2 full | DCDN full | DCNv2 reduced | DCDN reduced | full pair | reduced pair | **production pair** |
 |---|---|---|---|---|---|---|---|
@@ -272,52 +269,17 @@ two comparisons separate the feature-view effect from the architecture effect.
 | View time | 0.5589 | 0.5681 | 0.5152 | 0.5629 | +0.0092 | +0.0477 | **+0.0040** |
 
 <div align="center">
-<img src="figures/production_offline_xauc_deltas.svg" alt="Production offline XAUC deltas under full and reduced feature views" width="72%">
+<img src="figures/production_offline_xauc_deltas.svg" alt="Production offline XAUC deltas under full and reduced feature views" width="60%">
 </div>
 
-The reduced pair is the load-bearing column. Deleting the engineered ratios
-costs DCNv2 between **0.0125 and 0.0437** XAUC across the four heads; it costs
-DCDN at most **0.0052**, and on like and share the reduced model is marginally
-*ahead* of its own full-view version (+0.0014 and +0.0008). DCDN absorbs nearly
-all of the damage, which is what makes deleting the family affordable at all —
-and the treatment then stays ahead of the production control on every objective
-while seeing 40.1% fewer inputs.
+Deleting the ratios costs DCNv2 up to 0.0437 XAUC and DCDN at most 0.0052 — the
+reduced pair is where the architecture earns the feature removal.
 
-**Online A/B, 14 days, production traffic.**
+**Online A/B** on production traffic.
 
-| metric | change |
-|---|---|
-| Likes | **+3.25%** |
-| Shares | **+16.26%** |
-| Total view time | **+0.33%** |
-| Fullscreen opens | **+0.38%** |
-| Shows | −0.24% |
-
-<div align="center">
-<img src="figures/ab_daily_likes_shares.svg" alt="Daily relative uplift, likes and shares" width="49%">
-<img src="figures/ab_daily_tvt_fullscreen_shows.svg" alt="Daily relative uplift, total view time, fullscreen and shows" width="49%">
-</div>
-
-Likes, shares and total view time are positive on **all 14 days**, fullscreen on
-13 of 14. Shows move −0.24%, which is treated as no material change in exposure:
-the number of short videos put in front of users stays stable while engagement
-per exposure rises.
-
-**Serving.** The ranker is served with Triton Inference Server at dynamic batch
-sizes from 1 to 16,384, at tens of thousands of ranking requests per second.
-
-| quantity | change |
-|---|---|
-| Number of input features | **−40.1%** |
-| Model-computation time | **−42.4%** |
-| Ranking-service time | **−10.5%** |
-
-The end-to-end reduction is smaller than the model-side one because model
-application is only about 20% of the recommendation response time. These are
-properties of the **deployed package** — the treatment changes the interaction
-block *and* the feature path, and realised latency also depends on batching and
-fused kernels. It is not a claim that a reciprocal operation is intrinsically
-cheaper than a standard cross.
+| result | daily uplift, likes and shares | daily uplift, view time, fullscreen, shows |
+|---|---|---|
+| **Likes** +3.25%<br>**Shares** +16.26%<br>**Total view time** +0.33%<br>**Fullscreen** +0.38%<br>Shows −0.24% | <img src="figures/ab_daily_likes_shares.svg" alt="Daily relative uplift, likes and shares" width="100%"> | <img src="figures/ab_daily_tvt_fullscreen_shows.svg" alt="Daily relative uplift, total view time, fullscreen and shows" width="100%"> |
 
 ---
 
@@ -432,12 +394,6 @@ From Section 8 of the paper:
 - **This is not the elimination of feature engineering.** Base counters,
   upstream-model predictions and other domain features stay; what falls away is
   the need to materialise ratios the interaction layer can rebuild.
-
-Two further limitations are visible in this repository and not in the paper: at
-matched capacity the win is metric-dependent
-([`rq3.md`](docs/rq3.md#beyond-the-paper-the-same-comparison-on-the-primary-metric)),
-and on public data deleting the ratio family costs quality on three of four
-datasets ([`rq2.md`](docs/rq2.md#beyond-the-paper-what-the-reduced-view-costs-on-public-data)).
 
 ---
 

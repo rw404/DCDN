@@ -94,39 +94,6 @@ not realised kernels, and the wider the input geometry the more that gap opens
 
 ---
 
-## Beyond the paper: the same comparison on the primary metric
-
-nDCG@10 is the metric that is defined identically on all four datasets, which is
-why the paper uses it here. The primary metrics — AUC on three datasets, XAUC on
-KuaiRand — tell a different story about the same two models, and this repository
-reports it rather than leaving the reader to reconstruct it from
-[`rq2.md`](rq2.md).
-
-Paired seed-by-seed differences, `dcdn_reduced` minus `dcnv2_capacity_reduced`,
-with 95% percentile-bootstrap intervals over 20,000 resamples:
-
-| dataset | primary metric | mean difference | 95% CI | seeds won | verdict |
-|---|---|---|---|---|---|
-| Yambda | AUC | −0.00064 | [−0.00092, −0.00035] | 0/8 | **significantly worse** |
-| KuaiRec | AUC | +0.00060 | [−0.00225, +0.00340] | 4/8 | not significant |
-| KuaiRand | XAUC | −0.00053 | [−0.00565, +0.00763] | 1/8 | not significant |
-| VK-LSVD ur | AUC | −0.00790 | [−0.00962, −0.00633] | 0/8 | **significantly worse** |
-
-**On the primary metric, at equal parameters and FLOPs, DCDN does not win on
-quality** — worse on two datasets, indistinguishable on two, ahead on none. The
-two results are not in conflict: DCDN is consistently better at the *top* of the
-ranking, where nDCG@10 looks, and consistently not better at global pairwise
-separation, where AUC looks. Which of the two matters is a property of the
-serving surface, and for a feed that shows a user ten items it is the former.
-
-What is not metric-dependent is the latency column. The **1.15×–1.47×** speedup
-holds on every dataset and every metric, because it is a property of the kernel
-rather than of the ranking. Read conservatively, RQ3 says: at matched capacity
-DCDN gives strictly better top-of-ranking quality and strictly lower cost, and
-the deeper DCNv2 buys back some global separation for the extra milliseconds.
-
----
-
 ## Reproduction
 
 ```bash

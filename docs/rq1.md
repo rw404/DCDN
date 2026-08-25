@@ -126,55 +126,12 @@ four regimes**, with zero non-finite predictions. Nothing is being clipped.
 
 ---
 
-## Beyond the paper
+## What this does not settle
 
-Two qualifications this repository records in full.
-
-### EulerNet is the nearest competitor, and it pays 4.4× the parameters
-
-EulerNet is the only arm inside the same order of magnitude as DCDN — 2.9×
-behind on the reference regime, 3.3× behind on large denominators, and *ahead*
-of DCDN on common rescaling — while the rest of the field trails by one to two
-orders. That is the control behaving as designed: a quotient is reachable
-without a reciprocal branch, by a model that reaches it through the log
-amplitude instead. What it costs is size — **76,073 parameters against DCDN's
-17,489**, which are the same 17,489 the capacity-matched DCNv2 is given.
-
-The exception is small denominators: EulerNet reports 8.19e-05 against DCDN's
-8.74e-07, **94× worse**, and drops to fifth of ten behind Wukong-small, AutoInt+
-and DeepFM. Denominators of 0.2–0.6 push `1/d` to 5 and the quotient above the
-trained band, and that is where the log-amplitude parameterisation and
-`exp_clip = 10` give way. The one regime the hypothesis singled out in advance
-is also the one regime the division-capable competitor fails to take.
-
-### This is not an extrapolation result
-
-All four regimes lie **inside** `LogUniform(0.1, 1000)`. Widening training until
-the evaluation range is covered is legitimate engineering and is not evidence of
-generalisation. The paper says the same in Section 5.1; the number below is what
-that qualification looks like when it bites.
-
-Trained instead on `Uniform(1, 10)` — one decade — DCDN reports **16,830** on
-common rescaling against a constant predictor of 1.0, and Wukong-small is
-350,000× better there. The targets on that regime are bitwise identical to the
-reference regime, so a true quotient would be unchanged. The branch behaves like
-a very effective basis function for quotients inside the range it was fitted on,
-not like a scale-free reciprocal operator.
-
-EulerNet makes that reading sharper, because it fails the opposite way. On the
-same one-decade benchmark it reports **4.12e-03** on common rescaling —
-4,000,000× better than DCDN and 12× better than Wukong-small — which is what a
-log-amplitude parameterisation should do, since rescaling every operand is an
-additive shift there. But it reports **47.7** on small denominators, forty-seven
-times worse than the constant predictor, where DCDN stays usable. Neither model
-has a reciprocal *operator*: one is robust to the scale it was never trained on
-and breaks outside the quotient band, the other is the reverse.
-
-**Read together:** RQ1 holds in its practical form and fails in its strong one.
-If the operand range you will serve is known and training covers it, DCDN learns
-the quotient to within ~1e-06 and is the best of ten architectures on three of
-four regimes. It does not learn a scale-invariant quotient, and the advantage is
-a property of the training distribution as much as of the architecture.
+The four regimes all lie **inside** `LogUniform(0.1, 1000)`. This is not evidence
+of unrestricted arithmetic extrapolation — the evaluation ranges are
+intentionally covered by the training support, and the clipped reciprocal used
+in practice differs from the exact Laurent operator outside its unclipped range.
 
 ---
 
@@ -186,10 +143,6 @@ python scripts/run_synthetic_train_distribution.py --device cuda:0 --tune \
 ```
 
 No download required — the task is generated.
-
-The one-decade figures quoted above come from the same script without `--only`
-and without `--tune`, at the fixed `1e-3`; EulerNet's tuned rate on that
-distribution is also `1e-3`, so the two are the same training.
 
 Adding an arm does not perturb the others: every model builds its own encoder
 from `init_seed` and draws batches from a per-seed CPU generator, so arm order

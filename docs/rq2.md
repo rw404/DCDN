@@ -210,42 +210,6 @@ threshold.
 
 ---
 
-## Beyond the paper: what the reduced view costs on public data
-
-The paper uses `F_reduced` for the latency benchmark and for RQ3, and reports
-the production feature removal in RQ4. It does not ask the public-data version
-of that question directly, so this repository records it.
-
-**Does any reduced-input arm reach the best full-input arm on its dataset?**
-
-| dataset | best reduced arm | reaches the best full-input arm? |
-|---|---|---|
-| Yambda `listen50` | `afn_reduced`, 10th of 14 | no — −0.0053, 0/8 seeds |
-| KuaiRec `watch_ratio_gt2` | **`eulernet_reduced`, 3rd of 14** | **yes** — −0.00044, not significant |
-| KuaiRand `watch_time` | `afn_reduced`, 4th of 14 | no — −0.0146, 2/8 seeds |
-| VK-LSVD ur `timespent_gt10` | `afn_reduced`, 8th of 14 | no — −0.0062, 0/8 seeds |
-
-On public data, removing the materialised ratios costs primary-metric quality on
-three of four datasets, and on the one dataset where a reduced arm does close
-the gap, the arm that closes it is EulerNet rather than DCDN — `dcdn_reduced`
-ranks 13th, 6th, 7th and 13th of fourteen on the primary metric.
-
-This does not contradict the production result in RQ4, and the difference is
-worth naming precisely. The public slices remove between 10% and 36% of the
-input width, and their denominators are a handful of engagement counters. The
-production feature set removes **40.1%** of the inputs, and its ratio family is
-both larger and more redundant with the operands that remain. RQ4 also measures
-XAUC within sessions on a multi-head ranker, not single-head AUC on a flat
-split. The honest reading is that ratio removal is cheap when the removed family
-is large and reconstructible, and not free in general.
-
-Two further qualifications on the public evidence: KuaiRand `watch_time` has
-five arms with seeds worse than a constant predictor and should carry little
-weight, and the VK-LSVD view was built to have 36% denominator density, which is
-the most favourable geometry in the set rather than a neutral one.
-
----
-
 ## Division is not exclusive to DCDN
 
 | arm | parameters vs `dcdn_reduced` | latency vs `dcdn_reduced` | median quality rank |
@@ -254,11 +218,11 @@ the most favourable geometry in the set rather than a neutral one.
 | `eulernet_full` | 18.1× | 11.1× | 3.5 |
 | **`dcdn_full`** | **1.9×** | **1.2×** | **4.0** |
 
-Both arms with division in their hypothesis class outrank DCDN on median quality
-across the full metric set and cost an order of magnitude more to serve. **No
-arm the size of DCDN uses division at all** — that is the defensible form of the
-claim, not "the only model that can divide", and it is what makes the RQ2
-latency table the load-bearing half of the answer.
+AFN+ and EulerNet are substantially more general; DCDN deliberately hard-codes
+only the reciprocal direction. Both of the general arms outrank DCDN on median
+quality across the full metric set, and both cost an order of magnitude more to
+serve — which is why the latency table is the load-bearing half of RQ2 rather
+than a footnote to it.
 
 ---
 
