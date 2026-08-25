@@ -76,6 +76,7 @@ sta = _load(
 )
 
 from dcdn.models.cross import DCNConfig  # noqa: E402
+from dcdn.models.euler import EulerNetConfig  # noqa: E402
 from dcdn.models.field import (  # noqa: E402
     AutoIntPlusConfig,
     DeepFMConfig,
@@ -108,7 +109,7 @@ SLICE_OPERAND_RANGE = {
 ARMS = (
     "dcdn_reduced", "afn_reduced", "dcnv2_capacity_reduced", "dcnv2_reduced",
     "mlp_reduced", "deepfm_reduced", "dcn_reduced", "autoint_reduced",
-    "wukong_reduced",
+    "wukong_reduced", "eulernet_reduced",
 )
 TARGET = "y1"
 SEEDS = (42, 43, 44)
@@ -123,7 +124,7 @@ DISTRIBUTIONS = (
 )
 
 
-#: The five architectures outside the frozen matrix, at the same widths the
+#: The six architectures outside the frozen matrix, at the same widths the
 #: KuaiRec and Yambda studies used so the three datasets describe the same
 #: models.
 FIELD = (
@@ -143,6 +144,13 @@ FIELD = (
      WukongSmallConfig(
          num_layers=2, lcb_features=16, fmb_features=16, fmb_rank=8,
          fmb_hidden_dims=(256, 256), dropout=0.0, layer_norm=True,
+     )),
+    # EulerNet is the one non-DCDN arm with a division-capable inductive bias:
+    # its polar form makes a monomial with real exponents linear in the log
+    # amplitude, so it can represent n1/d1 without an explicit reciprocal.
+    ("eulernet_reduced", "EulerNet",
+     EulerNetConfig(
+         num_layers=3, fields_per_layer=16, dropout=0.0, exp_clip=10.0,
      )),
 )
 
