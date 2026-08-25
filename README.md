@@ -7,7 +7,7 @@ counters is one weight instead of an approximation.**
 
 ### _Deep Cross-Division Network for Product-and-Ratio Feature Interactions in Industrial Ranking_
 
-**Anonymous Authors** · under double-blind review
+**Anonymous Authors**
 
 [![paper](https://img.shields.io/badge/paper-{{VENUE}}-1a1a19?style=flat-square)]({{PAPER_URL}})
 [![arXiv](https://img.shields.io/badge/arXiv-{{ARXIV_ID}}-eb6834?style=flat-square)]({{ARXIV_URL}})
