@@ -1,82 +1,95 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="430" viewBox="0 0 980 430" font-family="Inter,system-ui,sans-serif">
-<rect width="980" height="430" fill="#fcfcfb"/>
-<text x="38" y="30" font-size="16" font-weight="600" fill="#1a1a19">Fused Triton kernel for the DCDN reciprocal core</text>
-<text x="38" y="50" font-size="11.5" fill="#5c5b54">A100-80GB · torch 2.8.0+cu128 · triton 3.4.0 · median of 3 rounds x 200 forwards · 187 operands, 38 denominators</text>
-<text x="68" y="62" font-size="12.5" font-weight="600" fill="#1a1a19">Interaction block in isolation</text>
-<line x1="68" y1="74.0" x2="448" y2="74.0" stroke="#e8e7e2"/>
-<text x="60" y="77.5" font-size="9.5" fill="#8b8a80" text-anchor="end">0.55</text>
-<line x1="68" y1="136.5" x2="448" y2="136.5" stroke="#e8e7e2"/>
-<text x="60" y="140.0" font-size="9.5" fill="#8b8a80" text-anchor="end">0.44</text>
-<line x1="68" y1="199.0" x2="448" y2="199.0" stroke="#e8e7e2"/>
-<text x="60" y="202.5" font-size="9.5" fill="#8b8a80" text-anchor="end">0.33</text>
-<line x1="68" y1="261.5" x2="448" y2="261.5" stroke="#e8e7e2"/>
-<text x="60" y="265.0" font-size="9.5" fill="#8b8a80" text-anchor="end">0.21</text>
-<line x1="68" y1="324.0" x2="448" y2="324.0" stroke="#e8e7e2"/>
-<text x="60" y="327.5" font-size="9.5" fill="#8b8a80" text-anchor="end">0.10</text>
-<text x="22" y="199" font-size="10" fill="#8b8a80" transform="rotate(-90 22 199)" text-anchor="middle">latency p50 (ms)</text>
-<text x="68.0" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">1</text>
-<text x="230.9" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">64</text>
-<text x="312.3" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">512</text>
-<text x="366.6" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">2048</text>
-<text x="420.9" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">8192</text>
-<text x="448.0" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">16384</text>
-<text x="258" y="358" font-size="10" fill="#8b8a80" text-anchor="middle">batch size (log scale)</text>
-<polyline points="68.0,167.6 230.9,164.3 312.3,165.4 366.6,163.1 420.9,165.4 448.0,99.6" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round"/>
-<circle cx="68.0" cy="167.6" r="3" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="230.9" cy="164.3" r="3" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="312.3" cy="165.4" r="3" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="366.6" cy="163.1" r="3" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="420.9" cy="165.4" r="3" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="448.0" cy="99.6" r="3" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
-<text x="455.0" y="103.1" font-size="10.5" font-weight="600" fill="#2a78d6">reference</text>
-<polyline points="68.0,283.5 230.9,283.2 312.3,278.4 366.6,278.7 420.9,254.8 448.0,191.6" fill="none" stroke="#eda100" stroke-width="2.5" stroke-linejoin="round"/>
-<circle cx="68.0" cy="283.5" r="3" fill="#eda100" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="230.9" cy="283.2" r="3" fill="#eda100" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="312.3" cy="278.4" r="3" fill="#eda100" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="366.6" cy="278.7" r="3" fill="#eda100" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="420.9" cy="254.8" r="3" fill="#eda100" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="448.0" cy="191.6" r="3" fill="#eda100" stroke="#fcfcfb" stroke-width="1.5"/>
-<text x="455.0" y="195.1" font-size="10.5" font-weight="600" fill="#eda100">fused</text>
-<polyline points="68.0,306.8 230.9,307.6 312.3,307.7 366.6,306.5 420.9,300.0 448.0,233.9" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round"/>
-<circle cx="68.0" cy="306.8" r="3" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="230.9" cy="307.6" r="3" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="312.3" cy="307.7" r="3" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="366.6" cy="306.5" r="3" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="420.9" cy="300.0" r="3" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.5"/>
-<circle cx="448.0" cy="233.9" r="3" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.5"/>
-<text x="455.0" y="237.4" font-size="10.5" font-weight="600" fill="#eb6834">fused+hoisted</text>
-<line x1="312.3" y1="165.4" x2="312.3" y2="307.7" stroke="#8b8a80" stroke-dasharray="3 3"/>
-<text x="318.3" y="236.6" font-size="11" font-weight="600" fill="#1a1a19">2.98x</text>
-<text x="598" y="62" font-size="12.5" font-weight="600" fill="#1a1a19">Saving inside the full production stack</text>
-<line x1="598" y1="74.0" x2="848" y2="74.0" stroke="#e8e7e2"/>
-<text x="590" y="77.5" font-size="9.5" fill="#8b8a80" text-anchor="end">22%</text>
-<line x1="598" y1="136.5" x2="848" y2="136.5" stroke="#e8e7e2"/>
-<text x="590" y="140.0" font-size="9.5" fill="#8b8a80" text-anchor="end">16%</text>
-<line x1="598" y1="199.0" x2="848" y2="199.0" stroke="#e8e7e2"/>
-<text x="590" y="202.5" font-size="9.5" fill="#8b8a80" text-anchor="end">11%</text>
-<line x1="598" y1="261.5" x2="848" y2="261.5" stroke="#e8e7e2"/>
-<text x="590" y="265.0" font-size="9.5" fill="#8b8a80" text-anchor="end">6%</text>
-<line x1="598" y1="324.0" x2="848" y2="324.0" stroke="#e8e7e2"/>
-<text x="590" y="327.5" font-size="9.5" fill="#8b8a80" text-anchor="end">0%</text>
-<rect x="605.9" y="94.6" width="25.8" height="229.4" rx="3" fill="#eb6834"/>
-<text x="618.8" y="88.6" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">20.2%</text>
-<text x="618.8" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">1</text>
-<rect x="647.6" y="116.6" width="25.8" height="207.4" rx="3" fill="#eb6834"/>
-<text x="660.5" y="110.6" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">18.3%</text>
-<text x="660.5" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">64</text>
-<rect x="689.2" y="295.3" width="25.8" height="28.7" rx="3" fill="#c9c8bf"/>
-<text x="702.2" y="289.3" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">2.5%</text>
-<text x="702.2" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">512</text>
-<rect x="730.9" y="315.9" width="25.8" height="8.1" rx="3" fill="#c9c8bf"/>
-<text x="743.8" y="309.9" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">0.7%</text>
-<text x="743.8" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">2048</text>
-<rect x="772.6" y="320.8" width="25.8" height="3.2" rx="3" fill="#c9c8bf"/>
-<text x="785.5" y="314.8" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">0.3%</text>
-<text x="785.5" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">8192</text>
-<rect x="814.2" y="321.3" width="25.8" height="2.7" rx="3" fill="#c9c8bf"/>
-<text x="827.2" y="315.3" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">0.2%</text>
-<text x="827.2" y="340" font-size="9.5" fill="#8b8a80" text-anchor="middle">16384</text>
-<text x="723" y="358" font-size="10" fill="#8b8a80" text-anchor="middle">batch size</text>
-<text x="598" y="382" font-size="10.5" fill="#5c5b54">The block is 0.3–0.4% of a stack whose attention layer costs 93%.</text>
-<text x="598" y="398" font-size="10.5" fill="#5c5b54">The kernel pays off where launch overhead dominates.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="470" viewBox="0 0 1180 470" font-family="Inter, -apple-system, Segoe UI, Roboto, sans-serif">
+<rect width="1180" height="470" fill="#ffffff"/>
+<text x="28" y="34" font-size="17" font-weight="700" fill="#262626">Fused Triton kernel for the DCDN reciprocal core</text>
+<text x="28" y="54" font-size="12" fill="#6b6b6b">A100-SXM4-80GB &#183; torch 2.8.0+cu128 &#183; triton 3.4.0 &#183; median of 3 rounds x 300 forwards &#183; 187 operands, 38 denominators</text>
+<text x="78" y="88" font-size="14" font-weight="700" fill="#262626">One layer, in isolation</text>
+<line x1="78" y1="104.0" x2="458" y2="104.0" stroke="#ebebeb"/>
+<text x="68" y="108.0" font-size="11" fill="#6b6b6b" text-anchor="end">0.55</text>
+<line x1="78" y1="156.4" x2="458" y2="156.4" stroke="#ebebeb"/>
+<text x="68" y="160.4" font-size="11" fill="#6b6b6b" text-anchor="end">0.46</text>
+<line x1="78" y1="208.8" x2="458" y2="208.8" stroke="#ebebeb"/>
+<text x="68" y="212.8" font-size="11" fill="#6b6b6b" text-anchor="end">0.37</text>
+<line x1="78" y1="261.2" x2="458" y2="261.2" stroke="#ebebeb"/>
+<text x="68" y="265.2" font-size="11" fill="#6b6b6b" text-anchor="end">0.28</text>
+<line x1="78" y1="313.6" x2="458" y2="313.6" stroke="#ebebeb"/>
+<text x="68" y="317.6" font-size="11" fill="#6b6b6b" text-anchor="end">0.19</text>
+<line x1="78" y1="366.0" x2="458" y2="366.0" stroke="#ebebeb"/>
+<text x="68" y="370.0" font-size="11" fill="#6b6b6b" text-anchor="end">0.10</text>
+<text x="26" y="235" font-size="12" fill="#6b6b6b" transform="rotate(-90 26 235)" text-anchor="middle">latency p50 (ms)</text>
+<text x="78.0" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">1</text>
+<text x="240.9" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">64</text>
+<text x="322.3" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">512</text>
+<text x="376.6" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">2048</text>
+<text x="430.9" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">8192</text>
+<text x="458.0" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">16384</text>
+<text x="268" y="406" font-size="12" fill="#6b6b6b" text-anchor="middle">batch size</text>
+<polyline points="78.0,202.0 240.9,198.6 322.3,199.8 376.6,197.3 430.9,199.8 458.0,130.8" fill="none" stroke="#8c8c8c" stroke-width="2.5" stroke-linejoin="round"/>
+<circle cx="78.0" cy="202.0" r="4" fill="#8c8c8c"/>
+<circle cx="240.9" cy="198.6" r="4" fill="#8c8c8c"/>
+<circle cx="322.3" cy="199.8" r="4" fill="#8c8c8c"/>
+<circle cx="376.6" cy="197.3" r="4" fill="#8c8c8c"/>
+<circle cx="430.9" cy="199.8" r="4" fill="#8c8c8c"/>
+<circle cx="458.0" cy="130.8" r="4" fill="#8c8c8c"/>
+<polyline points="78.0,323.6 240.9,323.2 322.3,318.2 376.6,318.5 430.9,293.5 458.0,227.3" fill="none" stroke="#1a73c8" stroke-width="2.5" stroke-linejoin="round"/>
+<circle cx="78.0" cy="323.6" r="7" fill="#1a73c8"/>
+<circle cx="240.9" cy="323.2" r="7" fill="#1a73c8"/>
+<circle cx="322.3" cy="318.2" r="7" fill="#1a73c8"/>
+<circle cx="376.6" cy="318.5" r="7" fill="#1a73c8"/>
+<circle cx="430.9" cy="293.5" r="7" fill="#1a73c8"/>
+<circle cx="458.0" cy="227.3" r="7" fill="#1a73c8"/>
+<polyline points="78.0,348.0 240.9,348.8 322.3,348.9 376.6,347.7 430.9,340.8 458.0,271.6" fill="none" stroke="#d21f68" stroke-width="2.5" stroke-linejoin="round"/>
+<rect x="71.5" y="341.5" width="13" height="13" rx="2.5" fill="#d21f68"/>
+<rect x="234.4" y="342.3" width="13" height="13" rx="2.5" fill="#d21f68"/>
+<rect x="315.8" y="342.4" width="13" height="13" rx="2.5" fill="#d21f68"/>
+<rect x="370.1" y="341.2" width="13" height="13" rx="2.5" fill="#d21f68"/>
+<rect x="424.4" y="334.3" width="13" height="13" rx="2.5" fill="#d21f68"/>
+<rect x="451.5" y="265.1" width="13" height="13" rx="2.5" fill="#d21f68"/>
+<line x1="322.3" y1="199.8" x2="322.3" y2="348.9" stroke="#4a7c6f" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="332.3" y="272.4" font-size="15" font-weight="700" fill="#262626">2.98&#215;</text>
+<text x="332.3" y="289.4" font-size="11.5" fill="#6b6b6b">block speed-up</text>
+<text x="576" y="88" font-size="14" font-weight="700" fill="#262626">Share of the production stack</text>
+<line x1="576" y1="104.0" x2="826" y2="104.0" stroke="#ebebeb"/>
+<text x="566" y="108.0" font-size="11" fill="#6b6b6b" text-anchor="end">22%</text>
+<line x1="576" y1="156.4" x2="826" y2="156.4" stroke="#ebebeb"/>
+<text x="566" y="160.4" font-size="11" fill="#6b6b6b" text-anchor="end">18%</text>
+<line x1="576" y1="208.8" x2="826" y2="208.8" stroke="#ebebeb"/>
+<text x="566" y="212.8" font-size="11" fill="#6b6b6b" text-anchor="end">13%</text>
+<line x1="576" y1="261.2" x2="826" y2="261.2" stroke="#ebebeb"/>
+<text x="566" y="265.2" font-size="11" fill="#6b6b6b" text-anchor="end">9%</text>
+<line x1="576" y1="313.6" x2="826" y2="313.6" stroke="#ebebeb"/>
+<text x="566" y="317.6" font-size="11" fill="#6b6b6b" text-anchor="end">4%</text>
+<line x1="576" y1="366.0" x2="826" y2="366.0" stroke="#ebebeb"/>
+<text x="566" y="370.0" font-size="11" fill="#6b6b6b" text-anchor="end">0%</text>
+<rect x="584.8" y="125.6" width="24.2" height="240.4" rx="3" fill="#d21f68"/>
+<text x="596.8" y="117.6" font-size="11.5" font-weight="700" fill="#262626" text-anchor="middle">20.2%</text>
+<text x="596.8" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">1</text>
+<rect x="626.4" y="148.6" width="24.2" height="217.4" rx="3" fill="#d21f68"/>
+<text x="638.5" y="140.6" font-size="11.5" font-weight="700" fill="#262626" text-anchor="middle">18.3%</text>
+<text x="638.5" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">64</text>
+<rect x="668.1" y="335.9" width="24.2" height="30.1" rx="3" fill="#d9d9d9"/>
+<text x="680.2" y="327.9" font-size="11.5" font-weight="700" fill="#262626" text-anchor="middle">2.5%</text>
+<text x="680.2" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">512</text>
+<rect x="709.8" y="357.6" width="24.2" height="8.4" rx="3" fill="#d9d9d9"/>
+<text x="721.8" y="349.6" font-size="11.5" font-weight="700" fill="#262626" text-anchor="middle">0.7%</text>
+<text x="721.8" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">2048</text>
+<rect x="751.4" y="362.6" width="24.2" height="3.4" rx="3" fill="#d9d9d9"/>
+<text x="763.5" y="354.6" font-size="11.5" font-weight="700" fill="#262626" text-anchor="middle">0.3%</text>
+<text x="763.5" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">8192</text>
+<rect x="793.1" y="363.2" width="24.2" height="2.8" rx="3" fill="#d9d9d9"/>
+<text x="805.2" y="355.2" font-size="11.5" font-weight="700" fill="#262626" text-anchor="middle">0.2%</text>
+<text x="805.2" y="386" font-size="11" fill="#6b6b6b" text-anchor="middle">16384</text>
+<text x="701" y="406" font-size="12" fill="#6b6b6b" text-anchor="middle">batch size</text>
+<line x1="872" y1="102" x2="872" y2="372" stroke="#d9d9d9" stroke-width="1"/>
+<circle cx="905" cy="118" r="4" fill="#8c8c8c"/>
+<text x="926" y="122 " font-size="14" fill="#262626">Reference</text>
+<text x="926" y="140" font-size="12" fill="#6b6b6b">six PyTorch ops</text>
+<circle cx="905" cy="164" r="9" fill="#1a73c8"/>
+<text x="926" y="168 " font-size="14" fill="#262626">Fused kernel</text>
+<text x="926" y="186" font-size="12" fill="#6b6b6b">carrier and recurrence in one</text>
+<rect x="896" y="201" width="18" height="18" rx="3" fill="#d21f68"/>
+<text x="926" y="214 " font-size="14" fill="#262626">+ hoisted check</text>
+<text x="926" y="232" font-size="12" fill="#6b6b6b">no device-to-host sync</text>
+<line x1="896" y1="256" x2="914" y2="256" stroke="#4a7c6f" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="926" y="260 " font-size="14" fill="#262626">Speed-up</text>
+<text x="926" y="278" font-size="12" fill="#6b6b6b">reference over best</text>
 </svg>
