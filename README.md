@@ -5,13 +5,9 @@
 **A cross network with a masked reciprocal branch, so that a ratio of historical
 counters is one weight instead of an approximation.**
 
-<!-- ─────────────  fill these in before release  ───────────── -->
+### _Deep Cross-Division Network for Product-and-Ratio Feature Interactions in Industrial Ranking_
 
-### _{{PAPER_TITLE}}_
-
-{{AUTHOR_1}}<sup>1</sup> · {{AUTHOR_2}}<sup>1</sup> · {{AUTHOR_3}}<sup>2</sup>
-
-<sup>1</sup>{{AFFILIATION_1}} · <sup>2</sup>{{AFFILIATION_2}}
+{{Anonymous Authors}}
 
 [![paper](https://img.shields.io/badge/paper-{{VENUE}}-1a1a19?style=flat-square)]({{PAPER_URL}})
 [![arXiv](https://img.shields.io/badge/arXiv-{{ARXIV_ID}}-eb6834?style=flat-square)]({{ARXIV_URL}})
@@ -26,31 +22,9 @@ counters is one weight instead of an approximation.**
 
 ## Abstract
 
-> {{ABSTRACT}}
->
-> _Placeholder. The paragraph below is the working summary this branch was
-> assembled around; replace it with the camera-ready abstract._
-
-Production rankers spend a large share of their feature inventory on **manually
-engineered ratios of historical counters** — click-through rates, average watch
-times, per-impression engagement. A DCNv2-style cross layer computes
-`x_{i+1} = x_0 ⊙ W x_i + x_i`, so every coordinate is a polynomial in the inputs
-with non-negative exponents; the quotient `n/d` is outside that span and can only
-be approximated locally. **DCDN** adds one term,
-
-```
-x_{i+1} = x_i + x_0 ⊙ W_p(x_i) + inv(x_0) ⊙ W_d(x_i)
-```
-
-where `inv(x_0)` inverts only the coordinates a frozen contract declares to be
-legitimate positive denominators. The span becomes Laurent, the exponent `−1`
-becomes reachable by gradient descent, and a ratio `x_j / x_i` becomes a single
-learned weight.
-
-We evaluate on four public datasets and one production feed, against thirteen
-baselines including two architectures — AFN+ and EulerNet — that also have
-division in their hypothesis class. We report where the mechanism pays, where it
-does not, and what it costs to serve.
+Learning effective feature interactions is essential for industrial recommender systems. DCN and DCNv2 efficiently automate polynomial feature crossing. However, their cross layers construct interactions using only non-negative integer powers of the input features, with the maximum degree controlled by network depth. Consequently, they cannot directly represent the reciprocal terms required for ratios, rates, and normalized counts unless such features are explicitly provided as inputs.
+We introduce DCDN, a Deep Cross-Division Network that augments a DCNv2-style cross layer with a division branch. DCDN jointly learns product, ratio, and mixed product–ratio interactions. We characterize the learned interactions using multivariate Laurent polynomials and show that DCDN can generate Laurent monomials of any order up to a maximum determined by network depth.
+We evaluated DCDN against a production-optimized neural-ranking baseline built around DCNv2 and supplied with manually engineered ratio features. Replacing the DCNv2 block with DCDN allowed us to eliminate the entire class of manually engineered ratio features from the model input, reducing the overall input feature amount by $40.1\%$. DCDN is deployed in the production ranking stack of a major short-video service. In a live A/B test on this service, DCDN increased likes by $3.25\%$, shares by $16.26\%$, total view time by $0.33\%$, and clicks to open fullscreen by $0.38\%$; all changes were statistically significant. The number of short videos shown to users remained stable. These results demonstrate that DCDN can improve user engagement while eliminating reliance on manually engineered ratio features. Our code is publicly released at [https://anonymous.4open.science/r/DCDN-2D6D](https://anonymous.4open.science/r/DCDN-2D6D).
 
 ---
 
