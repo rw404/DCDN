@@ -7,7 +7,17 @@ counters is one weight instead of an approximation.**
 
 ### _Deep Cross-Division Network for Product-and-Ratio Feature Interactions in Industrial Ranking_
 
-**Anonymous Authors**
+**[Mikhail Trapeznikov](mailto:m.trapeznikov@vk.team)**<sup>1,2</sup> ·
+**[Sofia Gulevskaia](mailto:s.gulevskaia@vkteam.ru)**<sup>1,2</sup> ·
+**[Maksim Utushkin](mailto:mak.utushkin@gmail.com)**<sup>1</sup> ·
+**[Aleksandr Poslavsky](mailto:dr.slink@vk.com)**<sup>1</sup> ·
+**[Alexander D'yakonov](mailto:djakonov@mail.ru)**<sup>1</sup>
+
+<sup>1</sup> AI VK, Moscow, Russian Federation<br>
+<sup>2</sup> Lomonosov Moscow State University, Moscow, Russian Federation
+
+**WSDM '27** · February 15–19, 2027 · Hong Kong, Hong Kong<br>
+**[Paper (DOI)](https://doi.org/10.1145/3862322.3863643)** · **[Citation](#citation)**
 
 [![python](https://img.shields.io/badge/python-3.12-2a78d6?style=flat-square)](https://www.python.org)
 [![torch](https://img.shields.io/badge/torch-2.8%20%2B%20cu128-1baf7a?style=flat-square)](https://pytorch.org)
@@ -53,7 +63,7 @@ fullscreen by 0.38%; all changes were statistically significant. The number of
 short videos shown to users remained stable. These results demonstrate that DCDN
 can improve user engagement while eliminating reliance on manually engineered
 ratio features. Our code is publicly released at
-[https://anonymous.4open.science/r/DCDN-2D6D](https://anonymous.4open.science/r/DCDN-2D6D).
+[https://github.com/rw404/DCDN](https://github.com/rw404/DCDN).
 
 ---
 
@@ -501,14 +511,24 @@ From Section 8 of the paper:
 
 ## Citation
 
+If you use DCDN in your research, please cite our WSDM '27 paper:
+
 ```bibtex
-@inproceedings{ {{BIBTEX_KEY}} ,
-  title     = {Deep Cross-Division Network for Product-and-Ratio
-               Feature Interactions in Industrial Ranking},
-  author    = { {{AUTHOR_LIST}} },
-  booktitle = { {{VENUE_FULL}} },
-  year      = { {{YEAR}} },
-  url       = { {{PAPER_URL}} }
+@inproceedings{trapeznikov2027dcdn,
+  author    = {Mikhail Trapeznikov and Sofia Gulevskaia and Maksim Utushkin and
+               Aleksandr Poslavsky and Alexander D'yakonov},
+  title     = {Deep Cross-Division Network for Product-and-Ratio Feature
+               Interactions in Industrial Ranking},
+  booktitle = {Proceedings of the Twentieth ACM International Conference on
+               Web Search and Data Mining},
+  series    = {WSDM '27},
+  year      = {2027},
+  month     = feb,
+  publisher = {Association for Computing Machinery},
+  location  = {Hong Kong, Hong Kong},
+  isbn      = {979-8-4007-3117-4/2027/02},
+  doi       = {10.1145/3862322.3863643},
+  url       = {https://doi.org/10.1145/3862322.3863643}
 }
 ```
 
