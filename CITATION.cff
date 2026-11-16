@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+message: "If you use DCDN, please cite the paper in preferred-citation."
+type: software
+title: "DCDN: Deep Cross-Division Network"
+authors:
+  - family-names: Trapeznikov
+    given-names: Mikhail
+  - family-names: Gulevskaia
+    given-names: Sofia
+  - family-names: Utushkin
+    given-names: Maksim
+  - family-names: Poslavsky
+    given-names: Aleksandr
+  - family-names: "D'yakonov"
+    given-names: Alexander
+repository-code: "https://github.com/rw404/DCDN"
+license: Apache-2.0
+preferred-citation:
+  type: conference-paper
+  authors:
+    - family-names: Trapeznikov
+      given-names: Mikhail
+    - family-names: Gulevskaia
+      given-names: Sofia
+    - family-names: Utushkin
+      given-names: Maksim
+    - family-names: Poslavsky
+      given-names: Aleksandr
+    - family-names: "D'yakonov"
+      given-names: Alexander
+  title: >-
+    Deep Cross-Division Network for Product-and-Ratio Feature Interactions
+    in Industrial Ranking
+  collection-title: >-
+    Proceedings of the Twentieth ACM International Conference on
+    Web Search and Data Mining
+  conference:
+    name: "Twentieth ACM International Conference on Web Search and Data Mining (WSDM '27)"
+    city: Hong Kong
+    country: HK
+    date-start: "2027-02-15"
+    date-end: "2027-02-19"
+  year: 2027
+  month: 2
+  publisher:
+    name: Association for Computing Machinery
+  isbn: "979-8-4007-3117-4"
+  doi: "10.1145/3862322.3863643"
+  url: "https://doi.org/10.1145/3862322.3863643"

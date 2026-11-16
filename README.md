@@ -128,6 +128,27 @@ everything else runs on CPU, slowly.
 
 ---
 
+## Usage
+
+The core preserves the input shape. Mark columns eligible for division with
+`denominator_mask`, then attach your prediction head and train as usual.
+
+```python
+import torch
+from dcdn import DCDNCore
+
+x = torch.tensor([[6.0, 2.0], [12.0, 3.0]])  # [batch, features]
+core = DCDNCore(
+    features_count=2,
+    num_layers=2,
+    denominator_mask=[False, True],  # column 1 is a positive denominator
+)
+features = core(x)
+print(features.shape)  # torch.Size([2, 2])
+```
+
+---
+
 ## Datasets
 
 Each of the four public tasks is built in two steps. **Acquire** verifies every
@@ -511,7 +532,8 @@ From Section 8 of the paper:
 
 ## Citation
 
-If you use DCDN in your research, please cite our WSDM '27 paper:
+If you use DCDN in your research, please cite our WSDM '27 paper
+(also available in [`CITATION.cff`](CITATION.cff)):
 
 ```bibtex
 @inproceedings{trapeznikov2027dcdn,
@@ -526,7 +548,7 @@ If you use DCDN in your research, please cite our WSDM '27 paper:
   month     = feb,
   publisher = {Association for Computing Machinery},
   location  = {Hong Kong, Hong Kong},
-  isbn      = {979-8-4007-3117-4/2027/02},
+  isbn      = {979-8-4007-3117-4},
   doi       = {10.1145/3862322.3863643},
   url       = {https://doi.org/10.1145/3862322.3863643}
 }
