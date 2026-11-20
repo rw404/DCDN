@@ -167,6 +167,7 @@
 <g id="font_9_14">
 <path transform="matrix(.001,0,0,-.001,0,0)" d="M241 0H170C142.66667 0 121.666667-7.833333 107-23.5 92.333339-39.166669 85-59 85-83V-740H165V-70H241V0Z"/>
 </g>
+<path id="ylabel_x_glyph" transform="scale(0.001)" d="M20.583984375 0 246.8759765625 357.56201171875 28.718994140625 698H162.171142578125L320.51806640625 437.93408203125H322.945068359375L484.43798828125 698H609.47412109375L389.317138671875 358L618.0361328125 0H485.010986328125L315.675048828125 277.6279296875H313.248046875L145.6201171875 0Z"/>
 </defs>
 <g clip-path="url(#clip_1)">
 <path transform="matrix(.75,0,0,.75,0,0)" d="M0 0H520V340H0Z" fill="#ffffff"/>
@@ -208,10 +209,13 @@
 <use data-text="." xlink:href="#font_3_71" transform="matrix(11.25,0,0,-11.25,29.929688,195.375)" fill="#24282c"/>
 <use data-text="0" xlink:href="#font_3_55" transform="matrix(11.25,0,0,-11.25,32.989679,195.375)" fill="#24282c"/>
 <use data-text="0" xlink:href="#font_3_55" transform="matrix(11.25,0,0,-11.25,39.739679,195.375)" fill="#24282c"/>
-<use data-text="&#x0394;" xlink:href="#font_4_22" transform="matrix(0,-12.75,-12.75,-0,21.75,119.50781)" fill="#24282c"/>
-<use data-text="A" xlink:href="#font_5_29" transform="matrix(0,-12.75,-12.75,-0,21.75,111)" fill="#24282c"/>
-<use data-text="U" xlink:href="#font_5_49" transform="matrix(0,-12.75,-12.75,-0,21.75,102.81334)" fill="#24282c"/>
-<use data-text="C" xlink:href="#font_5_31" transform="matrix(0,-12.75,-12.75,-0,21.75,94.08174)" fill="#24282c"/>
+<g id="y-axis-label" aria-label="Δ XAUC">
+<use data-text="&#x0394;" xlink:href="#font_4_22" transform="matrix(0,-12.75,-12.75,-0,21.75,125.085935)" fill="#24282c"/>
+<use data-text="X" xlink:href="#ylabel_x_glyph" transform="matrix(0,-12.75,-12.75,-0,21.75,113.569125)" fill="#24282c"/>
+<use data-text="A" xlink:href="#font_5_29" transform="matrix(0,-12.75,-12.75,-0,21.75,105.421875)" fill="#24282c"/>
+<use data-text="U" xlink:href="#font_5_49" transform="matrix(0,-12.75,-12.75,-0,21.75,97.235215)" fill="#24282c"/>
+<use data-text="C" xlink:href="#font_5_31" transform="matrix(0,-12.75,-12.75,-0,21.75,88.503615)" fill="#24282c"/>
+</g>
 <path transform="matrix(.75,0,0,.75,10.5,3)" d="M67.25 224.63H89.25V252H67.25Z" fill="#3e6663"/>
 <path transform="matrix(.75,0,0,.75,10.5,3)" d="M96.25 167.91H118.25V252H96.25Z" fill="#c92f6f"/>
 <path transform="matrix(.75,0,0,.75,10.5,3)" d="M125.25 231.77H147.25V252H125.25Z" fill="#5556b5"/>
@@ -311,3 +315,4 @@
 <use data-text="l" xlink:href="#font_9_14" transform="matrix(8.25,0,0,-8.25,291.7492,244.875)" fill="#24282c"/>
 </g>
 </svg>
+

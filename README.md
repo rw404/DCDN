@@ -48,21 +48,21 @@ as inputs.
 
 We introduce DCDN, a Deep Cross-Division Network that augments a DCNv2-style
 cross layer with a division branch. DCDN jointly learns product, ratio, and mixed
-product–ratio interactions. We characterize the learned interactions using
-multivariate Laurent polynomials and show that DCDN can generate Laurent
-monomials of any order up to a maximum determined by network depth.
+product–ratio interactions. We characterize the representable interactions as
+multivariate Laurent polynomials and show that a $K$-layer DCDN generates Laurent
+monomials of $\ell_1$-order up to $K+1$, with signed degree between $-K$ and $K+1$.
 
-We evaluated DCDN against a production-optimized neural-ranking baseline built
+We evaluate DCDN against a production-optimized neural-ranking baseline built
 around DCNv2 and supplied with manually engineered ratio features. Replacing the
 DCNv2 block with DCDN allowed us to eliminate the entire class of manually
-engineered ratio features from the model input, reducing the overall input
-feature amount by 40.1%. DCDN is deployed in the production ranking stack of a
-major short-video service. In a live A/B test on this service, DCDN increased
-likes by 3.25%, shares by 16.26%, total view time by 0.33%, and clicks to open
+engineered ratio features from the model input, reducing the number of input
+features by 40.1%. DCDN is deployed in the production ranking stack of a major
+short-video service. In a live A/B test on this service, DCDN increased likes by
+3.25%, shares by 16.26%, total view time (TVT) by 0.33%, and clicks to open
 fullscreen by 0.38%; all changes were statistically significant. The number of
-short videos shown to users remained stable. These results demonstrate that DCDN
-can improve user engagement while eliminating reliance on manually engineered
-ratio features. Our code is publicly released at
+shown videos decreased slightly (-0.24%). These results demonstrate that DCDN can
+improve user engagement while eliminating reliance on manually engineered ratio
+features. Our code is publicly released at
 [https://github.com/rw404/DCDN](https://github.com/rw404/DCDN).
 
 ---
@@ -73,15 +73,27 @@ A DCNv2 cross layer computes `x_{i+1} = x_i + x_0 \odot W x_i`, so every coordin
 is a polynomial in the inputs with non-negative exponents — the quotient `n/d`
 lies outside that span and can only be approximated locally. DCDN adds one term:
 
-```
-x_{i+1} = x_i + x_0 \odot W_p(x_i) + inv(x_0) \odot W_d(x_i)
-```
+$$
+\begin{aligned}
+x^{(\ell+1)} ={}& x^{(\ell)}
++ \left(W_\ell x^{(\ell)} + b_\ell\right) \odot x^{(0)} \\
+&+ \left(\widetilde{W}_\ell x^{(\ell)} + \widetilde{b}_\ell\right)
+\odot \frac{1}{x^{(0)}}.
+\end{aligned}
+$$
 
-`inv(x_0)` inverts only the coordinates a frozen contract declares to be
-legitimate positive denominators. The span becomes **Laurent**, the exponent `-1`
-becomes reachable by gradient descent, and a ratio `x_j / x_i` becomes a single
-learned weight. A `K`-layer stack realises exactly the Laurent monomials of
-signed degree `-K` through `K+1`, and both bounds are attainable.
+<div align="center">
+<img src="figures/dcdn_layer.svg" alt="DCDN layer with residual, product and division branches; product parameters W_l and b_l, and division parameters W_l and b_l with tildes" width="100%">
+</div>
+
+[Layer diagram (PDF)](figures/dcdn_layer.pdf)
+
+In the implementation, `inv(x_0)` inverts only the coordinates a frozen contract
+declares to be legitimate positive denominators. The span becomes **Laurent**,
+the exponent `-1` becomes reachable by gradient descent, and a ratio `x_j / x_i`
+becomes a single learned weight. For a $K$-layer stack, representable Laurent
+monomials have $\ell_1$-order at most $K+1$ and signed degree between $-K$ and
+$K+1$; both signed-degree bounds are attainable.
 
 ---
 
@@ -104,7 +116,7 @@ lives on the project's experiment branch.
 │   └── rq3.md                               <- capacity
 ├── configs/data/                            <- the frozen feature contracts
 ├── data/manifests/                          <- pinned source hashes
-├── figures/                                 <- every figure, SVG
+├── figures/                                 <- SVG figures and vector PDF exports
 ├── src/dcdn/                                <- model, metrics, fused inference
 └── scripts/
     ├── data/                                <- acquire and materialise the four datasets
@@ -371,8 +383,10 @@ columns separate the feature-view effect from the architecture effect.
 | View time | 0.5589 | 0.5681 | 0.5152 | 0.5629 | +0.0092 | +0.0477 | **+0.0040** |
 
 <div align="center">
-<img src="figures/production_offline_xauc_deltas.svg" alt="Production offline XAUC deltas under full and reduced feature views" width="60%">
+<img src="figures/production_offline_xauc_deltas.svg" alt="Production offline Δ XAUC under full and reduced feature views" width="60%">
 </div>
+
+[Production offline comparison (PDF)](figures/production_offline_xauc_deltas.pdf)
 
 Deleting the ratios costs DCNv2 up to 0.0437 XAUC and DCDN at most 0.0052 — the
 reduced pair is where the architecture earns the feature removal.
@@ -469,12 +483,12 @@ with it where the training mass is.
 </div>
 
 Multiplicative and reciprocal crossings shift exponents in positive and negative
-coordinate directions, so after `L` layers the reachable set is the `\ell_1` ball of
-radius `L+1` around the coordinate vectors — the whole ball for DCDN, its
-non-negative quadrant for DCNv2. Grey points lie inside the degree bound and are
-still out of reach, because one layer can apply the reciprocal only once. The
-notebook enumerates the same set and prints its counts, so the picture and the
-code agree by construction.
+coordinate directions. After $K$ layers, each reachable exponent vector has
+$\ell_1$-order at most $K+1$ and signed degree between $-K$ and $K+1$; negative
+exponents are available only on declared denominator coordinates. Grey points
+lie inside the degree bound and are still out of reach, because one layer can
+apply the reciprocal only once. The notebook enumerates the same set and prints
+its counts, so the picture and the code agree by construction.
 
 ---
 
@@ -557,3 +571,4 @@ If you use DCDN in your research, please cite our WSDM '27 paper
 ## License
 
 Apache License 2.0 — see [`LICENSE`](LICENSE).
+
